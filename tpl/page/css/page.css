@@ -1,0 +1,95 @@
+/*
+	// san_francisco_displayregular
+		@font-face {
+			font-family: 'san_francisco_displayregular';
+			src: url('@{fonts_path}/san_francisco_web/sanfranciscodisplay-regular-webfont.eot');
+			src: url('@{fonts_path}/san_francisco_web/sanfranciscodisplay-regular-webfont.eot?#iefix') format('embedded-opentype'),
+				 url('@{fonts_path}/san_francisco_web/sanfranciscodisplay-regular-webfont.woff2') format('woff2'),
+				 url('@{fonts_path}/san_francisco_web/sanfranciscodisplay-regular-webfont.woff') format('woff'),
+				 url('@{fonts_path}/san_francisco_web/sanfranciscodisplay-regular-webfont.ttf') format('truetype'),
+				 url('@{fonts_path}/san_francisco_web/sanfranciscodisplay-regular-webfont.svg#san_francisco_displayregular') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		// font mixin default
+		.font_default {
+			font-family: "san_francisco_displayregular", sans-serif;
+		}
+		.font_default_bold {
+			font-family: "san_francisco_displayregular", sans-serif;
+			font-weight: bold;
+		}
+
+	// Barlow Semi Condensed
+		//@import url('https://fonts.googleapis.com/css?family=Barlow+Condensed:500|Barlow+Semi+Condensed');	
+		@font-face {
+			font-family: 'Barlow Semi Condensed';
+			src: url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.eot');
+			src: url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.eot?#iefix') format('embedded-opentype'),
+				 //url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.woff2') format('woff2'),
+				 url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.woff') format('woff'),
+				 url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.ttf') format('truetype'),
+				 url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.svg#san_francisco_displayregular') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		// font mixin secondary
+		.font_secondary {
+			font-family: "Barlow Semi Condensed", sans-serif;
+		}
+		.font_secondary_bold {
+			font-family: "Barlow Semi Condensed", sans-serif;
+			font-weight: bold;
+		}
+		*/
+.content p strong {
+  font-size: 1.25em;
+}
+p img.svg {
+  vertical-align: middle;
+}
+#wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#wrapper #main {
+  flex: 1 0 auto;
+  min-height: 50vh;
+}
+#wrapper #footer {
+  flex-shrink: 0;
+}
+#wrapper {
+  background-image: url('../../assets/images/overlay_white.png');
+}
+#header {
+  padding-top: 4em;
+}
+#header .inner .logo .symbol img {
+  display: block;
+  width: auto;
+  height: 14em;
+  position: relative;
+  top: 5px;
+}
+#header .inner .title {
+  font-size: 2em;
+  color: black;
+}
+#main .inner > h1 {
+  font-variant: small-caps;
+  color: #4c4430;
+  letter-spacing: 0.05em;
+  font-weight: 300;
+  font-size: 2.8em;
+  margin-bottom: 0.5em;
+}
+#footer .inner h2 {
+  text-transform: initial;
+  font-variant-caps: small-caps;
+}
+#footer .inner ul {
+  color: #ffffff !important;
+}
+/*# sourceMappingURL=page.css.map */

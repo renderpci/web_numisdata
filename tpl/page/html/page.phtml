@@ -1,0 +1,32 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title><?php echo $page_title ?></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel='shortcut icon' type='image/x-icon' href='<?php echo __WEB_TEMPLATE_WEB__ ?>/favicon.ico' />
+	<?php echo $css_links ?>
+	<?php #include $base_path . '/html/google_analytics.inc' ?>
+	<script>WEB_AREA='<?php echo $this->area_name ?>';IS_PRODUCTION=<?php echo json_encode(IS_PRODUCTION) ?></script>
+</head>
+<body class="is-preload">
+	<?php /*
+	<!-- Lang selector -->
+		<ul id="page_lang_selector">
+			<li><i class="fa fa-globe"></i></li>
+			<?php foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) { ?>
+			<li><a href="?lang=<?php echo $lang ?>"><?php echo $lang_name ?></a></li>
+			<?php }	?>
+		</ul>
+	*/ ?>
+<?php echo $content_html ?>
+</body>
+</html>

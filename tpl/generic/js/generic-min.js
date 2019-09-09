@@ -1,0 +1,1 @@
+"use strict";var generic={set_up:function(e){return!0}};

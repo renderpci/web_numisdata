@@ -1,0 +1,42 @@
+
+<!-- Header -->
+	<header id="header">
+		<div class="inner">
+
+			<!-- Logo -->
+				<a href="<?php echo __WEB_ROOT_WEB__ ?>" class="logo">
+					<span class="symbol">
+						<img src="<?php echo __WEB_TEMPLATE_WEB__ ?>/assets/images/logo_mib.png" alt="" />
+					</span>
+					<span class="title">Moneda Ibérica</span>
+				</a>
+
+			<!-- Nav -->
+				<?php if (IS_PRODUCTION===false) { ?>
+				<nav>
+					<ul>
+						<li><a href="#menu">Menu</a></li>
+					</ul>
+				</nav>
+				<?php } ?>
+
+		</div>
+	</header>
+
+<!-- Menu -->
+	<?php if (IS_PRODUCTION===false) { ?>
+	<nav id="menu">
+		<h2>Menu</h2>
+		<?php echo $this->menu_tree_html ?>
+	</nav>
+	<?php } ?>
+
+<!-- lang switcher -->
+	<?php /*
+	<ul id="page_lang_selector">
+		<li id="lang_globe"><i class="fa fa-globe"></i></li>
+		<?php foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) { ?>
+		<li><a href="?lang=<?php echo $lang ?>"><?php echo $lang_name ?></a></li>
+		<?php } ?>
+	</ul>
+	*/ ?>

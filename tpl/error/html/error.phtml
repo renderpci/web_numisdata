@@ -1,0 +1,28 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+<!-- Wrapper. <?php echo trim($template_name) ?> -->
+	<div id="wrapper" class="<?php echo $template_name ?>_content">
+		<?php
+			// Debug info
+			if(SHOW_DEBUG===true) {
+				echo "<pre>$template_name</pre>";
+			}
+		?>
+
+		<!-- Top container -->
+			<div id="error_content" class="top_container">
+				<h2>Sorry. Page not found: <?php echo $this->area_name ?></h2>
+
+				<a href="<?php echo __WEB_ROOT_WEB__ ?>"><h1><?php echo tstring('inicio') ?></h1></a>
+			</div>
+
+		<!-- Footer -->
+			<?php echo $footer_html ?>
+
+	</div><?php echo "<!-- /{$template_name} -->"; ?>

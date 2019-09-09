@@ -1,0 +1,28 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/paco/Trabajos/web_projects/mib",
+			"file_exclude_patterns":
+			[
+				"*.zip",
+				"*.gz",
+				"*.data",
+				"*.map",
+				"*.css",
+				"*-min.js",
+				"*.min.js",
+				"*.codekit3"
+			],
+			"folder_exclude_patterns":
+			[
+				"temp",
+				"acc",
+				"_acc",
+				"des",
+				"*_OLD",
+				"~*"
+			]
+		}
+	]
+}

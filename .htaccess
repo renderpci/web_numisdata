@@ -1,0 +1,29 @@
+<IfModule mod_rewrite.c>
+
+# Project : maternidades_robadas
+# @see https://getpostcookie.com/blog/url-rewriting-for-beginners/
+
+# Activate rewrite
+	RewriteEngine on
+
+# RewriteBase / . Use the name of base directory like "/maternidades_robadas" for http://mujerymemoria/maternidades_robadas
+	#RewriteBase "/maternidades_robadas"
+	# Dynamic base. 
+	# @see https://stackoverflow.com/questions/21062290/set-rewritebase-to-the-current-folder-path-dynamically
+	RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+	RewriteRule ^(.*)$ - [E=BASE:%1]
+
+
+# RewriteCond $1 !^maternidades_robadas/
+# RewriteCond $1 /*web_app
+
+# Redirect exceptions. All calls to base directory will be redirect except this special list (tpl,dedalo,web_app,web)
+	RewriteCond $1 !^tpl/
+	RewriteCond $1 !^web_app/
+	#RewriteCond $1 !^dedalo/	
+	#RewriteCond $1 !^web/
+
+# Redirect all but exceptions
+	RewriteRule ^(.*)$ web_app/web/$1 [NS,L] 
+
+</IfModule>

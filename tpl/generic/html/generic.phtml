@@ -1,0 +1,54 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+		<!-- Main -->
+			<div id="main">
+				<div class="inner">
+					
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
+
+					<!-- main image -->
+						<?php /*<span class="image main"><img src="images/pic13.jpg" alt="" /></span>*/ ?>
+					
+					<!-- abstract -->
+						<p><?php echo $abstract ?></p>
+
+					<!-- Images -->
+						<?php if(!empty($ar_image)) { ?>
+						<section class="images">
+							<?php foreach ($ar_image as $key => $image) { ?>
+								<a href="<?php echo __WEB_BASE_URL__ . $image ?>" class="gallery image fit">
+									<img src="<?php echo __WEB_BASE_URL__ . $image ?>" alt="" class="image_big" />
+								</a>
+							<?php } ?>
+						</section>
+						<?php } ?>
+
+					<!-- body -->
+						<section class="content">
+							<?php echo $body ?>
+						</section>
+				</div>
+			</div>
+		
+		<!-- Footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js') ?>
+<script>
+	generic.set_up({})
+</script>

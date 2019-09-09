@@ -1,0 +1,28 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@path_page: "../../page"; ;
+
+// Usage library
+	@import "@{path_page}/css/library.less";
+
+
+// main
+	#main {
+		overflow: hidden;
+		padding-bottom: 2rem;
+	}
+
+
+// images
+	section.images {
+		display: flex;
+
+		a.image {
+			margin: auto ;
+
+			img {
+				max-width: 100%;				
+			}
+		}
+	}

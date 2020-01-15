@@ -34,15 +34,15 @@
 		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');
 	
 	// __web_root_web__			
-		$parts = explode('/',$_SERVER['REQUEST_URI']);
-		#$base  = '/'.$parts[1];
-		$ar_path = []; $total = count($parts);
-		for ($i=1; $i < ($total-1); $i++) { 
-			$ar_path[] = $parts[$i];
-		}
-		$base = '/'.implode('/', $ar_path);		
-		#error_log( $base .' - '. print_r($ar_path,true) );
-		#$base = '/web_projects/mib/';
+		// $parts = explode('/',$_SERVER['REQUEST_URI']);
+		// #$base  = '/'.$parts[1];
+		// $ar_path = []; $total = count($parts);
+		// for ($i=1; $i < ($total-1); $i++) { 
+		// 	$ar_path[] = $parts[$i];
+		// }
+		// $base = '/'.implode('/', $ar_path);		
+		// #error_log( $base .' - '. print_r($ar_path,true) );
+		$base = '/web_mib';
 		define('__WEB_ROOT_WEB__', $base);	
 
 	// web_app_dir
@@ -54,7 +54,7 @@
 	// __web_template_web_
 		define('__WEB_TEMPLATE_WEB__' , __WEB_ROOT_WEB__  .'/tpl' );
 		define('__WEB_TEMPLATE_PATH__', __WEB_BASE_PATH__ .'/tpl');
-		
+	
 	// version
 		include(__WEB_TEMPLATE_PATH__ . '/version.inc');
 
@@ -111,7 +111,7 @@
 
 
 // debug . Show / hide debug messages
-		$SHOW_DEBUG = false;
+		$SHOW_DEBUG = true;
 		if (isset($_SESSION['dedalo4']['auth']['user_id']) && $_SESSION['dedalo4']['auth']['user_id']==-1) {
 			$SHOW_DEBUG = true;
 		}
@@ -173,7 +173,7 @@
 
 // suffix
 	define('CSS_SUFFIX', '');
-	define('JS_SUFFIX' , '-min'); // -min
+	define('JS_SUFFIX' , ''); // -min
 
 
 

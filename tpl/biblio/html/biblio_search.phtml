@@ -1,0 +1,80 @@
+<?php /*
+<form method="post" action="#">
+	<div class="fields">
+		<div class="field">
+			<label for="name">Name</label>
+			<input type="text" name="name" id="name" />
+		</div>
+		<div class="field">
+			<label for="email">Email</label>
+			<input type="text" name="email" id="email" />
+		</div>
+		<div class="field">
+			<label for="message">Message</label>
+			<textarea name="message" id="message" rows="3"></textarea>
+		</div>
+	</div>
+	<ul class="actions">
+		<li><input type="submit" value="Send Message" /></li>
+	</ul>
+</form>
+*/ ?>
+<form id="search_form" class="form-inline" onsubmit="biblio.search(this,event)">
+	<div class="form-row fields">		
+	
+	<div class="form-group field">
+	 <?php #  <label for="autoria" class="col-form-label"><?php echo tstring('autoria') </label>?>
+	  <input class="form-control" id="autoria" type="text" name="autoridad" 
+	  data-search="string" data-mode="search_distinct" data-q_name="autoria" data-q_table="publicaciones" 
+	  placeholder="<?php echo tstring('autoria') ?>" title="<?php echo tstring('autoria') ?>">
+	  <div id="autoria_values" class="container_values"></div>
+	</div>
+
+	<div class="form-group field">
+	<?php #  <label for="titulo" class="col-form-label"><?php echo tstring('titulo') </label>?>
+	  <input class="form-control" id="titulo" type="text" name="titulo" 
+	  data-search="string" data-mode="search_distinct" data-q_name="titulo" data-q_table="publicaciones" 
+	  placeholder="<?php echo tstring('titulo') ?>" title="<?php echo tstring('titulo') ?>">
+	  <div id="titulo_values" class="container_values"></div>
+	</div>
+
+	<div class="form-group field">
+	<?php #   <label for="fecha_publicacion" class="col-form-label"><?php echo tstring('fecha_publicacion') </label>?>	  
+	  <input class="form-control" id="fecha_publicacion" type="text" name="fecha_publicacion" 
+	  data-search="string" data-mode="search_distinct" data-q_name="fecha_publicacion" data-q_table="publicaciones" 
+	  placeholder="<?php echo tstring('fecha_publicacion') ?>" title="<?php echo tstring('fecha_publicacion') ?>">
+	  <div id="fecha_publicacion_values" class="container_values"></div>
+	</div>
+
+	<div class="form-group field">
+	<?php #  <label for="serie" class="col-form-label"><?php echo tstring('serie') </label>	?>  
+	  <input class="form-control" id="serie" type="text"  name="serie" 
+	  data-search="string" data-mode="search_distinct" data-q_name="numero_serie" data-q_table="publicaciones" 
+	  placeholder="<?php echo tstring('series_colecciones') ?>" title="<?php echo tstring('series_colecciones') ?>">
+	  <div id="serie_values" class="container_values"></div>
+	</div>
+
+	<div class="form-group field">
+	<?php #  <label for="lugar_publicacion" class="col-form-label"><?php echo tstring('lugar_publicacion') </label>?>	  
+	  <input class="form-control" id="lugar_publicacion" type="text" name="lugar_publicacion" 
+	  data-search="string" data-mode="search_distinct" data-q_name="lugar_publicacion" data-q_table="publicaciones" 
+	  placeholder="<?php echo tstring('lugar_publicacion') ?>" title="<?php echo tstring('lugar_publicacion') ?>">
+	  <div id="lugar_publicacion_values" class="container_values"></div>
+	</div>
+
+
+	<div class="form-group field">
+	<?php #  <label for="lugar_publicacion" class="col-form-label"><?php echo tstring('lugar_publicacion') </label>?>	
+	  	<span class="operators"><?php echo tstring('operator') ?></span>  
+		<input type="radio" id="operator_or" name="operators" checked="" value="OR"><label for="operator_or"><?php echo tstring('or') ?></label>
+		<input type="radio" id="operator_and" name="operators" value="AND"><label for="operator_and"><?php echo tstring('and') ?></label>
+	</div>
+
+
+
+	<div class="form-group field">	    
+	   <input class="btn btn-light btn-block primary" id="button_submit" type="submit" value="<?php echo tstring('buscar') ?>">
+	</div>
+
+	</div>	
+</form>

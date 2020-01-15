@@ -1,0 +1,95 @@
+/*
+	#wrapper {
+
+		height: 100vh;		
+		
+	}
+	*/
+section.result {
+  min-height: 70vh;
+}
+.line_value {
+  display: flex;
+  line-height: 1em;
+  padding-top: 5px;
+  padding-left: 10px;
+}
+.line_value i {
+  color: #BFBFBF;
+  cursor: pointer;
+  align-self: center;
+}
+.line_value i:hover {
+  color: #E31A0A;
+}
+.line_value input.input_values {
+  pointer-events: none;
+  border: none;
+  margin-left: 5px;
+  width: 100%;
+  align-self: center;
+  text-overflow: ellipsis;
+  background-color: transparent;
+}
+.biblio_row_wrapper {
+  overflow: hidden;
+}
+.biblio_row_wrapper .info_line {
+  display: inline-block;
+  letter-spacing: 1.5px;
+}
+.biblio_row_wrapper > .row_title {
+  display: flex;
+  align-items: baseline;
+  padding-top: 40px;
+  line-height: 22px;
+}
+.biblio_row_wrapper > .row_title > .autoria {
+  color: #161616;
+  font-size: 24px;
+  letter-spacing: 1.5px;
+  font-variant: small-caps;
+}
+.biblio_row_wrapper > .fecha_publicacion {
+  color: #7b7b7b;
+  letter-spacing: 1.5px !important;
+  padding-left: 30px;
+}
+.biblio_row_wrapper > .row_body {
+  padding-left: 30px;
+}
+.biblio_row_wrapper > .row_body > h1 {
+  color: #161616;
+  line-height: 1.1em;
+  font-size: 1.1em;
+  padding: 0;
+  margin: 0;
+}
+.form-inline .form-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.form-inline .form-row .form-group {
+  flex: 1 1 50%;
+}
+.form-inline .form-row .operators {
+  padding-right: 2em;
+}
+.pagination.bottom {
+  margin-top: 3em;
+}
+.ui-menu .ui-menu-item {
+  padding-left: 0;
+  width: 100%;
+  display: flex;
+}
+.ui-menu .ui-menu-item-wrapper {
+  width: 100%;
+  border: none !important;
+  margin: 0 !important;
+}
+.ui-widget.ui-widget-content {
+  background-color: #f9f9f9;
+  border: none !important;
+}
+/*# sourceMappingURL=biblio.css.map */

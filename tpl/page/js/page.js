@@ -171,7 +171,7 @@ var page = {
 			}
 
 		return scrollbar
-	}//end adjust_footer_position
+	},//end adjust_footer_position
 
 
 
@@ -181,7 +181,7 @@ var page = {
 	activate_tooltips : function( elements ) {
 
 		if(SHOW_DEBUG===true) {
-			//console.log("elements:",elements);
+			// console.log("elements:",elements);
 		}
 
 		$(elements).each(function() {

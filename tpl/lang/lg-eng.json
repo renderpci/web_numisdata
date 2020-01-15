@@ -1,7 +1,11 @@
 {
     "inicio": "Home",
+    "catalogo": "Catalogue",
+    "bibliografia": "Bibliography",
+    "proyecto": "Project",
     "mas": "More",
     "load_more": "Load more",
     "idioma": "Lang",    
-    "info": "Info"
+    "info": "Info",
+    "direccion": "Address"
 }

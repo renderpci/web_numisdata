@@ -14,10 +14,13 @@
 		background-image: url('../../assets/images/overlay.png');
 		color: #ffffff !important;
 
-		> .inner {
+		>.inner {
 			@include vendor('display', 'flex');
 			@include vendor('flex-wrap', 'wrap');
 			@include vendor('flex-direction', 'row');
+
+			padding: 0 !important;
+			max-width: initial !important;
 
 			> * > :last-child {
 				margin-bottom: 0;
@@ -39,8 +42,11 @@
 				list-style: none;
 				//background-color: #9FEB88;
 				height: 6em;
-				padding: 0;
 				margin: 0;
+				padding: 0;
+				padding-left: 2em;
+				padding-right: 2em;
+				
 
 				>li {
 					//flex: 1 1 33%;
@@ -50,13 +56,18 @@
 					background-repeat: no-repeat;
 					background-position: center;
 					padding: 0;
-					flex: 1 1 33%;
-
+					flex: 1 1 25%;
+					margin: 0.5em;
+					
+					&.uni_val_hist {
+						background-image: url('../../assets/images/uni_val_hist.png');
+					}
 					&.ministerio {
 						background-image: url('../../assets/images/logo_mciu.jpg');
 					}
 					&.mupreva {
 						background-image: url('../../assets/images/LogoMuseoNegroValencia.png');
+						//background-position-x: 73%;
 					}
 					&.render {
 						background-image: url('../../assets/images/logo_render_bn.png');
@@ -70,8 +81,7 @@
 						opacity: 0;
 						border: none;
 					}
-				}
-				
+				}				
 				
 			}
 

@@ -1984,7 +1984,9 @@ body.is-menu-visible #menu {
     -moz-flex-direction: row;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
-    flex-direction: row; }
+    flex-direction: row;
+    padding: 0 !important;
+    max-width: initial !important; }
     #footer > .inner > * > :last-child {
       margin-bottom: 0; }
     #footer > .inner section:nth-child(1) {
@@ -1998,15 +2000,20 @@ body.is-menu-visible #menu {
       width: 100%;
       list-style: none;
       height: 6em;
+      margin: 0;
       padding: 0;
-      margin: 0; }
+      padding-left: 2em;
+      padding-right: 2em; }
       #footer > .inner .logos > li {
         position: relative;
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
         padding: 0;
-        flex: 1 1 33%; }
+        flex: 1 1 25%;
+        margin: 0.5em; }
+        #footer > .inner .logos > li.uni_val_hist {
+          background-image: url("../../assets/images/uni_val_hist.png"); }
         #footer > .inner .logos > li.ministerio {
           background-image: url("../../assets/images/logo_mciu.jpg"); }
         #footer > .inner .logos > li.mupreva {

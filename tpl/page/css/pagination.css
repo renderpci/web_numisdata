@@ -1,0 +1,89 @@
+.pagination {
+  display: -moz-inline-flex;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flex;
+  display: inline-flex;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  list-style: none;
+  margin: 0 0 2rem 2px;
+  padding: 0;
+}
+.pagination a,
+.pagination span,
+.pagination li {
+  -moz-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+  -webkit-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+  -ms-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+  border: solid 2px;
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 900;
+  height: 3rem;
+  letter-spacing: 0.075em;
+  line-height: calc(3rem - 4px);
+  margin-left: -2px;
+  min-width: 3rem;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-color: #eeeeee;
+}
+@media screen and (max-width: 980px) {
+  .pagination a,
+  .pagination span,
+  .pagination li {
+    font-size: 0.9rem;
+  }
+}
+.pagination a,
+.pagination li {
+  color: #212931 !important;
+}
+.pagination a:hover,
+.pagination li:hover {
+  color: #e5b44c !important;
+  border-color: #e5b44c;
+  z-index: 1;
+}
+.pagination a:hover + a,
+.pagination a:hover + span {
+  border-left-color: #e5b44c;
+}
+.pagination a.selected {
+  background-color: #eeeeee;
+}
+.pagination span {
+  color: #eeeeee;
+}
+.pagination .next,
+.pagination .previous {
+  text-decoration: none;
+  padding: 0 1.75rem;
+}
+.pagination .next:before,
+.pagination .previous:before {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  text-transform: none !important;
+  display: inline-block;
+  color: inherit !important;
+}
+.pagination .previous:before {
+  content: '\f104';
+  margin-right: 0.9375em;
+}
+.pagination .next:before {
+  content: '\f105';
+  float: right;
+  margin-left: 0.9375em;
+}
+/*# sourceMappingURL=pagination.css.map */

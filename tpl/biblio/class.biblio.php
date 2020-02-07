@@ -39,7 +39,8 @@ class biblio {
 			foreach ($options->ar_query as $key => $value_obj) {
 
 				switch ($value_obj->name) {
-					case 'fecha_publicacion':						
+					
+					case 'fecha_publicacion':
 						preg_match("/^([0-9]{4})([-\/]([0-9]{1,2}))?([-\/]([0-9]{1,2}))?$/", $value_obj->value, $output_array);
 						$year  	= isset($output_array[1]) ? $output_array[1] : false;
 						$month 	= false;
@@ -65,11 +66,15 @@ class biblio {
 						}
 						#debug_log(__METHOD__." year:$year, month:$month, day:$day ".to_string(), 'DEBUG');
 						break;
+
 					case 'section_id':
 						$ar_filter[] = '`'.$value_obj->name.'` = '.(int)$value_obj->value;
 						break;
-					default:						
-						$ar_filter[] = '`'.$value_obj->name."` LIKE '%".$value_obj->value."%'";
+
+					default:
+						// scape
+						$value = self::escape_value($value_obj->value);
+						$ar_filter[] = '`'.$value_obj->name."` LIKE '%".$value."%'";
 						#$ar_filter[] = '`'.$value_obj->name."` = '".$value_obj->value."'";											
 						break;
 				}			
@@ -106,6 +111,36 @@ class biblio {
 
 		return $ar_result;
 	}//end search_biblio
+
+
+
+	/**
+	* ESCAPE_VALUE
+	* @return 
+	*/
+	public static function escape_value($value) {
+
+		$value = trim($value);
+
+		// if (function_exists('mb_ereg_replace'))
+		// {
+		//     function mb_escape(string $string)
+		//     {
+		//         return mb_ereg_replace('[\x00\x0A\x0D\x1A\x22\x25\x27\x5C\x5F]', '\\\0', $string);
+		//     }
+		// } else {
+		//     function mb_escape(string $string)
+		//     {
+		//         return preg_replace('~[\x00\x0A\x0D\x1A\x22\x25\x27\x5C\x5F]~u', '\\\$0', $string);
+		//     }
+		// }
+		// #$value = mb_escape($value);
+
+		$value = str_replace("'", "''", $value);
+
+
+		return $value;
+	}//end escape_value
 
 
 

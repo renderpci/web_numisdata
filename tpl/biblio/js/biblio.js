@@ -8,6 +8,10 @@ var biblio =  {
 	search_options 	: null,
 
 
+
+	/**
+	* SET_UP
+	*/
 	set_up : function(options) {
 
 		const self = this
@@ -47,7 +51,7 @@ var biblio =  {
 
 				self.search_rows({
 					ar_query : ar_query,
-					limit 	 : 10
+					limit 	 : 1
 				})
 		}
 		
@@ -61,7 +65,7 @@ var biblio =  {
 	* SET_VALUE
 	*/
 	set_value : function(object, value) {
-		//console.log("object:",object);
+		
 		const container = document.getElementById(object.id + "_values")
 
 		// Check if already exists 
@@ -210,8 +214,7 @@ var biblio =  {
 	* SEARCH
 	*/
 	search : function(form_obj, event) {
-		if (event)
-		event.preventDefault(); // Prevent submit and navigate to url
+		if (event) event.preventDefault(); // Prevent submit and navigate to url
 		//console.log("form_obj:",form_obj,event);
 
 		const self = this
@@ -247,6 +250,12 @@ var biblio =  {
 				ar_query : ar_query,
 				operator : operators_value
 			})
+
+		// scrool to head result
+			const div_result = document.querySelector(".result")
+			if (div_result) {
+				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+			}
 
 
 		return response
@@ -291,14 +300,17 @@ var biblio =  {
 				if(SHOW_DEBUG===true) {
 					console.log("[biblio.search_rows] get_json_data response:", response);
 				}
+
+				container.style.opacity = "1"
 				
 				if (!response) {
 					// Error on load data from trigger
 					console.warn("[biblio.search_rows] Error. Received response data is null");
+					return false
 				
 				}else{
 					// Success
-					biblio.draw_rows({
+					return biblio.draw_rows({
 						target  : 'biblio_rows_list',
 						ar_rows : response.result.result,
 						// pagination
@@ -307,8 +319,6 @@ var biblio =  {
 						offset 	: trigger_vars.offset
 					})
 				}
-
-				container.style.opacity = "1"
 		})
 
 		return js_promise
@@ -323,8 +333,9 @@ var biblio =  {
 		
 		const self = this
 	
-		const ar_rows 		 = options.ar_rows
+		const ar_rows 		 = options.ar_rows || []
 		const ar_rows_length = ar_rows.length
+			console.log("ar_rows:",ar_rows);
 		
 		// container select and clean container div
 			const container = document.getElementById(options.target)	
@@ -340,10 +351,10 @@ var biblio =  {
 				class_name 		: "pagination top"
 			})
 			pagination_container.appendChild( self.draw_paginator({
-				total  : options.total,
-				limit  : options.limit,
-				offset : options.offset,
-				count  : ar_rows_length
+				total  		: options.total,
+				limit  		: options.limit,
+				offset 		: options.offset,
+				count  		: ar_rows_length
 			}))
 			fragment.appendChild(pagination_container)			
 	
@@ -357,221 +368,169 @@ var biblio =  {
 				return collator.compare(order_a , order_b)
 			});
 
-		// rows build			
+		// rows build
 			for (var i = 0; i < ar_rows_length; i++) {
 
 				// Build dom row
 
 				// item biblio_object
 					const biblio_object = ar_rows[i]
+						console.log("biblio_object:", i, biblio_object);
+
+					for(var a in biblio_object) {
+						if (!biblio_object[a] || biblio_object[a].length<1) {
+							if (a.indexOf('dato')!==-1) {
+								// biblio_object[a] = "Untitled " + a
+							}							
+						}
+					}
 
 				// wrapper 
 					const biblio_row_wrapper = common.create_dom_element({
 						  element_type 	: "div",
-						  class_name 	: "biblio_row_wrapper",
-						  parent 		: fragment,
+						  class_name 	: "biblio_row_wrapper",						  
 						  data_set 		: {
 						  	section_id 	: biblio_object.section_id
-						  }
+						  },
+						  parent 		: fragment
 					})
 
-				// div title 
-					var row_title = common.create_dom_element({
-						element_type 	: "div",
-						parent 			: biblio_row_wrapper,
-						class_name 		: "row_title"
-					})
+				// row_fields set
+					const row_field = row_fields
+						  row_field.biblio_object = biblio_object
 
-				// autoria 
-					if (biblio_object.autoria && biblio_object.autoria.length>0) {
-						//console.log("biblio_object.autoria:",biblio_object.autoria);
-						//console.log("biblio_object.autoria_dato:",biblio_object.autoria_dato);
+				// author 
+					biblio_row_wrapper.appendChild( row_field.author() )					
+					
+				// publication_date 
+					biblio_row_wrapper.appendChild( row_fields.publication_date() )
+				
+				// row_body
+					biblio_row_wrapper.appendChild( row_fields.row_body() )
 
 
-						var autoria 		= biblio_object.autoria_dato
-						var autoria_length 	= autoria.length
-
-						var ar_final_autoria = []
-
-						for (var j = 0; j < autoria_length; j++) {
-							let autor_text = autoria[j].apellidos +", "+ autoria[j].nombre
-							ar_final_autoria.push(autor_text)
-						}
-
-						let final_autoria = ar_final_autoria.join("; ")
-
-						var line = common.create_dom_element({
-							element_type 	: "div",
-							parent 			: row_title,
-							class_name 		: "autoria info_line"
-							})
-							/*common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_label",
-								text_content 	: tstring["autoria"]
-							})*/
-							common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_value",
-								text_content 	: final_autoria
-							})
-					}
-
-				// fecha_publicacion 
-					if (biblio_object.fecha_publicacion) {
-
-						var ar_fecha 	= biblio_object.fecha_publicacion.split("-")
-						var fecha_final = parseInt(ar_fecha[0])
-
-						if( typeof(ar_fecha[1]!=="undefined") && parseInt(ar_fecha[1]) > 0 ) {					
-							fecha_final = fecha_final + "-" + parseInt(ar_fecha[1])
-						}
-						if( typeof(ar_fecha[2]!=="undefined") && parseInt(ar_fecha[2]) > 0 ) {
-							fecha_final = fecha_final + "-" + parseInt(ar_fecha[2])
-						}
-
-						var line = common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "fecha_publicacion info_line",
-							parent 			: biblio_row_wrapper
-							})
-							common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_value",
-								text_content 	: fecha_final
-							})
-					}
-
+				continue;
+					
+				
 				// div body	
 					const row_body = common.create_dom_element({
 						element_type 	: "div",
-						parent 			: biblio_row_wrapper,
-						class_name 		: "row_body"
+						class_name 		: "row_body",
+						parent 			: biblio_row_wrapper						
 					})
 
 					// title
 						const titulo = biblio_object.titulo || ''
 						common.create_dom_element({
 							element_type 	: "h1",
-							parent 			: row_body,
-							text_content 	: titulo
+							text_content 	: titulo,
+							parent 			: row_body
 						})
 
-				// series_colecciones 
-					if (biblio_object.series_colecciones || biblio_object.numero_serie) {
-						var series_info = []
-						if (biblio_object.series_colecciones) {
-							 series_info.push(biblio_object.series_colecciones) 
-						}
-						if (biblio_object.numero_serie) {
-							 series_info.push(biblio_object.numero_serie)
-						}
-						common.create_dom_element({
-							element_type 	: "em",
-							parent 			: row_body,
-							class_name 		: "series_colecciones",
-							text_content 	: series_info.join(" ")
-						})
-					}			
-				
-				// lugar_publicacion 
-					if (biblio_object.lugar_publicacion) {
-						var line = common.create_dom_element({
-							element_type 	: "div",
-							parent 			: row_body,
-							class_name 		: "lugar_publicacion info_line"
-							})
-							/*common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_label",
-								text_content 	: tstring["lugar_publicacion"]
-							})*/
-							common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_value",
-								text_content 	: biblio_object.lugar_publicacion
-							})
-					}
-
-				// description_fisica 
-					if (biblio_object.description_fisica) {
-						var line = common.create_dom_element({
-							element_type 	: "div",
-							parent 			: row_body,
-							class_name 		: "description_fisica info_line"
-							})
-							/*common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_label",
-								text_content 	: tstring["lugar_publicacion"]
-							})*/
-
-							var coma = ", "
-								//console.log(biblio_object.numero_serie ==false)
-
-							if (biblio_object.lugar_publicacion ==false ){
-								coma = ""
+					// series_colecciones 
+						if (biblio_object.series_colecciones || biblio_object.numero_serie) {
+							const series_info = []
+							if (biblio_object.series_colecciones) {
+								 series_info.push(biblio_object.series_colecciones) 
 							}
-
-
+							if (biblio_object.numero_serie) {
+								 series_info.push(biblio_object.numero_serie)
+							}
 							common.create_dom_element({
+								element_type 	: "em",
+								parent 			: row_body,
+								class_name 		: "series_colecciones",
+								text_content 	: series_info.join(" ")
+							})
+						}			
+					
+					// lugar_publicacion 
+						if (biblio_object.lugar_publicacion) {
+							const line = common.create_dom_element({
 								element_type 	: "div",
-								parent 			: line,
+								class_name 		: "lugar_publicacion info_line",
+								parent 			: row_body							
+							})
+							// common.create_dom_element({
+							// 	element_type 	: "div",
+							// 	parent 			: line,
+							// 	class_name 		: "info_label",
+							// 	text_content 	: tstring["lugar_publicacion"]
+							// })
+							const coma = (biblio_object.series_colecciones===false) ? '' : ', '
+							common.create_dom_element({
+								element_type 	: "div",							
 								class_name 		: "info_value",
-								text_content 	: coma+biblio_object.description_fisica
+								text_content 	: coma + biblio_object.lugar_publicacion,
+								parent 			: line
 							})
-					}
+						}
+					
+					// description_fisica 
+						if (biblio_object.description_fisica) {
+							const line = common.create_dom_element({
+								element_type 	: "div",							
+								class_name 		: "description_fisica info_line",
+								parent 			: row_body
+							})
+							// common.create_dom_element({
+							// 	element_type 	: "div",
+							// 	parent 			: line,
+							// 	class_name 		: "info_label",
+							// 	text_content 	: tstring["lugar_publicacion"]
+							// })
 
-				// notas 
-					/*
-					if (biblio_object.nota_general) {
-						var line = common.create_dom_element({
-							element_type 	: "div",
-							parent 			: row_body,
-							class_name 		: "nota_general"
-							})
+							const coma = (biblio_object.lugar_publicacion===false) ? '' : ', '
 							common.create_dom_element({
 								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_label",
-								text_content 	: tstring["notas"]
-							})
-							common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
 								class_name 		: "info_value",
-								text_content 	: biblio_object.nota_general
+								text_content 	: coma + biblio_object.description_fisica,
+								parent 			: line
 							})
-					}
-					*/
+						}
+				/*
+				// notas
+					// if (biblio_object.nota_general) {
+					// 	var line = common.create_dom_element({
+					// 		element_type 	: "div",
+					// 		parent 			: row_body,
+					// 		class_name 		: "nota_general"
+					// 		})
+					// 		common.create_dom_element({
+					// 			element_type 	: "div",
+					// 			parent 			: line,
+					// 			class_name 		: "info_label",
+					// 			text_content 	: tstring["notas"]
+					// 		})
+					// 		common.create_dom_element({
+					// 			element_type 	: "div",
+					// 			parent 			: line,
+					// 			class_name 		: "info_value",
+					// 			text_content 	: biblio_object.nota_general
+					// 		})
+					// }					
 
 				// codigo 
-					/*if (biblio_object.codigo) {
-						var line = common.create_dom_element({
-							element_type 	: "div",
-							parent 			: row_body,
-							class_name 		: "fecha_publicacion info_line"
-							})
-							common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_label",
-								text_content 	: tstring["codigo"]
-							})
-							common.create_dom_element({
-								element_type 	: "div",
-								parent 			: line,
-								class_name 		: "info_value",
-								text_content 	: biblio_object.codigo
-							})
-					}*/			
-
+					// if (biblio_object.codigo) {
+					// 	var line = common.create_dom_element({
+					// 		element_type 	: "div",
+					// 		parent 			: row_body,
+					// 		class_name 		: "fecha_publicacion info_line"
+					// 		})
+					// 		common.create_dom_element({
+					// 			element_type 	: "div",
+					// 			parent 			: line,
+					// 			class_name 		: "info_label",
+					// 			text_content 	: tstring["codigo"]
+					// 		})
+					// 		common.create_dom_element({
+					// 			element_type 	: "div",
+					// 			parent 			: line,
+					// 			class_name 		: "info_value",
+					// 			text_content 	: biblio_object.codigo
+					// 		})
+					// }			
+				*/
 			}//end for (var i = 0; i < len; i++)
 
 		// pagination footer
@@ -580,10 +539,10 @@ var biblio =  {
 				class_name 		: "pagination bottom"
 			})
 			pagination_container_bottom.appendChild( self.draw_paginator({
-				total  : options.total,
-				limit  : options.limit,
-				offset : options.offset,
-				count  : ar_rows_length
+				total  		: options.total,
+				limit  		: options.limit,
+				offset 		: options.offset,
+				count  		: ar_rows_length
 			}))
 			fragment.appendChild(pagination_container_bottom)
 
@@ -619,9 +578,20 @@ var biblio =  {
 
 					// update search_options
 						self.search_options.offset = offset
-						self.search_options.total  = total						
+						self.search_options.total  = total
+					
+					// search (returns promise)
+						const search = self.search_rows(self.search_options)
 
-					return self.search_rows(self.search_options)
+					// scroll page to navigato header
+						search.then(function(response){
+							const div_result = document.querySelector(".result")
+							if (div_result) {
+								div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+							}
+						})
+
+					return search
 				}
 			})
 			pagination_fragment.appendChild(paginator_node)

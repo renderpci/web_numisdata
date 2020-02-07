@@ -32,38 +32,25 @@ section.result {
   background-color: transparent;
 }
 .biblio_row_wrapper {
-  overflow: hidden;
+  margin-bottom: 1em;
+  border-bottom: 1px solid #dedede;
+  padding-bottom: 1em;
 }
-.biblio_row_wrapper .info_line {
-  display: inline-block;
-  letter-spacing: 1.5px;
-}
-.biblio_row_wrapper > .row_title {
-  display: flex;
-  align-items: baseline;
-  padding-top: 40px;
-  line-height: 22px;
-}
-.biblio_row_wrapper > .row_title > .autoria {
-  color: #161616;
-  font-size: 24px;
-  letter-spacing: 1.5px;
+.biblio_row_wrapper .author {
   font-variant: small-caps;
 }
-.biblio_row_wrapper > .fecha_publicacion {
-  color: #7b7b7b;
-  letter-spacing: 1.5px !important;
-  padding-left: 30px;
+.biblio_row_wrapper .author > * {
+  display: inline-block;
+  padding-right: 1em;
 }
-.biblio_row_wrapper > .row_body {
-  padding-left: 30px;
+.biblio_row_wrapper .author > .section_id {
+  color: #5C8FEE;
+  float: right;
 }
-.biblio_row_wrapper > .row_body > h1 {
-  color: #161616;
-  line-height: 1.1em;
-  font-size: 1.1em;
-  padding: 0;
+.biblio_row_wrapper .row_body > h1.title {
   margin: 0;
+  font-size: 1.5em;
+  font-weight: 300;
 }
 .form-inline .form-row {
   display: flex;
@@ -71,6 +58,7 @@ section.result {
 }
 .form-inline .form-row .form-group {
   flex: 1 1 50%;
+  align-self: baseline;
 }
 .form-inline .form-row .operators {
   padding-right: 2em;

@@ -5,6 +5,7 @@
 # CONFIG
 	$start_time=microtime(1);
 	require(dirname(dirname(__FILE__)) . '/config/config.php');	
+	require_once(dirname(dirname(__FILE__)) .'/biblio/class.biblio.php');
 	
 	define('TEMPORAL_CHARS', '<i>.</i>');
 
@@ -35,9 +36,6 @@ function search_rows($json_data) {
 				return $response;
 			}
 		}
-		
-	// class biblio include
-		require(dirname(dirname(__FILE__)) .'/biblio/class.biblio.php');
 
 	// ar_query_safe
 		if (!empty($ar_query)) {			
@@ -117,6 +115,9 @@ function search_distinct($json_data) {
 
 	// limit defaults
 		if ($limit===false) $limit = 25;
+
+	// q
+		$q = biblio::escape_value($q);
 
 	// Search API Query
 		$options = new stdClass();

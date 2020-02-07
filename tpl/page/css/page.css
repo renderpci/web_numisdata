@@ -26,20 +26,18 @@
   -webkit-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
   -ms-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
-  border: solid 2px;
+  border: solid 1px #cecbcb;
   display: inline-block;
   font-size: 0.8rem;
   font-weight: 900;
   height: 3rem;
   letter-spacing: 0.075em;
   line-height: calc(3rem - 4px);
-  margin-left: -2px;
   min-width: 3rem;
   position: relative;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
-  border-color: #eeeeee;
 }
 @media screen and (max-width: 980px) {
   .pagination > .navigator a,
@@ -199,5 +197,8 @@ p img.svg {
 }
 #footer .inner ul {
   color: #ffffff !important;
+}
+.hide {
+  display: none !important;
 }
 /*# sourceMappingURL=page.css.map */

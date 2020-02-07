@@ -117,7 +117,7 @@ var row_fields = {
 		// title
 			const titulo = biblio_object.titulo || ''
 			common.create_dom_element({
-				element_type 	: "h1",
+				element_type 	: "div",
 				class_name 		: "title",
 				text_content 	: titulo,
 				parent 			: line

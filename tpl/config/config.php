@@ -9,7 +9,7 @@
 
 
 // dedalo 4 private conf file
-	$source_data_api = 'local'; // remote , local
+	$source_data_api = 'remote'; // remote , local
 
 
 

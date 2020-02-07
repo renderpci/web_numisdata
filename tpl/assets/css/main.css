@@ -1,5 +1,23 @@
 @import url(font-awesome.min.css);
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,700,900");
+
+@font-face {
+  font-family: cambria;
+  src: url(../fonts/cambria/cambria.ttf);
+  font-style: normal;
+}
+
+@font-face {
+  font-family: cambria_bold;
+  src: url(../fonts/cambria/cambriab.ttf);
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: cambria_italic;
+  src: url(../fonts/cambria/cambriai.ttf);
+  font-style: italic;
+}
 /*
 	Phantom by HTML5 UP
 	html5up.net | @ajlkn

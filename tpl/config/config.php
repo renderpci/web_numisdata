@@ -9,7 +9,7 @@
 
 
 // dedalo 4 private conf file
-	$source_data_api = 'local'; // remote , local
+	$source_data_api = 'remote'; // remote , local
 
 
 
@@ -24,11 +24,10 @@
 // site config
 
 	// __web_base_url__ . absolute url base to target web. Used to build absolute calls to elements
-		if ($source_data_api==='remote') {
-			define('__WEB_BASE_URL__', 'https://mib.numisdata.org');
-		}else{
-			define('__WEB_BASE_URL__', 'http://monedaiberica:8080');
-		}
+		define('__WEB_BASE_URL__', ($source_data_api==='remote')
+			? 'https://mib.numisdata.org'
+			: 'http://monedaiberica:8080'
+		);
 	
 	// media base url
 		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');
@@ -62,13 +61,11 @@
 
 // api config
 	
-	// json_trigger_url data source url		
-		if ($source_data_api==='remote') {
-			define('JSON_TRIGGER_URL', __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/');
-		}else{
-			define('JSON_TRIGGER_URL', __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/');
-		}		
-		
+	// json_trigger_url data source url	
+		define('JSON_TRIGGER_URL', ($source_data_api==='remote')
+			? __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/'
+			: __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/'
+		);	
 
 	// json_web_data colector. PHP version http request manager (via CURL)
 		include(__WEB_BASE_PATH__ .'/'. WEB_APP_DIR . '/api/class.json_web_data.php');

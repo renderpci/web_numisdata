@@ -14,11 +14,11 @@ var row_fields = {
 
 		const biblio_object = this.biblio_object	
 
+		// line
 		const line = common.create_dom_element({
 			element_type 	: "div",
 			class_name 		: "info_line author"
 		})
-
 
 		// section_id
 		common.create_dom_element({
@@ -49,15 +49,13 @@ var row_fields = {
 				text_content 	: final_autoria,
 				parent 			: line
 			})
-			
-			// line.classList.remove("hide")
-		
+				
 		}else{
 
 			common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "info_value",
-				text_content 	: "Undefined",
+				text_content 	: "Undefined author",
 				parent 			: line
 			})
 		}

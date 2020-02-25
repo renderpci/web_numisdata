@@ -375,15 +375,18 @@ var biblio =  {
 
 				// item biblio_object
 					const biblio_object = ar_rows[i]
-						console.log("biblio_object:", i, biblio_object);
 
-					for(var a in biblio_object) {
-						if (!biblio_object[a] || biblio_object[a].length<1) {
-							if (a.indexOf('dato')!==-1) {
-								// biblio_object[a] = "Untitled " + a
-							}							
-						}
-					}
+					if(SHOW_DEBUG===true) {
+						console.log("i biblio_object:", i, biblio_object);
+					}					
+
+					// for(var a in biblio_object) {
+					// 	if (!biblio_object[a] || biblio_object[a].length<1) {
+					// 		if (a.indexOf('dato')!==-1) {
+					// 			// biblio_object[a] = "Untitled " + a
+					// 		}
+					// 	}
+					// }
 
 				// wrapper 
 					const biblio_row_wrapper = common.create_dom_element({

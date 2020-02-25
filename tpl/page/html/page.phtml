@@ -16,7 +16,9 @@
 	<?php echo $css_links ?>
 	<?php #include $base_path . '/html/google_analytics.inc' ?>
 	<?php #require $base_path . '/html/favicons.phtml'; ?>
-	<script>WEB_AREA='<?php echo $this->area_name ?>';IS_PRODUCTION=<?php echo json_encode(IS_PRODUCTION) ?></script>
+
+	<script src="<?php echo __WEB_TEMPLATE_WEB__ . '/page/js/enviroment.js.php' ?>"></script>
+	<script>WEB_AREA='<?php echo $this->area_name ?>'</script>
 </head>
 <body class="is-preload">
 	<?php /*
@@ -29,5 +31,8 @@
 		</ul>
 	*/ ?>
 <?php echo $content_html ?>
+<script>
+page.setup()
+</script>
 </body>
 </html>

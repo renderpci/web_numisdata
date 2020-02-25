@@ -20,7 +20,7 @@ var page = {
 		var self = this
 		
 		window.ready(function(){
-			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)			
+			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
 		})
 		
 		return true	
@@ -354,4 +354,3 @@ var page = {
 
 }//end page
 
-page.setup()

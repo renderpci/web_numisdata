@@ -295,10 +295,16 @@ class page {
 				#array_unshift(page::$css_ar_url, __WEB_ROOT_WEB__ . '/page/css/page.css');
 
 				# Remove duplicates
-				page::$css_ar_url = array_unique(page::$css_ar_url);
-				foreach (page::$css_ar_url as $url) {
-					$html .= self::build_css_tag($url) .PHP_EOL;
-				}
+				#page::$css_ar_url = array_unique(page::$css_ar_url);
+
+				
+				$ar_url = array_map(function($url){					
+					return self::build_css_tag($url);
+				}, array_unique(page::$css_ar_url));
+				$html = implode(PHP_EOL."\t", $ar_url);
+				// foreach (page::$css_ar_url as $url) {
+				// 	$html .= self::build_css_tag($url) . PHP_EOL;
+				// }
 				break;
 			
 			case 'js':

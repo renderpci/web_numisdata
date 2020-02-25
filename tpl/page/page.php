@@ -3,8 +3,8 @@
 
 
 	# base_links
-		$base_links = common::get_base_links();
-		define('BASE_LINKS', $base_links);
+		// $base_links = common::get_base_links();
+		// define('BASE_LINKS', $base_links);
 	
 
 	# required classes
@@ -28,9 +28,10 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/util.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main.js';
 		
-
-		page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js.php';
+		
+		page::$js_ar_url[] = __WEB_ROOT_WEB__  	  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';
+		#page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/enviroment.js.php';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
 
 
 	# footer_html

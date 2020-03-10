@@ -20,7 +20,7 @@ class biblio {
 			$options->offset 	= 0;
 			$options->count 	= true;
 			$options->operator 	= 'or';
-			#$options->total 	= false;
+			$options->total 	= false;
 			$options->order 	= 'section_id ASC';
 			foreach ($request_options as $key => $value) {if (property_exists($options, $key)) $options->$key = $value;}
 
@@ -40,7 +40,7 @@ class biblio {
 
 				switch ($value_obj->name) {
 					
-					case 'fecha_publicacion':
+					case 'publication_date':
 						preg_match("/^([0-9]{4})([-\/]([0-9]{1,2}))?([-\/]([0-9]{1,2}))?$/", $value_obj->value, $output_array);
 						$year  	= isset($output_array[1]) ? $output_array[1] : false;
 						$month 	= false;
@@ -57,11 +57,11 @@ class biblio {
 							break;
 						}else{
 							if (!empty($month) && !empty($day)) {
-								$ar_filter[] = '`fecha_publicacion` = \''.sprintf("%04d", $year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day).'\'';
+								$ar_filter[] = '`publication_date` = \''.sprintf("%04d", $year).'-'.sprintf("%02d", $month).'-'.sprintf("%02d", $day).'\'';
 							}else if(!empty($month)) {
-								$ar_filter[] = '(YEAR(fecha_publicacion) = \''.$year.'\' AND MONTH(fecha_publicacion) = \''.$month.'\')';
+								$ar_filter[] = '(YEAR(publication_date) = \''.$year.'\' AND MONTH(publication_date) = \''.$month.'\')';
 							}else{
-								$ar_filter[] = 'YEAR(fecha_publicacion) = \''.$year.'\'';
+								$ar_filter[] = 'YEAR(publication_date) = \''.$year.'\'';
 							}
 						}
 						#debug_log(__METHOD__." year:$year, month:$month, day:$day ".to_string(), 'DEBUG');
@@ -71,39 +71,80 @@ class biblio {
 						$ar_filter[] = '`'.$value_obj->name.'` = '.(int)$value_obj->value;
 						break;
 
+					// case 'authors999':						
+					// 	$delimiter  = ' | ';						
+					// 	$ar_authors = explode($delimiter, $value_obj->value);
+					// 	$ar_filter_authors = [];
+					// 	foreach ($ar_authors as $a_value) {
+					// 		$a_value 	 = self::escape_value($a_value);
+					// 		$ar_filter_authors[] = '`'.$value_obj->name."` LIKE '%".$a_value."%'";
+					// 	}
+					// 	$ar_filter[] = '('. implode(' OR ', $ar_filter_authors).')';
+					// 	break;
+
 					default:
 						// scape
-						$value = self::escape_value($value_obj->value);
+						$value 		 = self::escape_value($value_obj->value);
 						$ar_filter[] = '`'.$value_obj->name."` LIKE '%".$value."%'";
-						#$ar_filter[] = '`'.$value_obj->name."` = '".$value_obj->value."'";											
+
+						if ($value_obj->name==='authors' && strpos($value_obj->value, ' | ')===false) {
+							$use_union = true;
+						}		
 						break;
 				}			
 			}
 			$filter = implode(' '.$operator.' ', $ar_filter);
 		}
 		if(SHOW_DEBUG===true) {
-			debug_log(__METHOD__." filter ".to_string($filter), 'DEBUG');;
-		}		
+			debug_log(__METHOD__." filter ".to_string($filter), 'DEBUG');
+		}
+
+		$ar_fields = [
+			'section_id',
+			'lang',
+			'title',
+			'authors',
+			'authors_data',
+			'authors_count',
+			'author_main',
+			'author_others',
+			'publication_date',
+			'typology',
+			'magazine',
+			'serie',
+			'physical_description',
+			'title_secundary',
+			'authors_secondary',
+			'other_people',
+			'place',
+			'editor',
+			'url_data',
+			'pdf',
+			'descriptors'
+		];
+
+		$portals_custom = [
+			'authors_data' => 'other_people'
+		];
 
 		# Search		
-		$tipos_options = new stdClass();
-			$tipos_options->dedalo_get 	= 'records';
-			$tipos_options->table  	 	= 'publicaciones';
-			$tipos_options->lang  	 	= WEB_CURRENT_LANG_CODE;
-			$tipos_options->limit 		= (int)$options->limit;
-			$tipos_options->offset 		= $options->offset;
-			$tipos_options->count 		= true; // $options->count;
-			#$tipos_options->total 		= $options->total;
-			$tipos_options->order 		= $options->order;
-			$tipos_options->sql_filter 	= $filter;
-			$tipos_options->resolve_portals_custom = [
-				'autoria_dato' => 'personas'	
-			];
-			# dump($tipos_options, ' tipos_options ++ '.to_string());
+		$rows_options = new stdClass();
+			$rows_options->dedalo_get 				= 'bibliography_rows'; //	'records';
+			$rows_options->table  	 				= 'publications';
+			$rows_options->ar_fields  				= $ar_fields;
+			$rows_options->lang  	 				= WEB_CURRENT_LANG_CODE;
+			$rows_options->limit 					= (int)$options->limit;
+			$rows_options->offset 					= $options->offset;
+			$rows_options->count 					= empty($options->total) ? true : false; // $options->count;
+			#$rows_options->total 					= $options->total;
+			$rows_options->order 					= $options->order;
+			$rows_options->sql_filter 				= $filter;
+			$rows_options->use_union  				= $use_union ?? false;
+			$rows_options->resolve_portals_custom 	= $portals_custom;
 		
 		# Http request in php to the API
-		$web_data = json_web_data::get_data($tipos_options);
-			#dump($web_data, ' web_data ++ '.to_string());
+		$web_data = json_web_data::get_data($rows_options);
+			// dump($web_data, ' web_data ++ '.to_string());
 
 
 		$ar_result = $web_data;

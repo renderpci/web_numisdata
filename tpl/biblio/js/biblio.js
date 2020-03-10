@@ -178,9 +178,9 @@ var biblio =  {
 			},
 			// When a option is focus in list
 			focus: function() {
-	          // prevent value inserted on focus
-	          return false;
-	        },
+				// prevent value inserted on focus
+				return false;
+			},
 	        close: function( event, ui ) {
 	        	
 	        },        
@@ -191,19 +191,23 @@ var biblio =  {
 				//console.log(ui);
 			}			
 		})
-		.on( "keydown", function( event ) {
+		.on("keydown", function( event ) {
 			//return false
 			//console.log(event)
 			if ( event.keyCode === $.ui.keyCode.ENTER  ) {
 				// prevent set selected value to autocomplete input
 				//event.preventDefault();
 				//var term = $(this).val();
-					
+				$(this).autocomplete('close')						
 			}//end if ( event.keyCode === $.ui.keyCode.ENTER  )
 		})// bind
 		.focus(function() {	
 		    $(this).autocomplete('search', null)
 		})
+		.blur(function() {	
+		    //$(element).autocomplete('close');
+		})
+
 
 		return true
 	},//end activate_autocomplete
@@ -335,7 +339,7 @@ var biblio =  {
 	
 		const ar_rows 		 = options.ar_rows || []
 		const ar_rows_length = ar_rows.length
-			console.log("ar_rows:",ar_rows);
+		
 		
 		// container select and clean container div
 			const container = document.getElementById(options.target)	
@@ -408,10 +412,16 @@ var biblio =  {
 				// publication_date 
 					biblio_row_wrapper.appendChild( row_fields.publication_date() )
 				
+				// row_title
+					biblio_row_wrapper.appendChild( row_fields.row_title() )
+
 				// row_body
 					biblio_row_wrapper.appendChild( row_fields.row_body() )
 
+				// row_url
+					biblio_row_wrapper.appendChild( row_fields.row_url() )
 
+					
 				continue;
 					
 				

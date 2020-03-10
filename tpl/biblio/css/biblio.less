@@ -109,15 +109,93 @@
 			// .randomColor(); background-color: @color;
 		}
 
-		.row_body {
-			// background-color: #BB97E5;
-			// .randomColor(); background-color: @color;
 
-			>h1.title {
-				margin: 0;
-			}
-
+		// custom styles
+		.italic {
+			font-style: italic;
 		}
+		.grey {
+			color: #8C8C8C;
+		}
+		.blue {
+			color: #497FC2;
+		}
+
+		// row_title
+			.row_title {
+				// background-color: #BB97E5;
+				// .randomColor(); background-color: @color;
+				display: flex;
+				flex-wrap: wrap;
+
+
+
+				.title {
+					// margin: 0;
+
+				}
+
+				.pdf {
+					// background-color: #E8D358;
+					margin-left: 0.5em;
+
+					&:after{
+						content: " ";
+						height: 100%;
+						width: 1em;
+						background-image: url("@{assets_path}/images/file-pdf-o.svg");
+						background-repeat: no-repeat;
+						background-size: contain;
+						background-position: center;
+						display: block;
+						cursor: pointer;
+					}
+				}
+				
+			}//end row_title
+
+		// row_body
+			.row_body {
+				// background-color: #BB97E5;
+				// .randomColor(); background-color: @color;
+				display: flex;
+				flex-wrap: wrap;
+
+				&.book {
+					background-color: #B5F792;
+				}
+
+				&.article {
+
+				}
+
+				.place {
+
+				}
+
+				.editor {
+
+				}
+
+			}//end row_body
+
+
+		// row_url
+			.row_url {
+				display: flex;
+				flex-wrap: wrap;
+
+				a.url_data {
+					.blue;
+				}
+
+				.separator {
+					padding-left: 0.5em;
+					padding-right: 0.5em;
+				}
+
+
+			}//end row_url
 
 
 		// .info_line {

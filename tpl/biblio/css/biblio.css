@@ -55,8 +55,50 @@ section.result {
   color: #5C8FEE;
   float: right;
 }
-.biblio_row_wrapper .row_body > h1.title {
-  margin: 0;
+.biblio_row_wrapper .italic {
+  font-style: italic;
+}
+.biblio_row_wrapper .grey {
+  color: #8C8C8C;
+}
+.biblio_row_wrapper .blue {
+  color: #497FC2;
+}
+.biblio_row_wrapper .row_title {
+  display: flex;
+  flex-wrap: wrap;
+}
+.biblio_row_wrapper .row_title .pdf {
+  margin-left: 0.5em;
+}
+.biblio_row_wrapper .row_title .pdf:after {
+  content: " ";
+  height: 100%;
+  width: 1em;
+  background-image: url("../../assets/images/file-pdf-o.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  display: block;
+  cursor: pointer;
+}
+.biblio_row_wrapper .row_body {
+  display: flex;
+  flex-wrap: wrap;
+}
+.biblio_row_wrapper .row_body.book {
+  background-color: #B5F792;
+}
+.biblio_row_wrapper .row_url {
+  display: flex;
+  flex-wrap: wrap;
+}
+.biblio_row_wrapper .row_url a.url_data {
+  color: #497FC2;
+}
+.biblio_row_wrapper .row_url .separator {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 .form-inline .form-row {
   display: flex;

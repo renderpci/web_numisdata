@@ -146,7 +146,7 @@ class page {
 				$options->ar_calls 		= $ar_calls;
 			# Http request in php to the API
 			$response = json_web_data::get_data($options);
-		
+
 		// filter page by config WEB_MENU_PARENT
 			# $ar_terms = [];
 			# foreach ($response->result[1]->result as $key => $item) {
@@ -1250,7 +1250,7 @@ class page {
 
 		}else{
 			# RESOLVE VALUES
-			if ($options->resolve_values===true) {			
+			if ($options->resolve_values===true) {		
 				foreach ($template_map->{$mode} as $key => $column_obj) {
 					$this->resolve_column_value( $column_obj, $this->row );
 				}//end foreach ($template_map->{$mode} as $key => $column_obj)

@@ -69,24 +69,25 @@ var common = {
 	*/
 	create_dom_element : function(element_options) {
 
-		var element_type			= element_options.element_type
-		var parent					= element_options.parent
-		var class_name				= element_options.class_name
-		var style					= element_options.style
-		var data_set				= element_options.data_set
-			if (typeof data_set==="undefined" && typeof element_options.dataset!=="undefined") data_set = element_options.dataset
-		var custom_function_events	= element_options.custom_function_events
-		var title_label				= element_options.title_label
-		var text_node				= element_options.text_node
-		var text_content			= element_options.text_content
-		var inner_html				= element_options.inner_html
-		var href					= element_options.href
-		var id 						= element_options.id
-		var draggable				= element_options.draggable
-		var value					= element_options.value
-		var download				= element_options.download
-		var src						= element_options.src
-		var type					= element_options.type // Like button, text ..
+		const element_type			= element_options.element_type
+		const parent				= element_options.parent
+		const class_name			= element_options.class_name
+		const style					= element_options.style		
+		const data_set 				= (typeof element_options.dataset!=="undefined")
+										? element_options.dataset
+										: element_options.data_set
+		const custom_function_events= element_options.custom_function_events
+		const title_label			= element_options.title_label || element_options.title || null
+		const text_node				= element_options.text_node
+		const text_content			= element_options.text_content
+		const inner_html			= element_options.inner_html
+		const href					= element_options.href		
+		const id 					= element_options.id
+		const draggable				= element_options.draggable
+		const value					= element_options.value
+		const download				= element_options.download
+		const src					= element_options.src
+		const type					= element_options.type // Like button, text ..
 		
 		const element = document.createElement(element_type);
 	
@@ -102,8 +103,7 @@ var common = {
 				element.href = href;
 			}else{
 				element.href = 'javascript:;';
-			}
-		
+			}		
 		}
 		
 		// Class name. Add css classes property to element

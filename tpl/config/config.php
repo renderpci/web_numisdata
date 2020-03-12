@@ -9,16 +9,16 @@
 
 
 // dedalo 4 private conf file
-	$source_data_api = 'remote'; // remote , local
+	$source_data_api = 'local'; // remote , local
 
 
 
 // custom development working vars (api client)
-	define('WEB_ENTITY' ,'mib');
-	define('WEB_ENTITY_LABEL' ,'Moneda Ibérica');
+	define('WEB_ENTITY' 		,'mib');
+	define('WEB_ENTITY_LABEL' 	,'Moneda Ibérica');
 
 // db . force use this db instead of default (usefull for multiple pubolications)
-	define('WEB_DB' ,'web_numisdata_mib');
+	define('WEB_DB' 			 ,'web_numisdata_mib');
 
 
 // site config

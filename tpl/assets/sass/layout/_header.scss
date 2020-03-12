@@ -10,29 +10,38 @@
 		@include padding(5em, 0, (3em, 0, -5em, 0));
 
 		.logo {
-			display: block;
 			border-bottom: 0;
 			color: inherit;
-			font-weight: _font(weight-bold);
-			letter-spacing: _font(letter-spacing);
+			// font-weight: _font(weight-bold);
+			// letter-spacing: _font(letter-spacing);
 			margin: 0 0 (_size(element-margin) * 1.25) 0;
 			text-decoration: none;
-			text-transform: uppercase;
-			display: inline-block;
+			// text-transform: uppercase;		
+
+			display: grid;
+    		grid-template-rows: 1fr auto;
 
 			> * {
-				display: inline-block;
+				// display: inline-block;
 				vertical-align: middle;
+				text-align: center;
+				width: 100%;
 			}
 
 			.symbol {
 				margin-right: 0.65em;
+				margin: 0;
+				// background-color: #3DFE19;
 
 				img {
-					display: block;
-					width: 2em;
-					height: 2em;
+					display: inline-block;
+					width: auto;
+			    	height: 14em;
 				}
+			}
+
+			.title {
+				
 			}
 		}
 

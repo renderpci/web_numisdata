@@ -60,7 +60,7 @@
 					margin: 0.5em;
 					
 					&.uni_val_hist {
-						background-image: url('../../assets/images/uni_val_hist.png');
+						background-image: url('../../assets/images/uni_val_hist.png');						
 					}
 					&.ministerio {
 						background-image: url('../../assets/images/logo_mciu.jpg');
@@ -68,9 +68,11 @@
 					&.mupreva {
 						background-image: url('../../assets/images/LogoMuseoNegroValencia.png');
 						//background-position-x: 73%;
+						flex: 1 1 12.5%;
 					}
 					&.render {
 						background-image: url('../../assets/images/logo_render_bn.png');
+						flex: 1 1 12.5%;
 					}
 
 					>a {

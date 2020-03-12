@@ -1,23 +1,5 @@
 @import url(font-awesome.min.css);
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,700,900");
-
-@font-face {
-  font-family: cambria;
-  src: url(../fonts/cambria/cambria.ttf);
-  font-style: normal;
-}
-
-@font-face {
-  font-family: cambria_bold;
-  src: url(../fonts/cambria/cambriab.ttf);
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: cambria_italic;
-  src: url(../fonts/cambria/cambriai.ttf);
-  font-style: italic;
-}
 /*
 	Phantom by HTML5 UP
 	html5up.net | @ajlkn
@@ -131,7 +113,7 @@ a {
   border-bottom: dotted 1px rgba(88, 88, 88, 0.5); }
   a:hover {
     border-bottom-color: transparent;
-    color: #0e71b4 !important; }
+    color: #be875a !important; }
 
 strong, b {
   font-weight: 900; }
@@ -1043,10 +1025,10 @@ header p {
     .icon.style2:before {
       font-size: 1.1em; }
     .icon.style2:hover {
-      color: #0e71b4;
-      border-color: #0e71b4; }
+      color: #be875a;
+      border-color: #be875a; }
     .icon.style2:active {
-      background-color: rgba(14, 113, 180, 0.1); }
+      background-color: rgba(190, 135, 90, 0.1); }
 
 /* List */
 ol {
@@ -1263,8 +1245,8 @@ textarea {
   input[type="tel"]:focus,
   select:focus,
   textarea:focus {
-    border-bottom-color: #0e71b4;
-    box-shadow: inset 0 -1px 0 0 #0e71b4; }
+    border-bottom-color: #be875a;
+    box-shadow: inset 0 -1px 0 0 #be875a; }
 
 select {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' preserveAspectRatio='none' viewBox='0 0 40 40'%3E%3Cpath d='M9.4,12.3l10.4,10.4l10.4-10.4c0.2-0.2,0.5-0.4,0.9-0.4c0.3,0,0.6,0.1,0.9,0.4l3.3,3.3c0.2,0.2,0.4,0.5,0.4,0.9 c0,0.4-0.1,0.6-0.4,0.9L20.7,31.9c-0.2,0.2-0.5,0.4-0.9,0.4c-0.3,0-0.6-0.1-0.9-0.4L4.3,17.3c-0.2-0.2-0.4-0.5-0.4-0.9 c0-0.4,0.1-0.6,0.4-0.9l3.3-3.3c0.2-0.2,0.5-0.4,0.9-0.4S9.1,12.1,9.4,12.3z' fill='%23c9c9c9' /%3E%3C/svg%3E");
@@ -1343,8 +1325,8 @@ input[type="radio"] {
     content: '\f00c'; }
   input[type="checkbox"]:focus + label:before,
   input[type="radio"]:focus + label:before {
-    border-color: #0e71b4;
-    box-shadow: 0 0 0 1px #0e71b4; }
+    border-color: #be875a;
+    box-shadow: 0 0 0 1px #be875a; }
 
 input[type="checkbox"] + label:before {
   border-radius: 4px; }
@@ -1496,14 +1478,14 @@ button,
   input[type="button"]:hover,
   button:hover,
   .button:hover {
-    color: #0e71b4 !important;
-    box-shadow: inset 0 0 0 2px #0e71b4; }
+    color: #be875a !important;
+    box-shadow: inset 0 0 0 2px #be875a; }
   input[type="submit"]:active,
   input[type="reset"]:active,
   input[type="button"]:active,
   button:active,
   .button:active {
-    background-color: rgba(14, 113, 180, 0.1); }
+    background-color: rgba(190, 135, 90, 0.1); }
   input[type="submit"].small,
   input[type="reset"].small,
   input[type="button"].small,
@@ -1529,13 +1511,13 @@ button,
     input[type="button"].primary:hover,
     button.primary:hover,
     .button.primary:hover {
-      background-color: #0e71b4; }
+      background-color: #be875a; }
     input[type="submit"].primary:active,
     input[type="reset"].primary:active,
     input[type="button"].primary:active,
     button.primary:active,
     .button.primary:active {
-      background-color: #0b598e; }
+      background-color: #ac7244; }
   input[type="submit"].disabled, input[type="submit"]:disabled,
   input[type="reset"].disabled,
   input[type="reset"]:disabled,
@@ -1667,7 +1649,7 @@ button,
         .tiles article > a .content > :last-child {
           margin-bottom: 0; }
     .tiles article.style1 > .image:before {
-      background-color: #0e71b4; }
+      background-color: #be875a; }
     .tiles article.style2 > .image:before {
       background-color: #7ecaf6; }
     .tiles article.style3 > .image:before {
@@ -1736,24 +1718,23 @@ button,
 #header {
   padding: 8em 0 0.1em 0 ; }
   #header .logo {
-    display: block;
     border-bottom: 0;
     color: inherit;
-    font-weight: 900;
-    letter-spacing: 0.35em;
     margin: 0 0 2.5em 0;
     text-decoration: none;
-    text-transform: uppercase;
-    display: inline-block; }
+    display: grid;
+    grid-template-rows: 1fr auto; }
     #header .logo > * {
-      display: inline-block;
-      vertical-align: middle; }
+      vertical-align: middle;
+      text-align: center;
+      width: 100%; }
     #header .logo .symbol {
-      margin-right: 0.65em; }
+      margin-right: 0.65em;
+      margin: 0; }
       #header .logo .symbol img {
-        display: block;
-        width: 2em;
-        height: 2em; }
+        display: inline-block;
+        width: auto;
+        height: 14em; }
   #header nav {
     position: fixed;
     right: 2em;
@@ -1811,7 +1792,7 @@ button,
             background-repeat: no-repeat;
             background-size: 2em 2em; }
           #header nav ul li a[href="#menu"]:before {
-            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 8px%3B stroke: %230e71b4%3B %7D%3C/style%3E%3Cline x1='0' y1='25' x2='100' y2='25' /%3E%3Cline x1='0' y1='50' x2='100' y2='50' /%3E%3Cline x1='0' y1='75' x2='100' y2='75' /%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 8px%3B stroke: %23be875a%3B %7D%3C/style%3E%3Cline x1='0' y1='25' x2='100' y2='25' /%3E%3Cline x1='0' y1='50' x2='100' y2='50' /%3E%3Cline x1='0' y1='75' x2='100' y2='75' /%3E%3C/svg%3E");
             opacity: 0; }
           #header nav ul li a[href="#menu"]:after {
             background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 8px%3B stroke: %23585858%3B %7D%3C/style%3E%3Cline x1='0' y1='25' x2='100' y2='25' /%3E%3Cline x1='0' y1='50' x2='100' y2='50' /%3E%3Cline x1='0' y1='75' x2='100' y2='75' /%3E%3C/svg%3E");
@@ -1931,7 +1912,7 @@ button,
       background-repeat: no-repeat;
       background-size: 2em 2em; }
     #menu > .close:before {
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 8px%3B stroke: %230e71b4%3B %7D%3C/style%3E%3Cline x1='15' y1='15' x2='85' y2='85' /%3E%3Cline x1='85' y1='15' x2='15' y2='85' /%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 8px%3B stroke: %23be875a%3B %7D%3C/style%3E%3Cline x1='15' y1='15' x2='85' y2='85' /%3E%3Cline x1='85' y1='15' x2='15' y2='85' /%3E%3C/svg%3E");
       opacity: 0; }
     #menu > .close:after {
       background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cstyle%3Eline %7B stroke-width: 8px%3B stroke: %23585858%3B %7D%3C/style%3E%3Cline x1='15' y1='15' x2='85' y2='85' /%3E%3Cline x1='85' y1='15' x2='15' y2='85' /%3E%3C/svg%3E");
@@ -1987,7 +1968,7 @@ body.is-menu-visible #menu {
 /* Footer */
 #footer {
   padding: 5em 0 6em 0 ;
-  background-color: #0e71b4;
+  background-color: #333333;
   background-image: url("../../assets/images/overlay.png");
   color: #ffffff !important; }
   #footer > .inner {
@@ -2035,9 +2016,11 @@ body.is-menu-visible #menu {
         #footer > .inner .logos > li.ministerio {
           background-image: url("../../assets/images/logo_mciu.jpg"); }
         #footer > .inner .logos > li.mupreva {
-          background-image: url("../../assets/images/LogoMuseoNegroValencia.png"); }
+          background-image: url("../../assets/images/LogoMuseoNegroValencia.png");
+          flex: 1 1 12.5%; }
         #footer > .inner .logos > li.render {
-          background-image: url("../../assets/images/logo_render_bn.png"); }
+          background-image: url("../../assets/images/logo_render_bn.png");
+          flex: 1 1 12.5%; }
         #footer > .inner .logos > li > a {
           position: absolute;
           width: 100%;

@@ -40,12 +40,18 @@ var row_fields = {
 		})
 
 		// section_id
-		common.create_dom_element({
-			element_type 	: "span",
-			class_name 		: "section_id",
-			text_content 	: biblio_object.section_id,
-			parent 			: line
-		})
+		if (dedalo_logged===true) {
+
+			const link = common.create_dom_element({
+				element_type 	: "a",
+				class_name 		: "section_id",
+				text_content 	: biblio_object.section_id + " " + this.get_typology(),
+				href 			: '/dedalo/lib/dedalo/main/?t=rsc205&id=' + biblio_object.section_id,
+				parent 			: line
+			})
+			link.setAttribute('target', '_blank');
+		}
+		
 
 		// authors 
 		if (biblio_object.authors && biblio_object.authors.length>0) {

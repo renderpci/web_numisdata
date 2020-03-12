@@ -64,7 +64,7 @@ var biblio =  {
 	/**
 	* SET_VALUE
 	*/
-	set_value : function(object, value) {
+	set_value : function(object, value, real_value) {
 		
 		const container = document.getElementById(object.id + "_values")
 
@@ -91,6 +91,15 @@ var biblio =  {
 					trash.addEventListener("click",function(){
 						this.parentNode.remove()
 					})
+
+				// if (object.dataset.q_name.indexOf(' AS ')!==-1) {
+				// 	const ar_parts = object.dataset.q_name.split(' AS ')
+				// 	// overwrite q_name fro input value
+				// 	object.dataset.q_name = ar_parts[1]
+				// 	// use real_value					
+				// 	object.dataset.real_value = real_value[0]
+				// }
+
 				var input = common.create_dom_element({
 					element_type 	: "input",
 					class_name   	: "input_values",
@@ -127,10 +136,12 @@ var biblio =  {
 
 				const trigger_url  = self.trigger_url
 				const trigger_vars = {
-						q		: term,
-						mode	: element.dataset.mode,
-						q_name  : element.dataset.q_name || null,
-						q_table : element.dataset.q_table || null
+						q				: term,
+						mode			: element.dataset.mode,
+						q_name  		: element.dataset.q_name || null,
+						q_search  		: element.dataset.q_search || element.dataset.q_name,
+						q_table 		: element.dataset.q_table || null,						
+						dd_relations 	: element.dataset.dd_relations || null 
 				}
 				if(SHOW_DEBUG===true) {
 					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars);
@@ -169,7 +180,7 @@ var biblio =  {
 		          terms.push( "" );
 		          this.value = terms.join( ", " );
 		          return false; */						
-				self.set_value(this, ui.item.label)
+				self.set_value(this, ui.item.label, ui.item.value)
 				this.value = ''
 				//this.value = ui.item.label
 
@@ -229,15 +240,37 @@ var biblio =  {
 			var ar_input_len 	= ar_form_inputs.length		
 			for (var i = 0; i < ar_input_len; i++) {
 				
-				var input = ar_form_inputs[i]
-
+				const input = ar_form_inputs[i]
+				
 				if (input.value.length>0) {
-					var current_obj = {
-						name 		: input.dataset.q_name, // input.name,
-						value 		: input.value,
+
+						console.log("input:",input);
+
+					// value
+						// const current_value = typeof input.dataset.real_value!=="undefined"
+						// 	? input.dataset.real_value
+						// 	: input.value
+						let current_value = input.value
+
+					// column
+						let current_column = input.dataset.q_name
+						if (input.dataset.q_name.indexOf(' AS ')!==-1) {
+							const ar_parts = input.dataset.q_name.split(' AS ')
+							// overwrite current_column
+							current_column = ar_parts[1]
+							if (current_column==="authors") {								
+								const regex = /\,/gi;
+								current_value = current_value.replace(regex, '');								
+							}
+						}						
+
+					const current_obj = {
+						name 		: current_column, // input.dataset.q_name, // input.name,
+						value 		: current_value,  // input.value
 						search_mode : input.dataset.search,
 						table 		: input.dataset.q_table
 					}
+					
 					ar_query.push(current_obj)
 				}
 			}	

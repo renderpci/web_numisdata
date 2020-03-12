@@ -102,11 +102,11 @@ function search_distinct($json_data) {
 		$response->msg 		= 'Error. Request failed ['.__FUNCTION__.']';
 
 	// set vars
-		$vars = array('q','q_name','q_table','limit');
+		$vars = array('q','q_name','q_search','q_table','limit','dd_relations');
 		foreach($vars as $name) {
 			$$name = common::setVarData($name, $json_data);
 			# DATA VERIFY
-			if ($name==='q' || $name==='limit') continue; # Skip non mandatory
+			if ($name==='q' || $name==='limit' || $name==='dd_relations') continue; # Skip non mandatory
 			if (empty($$name)) {
 				$response->msg = 'Trigger Error: ('.__FUNCTION__.') Empty '.$name.' (is mandatory)';
 				return $response;
@@ -119,6 +119,22 @@ function search_distinct($json_data) {
 	// q
 		$q = biblio::escape_value($q);
 
+	
+	// safe_q_name_select
+		$safe_q_name_select = (stripos($q_name, ' AS ')!==false)
+			? $q_name
+			: '`'.$q_name.'`'; // default
+
+	// safe_q_name		
+		if(stripos($q_name, ' AS ')!==false) {
+			$ar_parts = explode(' AS ', $q_name);
+			#$safe_q_name = $ar_parts[0];
+			$column_name = $ar_parts[1];
+		}else{
+			#$safe_q_name = $safe_q_name_select; // default
+			$column_name = $q_name;
+		}
+
 	// Search API Query
 		$options = new stdClass();
 			$options->dedalo_get 	= 'records';
@@ -126,30 +142,35 @@ function search_distinct($json_data) {
 			$options->ar_fields  	= [$q_name,'section_id'];
 			$options->lang  	 	= WEB_CURRENT_LANG_CODE;
 			$options->limit 		= (int)$limit;
-			$options->sql_fullselect= 'SELECT distinct `'.$q_name.'`, section_id FROM '.$q_table;
-			$options->sql_filter 	= '(`'.$q_name.'` IS NOT NULL AND `'.$q_name.'` != \'\' AND `'.$q_name.'` LIKE \'%'.$q.'%\')';
+			$options->sql_fullselect= 'SELECT distinct '.$safe_q_name_select.', section_id FROM '.$q_table;
+			$options->sql_filter 	= ''.$q_search.' IS NOT NULL '.PHP_EOL.'AND '.$q_search.'!=\'\' '.PHP_EOL.'AND '.$q_search.' LIKE \'%'.$q.'%\'';
+
+			// adtional filter using dd_relations column
+			if (!empty($dd_relations)) {
+				$options->sql_filter .= PHP_EOL.'AND dd_relations LIKE \'%"'.$dd_relations.'"%\'';
+			}
 		
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($options);
 			#dump($web_data, ' web_data ++ '.to_string());
 
-	// Group by q_name
+	// Group by column_name
 		$ar_group = [];
 		foreach ($web_data->result as $key => $row) {
-			if (isset($ar_group[$row->{$q_name}])) {
+			if (isset($ar_group[$row->{$column_name}])) {
 				# Add section_id
-				$ar_group[$row->{$q_name}]->section_id[] = $row->section_id;
+				$ar_group[$row->{$column_name}]->section_id[] = $row->section_id;
 				
 			}else{
 
 				$element = new stdClass();
-					#$element->{$q_name}  = $row->{$q_name};
+					#$element->{$column_name}  = $row->{$column_name};
 					#$element->section_id = [$row->section_id];
-					$element->label = $row->{$q_name};
+					$element->label = $row->{$column_name};
 					$element->value = [$row->section_id];
 
 				# Insert as new
-				$ar_group[$row->{$q_name}] = $element;
+				$ar_group[$row->{$column_name}] = $element;
 			}
 		}
 		#dump($ar_group, ' ar_group ++ '.to_string());

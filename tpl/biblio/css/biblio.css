@@ -54,6 +54,7 @@ section.result {
 .biblio_row_wrapper .author > .section_id {
   color: #5C8FEE;
   float: right;
+  padding-right: 0;
 }
 .biblio_row_wrapper .italic {
   font-style: italic;
@@ -85,9 +86,6 @@ section.result {
 .biblio_row_wrapper .row_body {
   display: flex;
   flex-wrap: wrap;
-}
-.biblio_row_wrapper .row_body.book {
-  background-color: #B5F792;
 }
 .biblio_row_wrapper .row_url {
   display: flex;

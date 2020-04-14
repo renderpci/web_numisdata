@@ -2,20 +2,34 @@
 	@assets_path: "../../assets";
 	@fonts_path: "@{assets_path}/fonts";
 
+
+
 // paginator
 	@import 'pagination.less';
+
 
 
 // Usage library
 	//@import "@{assets_path}/css/library.less";
 
+
+
 // fonts
 
 	// Montserrat | Varela Round
-		@import url('https://fonts.googleapis.com/css?family=Montserrat:700|Varela+Round&display=swap');
+		// @import url('https://fonts.googleapis.com/css?family=Montserrat:700|Varela+Round&display=swap');
 
+	// Raleway
+		// @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap');
 
-	
+		.font_logo {
+			font-family: 'Raleway', sans-serif;
+			font-weight: 300;
+			font-variant: small-caps;
+			letter-spacing: 0.065em;
+		}
+
 	// san_francisco_displayregular
 		// @font-face {
 		// 	font-family: 'san_francisco_displayregular';
@@ -38,7 +52,7 @@
 		// }
 
 	// Barlow Semi Condensed
-		// //@import url('https://fonts.googleapis.com/css?family=Barlow+Condensed:500|Barlow+Semi+Condensed');	
+		// //@import url('https://fonts.googleapis.com/css?family=Barlow+Condensed:500|Barlow+Semi+Condensed');
 		// @font-face {
 		// 	font-family: 'Barlow Semi Condensed';
 		// 	src: url('@{fonts_path}/Barlow_Condensed/BarlowCondensed-Light.eot');
@@ -58,32 +72,35 @@
 		// 	font-family: "Barlow Semi Condensed", sans-serif;
 		// 	font-weight: bold;
 		// }
-		
- 
+
+
+
 // reset css
 	//@import "@{assets_path}/css/reset.less";
 
+
+
 // font awesome
 	//@import "@{assets_path}/css/font-awesome.min.css";
+
+
 
 // page globals
 	body {
 		//.font_default;
 	}
 	h1 {
-		// .font_default_bold;		
+		// .font_default_bold;
 	}
 	a {
-
 		&:hover {
 			//color: #0c73b4 !important;  // blue
 		}
 	}
 	strong  {
-
 		.content p & {
-			font-size: 1.25em;	
-		}		
+			font-size: 1.25em;
+		}
 	}
 	p img.svg {
 		vertical-align: middle;
@@ -96,7 +113,7 @@
 		#wrapper {
 			min-height: 100vh;
 			display: flex;
-			flex-direction: column;	
+			flex-direction: column;
 			#main {
 				flex: 1 0 auto;
 				min-height: 50vh;
@@ -129,38 +146,51 @@
 		//margin-right: auto;
 		//height: 100%;
 		//position: relative;
-		background-image: url('../../assets/images/overlay_white.png');	
+		background-image: url('../../assets/images/overlay_white.png');
 	}
 
 
 
-
-
-// header 
+// header
 	#header {
+		padding-top: 2em;		
 
-		padding-top: 3em;
+		>.inner {
 
-		.inner {
-
-			// .logo .symbol img {
-			//     display: block;
-			//     width: auto;
-			//     height: 14em;
-			//     position: relative;
-			//     top: 5px;
-			// }
-
-			.title {
-				font-size: 2em;
-				font-weight: 700;
-				color: darken(#be875a, 8%);
-				// font-family: 'Montserrat', sans-serif;
-				font-family: 'Varela Round', sans-serif;
-				letter-spacing: 0.075em;
+			>div.logo_big {
+				text-align: center;
+				margin-bottom: 1.5em;
+				img {
+					height: 23em;
+				}
 			}
+
+			>a.logo {
+
+				>.symbol {
+					display: flex;
+					align-items: center;
+					padding: .75em;
+					background-color: #585858;
+					border-radius: 5px;
+
+					>img {
+						height: 5em;
+					}
+					>.title {
+						// color: darken(#be875a, 8%);
+						// font-family: 'Montserrat', sans-serif;
+						// font-family: 'Varela Round', sans-serif;
+						.font_logo;
+						font-size: 2.25em;
+						color: #be875a;
+						padding-left: 1em;
+					}
+				}
+			}//end a.logo
 		}
 	}
+
 
 
 // main
@@ -187,6 +217,14 @@
 		//background-color: rgb(76, 68, 48);
 		//background-image: url(../../assets/images/overlay.png);
 
+		>section {
+			width: 100%;
+			text-align: center;
+			font-size: 2em;
+			font-weight: 400;
+			color: #e6e6e6;
+		}
+
 		.inner {
 
 			h2 {
@@ -198,7 +236,7 @@
 				color: #ffffff !important;
 			}
 		}
-		
+
 	}//end #footer
 
 
@@ -207,12 +245,3 @@
 	.hide {
 		display: none !important;
 	}
-
-
-
-	
-
-
-
-
-

@@ -147,6 +147,11 @@ class page {
 			# Http request in php to the API
 			$response = json_web_data::get_data($options);
 
+
+			if (empty($response->result)) {
+				dump($response, ' response ++ '.to_string());
+			}
+
 		// filter page by config WEB_MENU_PARENT
 			# $ar_terms = [];
 			# foreach ($response->result[1]->result as $key => $item) {

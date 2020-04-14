@@ -1,3 +1,8 @@
-/* SIZES
------------------------------------------ */
+#wrapper {
+  background-color: #3d3d3d;
+}
+#main {
+  background-color: #ffffff;
+  padding-top: 2.5em;
+}
 /*# sourceMappingURL=main_home.css.map */

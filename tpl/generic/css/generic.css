@@ -1,1 +1,14 @@
-#main{overflow:hidden;padding-bottom:2rem}section.images{display:flex}section.images a.image{margin:auto}section.images a.image img{max-width:100%}/*# sourceMappingURL=generic.css.map */
+#main {
+  overflow: hidden;
+  padding-bottom: 2rem;
+}
+section.images {
+  display: flex;
+}
+section.images a.image {
+  margin: auto ;
+}
+section.images a.image img {
+  max-width: 100%;
+}
+/*# sourceMappingURL=generic.css.map */

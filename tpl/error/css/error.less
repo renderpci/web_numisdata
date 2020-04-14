@@ -3,26 +3,28 @@
 	@fonts_path: "@{assets_path}/fonts";
 
 // Usage library
-	@import "@{assets_path}/css/library.less";
+	// @import "@{assets_path}/css/library.less";
 
 
 // error_content div
 	#error_content {
 		padding: 40px;
 		border-radius: 4px;
-		background-color: #000000;
-		background-image: url('../../assets/images/page-not-found-error-404.png');
+		background-color: #be875a;
+		background-image: url('../../assets/images/logo_mib_marron.svg');
 		background-size: cover;
 		background-repeat: no-repeat;
 		min-height: 500px;
 		height: 100vh;
-		color: #ffffff; 
+		color: #ffffff;
 		padding-top: 75px;
 
 		a {
 			color: #ffffff;
 			padding: 40px;
+
+			&:hover {
+				color: #111111 !important;
+			}
 		}
 	}
-
-

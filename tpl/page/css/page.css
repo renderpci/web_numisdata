@@ -104,18 +104,17 @@
   padding: 0.25em;
 }
 @font-face {
-  font-family: 'Montserrat';
+  font-family: 'Raleway';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 300;
   font-display: swap;
-  src: local('Montserrat Bold'), local('Montserrat-Bold'), url(https://fonts.gstatic.com/s/montserrat/v14/JTURjIg1_i6t8kCHKm45_dJE3gnD-w.ttf) format('truetype');
+  src: local('Raleway Light'), local('Raleway-Light'), url(https://fonts.gstatic.com/s/raleway/v14/1Ptrg8zYS_SKggPNwIYqaqE.ttf) format('truetype');
 }
-@font-face {
-  font-family: 'Varela Round';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Varela Round Regular'), local('VarelaRound-Regular'), url(https://fonts.gstatic.com/s/varelaround/v12/w8gdH283Tvk__Lua32TysjIfp8uK.ttf) format('truetype');
+.font_logo {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  font-variant: small-caps;
+  letter-spacing: 0.065em;
 }
 .content p strong {
   font-size: 1.25em;
@@ -139,14 +138,33 @@ p img.svg {
   background-image: url('../../assets/images/overlay_white.png');
 }
 #header {
-  padding-top: 3em;
+  padding-top: 2em;
 }
-#header .inner .title {
-  font-size: 2em;
-  font-weight: 700;
-  color: #ac7244;
-  font-family: 'Varela Round', sans-serif;
-  letter-spacing: 0.075em;
+#header > .inner > div.logo_big {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+#header > .inner > div.logo_big img {
+  height: 23em;
+}
+#header > .inner > a.logo > .symbol {
+  display: flex;
+  align-items: center;
+  padding: 0.75em;
+  background-color: #585858;
+  border-radius: 5px;
+}
+#header > .inner > a.logo > .symbol > img {
+  height: 5em;
+}
+#header > .inner > a.logo > .symbol > .title {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  font-variant: small-caps;
+  letter-spacing: 0.065em;
+  font-size: 2.25em;
+  color: #be875a;
+  padding-left: 1em;
 }
 #main .inner > h1 {
   font-variant: small-caps;
@@ -155,6 +173,13 @@ p img.svg {
   font-weight: 300;
   font-size: 2.8em;
   margin-bottom: 0.5em;
+}
+#footer > section {
+  width: 100%;
+  text-align: center;
+  font-size: 2em;
+  font-weight: 400;
+  color: #e6e6e6;
 }
 #footer .inner h2 {
   text-transform: initial;

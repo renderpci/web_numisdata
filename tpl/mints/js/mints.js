@@ -54,7 +54,7 @@ var mints =  {
 					limit 	 : 1
 				})
 		}else{
-			
+
 			// exec first default search without params
 				self.search_rows({
 					ar_query : [],
@@ -312,7 +312,7 @@ var mints =  {
 	* Call to trigger and load json data results of search. On complete load, draw list items
 	*/
 	search_rows : function(options) {
-console.log("options", options);
+		
 		const self = this
 
 		// search options store

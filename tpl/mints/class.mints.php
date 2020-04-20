@@ -82,11 +82,11 @@ class mints {
 			$rows_options->limit 					= (int)$options->limit;
 			$rows_options->offset 					= $options->offset;
 			$rows_options->count 					= empty($options->total) ? true : false; // $options->count;
-			// $rows_options->total 					= $options->total;
+			// $rows_options->total 				= $options->total;
 			$rows_options->order 					= $options->order;
 			$rows_options->sql_filter 				= $filter;
-			// $rows_options->use_union  				= $use_union ?? false;
-			$rows_options->resolve_portals_custom 	= $portals_custom;
+			// $rows_options->use_union  			= $use_union ?? false;
+			// $rows_options->resolve_portals_custom 	= $portals_custom;
 
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($rows_options);
@@ -94,7 +94,7 @@ class mints {
 
 
 		$ar_result = $web_data;
-		
+
 
 		return $ar_result;
 	}//end search_mints

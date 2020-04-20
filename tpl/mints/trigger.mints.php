@@ -26,7 +26,7 @@ function search_rows($json_data) {
 		$response->msg 		= 'Error. Request failed ['.__FUNCTION__.']';
 
 	// set vars
-		$vars = array('ar_query','limit','offset','count','order','operator'); // ,'offset','total'
+		$vars = array('ar_query','limit','offset','total','order','operator'); // ,'offset','count'
 		foreach($vars as $name) {
 			$$name = common::setVarData($name, $json_data);
 			# DATA VERIFY
@@ -57,8 +57,8 @@ function search_rows($json_data) {
 			$search_options->limit 		= $limit;
 			// pagination
 			$search_options->offset 	= $offset;
-			$search_options->count 		= $count;
-			#$search_options->total 	= $total;
+			#$search_options->count 	= $count;
+			$search_options->total 		= $total;
 			$search_options->order 		= $order;
 			$search_options->operator 	= $operator;
 

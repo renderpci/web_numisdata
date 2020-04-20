@@ -43,15 +43,15 @@ section.result {
   font-weight: 100;
   line-height: 1.4;
 }
-.mints_row_wrapper .author {
+.mints_row_wrapper .name {
   font-variant: small-caps;
   letter-spacing: 1px;
 }
-.mints_row_wrapper .author > * {
+.mints_row_wrapper .name > * {
   display: inline-block;
   padding-right: 1em;
 }
-.mints_row_wrapper .author > .section_id {
+.mints_row_wrapper .name > .section_id {
   color: #5C8FEE;
   float: right;
   padding-right: 0;

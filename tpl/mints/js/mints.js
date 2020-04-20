@@ -5,7 +5,7 @@
 var mints =  {
 
 	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/mints/trigger.mints.php",
-	search_options 	: null,
+	search_options 	: {},
 
 
 
@@ -289,7 +289,7 @@ var mints =  {
 			const operators_value = form_obj.querySelector('input[name="operators"]:checked').value;
 
 
-		// exec query (promise)
+		// search_rows. exec query (promise)
 			const response = self.search_rows({
 				ar_query : ar_query,
 				operator : operators_value
@@ -312,7 +312,7 @@ var mints =  {
 	* Call to trigger and load json data results of search. On complete load, draw list items
 	*/
 	search_rows : function(options) {
-		
+
 		const self = this
 
 		// search options store
@@ -328,7 +328,7 @@ var mints =  {
 			limit 	 : options.limit || 10,
 			// pagination
 			offset 	 : options.offset || 0,
-			count 	 : options.count || false,
+			// count 	 : options.count || false,
 			total 	 : options.total || false,
 			order 	 : options.order || 'section_id ASC',
 			operator : options.operator || 'OR'
@@ -354,6 +354,10 @@ var mints =  {
 
 				}else{
 					// Success
+
+					// fix totals
+						self.search_options.total = response.result.total
+
 					return mints.draw_rows({
 						target  : 'mints_rows_list',
 						ar_rows : response.result.result,
@@ -377,12 +381,15 @@ var mints =  {
 
 		const self = this
 
+		const total  		 = options.total
+		const limit  		 = options.limit
+		const offset 		 = options.offset
+		const target 		 = options.target
 		const ar_rows 		 = options.ar_rows || []
 		const ar_rows_length = ar_rows.length
 
-
 		// container select and clean container div
-			const container = document.getElementById(options.target)
+			const container = document.getElementById(target)
 			while (container.hasChildNodes()) {
 				container.removeChild(container.lastChild);
 			}
@@ -395,72 +402,60 @@ var mints =  {
 				class_name 		: "pagination top"
 			})
 			pagination_container.appendChild( self.draw_paginator({
-				total  		: options.total,
-				limit  		: options.limit,
-				offset 		: options.offset,
+				total  		: total,
+				limit  		: limit,
+				offset 		: offset,
 				count  		: ar_rows_length
 			}))
 			fragment.appendChild(pagination_container)
 
 		// sort rows
-			let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
-			ar_rows.sort( (a,b) => {
-					let order_a = a.autoria +" "+ a.fecha_publicacion
-					let order_b = b.autoria +" "+ b.fecha_publicacion
-					//console.log("order_a",order_a, order_b);
-					//console.log(collator.compare(order_a , order_b));
-				return collator.compare(order_a , order_b)
-			});
+			// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+			// ar_rows.sort( (a,b) => {
+			// 		let order_a = a.autoria +" "+ a.fecha_publicacion
+			// 		let order_b = b.autoria +" "+ b.fecha_publicacion
+			// 		//console.log("order_a",order_a, order_b);
+			// 		//console.log(collator.compare(order_a , order_b));
+			// 	return collator.compare(order_a , order_b)
+			// });
 
 		// rows build
 			for (var i = 0; i < ar_rows_length; i++) {
 
 				// Build dom row
 
-				// item mints_object
-					const mints_object = ar_rows[i]
+				// item row_object
+					const row_object = ar_rows[i]
 
 					if(SHOW_DEBUG===true) {
-						console.log("i mints_object:", i, mints_object);
+						// console.log("i row_object:", i, row_object);
 					}
-
-					// for(var a in mints_object) {
-					// 	if (!mints_object[a] || mints_object[a].length<1) {
-					// 		if (a.indexOf('dato')!==-1) {
-					// 			// mints_object[a] = "Untitled " + a
-					// 		}
-					// 	}
-					// }
 
 				// wrapper
 					const mints_row_wrapper = common.create_dom_element({
 						  element_type 	: "div",
 						  class_name 	: "mints_row_wrapper",
 						  data_set 		: {
-						  	section_id 	: mints_object.section_id
+						  	section_id 	: row_object.section_id
 						  },
 						  parent 		: fragment
 					})
 
 				// row_fields set
 					const row_field = row_fields
-						  row_field.mints_object = mints_object
+						  row_field.row_object = row_object
 
-				// author
-					mints_row_wrapper.appendChild( row_field.author() )
+				// name
+					mints_row_wrapper.appendChild( row_field.name() )
 
-				// publication_date
-					mints_row_wrapper.appendChild( row_fields.publication_date() )
-
-				// row_title
-					mints_row_wrapper.appendChild( row_fields.row_title() )
-
-				// row_body
-					mints_row_wrapper.appendChild( row_fields.row_body() )
-
-				// row_url
-					mints_row_wrapper.appendChild( row_fields.row_url() )
-
+				// place
+					mints_row_wrapper.appendChild( row_fields.place() )
+				//
+				// // row_body
+				// 	mints_row_wrapper.appendChild( row_fields.row_body() )
+				//
+				// // row_url
+				// 	mints_row_wrapper.appendChild( row_fields.row_url() )
 
 				continue;
 
@@ -473,7 +468,7 @@ var mints =  {
 					})
 
 					// title
-						const titulo = mints_object.titulo || ''
+						const titulo = row_object.titulo || ''
 						common.create_dom_element({
 							element_type 	: "h1",
 							text_content 	: titulo,
@@ -481,13 +476,13 @@ var mints =  {
 						})
 
 					// series_colecciones
-						if (mints_object.series_colecciones || mints_object.numero_serie) {
+						if (row_object.series_colecciones || row_object.numero_serie) {
 							const series_info = []
-							if (mints_object.series_colecciones) {
-								 series_info.push(mints_object.series_colecciones)
+							if (row_object.series_colecciones) {
+								 series_info.push(row_object.series_colecciones)
 							}
-							if (mints_object.numero_serie) {
-								 series_info.push(mints_object.numero_serie)
+							if (row_object.numero_serie) {
+								 series_info.push(row_object.numero_serie)
 							}
 							common.create_dom_element({
 								element_type 	: "em",
@@ -498,7 +493,7 @@ var mints =  {
 						}
 
 					// lugar_publicacion
-						if (mints_object.lugar_publicacion) {
+						if (row_object.lugar_publicacion) {
 							const line = common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "lugar_publicacion info_line",
@@ -510,40 +505,34 @@ var mints =  {
 							// 	class_name 		: "info_label",
 							// 	text_content 	: tstring["lugar_publicacion"]
 							// })
-							const coma = (mints_object.series_colecciones===false) ? '' : ', '
+							const coma = (row_object.series_colecciones===false) ? '' : ', '
 							common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "info_value",
-								text_content 	: coma + mints_object.lugar_publicacion,
+								text_content 	: coma + row_object.lugar_publicacion,
 								parent 			: line
 							})
 						}
 
 					// description_fisica
-						if (mints_object.description_fisica) {
+						if (row_object.description_fisica) {
 							const line = common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "description_fisica info_line",
 								parent 			: row_body
 							})
-							// common.create_dom_element({
-							// 	element_type 	: "div",
-							// 	parent 			: line,
-							// 	class_name 		: "info_label",
-							// 	text_content 	: tstring["lugar_publicacion"]
-							// })
 
-							const coma = (mints_object.lugar_publicacion===false) ? '' : ', '
+							const coma = (row_object.lugar_publicacion===false) ? '' : ', '
 							common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "info_value",
-								text_content 	: coma + mints_object.description_fisica,
+								text_content 	: coma + row_object.description_fisica,
 								parent 			: line
 							})
 						}
 				/*
 				// notas
-					// if (mints_object.nota_general) {
+					// if (row_object.nota_general) {
 					// 	var line = common.create_dom_element({
 					// 		element_type 	: "div",
 					// 		parent 			: row_body,
@@ -559,12 +548,12 @@ var mints =  {
 					// 			element_type 	: "div",
 					// 			parent 			: line,
 					// 			class_name 		: "info_value",
-					// 			text_content 	: mints_object.nota_general
+					// 			text_content 	: row_object.nota_general
 					// 		})
 					// }
 
 				// codigo
-					// if (mints_object.codigo) {
+					// if (row_object.codigo) {
 					// 	var line = common.create_dom_element({
 					// 		element_type 	: "div",
 					// 		parent 			: row_body,
@@ -580,7 +569,7 @@ var mints =  {
 					// 			element_type 	: "div",
 					// 			parent 			: line,
 					// 			class_name 		: "info_value",
-					// 			text_content 	: mints_object.codigo
+					// 			text_content 	: row_object.codigo
 					// 		})
 					// }
 				*/
@@ -592,10 +581,10 @@ var mints =  {
 				class_name 		: "pagination bottom"
 			})
 			pagination_container_bottom.appendChild( self.draw_paginator({
-				total  		: options.total,
-				limit  		: options.limit,
-				offset 		: options.offset,
-				count  		: ar_rows_length
+				total  	: total,
+				limit  	: limit,
+				offset 	: offset,
+				count  	: ar_rows_length
 			}))
 			fragment.appendChild(pagination_container_bottom)
 

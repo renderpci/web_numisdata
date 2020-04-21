@@ -25,7 +25,7 @@ var row_fields = {
 
 			const link = common.create_dom_element({
 				element_type 	: "a",
-				class_name 		: "section_id",
+				class_name 		: "section_id go_to_dedalo",
 				text_content 	: row_object.section_id,
 				href 			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
 				parent 			: line
@@ -38,9 +38,10 @@ var row_fields = {
 
 			const name = row_object.name
 			common.create_dom_element({
-				element_type 	: "div",
+				element_type 	: "a",
 				class_name 		: "info_value",
 				text_content 	: name,
+				href 			: "./mint/" + row_object.section_id,
 				parent 			: line
 			})
 

@@ -13,7 +13,7 @@ var common = {
 	* Exec a XMLHttpRequest to trigger url and return a promise with object response
 	*/
 	get_json_data : function(trigger_url, trigger_vars, async) {
-		
+
 		const	url		= trigger_url + "?d=" + Date.now();
 		const data_send = JSON.stringify(trigger_vars)
 		
@@ -43,7 +43,7 @@ var common = {
 				// When the request loads, check whether it was successful
 				request.onload = function(e) {
 				  if (request.status === 200) {
-					// If successful, resolve the promise by passing back the request response
+					// If successful, resolve the promise by passing back the request response					
 					resolve(request.response);
 				  }else{
 					// If it fails, reject the promise with a error message
@@ -730,6 +730,21 @@ var common = {
 
 		return true
 	},//end register_events
+
+
+
+	/**
+	* CLEAN_GAPS
+	* Remove empty elements in a joined array of elements
+	* Like 'element1 | element2 |  | element3' 
+	* to: 	'element1, element2, element3'
+	*/
+	clean_gaps : function(text, splitter=" | ", joinner=", ") {
+
+		const result = (text.split(splitter).filter( el => el.length>0 )).join(joinner);
+
+		return result
+	}//end clean_gaps
 
 
 

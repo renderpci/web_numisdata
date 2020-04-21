@@ -253,7 +253,7 @@ var paginator =  {
 	* Builds and return complete paginator dom node
 	*/
 	get_full_paginator : function(options) {
-
+		
 		const self = this
 
 		const total 	= options.total;

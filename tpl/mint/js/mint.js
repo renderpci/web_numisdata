@@ -2,10 +2,7 @@
 
 
 
-var mints =  {
-
-	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/mints/trigger.mints.php",
-	search_options 	: {},
+var mint =  {
 
 
 
@@ -16,52 +13,22 @@ var mints =  {
 
 		const self = this
 
-		const form = document.getElementById("search_form")
-		if (form) {
-			const ar_form_inputs  	 = form.querySelectorAll("input.form-control")
-			const ar_form_inputs_len = ar_form_inputs.length
-			for (var i = 0; i < ar_form_inputs_len; i++) {
-
-				// Activate autocomplete behabiour for each input
-					self.activate_autocomplete(ar_form_inputs[i])
-
-				// Add event keyup to all inputs
-				//ar_form_inputs[i].addEventListener("keyup", function(e){
-				//	//self.search(form, null)
-				//},false)
-			}
-
-			// exec first default search without params
-				self.search_rows({
-					ar_query : [],
-					limit 	 : 10
-				}) // First search
-
-		}else if (typeof mints_section_id!=="undefined") {
-
-			// Defined in html file
-				var ar_query 	= []
-				var current_obj = {
-						name 		: "section_id", // input.name,
-						value 		: mints_section_id,
-						search_mode : "string",
-						table 		: "publicaciones"
-					}
-					ar_query.push(current_obj)
-
-				self.search_rows({
-					ar_query : ar_query,
-					limit 	 : 1
-				})
-		}else{
-
-			// exec first default search without params
-				self.search_rows({
-					ar_query : [],
-					limit 	 : 10
-				}) // First search
+		if (typeof options.section_id!=="undefined") {
+			
+			mint.render_mint(options.section_id)			
 		}
 
+	
+		document.onkeyup = function(e) {
+
+			if (e.which == 37) { // arrow left <-
+				let button = document.getElementById("go_prev")
+				if (button) button.click()
+			}else if (e.which == 39) { // arrow right ->
+				let button = document.getElementById("go_next")
+				if (button) button.click()
+			}		
+		}
 
 		return true
 	},//end set_up
@@ -69,593 +36,499 @@ var mints =  {
 
 
 	/**
-	* SET_VALUE
+	* RENDER_MINT
 	*/
-	set_value : function(object, value, real_value) {
-
-		const container = document.getElementById(object.id + "_values")
-
-		// Check if already exists
-			const inputs 		= container.querySelectorAll(".input_values")
-			const inputs_length = inputs.length
-			for (var i = inputs_length - 1; i >= 0; i--) {
-				if (value===inputs[i].value) return false;
-			}
-
-		// Create new line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name   	: "line_value",
-				parent 			: container
-				})
-				// <i class="fal fa-trash-alt"></i>
-				var trash = common.create_dom_element({
-					element_type 	: "i",
-					//class_name   	: "far fa-trash-alt", // awesome font 5
-					class_name   	: "icon fa-trash", //awesome font 4
-					parent 			: line
-					})
-					trash.addEventListener("click",function(){
-						this.parentNode.remove()
-					})
-
-				// if (object.dataset.q_name.indexOf(' AS ')!==-1) {
-				// 	const ar_parts = object.dataset.q_name.split(' AS ')
-				// 	// overwrite q_name fro input value
-				// 	object.dataset.q_name = ar_parts[1]
-				// 	// use real_value
-				// 	object.dataset.real_value = real_value[0]
-				// }
-
-				var input = common.create_dom_element({
-					element_type 	: "input",
-					class_name   	: "input_values",
-					parent 			: line,
-					data_set 		: object.dataset // Inherit dataset
-				})
-				input.value = value
-
-		return true
-	},//end set_value
-
-
-
-	/**
-	* ACTIVATE_AUTOCOMPLETE
-	*/
-	activate_autocomplete : function(element) {
+	render_mint : function(section_id) {
 
 		const self = this
 
-		// const cache = {}
-		$(element).autocomplete({
-			delay 	 : 150,
-			minLength: 0,
-			source 	 : function( request, response ) {
+		// search by section_id			
+			const search = self.get_row_data({
+				section_id : section_id
+			})
+			
+		// draw
+			search.then(function(response){
+					console.log("response:",response);
+				
+				// mint draw
+					const mint = response.result.find( el => el.id==='mint')					
+					self.draw_row({
+						target  : document.getElementById('row_detail'),
+						ar_rows : mint.result
+					})
 
-				const term  = request.term;
+				// map draw. Init default map
+					self.init_map({
+						map_data : JSON.parse(mint.result[0].map)
+					})	
 
-				// // Cache
-				// 	if ( term in cache ) {
-				// 		response( cache[ term ] );
-				// 		return;
-				// 	}
-
-				const trigger_url  = self.trigger_url
-				const trigger_vars = {
-						q				: term,
-						mode			: element.dataset.mode,
-						q_name  		: element.dataset.q_name || null,
-						q_search  		: element.dataset.q_search || element.dataset.q_name,
-						q_table 		: element.dataset.q_table || null,
-						dd_relations 	: element.dataset.dd_relations || null
-				}
-				if(SHOW_DEBUG===true) {
-					console.log("[mints.activate_autocomplete] trigger_vars:", trigger_vars);
-				}
-
-				common.get_json_data(trigger_url, trigger_vars).then(function(response_data) {
-					// if(SHOW_DEBUG===true) {
-						console.log("[mints.activate_autocomplete] response_data",response_data)
-					// }
-
-					const result = (element.id==="fecha_publicacion")
-						? response_data.result.map( item => {
-							item.label = item.label.substring(0, 4)
-							return item
-						})
-						: response_data.result
-
-					response(result)
-
-				}, function(error) {
-					console.error("[activate_autocomplete] Failed get_json!", error);
-				});
-			},
-			// When a option is selected in list
-			select: function( event, ui ) {
-				// prevent set selected value to autocomplete input
-				event.preventDefault();
-
-				/* MULTI
-				  var terms = split( this.value );
-		          // remove the current input
-		          terms.pop();
-		          // add the selected item
-		          terms.push( ui.item.label );
-		          // add placeholder to get the comma-and-space at the end
-		          terms.push( "" );
-		          this.value = terms.join( ", " );
-		          return false; */
-				self.set_value(this, ui.item.label, ui.item.value)
-				this.value = ''
-				//this.value = ui.item.label
-
-				//$(this).blur()
-				return false;
-			},
-			// When a option is focus in list
-			focus: function() {
-				// prevent value inserted on focus
-				return false;
-			},
-	        close: function( event, ui ) {
-
-	        },
-			change: function( event, ui ) {
-
-			},
-			response: function( event, ui ) {
-				//console.log(ui);
-			}
-		})
-		.on("keydown", function( event ) {
-			//return false
-			//console.log(event)
-			if ( event.keyCode === $.ui.keyCode.ENTER  ) {
-				// prevent set selected value to autocomplete input
-				//event.preventDefault();
-				//var term = $(this).val();
-				$(this).autocomplete('close')
-			}//end if ( event.keyCode === $.ui.keyCode.ENTER  )
-		})// bind
-		.focus(function() {
-		    $(this).autocomplete('search', null)
-		})
-		.blur(function() {
-		    //$(element).autocomplete('close');
-		})
-
-
-		return true
-	},//end activate_autocomplete
-
-
-
-	/**
-	* SEARCH
-	*/
-	search : function(form_obj, event) {
-		if (event) event.preventDefault(); // Prevent submit and navigate to url
-		//console.log("form_obj:",form_obj,event);
-
-		const self = this
-
-		// ar_query
-			var ar_query 		= []
-			var ar_form_inputs  = form_obj.querySelectorAll("input.input_values, input.form-control")
-			var ar_input_len 	= ar_form_inputs.length
-			for (var i = 0; i < ar_input_len; i++) {
-
-				const input = ar_form_inputs[i]
-
-				if (input.value.length>0) {
-
-						console.log("input:",input);
-
-					// value
-						// const current_value = typeof input.dataset.real_value!=="undefined"
-						// 	? input.dataset.real_value
-						// 	: input.value
-						let current_value = input.value
-
-					// column
-						let current_column = input.dataset.q_name
-						if (input.dataset.q_name.indexOf(' AS ')!==-1) {
-							const ar_parts = input.dataset.q_name.split(' AS ')
-							// overwrite current_column
-							current_column = ar_parts[1]
-							if (current_column==="authors") {
-								const regex = /\,/gi;
-								current_value = current_value.replace(regex, '');
-							}
-						}
-
-					const current_obj = {
-						name 		: current_column, // input.dataset.q_name, // input.name,
-						value 		: current_value,  // input.value
-						search_mode : input.dataset.search,
-						table 		: input.dataset.q_table
-					}
-
-					ar_query.push(current_obj)
-				}
-			}
-			if(SHOW_DEBUG===true) {
-				console.log("search.ar_query:", ar_query);
-			}
-
-		// operators value
-			const operators_value = form_obj.querySelector('input[name="operators"]:checked').value;
-
-
-		// search_rows. exec query (promise)
-			const response = self.search_rows({
-				ar_query : ar_query,
-				operator : operators_value
+				// types draw
+					const types = response.result.find( el => el.id==='types')
+					self.draw_types({
+						target  : document.getElementById('types'),
+						ar_rows : types.result
+					})
+				
 			})
 
-		// scrool to head result
-			const div_result = document.querySelector(".result")
-			if (div_result) {
-				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-			}
-
-
-		return response
-	},//end search
+		return true
+	},//end render_mint
 
 
 
 	/**
-	* SEARCH_ROWS
-	* Call to trigger and load json data results of search. On complete load, draw list items
+	* GET_ROW_DATA
+	* 
 	*/
-	search_rows : function(options) {
+	get_row_data : function(options) {
 
 		const self = this
 
-		// search options store
-			self.search_options = options
+		const section_id = options.section_id
 
-		const container = document.getElementById("mints_rows_list")
-			  container.style.opacity = "0.4"
-
-		const trigger_url  = self.trigger_url
+		const trigger_url  = mints.trigger_url
 		const trigger_vars = {
-			mode 	 : "search_rows",
-			ar_query : typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit 	 : options.limit || 10,
-			// pagination
-			offset 	 : options.offset || 0,
-			// count 	 : options.count || false,
-			total 	 : options.total || false,
-			order 	 : options.order || 'section_id ASC',
-			operator : options.operator || 'OR'
+			mode 	 	: "get_row_data",
+			section_id 	: section_id
 		}
-
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("[mints.search_rows] trigger_vars:",trigger_vars);
-			}
-
+	
 		// Http request directly in javascript to the API is possible too..
 		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
 				if(SHOW_DEBUG===true) {
-					console.log("[mints.search_rows] get_json_data response:", response);
+					console.log("[mints.get_row_data] get_json_data response:", response);
 				}
-
-				container.style.opacity = "1"
 
 				if (!response) {
 					// Error on load data from trigger
-					console.warn("[mints.search_rows] Error. Received response data is null");
+					console.warn("[mints.get_row_data] Error. Received response data is null");
 					return false
 
 				}else{
 					// Success
-
-					// fix totals
-						self.search_options.total = response.result.total
-
-					return mints.draw_rows({
-						target  : 'mints_rows_list',
-						ar_rows : response.result.result,
-						// pagination
-						total   : response.result.total,
-						limit 	: trigger_vars.limit,
-						offset 	: trigger_vars.offset
-					})
+					return response.result
 				}
 		})
 
 		return js_promise
-	},//end search_rows
+	},//end get_row_data
 
 
 
 	/**
-	* DRAW_ROWS
+	* DRAW_ROW
 	*/
-	draw_rows : function(options) {
+	draw_row : function(options) {
 
-		const self = this
+		const row_object	= options.ar_rows[0]
+		const container 	= options.target
 
-		const total  		 = options.total
-		const limit  		 = options.limit
-		const offset 		 = options.offset
-		const target 		 = options.target
-		const ar_rows 		 = options.ar_rows || []
-		const ar_rows_length = ar_rows.length
+		// fix row_object
+			self.row_object = row_object
+
+		// debug
+			if(SHOW_DEBUG===true) {
+				console.log("Mint row_object:",row_object);
+			}		
 
 		// container select and clean container div
-			const container = document.getElementById(target)
 			while (container.hasChildNodes()) {
 				container.removeChild(container.lastChild);
 			}
 
 		const fragment = new DocumentFragment();
 
-		// pagination top
-			const pagination_container = common.create_dom_element({
+		// line
+			const line = common.create_dom_element({
 				element_type 	: "div",
-				class_name 		: "pagination top"
+				class_name 		: "",
+				parent 			: fragment
 			})
-			pagination_container.appendChild( self.draw_paginator({
-				total  		: total,
-				limit  		: limit,
-				offset 		: offset,
-				count  		: ar_rows_length
-			}))
-			fragment.appendChild(pagination_container)
 
-		// sort rows
-			// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
-			// ar_rows.sort( (a,b) => {
-			// 		let order_a = a.autoria +" "+ a.fecha_publicacion
-			// 		let order_b = b.autoria +" "+ b.fecha_publicacion
-			// 		//console.log("order_a",order_a, order_b);
-			// 		//console.log(collator.compare(order_a , order_b));
-			// 	return collator.compare(order_a , order_b)
-			// });
+		// section_id
+			if (dedalo_logged===true) {
 
-		// rows build
-			for (var i = 0; i < ar_rows_length; i++) {
+				const link = common.create_dom_element({
+					element_type 	: "a",
+					class_name 		: "section_id go_to_dedalo",
+					text_content 	: row_object.section_id,
+					href 			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
+					parent 			: line
+				})
+				link.setAttribute('target', '_blank');
+			}
 
-				// Build dom row
+		// name
+			if (row_object.name && row_object.name.length>0) {
 
-				// item row_object
-					const row_object = ar_rows[i]
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "",
+					text_content 	: tstring.name || "Name",
+					parent 			: line
+				})
 
-					if(SHOW_DEBUG===true) {
-						// console.log("i row_object:", i, row_object);
-					}
+				const name = row_object.name
+				common.create_dom_element({
+					element_type 	: "span",
+					class_name 		: "info_value",
+					text_content 	: name,
+					parent 			: line
+				})
+			}
 
-				// wrapper
-					const mints_row_wrapper = common.create_dom_element({
-						  element_type 	: "div",
-						  class_name 	: "mints_row_wrapper",
-						  data_set 		: {
-						  	section_id 	: row_object.section_id
-						  },
-						  parent 		: fragment
-					})
+		// place
+			if (row_object.place && row_object.place.length>0) {
 
-				// row_fields set
-					const row_field = row_fields
-						  row_field.row_object = row_object
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "",
+					text_content 	: tstring.place || "Place",
+					parent 			: line
+				})
 
-				// name
-					mints_row_wrapper.appendChild( row_field.name() )
+				const place = row_object.place
+				common.create_dom_element({
+					element_type 	: "div",
+					class_name 		: "info_value",
+					text_content 	: place,
+					parent 			: line
+				})
+			}
 
-				// place
-					mints_row_wrapper.appendChild( row_fields.place() )
-				//
-				// // row_body
-				// 	mints_row_wrapper.appendChild( row_fields.row_body() )
-				//
-				// // row_url
-				// 	mints_row_wrapper.appendChild( row_fields.row_url() )
+		// history
+			if (row_object.history && row_object.history.length>0) {
 
-				continue;
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "",
+					text_content 	: tstring.history || "History",
+					parent 			: line
+				})
 
+				const history = row_object.history
+				common.create_dom_element({
+					element_type 	: "div",
+					class_name 		: "info_value",
+					text_content 	: history,
+					parent 			: line
+				})
+			}
 
-				// div body
-					const row_body = common.create_dom_element({
-						element_type 	: "div",
-						class_name 		: "row_body",
-						parent 			: mints_row_wrapper
-					})
+		// numismatic_comments
+			if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
-					// title
-						const titulo = row_object.titulo || ''
-						common.create_dom_element({
-							element_type 	: "h1",
-							text_content 	: titulo,
-							parent 			: row_body
-						})
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "",
+					text_content 	: tstring.numismatic_comments || "Numismatic comments",
+					parent 			: line
+				})
 
-					// series_colecciones
-						if (row_object.series_colecciones || row_object.numero_serie) {
-							const series_info = []
-							if (row_object.series_colecciones) {
-								 series_info.push(row_object.series_colecciones)
-							}
-							if (row_object.numero_serie) {
-								 series_info.push(row_object.numero_serie)
-							}
-							common.create_dom_element({
-								element_type 	: "em",
-								parent 			: row_body,
-								class_name 		: "series_colecciones",
-								text_content 	: series_info.join(" ")
-							})
+				const numismatic_comments = row_object.numismatic_comments
+				common.create_dom_element({
+					element_type 	: "div",
+					class_name 		: "info_value",
+					text_content 	: numismatic_comments,
+					parent 			: line
+				})
+			}
+
+		// bibliography_data
+			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
+
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "",
+					text_content 	: tstring.bibliographic_references || "Bibliographic references",
+					parent 			: line
+				})
+
+				for (var i = 0; i < row_object.bibliography_data.length; i++) {
+					
+					const bibliographic_reference = row_object.bibliography_data[i]
+					
+					// debug
+						if(SHOW_DEBUG===true) {
+							console.log("bibliographic_reference:",bibliographic_reference);
 						}
-
-					// lugar_publicacion
-						if (row_object.lugar_publicacion) {
-							const line = common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "lugar_publicacion info_line",
-								parent 			: row_body
+					
+					// description
+						const description = bibliographic_reference.description
+						if (description.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",
+								class_name 		: "",
+								text_content 	: tstring.description || "Description",
+								parent 			: line
 							})
-							// common.create_dom_element({
-							// 	element_type 	: "div",
-							// 	parent 			: line,
-							// 	class_name 		: "info_label",
-							// 	text_content 	: tstring["lugar_publicacion"]
-							// })
-							const coma = (row_object.series_colecciones===false) ? '' : ', '
+							
 							common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "info_value",
-								text_content 	: coma + row_object.lugar_publicacion,
+								inner_html 		: description,
 								parent 			: line
 							})
 						}
 
-					// description_fisica
-						if (row_object.description_fisica) {
-							const line = common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "description_fisica info_line",
-								parent 			: row_body
+					// info
+						const items = common.clean_gaps(bibliographic_reference.items, " | ", ", ")
+						if (items.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",
+								class_name 		: "",
+								text_content 	: tstring.info || "Info",
+								parent 			: line
 							})
-
-							const coma = (row_object.lugar_publicacion===false) ? '' : ', '
+												
 							common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "info_value",
-								text_content 	: coma + row_object.description_fisica,
+								inner_html 		: items,
 								parent 			: line
 							})
 						}
-				/*
-				// notas
-					// if (row_object.nota_general) {
-					// 	var line = common.create_dom_element({
-					// 		element_type 	: "div",
-					// 		parent 			: row_body,
-					// 		class_name 		: "nota_general"
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_label",
-					// 			text_content 	: tstring["notas"]
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_value",
-					// 			text_content 	: row_object.nota_general
-					// 		})
-					// }
 
-				// codigo
-					// if (row_object.codigo) {
-					// 	var line = common.create_dom_element({
-					// 		element_type 	: "div",
-					// 		parent 			: row_body,
-					// 		class_name 		: "fecha_publicacion info_line"
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_label",
-					// 			text_content 	: tstring["codigo"]
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_value",
-					// 			text_content 	: row_object.codigo
-					// 		})
-					// }
-				*/
-			}//end for (var i = 0; i < len; i++)
-
-		// pagination footer
-			const pagination_container_bottom = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "pagination bottom"
-			})
-			pagination_container_bottom.appendChild( self.draw_paginator({
-				total  	: total,
-				limit  	: limit,
-				offset 	: offset,
-				count  	: ar_rows_length
-			}))
-			fragment.appendChild(pagination_container_bottom)
+					// pages
+						const pages = bibliographic_reference.pages
+						if (pages.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",
+								class_name 		: "",
+								text_content 	: tstring.pages || "Pages",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: pages,
+								parent 			: line
+							})
+						}
+				}				
+			}
 
 
-		// bulk fragment nodes to container
-			container.appendChild(fragment)
+		// container final add
+		container.appendChild(fragment)
 
 
-		return true
-	},//end draw_rows
+		return container
+	},//end draw_row
 
 
 
 	/**
-	* DRAW_PAGINATOR
-	* Return a DocumentFragment with all pagination nodes
+	* DRAW_TYPES
 	*/
-	draw_paginator : function(options) {
+	draw_types : function(options) {
+
+		const container 	 = options.target
+		const ar_rows		 = options.ar_rows
+		const ar_rows_length = ar_rows.length
+
+		// sort rows
+			let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+			ar_rows.sort( (a,b) => {
+					let order_a = a.catalogue +" "+ a.number
+					let order_b = b.catalogue +" "+ b.number
+					//console.log("order_a",order_a, order_b);
+					//console.log(collator.compare(order_a , order_b));
+				return collator.compare(order_a , order_b)
+			});
+
+		// container select and clean container div
+			while (container.hasChildNodes()) {
+				container.removeChild(container.lastChild);
+			}
+
+		const fragment = new DocumentFragment();
+
+		// label types
+			common.create_dom_element({
+				element_type 	: "label",
+				class_name 		: "",
+				text_content 	: tstring.types || "Types",
+				parent 			: fragment
+			})
+
+		console.groupCollapsed("Types info");
+		for (let i = 0; i < ar_rows_length; i++) {
+			
+			const row_object = ar_rows[i]
+
+			// debug
+				if(SHOW_DEBUG===true) {
+					console.log("type row_object:",row_object);;
+				}
+
+			// row_line
+			const row_line = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "type_row",
+				parent 			: fragment
+			})
+
+			// section_id
+				if (dedalo_logged===true) {
+
+					const link = common.create_dom_element({
+						element_type 	: "a",
+						class_name 		: "section_id go_to_dedalo",
+						text_content 	: row_object.section_id,
+						href 			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
+						parent 			: row_line
+					})
+					link.setAttribute('target', '_blank');
+				}
+			
+
+			// name
+				const name = common.create_dom_element({
+					element_type 	: "span",
+					class_name 		: "",
+					text_content 	: row_object.catalogue + " " +row_object.number,
+					parent 			: row_line
+				})
+
+			// material
+				const material = common.clean_gaps(row_object.material, " | ", ", ")
+				if (material.length>0) {
+					const material_info = common.create_dom_element({
+						element_type 	: "span",
+						class_name 		: "",
+						text_content 	: " ("+material+")",
+						parent 			: row_line
+					})
+				}
+			
+			// equivalents
+				// const equivalents = common.clean_gaps(row_object.equivalents, "<br>", ", ")
+				// if (equivalents.length>0) {
+				// 	const equivalents_info = common.create_dom_element({
+				// 		element_type 	: "div",
+				// 		class_name 		: "equivalents",
+				// 		text_content 	: equivalents,
+				// 		parent 			: row_line
+				// 	})
+				// }
+
+		}
+		console.groupEnd();
+
+		// container final add
+		container.appendChild(fragment)
+
+
+		return container
+	},//end draw_types
+
+
+
+	/**
+	* INIT_MAP
+	*/
+	init_map : function(options) {
 
 		const self = this
 
-		const pagination_fragment = new DocumentFragment();
-		// paginator (nav bar)
-			const paginator_node = paginator.get_full_paginator({
-				total  	: options.total,
-				limit  	: options.limit,
-				offset 	: options.offset,
-				n_nodes : 10,
-				callback: (item) => {
+		// short vars
+			const map_data = options.map_data	
 
-					const offset = item.offset
-					const total  = item.total
+		// default vars set
+			self.map = null
+			self.layer_control = false
+			self.loaded_document = false
+			self.icon_main = null
+			self.icon_finds= null
+			self.icon_uncertain = null
+			self.popupOptions = null
+			self.current_layer = null
+			self.current_group = null
+			self.initial_map_data = {
+				x 		: 40.1,
+				y 		: 9,
+			 	zoom 	: 8, // (13 for dare, 8 for osm)
+			 	alt 	: 16
+			}
+			self.option_selected = null
 
-					// update search_options
-						self.search_options.offset = offset
-						self.search_options.total  = total
+		
+		const div_container_id = "map_container"
 
-					// search (returns promise)
-						const search = self.search_rows(self.search_options)
+		// MAP_DATA : defaults Define main map element default data			
+			const map_x 	= map_data.lat
+			const map_y 	= map_data.lon
+			const map_zoom 	= map_data.zoom
+		
+				
+		// layer. Add layer to map 
+			//var dare 		= new L.TileLayer('http://dare.ht.lu.se/tiles/imperium/{z}/{x}/{y}.png');
+			const dare 		= new L.TileLayer('http://pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',{ maxZoom: 11 });		
+			const arcgis 	= new L.tileLayer('//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+			const osm 		= new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+			
+		// map
+			// self.map = new L.map(div_container_id, {layers: [osm], center: new L.LatLng(map_data.x, map_data.y), zoom: map_data.zoom});
+			self.map = new L.map(div_container_id, {layers: [osm], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
 
-					// scroll page to navigato header
-						search.then(function(response){
-							const div_result = document.querySelector(".result")
-							if (div_result) {
-								div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-							}
-						})
+		// layer selector
+			const base_maps = {
+				dare 	: dare,
+				arcgis 	: arcgis,
+				osm 	: osm
+			}
+			// if(self.layer_control===false || self.loaded_document===true) {
+				self.layer_control = L.control.layers(base_maps).addTo(self.map);
+			// }
 
-					return search
-				}
-			})
-			pagination_fragment.appendChild(paginator_node)
-		// spacer
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "spacer",
-				parent 			: pagination_fragment
-			})
-		// totals (info about showed and total records)
-			const totals_node = paginator.get_totals_node({
-				total  	: options.total,
-				limit  	: options.limit,
-				offset 	: options.offset,
-				count 	: options.count
-			})
-			pagination_fragment.appendChild(totals_node)
+		// disable zoom handlers
+			self.map.scrollWheelZoom.disable();
+
+		// icons 
+			self.icon_main = L.icon({
+			    //iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
+			    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/naranja.png",
+			    shadowUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
+			    iconSize:     [47, 43], // size of the icon
+			    shadowSize:   [41, 41], // size of the shadow
+			    iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
+			    shadowAnchor: [0, 20],  // the same for the shadow
+			    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
+			});
+
+			self.icon_finds = L.icon({
+			    //iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
+			    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/verde.png",
+			    shadowUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
+			    iconSize:     [47, 43], // size of the icon
+			    shadowSize:   [41, 41], // size of the shadow
+			    iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
+			    shadowAnchor: [0, 20],  // the same for the shadow
+			    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
+			});
+
+			self.icon_uncertain = L.icon({
+			    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-uncertainty.png",
+			    //shadowUrl:  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
+			    iconSize:     [50, 50], // size of the icon
+			    //shadowSize:   [41, 41], // size of the shadow
+			    iconAnchor:   [25, 25], // point of the icon which will correspond to marker's location
+			    //shadowAnchor: [0, 20],  // the same for the shadow
+			    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
+			});
+
+		// popupOptions
+			self.popupOptions =	{
+				maxWidth	: '758',
+				closeButton	: true
+			}
+
+		return true
+	},//end init_map
+	
 
 
-		return pagination_fragment
-	},//end draw_paginator
-
-
-
+	
 }//end mints

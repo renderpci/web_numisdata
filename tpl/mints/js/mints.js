@@ -29,38 +29,19 @@ var mints =  {
 				//ar_form_inputs[i].addEventListener("keyup", function(e){
 				//	//self.search(form, null)
 				//},false)
-			}
-
-			// exec first default search without params
-				self.search_rows({
-					ar_query : [],
-					limit 	 : 10
-				}) // First search
-
-		}else if (typeof mints_section_id!=="undefined") {
-
-			// Defined in html file
-				var ar_query 	= []
-				var current_obj = {
-						name 		: "section_id", // input.name,
-						value 		: mints_section_id,
-						search_mode : "string",
-						table 		: "publicaciones"
-					}
-					ar_query.push(current_obj)
-
-				self.search_rows({
-					ar_query : ar_query,
-					limit 	 : 1
-				})
-		}else{
-
-			// exec first default search without params
-				self.search_rows({
-					ar_query : [],
-					limit 	 : 10
-				}) // First search
+			}			
 		}
+
+		// exec first default search without params
+			self.search_rows({
+				ar_query : [],
+				limit 	 : 10
+			}).then(function(response){
+				self.draw_rows({
+					target  : 'rows_list',
+					ar_rows : response.result
+				})
+			})
 
 
 		return true
@@ -293,6 +274,11 @@ var mints =  {
 			const response = self.search_rows({
 				ar_query : ar_query,
 				operator : operators_value
+			}).then(function(response){
+				self.draw_rows({
+					target  : 'rows_list',
+					ar_rows : response.result
+				})
 			})
 
 		// scrool to head result
@@ -318,8 +304,8 @@ var mints =  {
 		// search options store
 			self.search_options = options
 
-		const container = document.getElementById("mints_rows_list")
-			  container.style.opacity = "0.4"
+		// const container = document.getElementById("rows_list")
+			  // container.style.opacity = "0.4"
 
 		const trigger_url  = self.trigger_url
 		const trigger_vars = {
@@ -345,7 +331,7 @@ var mints =  {
 					console.log("[mints.search_rows] get_json_data response:", response);
 				}
 
-				container.style.opacity = "1"
+				// container.style.opacity = "1"
 
 				if (!response) {
 					// Error on load data from trigger
@@ -356,16 +342,13 @@ var mints =  {
 					// Success
 
 					// fix totals
-						self.search_options.total = response.result.total
+						self.search_options.total 	= (response.result.total && response.result.total>0)
+							? response.result.total // new total
+							: self.search_options.total // previous calculated total
+						self.search_options.limit 	= trigger_vars.limit
+						self.search_options.offset 	= trigger_vars.offset
 
-					return mints.draw_rows({
-						target  : 'mints_rows_list',
-						ar_rows : response.result.result,
-						// pagination
-						total   : response.result.total,
-						limit 	: trigger_vars.limit,
-						offset 	: trigger_vars.offset
-					})
+					return response.result
 				}
 		})
 
@@ -381,12 +364,14 @@ var mints =  {
 
 		const self = this
 
-		const total  		 = options.total
-		const limit  		 = options.limit
-		const offset 		 = options.offset
 		const target 		 = options.target
 		const ar_rows 		 = options.ar_rows || []
 		const ar_rows_length = ar_rows.length
+
+		const total  		 = self.search_options.total
+		const limit  		 = self.search_options.limit
+		const offset 		 = self.search_options.offset
+
 
 		// container select and clean container div
 			const container = document.getElementById(target)
@@ -420,7 +405,7 @@ var mints =  {
 			// });
 
 		// rows build
-			for (var i = 0; i < ar_rows_length; i++) {
+			for (let i = 0; i < ar_rows_length; i++) {
 
 				// Build dom row
 
@@ -449,130 +434,8 @@ var mints =  {
 					mints_row_wrapper.appendChild( row_field.name() )
 
 				// place
-					mints_row_wrapper.appendChild( row_fields.place() )
-				//
-				// // row_body
-				// 	mints_row_wrapper.appendChild( row_fields.row_body() )
-				//
-				// // row_url
-				// 	mints_row_wrapper.appendChild( row_fields.row_url() )
-
-				continue;
-
-
-				// div body
-					const row_body = common.create_dom_element({
-						element_type 	: "div",
-						class_name 		: "row_body",
-						parent 			: mints_row_wrapper
-					})
-
-					// title
-						const titulo = row_object.titulo || ''
-						common.create_dom_element({
-							element_type 	: "h1",
-							text_content 	: titulo,
-							parent 			: row_body
-						})
-
-					// series_colecciones
-						if (row_object.series_colecciones || row_object.numero_serie) {
-							const series_info = []
-							if (row_object.series_colecciones) {
-								 series_info.push(row_object.series_colecciones)
-							}
-							if (row_object.numero_serie) {
-								 series_info.push(row_object.numero_serie)
-							}
-							common.create_dom_element({
-								element_type 	: "em",
-								parent 			: row_body,
-								class_name 		: "series_colecciones",
-								text_content 	: series_info.join(" ")
-							})
-						}
-
-					// lugar_publicacion
-						if (row_object.lugar_publicacion) {
-							const line = common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "lugar_publicacion info_line",
-								parent 			: row_body
-							})
-							// common.create_dom_element({
-							// 	element_type 	: "div",
-							// 	parent 			: line,
-							// 	class_name 		: "info_label",
-							// 	text_content 	: tstring["lugar_publicacion"]
-							// })
-							const coma = (row_object.series_colecciones===false) ? '' : ', '
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content 	: coma + row_object.lugar_publicacion,
-								parent 			: line
-							})
-						}
-
-					// description_fisica
-						if (row_object.description_fisica) {
-							const line = common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "description_fisica info_line",
-								parent 			: row_body
-							})
-
-							const coma = (row_object.lugar_publicacion===false) ? '' : ', '
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content 	: coma + row_object.description_fisica,
-								parent 			: line
-							})
-						}
-				/*
-				// notas
-					// if (row_object.nota_general) {
-					// 	var line = common.create_dom_element({
-					// 		element_type 	: "div",
-					// 		parent 			: row_body,
-					// 		class_name 		: "nota_general"
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_label",
-					// 			text_content 	: tstring["notas"]
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_value",
-					// 			text_content 	: row_object.nota_general
-					// 		})
-					// }
-
-				// codigo
-					// if (row_object.codigo) {
-					// 	var line = common.create_dom_element({
-					// 		element_type 	: "div",
-					// 		parent 			: row_body,
-					// 		class_name 		: "fecha_publicacion info_line"
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_label",
-					// 			text_content 	: tstring["codigo"]
-					// 		})
-					// 		common.create_dom_element({
-					// 			element_type 	: "div",
-					// 			parent 			: line,
-					// 			class_name 		: "info_value",
-					// 			text_content 	: row_object.codigo
-					// 		})
-					// }
-				*/
+					mints_row_wrapper.appendChild( row_fields.place() )				
+				
 			}//end for (var i = 0; i < len; i++)
 
 		// pagination footer
@@ -603,52 +466,67 @@ var mints =  {
 	* Return a DocumentFragment with all pagination nodes
 	*/
 	draw_paginator : function(options) {
-
+	
 		const self = this
 
+		// short vars
+			const total 	= options.total
+			const limit 	= options.limit
+			const offset 	= options.offset
+			const count 	= options.count
+			const n_nodes 	= 10
+	
 		const pagination_fragment = new DocumentFragment();
+		
 		// paginator (nav bar)
 			const paginator_node = paginator.get_full_paginator({
-				total  	: options.total,
-				limit  	: options.limit,
-				offset 	: options.offset,
-				n_nodes : 10,
+				total  	: total,
+				limit  	: limit,
+				offset 	: offset,
+				n_nodes : n_nodes,
 				callback: (item) => {
 
-					const offset = item.offset
-					const total  = item.total
-
 					// update search_options
-						self.search_options.offset = offset
-						self.search_options.total  = total
+						self.search_options.offset = item.offset
+						self.search_options.total  = item.total
 
 					// search (returns promise)
 						const search = self.search_rows(self.search_options)
 
 					// scroll page to navigato header
 						search.then(function(response){
-							const div_result = document.querySelector(".result")
-							if (div_result) {
-								div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-							}
-						})
+							
+							// scroll to result
+								const div_result = document.querySelector(".result")
+								if (div_result) {
+									div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+								}
+
+							// draw records
+								self.draw_rows({
+									target  : 'rows_list',
+									ar_rows : response.result
+								})
+						})					
 
 					return search
 				}
 			})
 			pagination_fragment.appendChild(paginator_node)
+		
 		// spacer
 			common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "spacer",
 				parent 			: pagination_fragment
 			})
+		
 		// totals (info about showed and total records)
 			const totals_node = paginator.get_totals_node({
-				total  	: options.total,
-				limit  	: options.limit,
-				offset 	: options.offset,
-				count 	: options.count
+				total  	: total,
+				limit  	: limit,
+				offset 	: offset,
+				count 	: count
 			})
 			pagination_fragment.appendChild(totals_node)
 

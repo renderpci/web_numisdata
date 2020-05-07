@@ -18,17 +18,17 @@ var mint =  {
 			mint.render_mint(options.section_id)			
 		}
 
-	
-		document.onkeyup = function(e) {
-
-			if (e.which == 37) { // arrow left <-
-				let button = document.getElementById("go_prev")
-				if (button) button.click()
-			}else if (e.which == 39) { // arrow right ->
-				let button = document.getElementById("go_next")
-				if (button) button.click()
-			}		
-		}
+		
+		// navigate records group
+			// document.onkeyup = function(e) {
+			// 	if (e.which == 37) { // arrow left <-
+			// 		let button = document.getElementById("go_prev")
+			// 		if (button) button.click()
+			// 	}else if (e.which == 39) { // arrow right ->
+			// 		let button = document.getElementById("go_next")
+			// 		if (button) button.click()
+			// 	}
+			// }
 
 		return true
 	},//end set_up
@@ -433,97 +433,12 @@ var mint =  {
 
 		const self = this
 
-		// short vars
-			const map_data = options.map_data	
-
-		// default vars set
-			self.map = null
-			self.layer_control = false
-			self.loaded_document = false
-			self.icon_main = null
-			self.icon_finds= null
-			self.icon_uncertain = null
-			self.popupOptions = null
-			self.current_layer = null
-			self.current_group = null
-			self.initial_map_data = {
-				x 		: 40.1,
-				y 		: 9,
-			 	zoom 	: 8, // (13 for dare, 8 for osm)
-			 	alt 	: 16
-			}
-			self.option_selected = null
-
+		// init page common map
+			page.init_map({
+				map_data : options.map_data,
+				div_container_id : "map_container"
+			})
 		
-		const div_container_id = "map_container"
-
-		// MAP_DATA : defaults Define main map element default data			
-			const map_x 	= map_data.lat
-			const map_y 	= map_data.lon
-			const map_zoom 	= map_data.zoom
-		
-				
-		// layer. Add layer to map 
-			//var dare 		= new L.TileLayer('http://dare.ht.lu.se/tiles/imperium/{z}/{x}/{y}.png');
-			const dare 		= new L.TileLayer('http://pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',{ maxZoom: 11 });		
-			const arcgis 	= new L.tileLayer('//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
-			const osm 		= new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-			
-		// map
-			// self.map = new L.map(div_container_id, {layers: [osm], center: new L.LatLng(map_data.x, map_data.y), zoom: map_data.zoom});
-			self.map = new L.map(div_container_id, {layers: [osm], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
-
-		// layer selector
-			const base_maps = {
-				dare 	: dare,
-				arcgis 	: arcgis,
-				osm 	: osm
-			}
-			// if(self.layer_control===false || self.loaded_document===true) {
-				self.layer_control = L.control.layers(base_maps).addTo(self.map);
-			// }
-
-		// disable zoom handlers
-			self.map.scrollWheelZoom.disable();
-
-		// icons 
-			self.icon_main = L.icon({
-			    //iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
-			    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/naranja.png",
-			    shadowUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-			    iconSize:     [47, 43], // size of the icon
-			    shadowSize:   [41, 41], // size of the shadow
-			    iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
-			    shadowAnchor: [0, 20],  // the same for the shadow
-			    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-			});
-
-			self.icon_finds = L.icon({
-			    //iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
-			    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/verde.png",
-			    shadowUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-			    iconSize:     [47, 43], // size of the icon
-			    shadowSize:   [41, 41], // size of the shadow
-			    iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
-			    shadowAnchor: [0, 20],  // the same for the shadow
-			    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-			});
-
-			self.icon_uncertain = L.icon({
-			    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-uncertainty.png",
-			    //shadowUrl:  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-			    iconSize:     [50, 50], // size of the icon
-			    //shadowSize:   [41, 41], // size of the shadow
-			    iconAnchor:   [25, 25], // point of the icon which will correspond to marker's location
-			    //shadowAnchor: [0, 20],  // the same for the shadow
-			    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-			});
-
-		// popupOptions
-			self.popupOptions =	{
-				maxWidth	: '758',
-				closeButton	: true
-			}
 
 		return true
 	},//end init_map

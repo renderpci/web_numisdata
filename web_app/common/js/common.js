@@ -169,7 +169,8 @@ var common = {
 		}else if(text_content) {
 			element.textContent = text_content
 		}else if(inner_html) {
-			element.innerHTML = inner_html
+			// element.innerHTML = inner_html
+			element.insertAdjacentHTML('afterbegin', inner_html);
 		}
 
 
@@ -741,7 +742,17 @@ var common = {
 	*/
 	clean_gaps : function(text, splitter=" | ", joinner=", ") {
 
-		const result = (text.split(splitter).filter( el => el.length>0 )).join(joinner);
+		// trim start and end spaces. i.e. ' | label1 | label2 | ' => '| label1 | label2 |'
+		text = text.trim()
+
+		// remove splitte at start and end. i.e '| label1 | label2 |' => 'label1 | label2'
+		text = text.replace(/^\| |\| {1,2}\|| \|+$/g, '')
+
+		// trim again
+		text = text.trim()
+
+		// split by splitter (piper) and then join again with new joinner
+		const result = (text.split(splitter).filter( el => el.length>0 )).join(joinner)
 
 		return result
 	}//end clean_gaps

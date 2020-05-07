@@ -1,0 +1,77 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+
+// Usage library
+	//@import "@{assets_path}/css/library.less";
+
+
+.result {
+
+	a.section_id {
+		float: right;
+	}
+
+	>div {
+		margin-bottom: 2em;
+		// background-color: #fffc9f;
+	}
+
+	// mint row detail
+	#row_detail {
+		label {
+			margin: 0;
+		}
+		.info_value {
+
+		}
+		img {
+			max-height: 12em;
+			display: block;
+			margin: 1em;
+			margin-left: 0;
+		}
+	}
+
+	// map
+	#map_container {
+		height: 60vh;		
+		font-size: 1rem;
+		margin-bottom: 3em;
+		background-color: #585858;
+		border-top: 1px solid #dcdcdc;
+		border-bottom: 1px solid #dcdcdc;
+
+		// wide
+		// width: 100vw;
+		// margin-left: calc(-50vw + 50%);
+		// margin-right: calc(-50vw + 50%);		
+	}
+	
+	// mint types list
+	#types {
+		// background-color: #3d3d3d;
+		padding: 1em;
+		// color: white;	
+		border-radius: 0.25em;
+		margin-top: 1em;
+		border-radius: 0.25em;
+		border: 1px solid #cccccc;
+
+		>.type_row {
+			display: table;
+			width: 100%;
+			border-bottom: 1px solid #ccc;
+			padding-bottom: 0.5em;
+			margin-bottom: 0.5em;
+
+			>span {
+				padding-right: 1em;
+			}
+			.equivalents {
+				display: block;
+			}
+		}
+	}
+
+}

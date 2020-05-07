@@ -1,0 +1,35 @@
+.result a.section_id {
+  float: right;
+}
+.result > div {
+  margin-bottom: 2em;
+}
+.result #row_detail label {
+  margin: 0;
+}
+.result #row_detail img {
+  max-height: 12em;
+  display: block;
+  margin: 1em;
+  margin-left: 0;
+}
+.result #types {
+  padding: 1em;
+  margin-top: 1em;
+  border-radius: 0.25em;
+  border: 1px solid #cccccc;
+}
+.result #types > .type_row {
+  display: table;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+}
+.result #types > .type_row > span {
+  padding-right: 1em;
+}
+.result #types > .type_row .equivalents {
+  display: block;
+}
+/*# sourceMappingURL=coin.css.map */

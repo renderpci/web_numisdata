@@ -211,4 +211,7 @@ p img.svg {
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
 }
+.spinner_svg {
+  max-height: 200px;
+}
 /*# sourceMappingURL=page.css.map */

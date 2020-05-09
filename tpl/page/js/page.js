@@ -458,5 +458,133 @@ var page = {
 
 
 
+	/**
+	* REQUEST
+	* Make a fetch request to server api
+	* @param object options
+	* @return promise api_response
+	*/
+	request : async function(options) {
+
+			console.log("request options:",options);
+
+		const url 			= options.url || page_globals.JSON_TRIGGER_URL
+		const method 		= options.method || 'POST' // *GET, POST, PUT, DELETE, etc.
+		const mode 			= options.mode || 'cors' // no-cors, cors, *same-origin
+		const cache 			= options.cache || 'no-cache' // *default, no-cache, reload, force-cache, only-if-cached
+		const credentials 	= options.credentials || 'same-origin' // include, *same-origin, omit
+		const headers 		= options.headers || {'Content-Type': 'application/json'}// 'Content-Type': 'application/x-www-form-urlencoded'
+		const redirect 		= options.redirect || 'follow' // manual, *follow, error
+		const referrer 		= options.referrer || 'no-referrer' // no-referrer, *client
+		const body 			= options.body // body data type must match "Content-Type" header
+
+		// code defaults
+			if (!body.code) {
+				body.code = '654asdiKrhdTetQksl?uoQaW2'
+			}
+		// lang defaults
+			if (!body.lang) {
+				body.lang = page_globals.WEB_CURRENT_LANG_CODE
+			}			
+
+		const handle_errors = function(response) {
+			if (!response.ok) {
+				console.warn("-> handle_errors response:",response);
+				throw Error(response.statusText);
+			}
+			return response;
+		}
+
+	 	const api_response = fetch(
+	 		url,
+	 		{
+				method		: method,
+				mode		: mode,
+				cache		: cache,
+				credentials	: credentials,
+				headers		: headers,
+				redirect	: redirect,
+				referrer	: referrer,
+				body		: JSON.stringify(body)
+			})
+			.then(handle_errors)
+			.then(response => {
+				// console.log("-> json response 1 ok:",response.body);
+				const json_parsed = response.json().then((result)=>{
+					//console.log("-> json result 2:",result);
+					return result
+				})
+				return json_parsed
+			})// parses JSON response into native Javascript objects
+			.catch(error => {
+				console.error("!!!!! [page data_manager.request] ERROR:", error)
+				return {
+					result 	: false,
+					msg 	: error.message,
+					error 	: error
+				}
+			});
+
+		return api_response
+	},//end request
+
+
+
+	/**
+	* ADD_SPINNER
+	* @return 
+	*/
+	add_spinner : function(target) {
+					
+		if(target) {
+			const image = common.create_dom_element({
+				element_type 	: "img",
+				class_name 		: "spinner_svg",
+				src 			: page_globals.__WEB_ROOT_WEB__ + "/tpl/assets/images/spinner.svg"
+			})	
+			target.appendChild(image)
+		}else{
+			console.warn("[add_spinner] Error on get target ", target);
+		}		
+
+		return true
+	},//end add_spinner
+
+
+
+	/**
+	* remove_SPINNER
+	* @return 
+	*/
+	remove_spinner : function(target) {
+
+		const spinner = target.querySelector(".spinner_svg")
+		if (spinner) {
+			spinner.remove()
+			return true
+		}
+
+		return false
+	},//end remove_spinner
+
+
+
+	/**
+	* REMOTE_IMAGE
+	* @return bool
+	*/
+	remote_image : function(url) {
+
+		if (url) {
+			const remote_url = url.replace(/\/dedalo\/media_test\/media_monedaiberica\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/")
+			return remote_url
+		}
+		// /dedalo/media_test/media_monedaiberica		
+
+		return null
+	}//end remote_image
+
+
+
 }//end page
 

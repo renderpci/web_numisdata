@@ -1,0 +1,137 @@
+/*
+	#wrapper {
+
+		height: 100vh;
+
+	}
+	*/
+section.result {
+  min-height: 70vh;
+  padding-top: 2em;
+}
+.line_value {
+  display: flex;
+  line-height: 1em;
+  padding-top: 5px;
+  padding-left: 10px;
+}
+.line_value i {
+  color: #BFBFBF;
+  cursor: pointer;
+  align-self: center;
+}
+.line_value i:hover {
+  color: #E31A0A;
+}
+.line_value input.input_values {
+  pointer-events: none;
+  border: none;
+  margin-left: 5px;
+  width: 100%;
+  align-self: center;
+  text-overflow: ellipsis;
+  background-color: transparent;
+}
+.row_wrapper {
+  margin-bottom: 1em;
+  border-bottom: 1px solid #dedede;
+  padding-bottom: 1em;
+}
+.row_wrapper h2 {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  display: inline-block;
+}
+.row_wrapper img.svg {
+  vertical-align: middle;
+}
+.row_wrapper div,
+.row_wrapper h1 {
+  font-family: cambria;
+  font-size: 1.1em;
+  font-weight: 100;
+  line-height: 1.4;
+}
+.row_wrapper .name {
+  font-variant: small-caps;
+  letter-spacing: 1px;
+}
+.row_wrapper .name > * {
+  display: inline-block;
+  padding-right: 1em;
+}
+.row_wrapper .name > .section_id {
+  float: right;
+  padding-right: 0;
+}
+.row_wrapper .italic {
+  font-style: italic;
+}
+.row_wrapper .grey {
+  color: #8C8C8C;
+}
+.row_wrapper .blue {
+  color: #497FC2;
+}
+.row_wrapper .row_title {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row_wrapper .row_title .pdf {
+  margin-left: 0.5em;
+}
+.row_wrapper .row_title .pdf:after {
+  content: " ";
+  height: 100%;
+  width: 1em;
+  background-image: url("../../assets/images/file-pdf-o.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  display: block;
+  cursor: pointer;
+}
+.row_wrapper .row_body {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row_wrapper .row_url {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row_wrapper .row_url a.url_data {
+  color: #497FC2;
+}
+.row_wrapper .row_url .separator {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+.form-inline .form-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.form-inline .form-row .form-group {
+  flex: 1 1 50%;
+  align-self: baseline;
+}
+.form-inline .form-row .operators {
+  padding-right: 2em;
+}
+.pagination.bottom {
+  margin-top: 3em;
+}
+.ui-menu .ui-menu-item {
+  padding-left: 0;
+  width: 100%;
+  display: flex;
+}
+.ui-menu .ui-menu-item-wrapper {
+  width: 100%;
+  border: none !important;
+  margin: 0 !important;
+}
+.ui-widget.ui-widget-content {
+  background-color: #f9f9f9;
+  border: none !important;
+}
+/*# sourceMappingURL=catalog.css.map */

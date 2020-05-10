@@ -252,6 +252,23 @@
 	}//end mints_row_wrapper
 
 
+// children container
+
+	.children_contanier{
+		margin-left: 3em;
+	}
+	.children_contanier:first-child{
+		margin-left: 0;
+	}
+
+// types contanier
+
+	.row_node{
+		border-top: 1px solid black;
+	}
+	.row_node:first-child{
+		border-top: none;
+	}
 
 // form mints
 	.form-inline {
@@ -273,6 +290,102 @@
 		}
 
 	}//end .form-inline
+
+	.term{
+		font-weight: bold;
+	}
+
+	span{
+		margin-right: 1em;
+	}
+
+	
+
+	.descriptions{
+		display: grid;
+		grid-template-columns: 50% 50%;
+		grid-template-rows: auto auto auto;
+	}
+
+	.ref_type_equivalents{
+		font-size: 0.6em;
+		grid-column-start: 1;
+		grid-row-start: 2;
+	}
+	.collection_auction{
+		font-size: 0.6em;
+		grid-column-start: 2;
+		grid-row-start: 2;
+		display: inline-flex;
+	}
+	.ref_type_design_obverse{
+		grid-column-start: 1;
+		grid-row-start: 1;
+	}
+	.ref_type_symbol_obverse{
+		grid-column-start: 1;
+		grid-row-start: 2;
+	}
+	.ref_type_legend_obverse{
+		grid-column-start: 1;
+		grid-row-start: 3;
+	}
+
+	.ref_type_design_reverse{
+		grid-column-start: 2;
+		grid-row-start: 1;
+	}
+	.ref_type_symbol_reverse{
+		grid-column-start: 2;
+		grid-row-start: 2;
+	}
+	.ref_type_legend_reverse{
+		grid-column-start: 2;
+		grid-row-start: 3;
+	}
+
+	.coins_images{
+		display: inline-grid;
+		grid-template-columns: 50% 50%;
+		justify-items: center;
+		align-items: center;
+		justify-content: center;
+		// width: attr(data-print_w);
+	}
+	.image_obverse{
+		max-width: 100%;
+		height: auto;
+		// width: attr(data-print_w);
+	}
+
+	.image_reverse{
+		max-width: 100%;
+		height: auto;
+		// width: attr(data-print_w);
+	}
+	.type_container{
+		display: inline-grid;
+		grid-template-columns: 60% 40%;
+		grid-template-rows: auto auto;
+	}
+	.types{
+		display: grid;
+	}
+
+	// @media print{
+	// 	.image_obverse{
+	// 		width: calc( attr(data-print_w) / 2);
+	// 	}
+	// 	.image_reverse{
+	// 		width: calc( attr(data-print_w) / 2);
+	// 	}
+	// 	.coins_images{
+	// 		width: calc( attr(data-print_w) / 2);
+	// 	}
+	// }
+
+
+
 
 
 

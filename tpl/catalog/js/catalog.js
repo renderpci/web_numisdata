@@ -593,22 +593,6 @@ var catalog =  {
 		const ar_rows 		 = options.ar_rows || []
 		const ar_rows_length = ar_rows.length
 
-
-		// rows
-			
-		const ar_mints = ar_rows.filter(itemn => item.term_table === 'mints')
-
-		for (ley i = ar_mints.length - 1; i >= 0; i--) {
-			const children = ar_mints[i].children
-			for (let i = children.length - 1; i >= 0; i--) {
-				const current_children = children[i]
-				const ar_items_children = children.filter(item => item.section_id === current_children)
-
-			}
-			
-		}
-
-
 		const total  		 = self.search_options.total
 		const limit  		 = self.search_options.limit
 		const offset 		 = self.search_options.offset
@@ -624,6 +608,15 @@ var catalog =  {
 			// page.add_spinner(container)			
 
 		const fragment = new DocumentFragment();
+
+		const ar_mints = ar_rows.filter(item => item.term_table === 'mints')
+
+		for (let i = 0; i < ar_mints.length; i++) {
+			const parent = JSON.parse(ar_mints[i].parent)[0]
+			const mint_poarent 	= ar_rows.find(item => item.section_id === parent)
+			const render_mints = self.get_children(ar_rows, mint_poarent, fragment)
+		}
+		
 
 		// sort rows
 			// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
@@ -642,8 +635,6 @@ var catalog =  {
 			for (let i = 0; i < ar_rows_length; i++) {
 
 				
-			
-				
 			}//end for (var i = 0; i < len; i++)
 
 		
@@ -657,33 +648,58 @@ var catalog =  {
 	},//end draw_rows
 
 
-	render_rows : function(options){
+	get_children : function(ar_rows, parent, parent_node){
+
+		const self = this
+
+		const children = JSON.parse(parent.children)
+
+		// wrapper
+			const catalog_row_wrapper = common.create_dom_element({
+				  element_type 	: "div",
+				  class_name 	: "children_contanier",
+			})
+			parent_node.appendChild( catalog_row_wrapper )
+
+		if(children){
+			for (let i = 0; i < children.length; i++) {
+				self.get_child(ar_rows, children[i], catalog_row_wrapper)
+			}
+		}
+	},
+
+	get_child : function(ar_rows, section_id, parent_node){
+
+		const self = this
+
+		const row_object 	= ar_rows.find(item => item.section_id === section_id)
+		if (row_object) {
+			const row_node 	= self.render_rows(row_object)
+			parent_node.appendChild( row_node )
+
+			if(row_object.children){
+				self.get_children(ar_rows, row_object, row_node)
+			}
+		}
+	},
+
+
+
+	render_rows : function(row_object){
 
 		// Build dom row
 		// item row_object
-			const row_object = ar_rows[i]
+			// const row_object = ar_rows[i]
 
 			if(SHOW_DEBUG===true) {
 				// console.log("i row_object:", i, row_object);
 			}
 
-		// wrapper
-			const catalog_row_wrapper = common.create_dom_element({
-				  element_type 	: "div",
-				  class_name 	: "row_wrapper",
-				  data_set 		: {
-				  	section_id 	: row_object.section_id
-				  },
-				  parent 		: fragment
-			})
-
 		// row_fields set
 			const node = row_fields.draw_item(row_object)
-			
-		// name
-			catalog_row_wrapper.appendChild( node )
 
-	}
+		return node
+	},
 
 
 	/**

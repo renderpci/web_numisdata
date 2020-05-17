@@ -113,7 +113,7 @@ section.result {
   margin-left: 0;
 }
 .row_node {
-  border-top: 1px solid black;
+  border-top: 1px solid #ddd;
 }
 .row_node:first-child {
   border-top: none;
@@ -131,14 +131,25 @@ section.result {
 }
 .term {
   font-weight: bold;
+  text-transform: uppercase;
 }
 span {
   margin-right: 1em;
+}
+.ref_type_averages_weight,
+.ref_type_averages_diameter {
+  margin-right: 0.5em;
+  font-size: 16px;
+}
+.ref_type_total_weight_items,
+.ref_type_total_diameter_items {
+  font-size: 16px;
 }
 .descriptions {
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: auto auto auto;
+  font-size: 14px;
 }
 .ref_type_equivalents {
   font-size: 0.6em;
@@ -159,9 +170,13 @@ span {
   grid-column-start: 1;
   grid-row-start: 2;
 }
-.ref_type_legend_obverse {
+.legend_obverse {
   grid-column-start: 1;
   grid-row-start: 3;
+}
+.legend_obverse img {
+  height: 1.2em;
+  vertical-align: middle;
 }
 .ref_type_design_reverse {
   grid-column-start: 2;
@@ -171,16 +186,28 @@ span {
   grid-column-start: 2;
   grid-row-start: 2;
 }
-.ref_type_legend_reverse {
+.legend_reverse {
   grid-column-start: 2;
   grid-row-start: 3;
+  display: grid;
+}
+.legend_reverse img {
+  height: 1.2em;
+  vertical-align: middle;
 }
 .coins_images {
   display: inline-grid;
   grid-template-columns: 50% 50%;
+  align-items: center;
+  justify-content: center;
+}
+.coins_images_container {
+  grid-column-start: 2;
+  grid-row-start: 1;
   justify-items: center;
   align-items: center;
   justify-content: center;
+  display: grid;
 }
 .image_obverse {
   max-width: 100%;
@@ -192,11 +219,18 @@ span {
 }
 .type_container {
   display: inline-grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: 2fr 1fr;
   grid-template-rows: auto auto;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
 }
 .types {
   display: grid;
+}
+#rows_list > .children_contanier {
+  background-color: white;
+  padding: 0.5em;
+  border-radius: 0.4em;
 }
 .pagination.bottom {
   margin-top: 3em;
@@ -214,5 +248,17 @@ span {
 .ui-widget.ui-widget-content {
   background-color: #f9f9f9;
   border: none !important;
+}
+@media print {
+  .inner > h1,
+  .form {
+    display: none !important;
+  }
+  #header {
+    padding: 0 !important;
+  }
+  .children_contanier {
+    margin-left: 1em;
+  }
 }
 /*# sourceMappingURL=catalog.css.map */

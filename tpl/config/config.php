@@ -28,9 +28,10 @@
 			? 'https://mib.numisdata.org'
 			: 'http://monedaiberica:8080'
 		);
+
 	
 	// media base url
-		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');
+		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');	
 	
 	// __web_root_web__			
 		// $parts = explode('/',$_SERVER['REQUEST_URI']);
@@ -43,6 +44,13 @@
 		// #error_log( $base .' - '. print_r($ar_path,true) );
 		$base = '/web_mib';
 		define('__WEB_ROOT_WEB__', $base);	
+
+	// IS_PRODUCTION. used like 'mib_web'
+		$path_suffix = substr($base , -3);		
+		define('IS_PRODUCTION', ($path_suffix==='web')
+			? true 
+			: false
+		);
 
 	// web_app_dir
 		define('WEB_APP_DIR', 'web_app');
@@ -65,7 +73,8 @@
 		define('JSON_TRIGGER_URL', ($source_data_api==='remote')
 			? __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/'
 			: __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/'
-		);	
+		);
+		
 
 	// json_web_data colector. PHP version http request manager (via CURL)
 		include(__WEB_BASE_PATH__ .'/'. WEB_APP_DIR . '/api/class.json_web_data.php');
@@ -177,11 +186,5 @@
 // safe images url
 	define('SAFE_IMAGES_URL', false);
 
-
-
-// IS_PRODUCTION. used like 'mib_web'
-	$path_suffix = substr($base , -3);
-	$IS_PRODUCTION = ($path_suffix==='web') ? true : false;
-	define('IS_PRODUCTION', $IS_PRODUCTION);
 
 

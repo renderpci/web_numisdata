@@ -42,7 +42,9 @@
 	*/ ?>
 <?php echo $content_html ?>
 <script>
-page.setup()
+document.addEventListener('DOMContentLoaded', function(event) {
+	page.setup()
+})
 </script>
 </body>
 </html>

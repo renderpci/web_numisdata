@@ -613,8 +613,12 @@ var catalog =  {
 
 		for (let i = 0; i < ar_mints.length; i++) {
 			const parent = JSON.parse(ar_mints[i].parent)[0]
-			const mint_poarent 	= ar_rows.find(item => item.section_id === parent)
-			const render_mints = self.get_children(ar_rows, mint_poarent, fragment)
+			const mint_parent 	= ar_rows.find(item => item.section_id === parent)
+			if(!mint_parent){
+					console.error("mint don't have public parent:",ar_mints[i]);
+				continue
+			} 
+			const render_mints = self.get_children(ar_rows, mint_parent, fragment)
 		}
 		
 
@@ -652,7 +656,7 @@ var catalog =  {
 
 		const self = this
 
-		const children = JSON.parse(parent.children)
+		const children =  JSON.parse(parent.children)
 
 		// wrapper
 			const catalog_row_wrapper = common.create_dom_element({
@@ -778,3 +782,5 @@ var catalog =  {
 
 
 }//end catalog
+
+

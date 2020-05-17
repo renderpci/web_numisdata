@@ -31,4 +31,8 @@
 	</div>
 
 <?php echo $this->get_header_links('js') ?>
-<script>error.set_up()</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(event) {
+	error.set_up()
+})
+</script>

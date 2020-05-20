@@ -574,9 +574,16 @@ var page = {
 	* @return bool
 	*/
 	remote_image : function(url) {
-
+		
 		if (url) {
-			const remote_url = url.replace(/\/v5\/media_test\/media_monedaiberica\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/")
+			
+			let remote_url = ''
+			if (url.indexOf('v5/media_test')!==-1) {
+				remote_url = url.replace(/\/v5\/media_test\/media_monedaiberica\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/")
+			}else{
+				remote_url = url.replace(/\/dedalo\/media_test\/media_monedaiberica\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/")
+			}	
+
 			return remote_url
 		}
 		// /dedalo/media_test/media_monedaiberica		

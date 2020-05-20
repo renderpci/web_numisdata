@@ -116,12 +116,11 @@
 
 
 
-// debug . Show / hide debug messages
-		$SHOW_DEBUG = true;
-		if (isset($_SESSION['dedalo4']['auth']['user_id']) && $_SESSION['dedalo4']['auth']['user_id']==-1) {
-			$SHOW_DEBUG = true;
-		}
-		define('SHOW_DEBUG', $SHOW_DEBUG);
+// debug . Show / hide debug messages		
+	define('SHOW_DEBUG', (isset($_SESSION['dedalo4']['auth']['user_id']) && $_SESSION['dedalo4']['auth']['user_id']==-1)
+		? true
+		: true
+	);
 
 
 

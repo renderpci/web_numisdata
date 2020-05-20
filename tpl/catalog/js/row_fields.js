@@ -7,6 +7,7 @@ var row_fields = {
 
 
 	ar_rows : [],
+	caller  : null,
 
 
 
@@ -136,15 +137,19 @@ var row_fields = {
 					// reverse
 								
 						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)
-						self.node_factory(item, "ref_type_symbol_reverse", descriptions, null, null)
 						if (!IS_PRODUCTION) {
-							item.ref_type_legend_reverse = page.remote_image(item.ref_type_legend_reverse)
+							item.ref_type_symbol_reverse = page.remote_image(item.ref_type_legend_reverse)
 						}
+						self.node_factory(item, "ref_type_symbol_reverse", descriptions, null, null)
+						
 						const legend_reverse = common.create_dom_element({
 							  element_type 	: "div",
 							  class_name 	: "legend_reverse",
 							  parent 		: descriptions
-						})							
+						})
+						if (!IS_PRODUCTION) {
+							item.ref_type_legend_reverse = page.remote_image(item.ref_type_legend_reverse)
+						}
 						self.node_factory(item, "ref_type_legend_reverse", legend_reverse, null, null)
 						self.node_factory(item, "ref_type_legend_transcription_reverse", legend_reverse, null, null)
 					
@@ -287,7 +292,97 @@ var row_fields = {
 		}		
 
 		return false
-	}//end node_factory
+	},//end node_factory
+
+
+
+	/**
+	* FORM_NODE_FACTORY
+	*/
+		// form_node_factory : function(name, column, table, parent, placeholder, activate_autocomplete) {
+
+		// 	const self = this
+
+		// 	// grouper
+		// 		const group = common.create_dom_element({
+		// 			element_type	: 'div',
+		// 			class_name 		: "form-group field",
+		// 			parent 			: parent
+		// 		})
+
+		// 	// input
+		// 		const input = common.create_dom_element({
+		// 			element_type	: 'input',
+		// 			type			: 'text',
+		// 			id 				: name,
+		// 			class_name		: "form-control ui-autocomplete-input",
+		// 			placeholder 	: placeholder,
+		// 			dataset 		: {
+		// 				q_name	: name,
+		// 				q_column: column,
+		// 				q_table	: table,
+		// 				eq		: "LIKE"
+		// 			},
+		// 			parent			: group
+		// 		})
+
+		// 	// autocomplete activate
+		// 		if (activate_autocomplete===true) {
+		// 			self.caller.activate_autocomplete(input)
+		// 		}
+
+		// 	// values container (user selections)
+		// 		const values = common.create_dom_element({
+		// 			element_type	: 'div',
+		// 			id				: name + '_values',
+		// 			class_name 		: "container_values",
+		// 			parent 			: group
+		// 		})
+
+
+		// 	return input
+		// },//end form_node_factory
+
+
+
+	/**
+	* BUILD_FORM_NODE
+	*/
+	build_form_node : function(form_item, parent) {
+
+		// grouper
+			const group = common.create_dom_element({
+				element_type	: 'div',
+				class_name 		: "form-group field",
+				parent 			: parent
+			})
+
+		// input
+			const node_input = common.create_dom_element({
+				element_type	: 'input',
+				type			: 'text',
+				id 				: form_item.id,
+				class_name		: "form-control ui-autocomplete-input",
+				placeholder 	: form_item.label,				
+				parent			: group
+			})
+			node_input.addEventListener("keyup", function(e){				
+				form_item.q = e.target.value
+			})
+			form_item.node_input = node_input
+
+		// values container (user selections)
+			const node_values = common.create_dom_element({
+				element_type	: 'div',
+				// id				: form_item.name + '_values',
+				class_name 		: "container_values",
+				parent 			: group
+			})
+			form_item.node_values = node_values
+
+
+		return true
+	}//end build_form_node
 
 
 

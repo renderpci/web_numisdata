@@ -345,45 +345,4 @@ var row_fields = {
 
 
 
-	/**
-	* BUILD_FORM_NODE
-	*/
-	build_form_node : function(form_item, parent) {
-
-		// grouper
-			const group = common.create_dom_element({
-				element_type	: 'div',
-				class_name 		: "form-group field",
-				parent 			: parent
-			})
-
-		// input
-			const node_input = common.create_dom_element({
-				element_type	: 'input',
-				type			: 'text',
-				id 				: form_item.id,
-				class_name		: "form-control ui-autocomplete-input",
-				placeholder 	: form_item.label,				
-				parent			: group
-			})
-			node_input.addEventListener("keyup", function(e){				
-				form_item.q = e.target.value
-			})
-			form_item.node_input = node_input
-
-		// values container (user selections)
-			const node_values = common.create_dom_element({
-				element_type	: 'div',
-				// id				: form_item.name + '_values',
-				class_name 		: "container_values",
-				parent 			: group
-			})
-			form_item.node_values = node_values
-
-
-		return true
-	}//end build_form_node
-
-
-
 }//end row_fields

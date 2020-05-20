@@ -4,7 +4,6 @@
 "use strict";
 
 
-
 var catalog =  {
 
 	trigger_url			: page_globals.__WEB_TEMPLATE_WEB__ + "/catalog/trigger.catalog.php",
@@ -200,33 +199,23 @@ var catalog =  {
 
 
 
+	/**
+	* CREATE_FORM_ITEM
+	*/
 	create_form_item : function(options) {
 
 		const self = this
 
-		// create new instance of form_item
-			const form_item = {
-				id 				: options.name,
-				name 			: options.name, // used as id in node
-				label 			: options.label, // used to placeholder too	
-				q 				: "", // user keyboard enters
-				q_selected 		: [], // picked from autocomplete options
-				q_column 		: options.q_column, // like 'term'
-				// q_table 		: options.q_table, // like 'mints'
-				// q_table_name 	: 'term_table', // like 'term_table'				
-				eq 				: "LIKE", // default internal operator search
-				eq_in 			: options.eq_in || '', // used in autocomplete
-				eq_out 			: options.eq_out || '%', // used in autocomplete				
-				is_term 		: options.is_term || false		
-			}
+		// form_item. create new instance of form_item
+			const form_item = forms.build_form_item(options)
 
 		// node
-			row_fields.build_form_node(form_item, options.parent)
+			forms.build_form_node(form_item, options.parent)
 		
 		// autocomplete activate			
 			self.activate_autocomplete(form_item.node_input)
 		
-		// store in current instance
+		// store current instance
 			self.form_items[options.id] = form_item
 
 
@@ -666,7 +655,7 @@ var catalog =  {
 				current_form_item = self.form_items[element.id]
 
 				const field		= current_form_item.q_name // Like 'mint'
-				const q_column	= current_form_item.q_column // Like 'term'				
+				const q_column	= current_form_item.q_column // Like 'term'
 
 				// filter build 
 					const op 	 = "AND"
@@ -716,7 +705,7 @@ var catalog =  {
 								if (form_item.q_selected.length>0) {
 									for (let k = 0; k < form_item.q_selected.length; k++) {
 										
-										const value = form_item.q_selected[k]										
+										const value = form_item.q_selected[k]
 										
 										c_filter[c_op].push({
 											field	: form_item.q_column,
@@ -730,7 +719,7 @@ var catalog =  {
 							filter[op].push(c_filter)
 						}
 
-					// cache . Use only when there are no cross filters						
+					// cache . Use only when there are no cross filters
 						if (filter[op].length===1) {
 							if ( term in cache ) {
 								if(SHOW_DEBUG===true) {

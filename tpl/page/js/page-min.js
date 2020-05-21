@@ -19,9 +19,9 @@ var page = {
 		
 		var self = this
 		
-		window.ready(function(){
+		// window.ready(function(){
 			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
-		})
+		// })
 		
 		return true	
 	},//end setup

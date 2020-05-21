@@ -78,7 +78,56 @@ var forms = {
 
 
 		return true
-	}//end build_form_node
+	},//end build_form_node
+
+
+
+	/**
+	* BUILD_OPERATORS_NODE
+	*/
+	build_operators_node : function() {
+
+		const group = common.create_dom_element({
+			element_type	: "div",
+			class_name 		: "form-group field"			
+		})
+		const operator_label = common.create_dom_element({
+			element_type	: "span",
+			class_name 		: "operators",
+			text_content 	: tstring["operator"] || "Operator",
+			parent 			: group
+		})
+		const radio1 = common.create_dom_element({
+			element_type	: "input",
+			type 			: "radio",
+			id 				: "operator_or",
+			parent 			: group
+		})
+		radio1.setAttribute("name","operators")
+		radio1.setAttribute("value","OR")
+		const radio1_label = common.create_dom_element({
+			element_type	: "label",
+			text_content 	: tstring["or"] || "or",
+			parent 			: group
+		})
+		const radio2 = common.create_dom_element({
+			element_type	: "input",
+			type 			: "radio",
+			id 				: "operator_and",
+			name 			: "operators",
+			parent 			: group
+		})
+		radio2.setAttribute("name","operators")
+		radio2.setAttribute("value","AND")
+		radio2.setAttribute("checked","checked")
+		const radio2_label = common.create_dom_element({
+			element_type	: "label",
+			text_content 	: tstring["and"] || "and",
+			parent 			: group
+		})
+
+		return group
+	}//end build_operators_node
 
 
 

@@ -247,8 +247,8 @@ var catalog =  {
 				label		: tstring["mint"] || "mint",
 				q_column 	: "p_mint",
 				eq 			: "LIKE",
-				// eq_in 		: "[\"",
-				// q_table 	: "mints",				
+				eq_in 		: "%",
+				// q_table 	: "mints",
 				is_term 	: true,
 				parent		: form_row
 			})
@@ -258,9 +258,69 @@ var catalog =  {
 				id 			: "period",
 				name 		: "period",
 				label		: tstring["period"] || "period",
-				q_column 	: "p_period",				
+				q_column 	: "p_period",
 				eq_in 		: "%",
-				// q_table 	: "ts_period",				
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// culture
+			self.create_form_item({
+				id 			: "culture",
+				name 		: "culture",
+				label		: tstring["culture"] || "culture",
+				q_column 	: "p_culture",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// creator
+			self.create_form_item({
+				id 			: "creator",
+				name 		: "creator",
+				label		: tstring["creator"] || "creator",
+				q_column 	: "p_creator",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// role
+			self.create_form_item({
+				id 			: "role",
+				name 		: "role",
+				label		: tstring["role"] || "role",
+				q_column 	: "p_role",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// territory
+			self.create_form_item({
+				id 			: "territory",
+				name 		: "territory",
+				label		: tstring["territory"] || "territory",
+				q_column 	: "p_territory",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// group
+			self.create_form_item({
+				id 			: "group",
+				name 		: "group",
+				label		: tstring["group"] || "group",
+				q_column 	: "p_group",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
 				is_term 	: true,
 				parent		: form_row
 			})
@@ -299,46 +359,9 @@ var catalog =  {
 			})
 		
 
+		
 		// operators
-			const group = common.create_dom_element({
-				element_type	: "div",
-				class_name 		: "form-group field",
-				parent 			: form_row
-			})
-			const operator_label = common.create_dom_element({
-				element_type	: "span",
-				class_name 		: "operators",
-				text_content 	: tstring["operator"] || "Operator",
-				parent 			: group
-			})
-			const radio1 = common.create_dom_element({
-				element_type	: "input",
-				type 			: "radio",
-				id 				: "operator_or",				
-				parent 			: group
-			})
-			radio1.setAttribute("name","operators")			
-			radio1.setAttribute("value","OR")
-			const radio1_label = common.create_dom_element({
-				element_type	: "label",				
-				text_content 	: tstring["or"] || "or",
-				parent 			: group
-			})
-			const radio2 = common.create_dom_element({
-				element_type	: "input",
-				type 			: "radio",
-				id 				: "operator_and",
-				name 			: "operators",
-				parent 			: group
-			})
-			radio2.setAttribute("name","operators")
-			radio2.setAttribute("value","AND")
-			radio2.setAttribute("checked","checked")
-			const radio2_label = common.create_dom_element({
-				element_type	: "label",				
-				text_content 	: tstring["and"] || "and",
-				parent 			: group
-			})
+			form_row.appendChild( forms.build_operators_node() )
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -755,10 +778,13 @@ var catalog =  {
 									const item_name = current_ar_value[j]
 									// const item_name = item.name.replace(/[\["|"\]]/g, '')
 
-									ar_result.push({
-										label : item_name, // item_name,
-										value : item_name // item.name
-									})
+									const found = ar_result.find(el => el.value===item_name)
+									if (!found) {
+										ar_result.push({
+											label : item_name, // item_name,
+											value : item_name // item.name
+										})
+									}
 								}																
 							}
 
@@ -794,9 +820,9 @@ var catalog =  {
 				// prevent value inserted on focus
 				return false;
 			},
-	        close: function( event, ui ) {
+			close: function( event, ui ) {
 
-	        },
+			},
 			change: function( event, ui ) {
 
 			},
@@ -992,9 +1018,9 @@ var catalog =  {
 				}
 			}).then((response)=>{
 
-				if(SHOW_DEBUG===true) {
-					// console.log("--- form_submit response:",response)
-				}
+				// if(SHOW_DEBUG===true) {
+					console.log("--- form_submit response:",response)
+				// }
 	
 				// clean container and add_spinner
 					const container = document.querySelector("#rows_list")
@@ -1147,16 +1173,27 @@ var catalog =  {
 
 			const ar_mints = ar_rows.filter(item => item.term_table==='mints')
 
+			const ar_parent = []
 			for (let i = 0; i < ar_mints.length; i++) {
 				const parent = JSON.parse(ar_mints[i].parent)[0]
 				const mint_parent 	= ar_rows.find(item => item.section_id===parent)
 				if(!mint_parent){
 						console.error("mint don't have public parent:",ar_mints[i]);
 					continue
-				} 
-				const render_mints = self.get_children(ar_rows, mint_parent, fragment)
-			}			
-
+				}
+				// check if the parent is inside the ar_aprents, if not push inside else nothing
+				const unique_parent 	= ar_parent.find(item => item.section_id===parent)
+				if(typeof unique_parent === 'undefined'){
+					ar_parent.push(mint_parent)
+				}
+				
+			}
+			// create the nodes with the unique parents: ar_parents
+			for (let i = 0; i < ar_parent.length; i++) {
+				const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
+			}		
+			
+			
 			// sort rows
 				// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
 				// ar_rows.sort( (a,b) => {

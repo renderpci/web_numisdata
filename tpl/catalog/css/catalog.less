@@ -271,13 +271,15 @@
 	.children_contanier{
 		margin-left: 3em;
 	}
-	.children_contanier:first-child{
+
+	#rows_list >.children_contanier {
 		margin-left: 0;
 	}
 
 // types contanier
 
 	.row_node{
+		page-break-inside: avoid;
 		border-top: 1px solid #ddd;
 	}
 	.row_node:first-child{

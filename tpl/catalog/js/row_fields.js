@@ -138,7 +138,7 @@ var row_fields = {
 								
 						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)
 						if (!IS_PRODUCTION) {
-							item.ref_type_symbol_reverse = page.remote_image(item.ref_type_legend_reverse)
+							item.ref_type_symbol_reverse = page.remote_image(item.ref_type_symbol_reverse)
 						}
 						self.node_factory(item, "ref_type_symbol_reverse", descriptions, null, null)
 						

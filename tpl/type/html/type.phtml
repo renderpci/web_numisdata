@@ -38,7 +38,9 @@
 
 <?php echo $this->get_header_links('js') ?>
 <script>
+document.addEventListener('DOMContentLoaded', function(event) {
 	type.set_up({
 		section_id : '<?php echo $section_id ?>'
 	})
+})
 </script>

@@ -375,7 +375,7 @@ class page {
 				$url .= '_' . WEB_CURRENT_LANG_CODE;
 			}
 
-		$tag = '<script src="'.$url.'"></script>';
+		$tag = '<script defer src="'.$url.'"></script>';
 
 		return $tag;
 	}//edn build_js_tag

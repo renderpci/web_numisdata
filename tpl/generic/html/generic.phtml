@@ -50,5 +50,7 @@
 
 <?php echo $this->get_header_links('js') ?>
 <script>
-	generic.set_up({})
+document.addEventListener('DOMContentLoaded', function(event) {
+	generic.set_up()
+})
 </script>

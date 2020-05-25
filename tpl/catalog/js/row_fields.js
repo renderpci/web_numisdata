@@ -132,12 +132,18 @@ var row_fields = {
 					self.node_factory(item, "ref_type_equivalents", type_container, null, null)
 					
 					// images
+						// convert the diameter to float.
+						const diameter = item['ref_type_averages_diameter'] !==null
+							? parseFloat(item['ref_type_averages_diameter'].replace(',', '.'))
+							: 15
+
+
 						const coins_images = common.create_dom_element({
 							  element_type 	: "div",
 							  class_name 	: "coins_images",
 							  parent 		: type_container,
 						})			
-						coins_images.style.width = (item['ref_type_averages_diameter'] * 4 ) + 'mm'
+						coins_images.style.width = (diameter * 4 ) + 'mm'
 						const url_ref_coins_image_obverse = page.remote_image(item.ref_coins_image_obverse)
 						const img_obverse = common.create_dom_element({
 							  element_type 	: "img",
@@ -145,7 +151,7 @@ var row_fields = {
 							  src 			: url_ref_coins_image_obverse,
 							  parent 		: coins_images
 						})
-						img_obverse.style.width = (item['ref_type_averages_diameter'] * 2 ) + 'mm'
+						img_obverse.style.width = (diameter * 2 ) + 'mm'
 						const url_ref_coins_image_reverse = page.remote_image(item.ref_coins_image_reverse)
 						const img_reverse =common.create_dom_element({
 							  element_type 	: "img",
@@ -153,19 +159,19 @@ var row_fields = {
 							  src 			: url_ref_coins_image_reverse,
 							  parent 		: coins_images
 						})
-						img_reverse.style.width = (item['ref_type_averages_diameter'] * 2 ) + 'mm'
+						img_reverse.style.width = (diameter * 2 ) + 'mm'
 
 						 if (window.matchMedia) {
 							window.matchMedia('print').addListener(function(mql) {
 								 if (mql.matches) {
-									coins_images.style.width 	= (item['ref_type_averages_diameter'] * 2 ) + 'mm'
-									img_obverse.style.width 	= (item['ref_type_averages_diameter'] * 1 ) + 'mm'
-									img_reverse.style.width 	= (item['ref_type_averages_diameter'] * 1 ) + 'mm'
+									coins_images.style.width 	= (diameter * 2 ) + 'mm'
+									img_obverse.style.width 	= (diameter * 1 ) + 'mm'
+									img_reverse.style.width 	= (diameter * 1 ) + 'mm'
 								}
 								 if (!mql.matches) {
-								 	coins_images.style.width 	= (item['ref_type_averages_diameter'] * 4 ) + 'mm'
-									img_obverse.style.width 	= (item['ref_type_averages_diameter'] * 2 ) + 'mm'
-									img_reverse.style.width 	= (item['ref_type_averages_diameter'] * 2 ) + 'mm'
+								 	coins_images.style.width 	= (diameter * 4 ) + 'mm'
+									img_obverse.style.width 	= (diameter * 2 ) + 'mm'
+									img_reverse.style.width 	= (diameter * 2 ) + 'mm'
 								 }
 							})
 						}
@@ -184,7 +190,7 @@ var row_fields = {
 				common.create_dom_element({
 					  element_type 	: "div",
 					  class_name 	: "term " + term_table,
-					  text_content 	: item.term + " [" + term_table + "]",
+					  text_content 	: item.term, // + " [" + term_table + "]",
 					  parent 		: fragment
 				})
 				break;
@@ -234,9 +240,7 @@ var row_fields = {
 
 
 				case "ref_type_equivalents":
-					console.log("item[name]:",item[name]);
 					current_value = item[name].replace(/<br>/g,' - ')
-						console.log("current_value:",current_value);
 				break;
 				
 

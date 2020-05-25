@@ -34,7 +34,7 @@ var biblio =  {
 			// exec first default search without params
 				self.search_rows({
 					ar_query : [],
-					limit 	 : 10
+					limit 	 : 100
 				}) // First search
 
 		}else if (typeof biblio_section_id!=="undefined") {

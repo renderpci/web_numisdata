@@ -88,6 +88,7 @@ var common = {
 		const download				= element_options.download
 		const src					= element_options.src
 		const type					= element_options.type // Like button, text ..
+		const placeholder			= element_options.placeholder
 		
 		const element = document.createElement(element_type);
 	
@@ -192,6 +193,11 @@ var common = {
 		// SRC Add id property to element
 		if(src){
 			element.src = src;
+		}
+
+		// placeholder
+		if(placeholder){
+			element.placeholder = placeholder;
 		}
 
 

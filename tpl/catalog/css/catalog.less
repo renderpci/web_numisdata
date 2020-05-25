@@ -20,12 +20,15 @@
 	section.form {
 		// background-color: #f5f5f5;
 	}
+	form {
+		overflow-x: initial;
+	}
 
 
 
 // search result
 	section.result {
-		min-height: 70vh;
+		min-height: 60vh;
 		padding-top: 2em;
 	}
 
@@ -48,6 +51,16 @@
 			}
 		}
 
+		.value_label {
+			pointer-events:none;
+			border:none;
+			margin-left: 5px;
+			width: 100%;
+			align-self: center;
+			text-overflow: ellipsis;
+			background-color: transparent;
+		}
+
 		input.input_values {
 			pointer-events:none;
 			border:none;
@@ -56,6 +69,7 @@
 			align-self: center;
 			text-overflow: ellipsis;
 			background-color: transparent;
+			display: none;
 		}
 	}
 
@@ -257,14 +271,16 @@
 	.children_contanier{
 		margin-left: 3em;
 	}
-	.children_contanier:first-child{
+
+	#rows_list >.children_contanier {
 		margin-left: 0;
 	}
 
 // types contanier
 
 	.row_node{
-		border-top: 1px solid black;
+		page-break-inside: avoid;
+		border-top: 1px solid #ddd;
 	}
 	.row_node:first-child{
 		border-top: none;
@@ -293,10 +309,23 @@
 
 	.term{
 		font-weight: bold;
+		text-transform: uppercase;
 	}
 
 	span{
 		margin-right: 1em;
+	}
+
+	.ref_type_averages_weight, .ref_type_averages_diameter{
+		    margin-right: 0.5em;
+		    font-size: 16px;
+	}
+	.ref_type_total_weight_items, .ref_type_total_diameter_items{
+		font-size: 16px;
+	}
+
+	.mints{
+		// font-size: 1.4em;
 	}
 
 	
@@ -305,6 +334,7 @@
 		display: grid;
 		grid-template-columns: 50% 50%;
 		grid-template-rows: auto auto auto;
+		font-size: 14px;
 	}
 
 	.ref_type_equivalents{
@@ -326,9 +356,13 @@
 		grid-column-start: 1;
 		grid-row-start: 2;
 	}
-	.ref_type_legend_obverse{
+	.legend_obverse{
 		grid-column-start: 1;
 		grid-row-start: 3;
+		img{
+			height: 1.2em;
+			vertical-align: middle;
+		}
 	}
 
 	.ref_type_design_reverse{
@@ -339,18 +373,32 @@
 		grid-column-start: 2;
 		grid-row-start: 2;
 	}
-	.ref_type_legend_reverse{
+	.legend_reverse{
 		grid-column-start: 2;
 		grid-row-start: 3;
+		display: grid;
+		img{
+			height: 1.2em;
+			vertical-align: middle;
+		}
 	}
 
 	.coins_images{
+
 		display: inline-grid;
 		grid-template-columns: 50% 50%;
-		justify-items: center;
+		
 		align-items: center;
 		justify-content: center;
 		// width: attr(data-print_w);
+	}
+	.coins_images_container{
+		grid-column-start: 2;
+		grid-row-start: 1;
+		justify-items: center;
+		align-items: center;
+		justify-content: center;
+		display: grid;
 	}
 	.image_obverse{
 		max-width: 100%;
@@ -367,6 +415,8 @@
 		display: inline-grid;
 		grid-template-columns: 70% 30%;
 		grid-template-rows: auto auto;
+		margin-bottom: 0.5em;
+		margin-top: 0.5em;
 	}
 	.types{
 		display: grid;
@@ -385,14 +435,6 @@
 	// }
 	
 
-#rows_list {
-	>.children_contanier {
-		background-color: white;
-    padding: 0.5em;
-    border-radius: 0.4em;
-	}
-	
-}
 
 
 

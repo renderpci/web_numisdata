@@ -28,6 +28,7 @@
 			? 'https://mib.numisdata.org'
 			: 'http://monedaiberica:8080'
 		);
+
 	
 	// media base url
 		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');	
@@ -72,7 +73,8 @@
 		define('JSON_TRIGGER_URL', ($source_data_api==='remote')
 			? __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/'
 			: __WEB_BASE_URL__ . '/dedalo/lib/dedalo/publication/server_api/v1/json/'
-		);	
+		);
+		
 
 	// json_web_data colector. PHP version http request manager (via CURL)
 		include(__WEB_BASE_PATH__ .'/'. WEB_APP_DIR . '/api/class.json_web_data.php');
@@ -114,12 +116,11 @@
 
 
 
-// debug . Show / hide debug messages
-		$SHOW_DEBUG = true;
-		if (isset($_SESSION['dedalo4']['auth']['user_id']) && $_SESSION['dedalo4']['auth']['user_id']==-1) {
-			$SHOW_DEBUG = true;
-		}
-		define('SHOW_DEBUG', $SHOW_DEBUG);
+// debug . Show / hide debug messages		
+	define('SHOW_DEBUG', (isset($_SESSION['dedalo4']['auth']['user_id']) && $_SESSION['dedalo4']['auth']['user_id']==-1)
+		? true
+		: true
+	);
 
 
 

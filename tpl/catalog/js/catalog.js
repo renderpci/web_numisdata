@@ -1,5 +1,7 @@
-"use strict";
+/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*eslint no-undef: "error"*/
 
+"use strict";
 
 
 var catalog =  {
@@ -8,6 +10,14 @@ var catalog =  {
 	search_options		: {},
 	selected_term_table : null, // Like 'mints'
 
+	// global filters
+	filters : {},
+	filter_op : "AND",
+	draw_delay : 390, // ms
+
+	// form_items
+	form_items : [],
+ 
 
 
 	/**
@@ -17,35 +27,160 @@ var catalog =  {
 
 		const self = this
 
-		// const form = document.getElementById("search_form")
-		// if (form) {
-		// 	const ar_form_inputs  	 = form.querySelectorAll("input.form-control")
-		// 	const ar_form_inputs_len = ar_form_inputs.length
-		// 	for (var i = 0; i < ar_form_inputs_len; i++) {
-
-		// 		// Activate autocomplete behabiour for each input
-		// 			self.activate_autocomplete(ar_form_inputs[i])
-
-		// 		// Add event keyup to all inputs
-		// 		//ar_form_inputs[i].addEventListener("keyup", function(e){
-		// 		//	//self.search(form, null)
-		// 		//},false)
-		// 	}
-		// }
-
+		const container = document.getElementById("items_container")
+				
 		// load mints list
-			self.load_mint_list().then(function(response){						
+			// self.load_mint_list().then(function(response){
 
-				const select = self.draw_select({
-					data		: response.result,
-					term_table	: "mints",
-					default		: [{section_id:'0',name:"Select mint"}]
-				})
+			// 	// mints selector
+			// 		const select = self.draw_select({
+			// 			data		: response.result,
+			// 			term_table	: "mints",
+			// 			filter_id 	: "mints",
+			// 			default		: [{section_id:'0',name:"Select mint"}],
+			// 			filter 		: function(item) {
+			// 				// filter
+			// 					const filter_value = {
+			// 						"OR": []
+			// 					}
 
-				const container = document.getElementById("items_container")
-				container.appendChild(select)
-			})
-			
+			// 				// parents
+			// 					const parents = item.parents ? JSON.parse(item.parents) : null
+			// 					if (parents) {
+			// 						for (let j = 0; j < parents.length; j++) {
+			// 							filter_value["OR"].push({
+			// 								'field' : 'section_id',
+			// 								'value' : `${parents[j]}`,
+			// 								'op' 	: '='
+			// 							})
+			// 						}
+			// 					}
+
+			// 				// self
+			// 					filter_value["OR"].push({
+			// 						'field' : 'section_id',
+			// 						'value' : `${item.section_id}`,
+			// 						'op' 	: '='
+			// 					})
+
+			// 				// childrens
+			// 					filter_value["OR"].push({
+			// 						'field' : 'parents',
+			// 						'value' : `'%"${item.section_id}"%'`,
+			// 						'op' 	: 'LIKE'
+			// 					})
+
+			// 				return filter_value
+			// 			}
+			// 		})
+				
+			// 	container.appendChild(select)
+			// })
+		
+		// load periods list
+			// self.load_period_list().then(function(response){
+
+			// 	// periods selector
+			// 		const select = self.draw_select({
+			// 			data		: response.result,
+			// 			term_table	: "ts_period",
+			// 			filter_id 	: "period",
+			// 			default		: [{section_id:'0',name:"Select period"}],
+			// 			filter 		: function(item) {
+
+			// 				// filter
+			// 					const filter_value = {
+			// 						"OR": []
+			// 					}
+
+			// 				// parents
+			// 					const parents = item.parents ? JSON.parse(item.parents) : null
+			// 					if (parents) {
+			// 						for (let j = 0; j < parents.length; j++) {
+			// 							filter_value["OR"].push({
+			// 								'field' : 'section_id',
+			// 								'value' : `${parents[j]}`,
+			// 								'op' 	: '='
+			// 							})
+			// 						}
+			// 					}
+
+			// 				// self
+			// 					filter_value["OR"].push({
+			// 						'field' : 'section_id',
+			// 						'value' : `${item.section_id}`,
+			// 						'op' 	: '='
+			// 					})
+
+			// 				// childrens
+			// 					filter_value["OR"].push({
+			// 						'field' : 'parents',
+			// 						'value' : `'%"${item.section_id}"%'`,
+			// 						'op' 	: 'LIKE'
+			// 					})
+
+			// 				return filter_value
+			// 			}
+			// 		})
+
+			// 	container.appendChild(select)
+			// })
+				
+		// load material list
+			// self.load_material_list().then(function(response){
+
+			// 	// material selector
+			// 		const select = self.draw_select({
+			// 			data		: response.result,
+			// 			term_table	: "type",
+			// 			filter_id 	: "material",
+			// 			default		: [{section_id:'0',name:"Select material"}],
+			// 			filter 		: function(item) {
+
+			// 					console.log("item:",item);
+
+			// 				// filter
+			// 					const filter_value = {
+			// 						"OR": []
+			// 					}							
+							
+			// 				// parents
+			// 					const parents = item.parents ? JSON.parse(item.parents) : null
+			// 					if (parents) {
+			// 						for (let j = 0; j < parents.length; j++) {
+			// 							filter_value["OR"].push({
+			// 								'field' : 'section_id',
+			// 								'value' : `${parents[j]}`,
+			// 								'op' 	: '='
+			// 							})
+			// 						}
+			// 					}
+
+			// 				// self
+			// 					filter_value["OR"].push({
+			// 						'field' : 'ref_type_material_data',
+			// 						'value' : `${item.section_id}`,
+			// 						'op' 	: '='
+			// 					})
+
+			// 				// // childrens
+			// 				// 	filter_value["OR"].push({
+			// 				// 		'field' : 'parents',
+			// 				// 		'value' : `'%"${item.section_id}"%'`,
+			// 				// 		'op' 	: 'LIKE'
+			// 				// 	})
+
+			// 				return filter_value
+			// 			}
+			// 		})
+
+			// 	container.appendChild(select)
+			// })
+
+		// form
+			const form = self.build_form()		
+			container.appendChild(form)
+		
 
 		// exec first default search without params
 			// self.search_rows({
@@ -59,10 +194,205 @@ var catalog =  {
 			// })
 
 
-
-
 		return true
 	},//end set_up
+
+
+
+	/**
+	* CREATE_FORM_ITEM
+	*/
+	create_form_item : function(options) {
+
+		const self = this
+
+		// form_item. create new instance of form_item
+			const form_item = forms.build_form_item(options)
+
+		// node
+			forms.build_form_node(form_item, options.parent)
+		
+		// autocomplete activate			
+			self.activate_autocomplete(form_item.node_input)
+		
+		// store current instance
+			self.form_items[options.id] = form_item
+
+
+		return form_item
+	},//end create_form_item
+
+
+
+	/**
+	* BUILD_FORM
+	*/
+	build_form : function() {
+
+		const self = this
+
+		const fragment = new DocumentFragment()
+		
+		const form_row = common.create_dom_element({
+			element_type	: "div",
+			class_name 		: "form-row fields",
+			parent 			: fragment
+		})
+		
+
+		// mint
+			self.create_form_item({
+				id 			: "mint",
+				name 		: "mint",
+				label		: tstring["mint"] || "mint",
+				q_column 	: "p_mint",
+				eq 			: "LIKE",
+				eq_in 		: "%",
+				// q_table 	: "mints",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// period
+			self.create_form_item({
+				id 			: "period",
+				name 		: "period",
+				label		: tstring["period"] || "period",
+				q_column 	: "p_period",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// culture
+			self.create_form_item({
+				id 			: "culture",
+				name 		: "culture",
+				label		: tstring["culture"] || "culture",
+				q_column 	: "p_culture",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// creator
+			self.create_form_item({
+				id 			: "creator",
+				name 		: "creator",
+				label		: tstring["creator"] || "creator",
+				q_column 	: "p_creator",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// role
+			self.create_form_item({
+				id 			: "role",
+				name 		: "role",
+				label		: tstring["role"] || "role",
+				q_column 	: "p_role",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// territory
+			self.create_form_item({
+				id 			: "territory",
+				name 		: "territory",
+				label		: tstring["territory"] || "territory",
+				q_column 	: "p_territory",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// group
+			self.create_form_item({
+				id 			: "group",
+				name 		: "group",
+				label		: tstring["group"] || "group",
+				q_column 	: "p_group",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: true,
+				parent		: form_row
+			})
+
+		// material
+			self.create_form_item({
+				id 			: "material",
+				name 		: "material",
+				q_column 	: "ref_type_material",
+				q_table 	: "any",
+				label		: tstring["material"] || "material",
+				is_term 	: false,
+				parent		: form_row
+			})
+
+		// collection
+			self.create_form_item({
+				id 			: "collection",
+				name 		: "collection",
+				q_column 	: "ref_coins_collection",
+				q_table 	: "any",
+				label		: tstring["collection"] || "collection",
+				is_term 	: false,
+				parent		: form_row
+			})
+
+		// denomination
+			self.create_form_item({
+				id 			: "denomination",
+				name 		: "denomination",
+				q_column 	: "ref_type_denomination",
+				q_table 	: "any",
+				label		: tstring["denomination"] || "denomination",
+				is_term 	: false,
+				parent		: form_row
+			})
+		
+
+		
+		// operators
+			form_row.appendChild( forms.build_operators_node() )
+
+		// submit button
+			const submit_group = common.create_dom_element({
+				element_type	: "div",
+				class_name 		: "form-group field",
+				parent 			: fragment
+			})
+			const submit_button = common.create_dom_element({
+				element_type	: "input",
+				type 			: "submit",
+				id 				: "submit",
+				value 			: tstring["buscar"] || "Search",
+				class_name 		: "btn btn-light btn-block primary",
+				parent 			: submit_group
+			})
+			submit_button.addEventListener("click",function(e){
+				e.preventDefault()
+				self.form_submit(form)
+			})
+
+		// form
+			const form = common.create_dom_element({
+				element_type	: "form",
+				id 				: "search_form",
+				class_name 		: "form-inline"
+			})			
+			form.appendChild(fragment)
+
+
+		return form
+	},//end build_form
 
 
 
@@ -70,24 +400,102 @@ var catalog =  {
 	* LOAD_MINT_LIST
 	* @return promise
 	*/
-	load_mint_list : function() {
-		
-		const js_promise = page.request({
-			body : {
-				dedalo_get 	: 'records',
-				table 		: 'catalog',
-				ar_fields 	: ['section_id','term AS name','parents'],
-				// sql_fullselect : 'DISTINCT term, '
-				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
-				limit 		: 0,
-				count 		: false,
-				order 		: 'term ASC',
-				sql_filter  : 'term_table=\'mints\''
-			}
-		})
+		// load_mint_list : function() {
+			
+		// 	const js_promise = page.request({
+		// 		body : {
+		// 			dedalo_get 	: 'records',
+		// 			table 		: 'catalog',
+		// 			ar_fields 	: ['section_id','term AS name','parents'],
+		// 			// sql_fullselect : 'DISTINCT term, '
+		// 			lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 			limit 		: 0,
+		// 			count 		: false,
+		// 			order 		: 'term ASC',
+		// 			sql_filter  : 'term_table=\'mints\''
+		// 		}
+		// 	})
 
-		return js_promise
-	},//end load_mint_list
+		// 	return js_promise
+		// },//end load_mint_list
+
+
+
+	/**
+	* LOAD_PERIOD_LIST
+	* @return promise
+	*/
+		// load_period_list : function() {
+			
+		// 	const js_promise = page.request({
+		// 		body : {
+		// 			dedalo_get 	: 'records',
+		// 			table 		: 'catalog',
+		// 			ar_fields 	: ['section_id','term AS name','parents'],
+		// 			// sql_fullselect : 'DISTINCT term, '
+		// 			lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 			limit 		: 0,
+		// 			count 		: false,
+		// 			order 		: 'term ASC',
+		// 			sql_filter  : 'term_table=\'ts_period\''
+		// 		}
+		// 	})
+
+		// 	return js_promise
+		// },//end load_period_list
+
+
+
+	/**
+	* LOAD_MATERIAL_LIST
+	* @return promise
+	*/
+		// load_material_list : async function() {
+			
+		// 	// search base . Gets list of values for real table like 'materials'
+		// 		const search_base = await page.request({
+		// 			body : {
+		// 				dedalo_get 	: 'records',
+		// 				table 		: 'material',
+		// 				ar_fields 	: ['section_id','CONCAT(term, " | ", symbol) AS name'],
+		// 				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 				limit 		: 0,
+		// 				count 		: false,
+		// 				order 		: 'name ASC',
+		// 				sql_filter  : ''
+		// 			}
+		// 		})
+			
+		// 	// search secondary. Gets main table matches
+		// 		const search_secondary = await page.request({
+		// 			body : {
+		// 				dedalo_get 	: 'records',
+		// 				table 		: 'catalog',
+		// 				ar_fields 	: ['section_id', 'ref_type_material_data'],
+		// 				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 				limit 		: 0,
+		// 				count 		: false,
+		// 				order 		: 'section_id ASC',
+		// 				sql_filter  : search_base.result.map(item => "`ref_type_material_data` LIKE '%\"" + item.section_id + "\"%'").join(" OR ")
+		// 			}
+		// 		})
+
+		// 	// add to search_base the secondary results
+		// 		const ar_mix = search_base.result.map(item => {
+
+		// 			const types = search_secondary.result.filter( el => el.ref_type_material_data==="[\"" + item.section_id +"\"]" )			
+		// 			item.types  = types.map(el => el.section_id)
+
+		// 			return item
+		// 		})
+
+		// 	// final response object
+		// 		const response = {
+		// 			result : ar_mix
+		// 		}
+
+		// 	return response
+		// },//end load_material_list
 
 
 
@@ -95,137 +503,95 @@ var catalog =  {
 	* DRAW_SELECT
 	* @return promise
 	*/
-	draw_select : function(options) {
+		// draw_select : function(options) {
 
-		const self = this
+		// 	const self = this
 
-		const data 			  	= options.data
-		const term_table		= options.term_table
-		const options_default	= options.default || [{section_id:'0',name:"Select option"}]
-		
-		const fragment = new DocumentFragment()
+		// 	const filter_id 		= options.filter_id
+		// 	const data 			  	= options.data
+		// 	const term_table		= options.term_table
+		// 	const options_default	= options.default || [{section_id:'0',name:"Select option"}]
+			
+		// 	const fragment = new DocumentFragment()
 
-		// prepend empty option
-			const elements = options_default.concat(data)
+		// 	// prepend empty option
+		// 		const elements = options_default.concat(data)
 
-		// iterate option
-			const elements_length = elements.length
-			for (let i = 0; i < elements_length; i++) {
-				
-				const item = elements[i]
+		// 	// iterate option
+		// 		const elements_length = elements.length
+		// 		for (let i = 0; i < elements_length; i++) {
+					
+		// 			const item = elements[i]
 
-				// filter
-					const filter_value = {
-						"OR": []
-					}
+		// 			const filter_value = options.filter(item)				
 
-				// parents
-					const parents = item.parents ? JSON.parse(item.parents) : null					
-					if (parents) {
-						for (let j = 0; j < parents.length; j++) {							
-							filter_value["OR"].push({
-								'field' : 'section_id',
-								'value' : `${parents[j]}`,
-								'op' 	: '='
-							})
-						}
-					}
+		// 			common.create_dom_element({
+		// 				element_type	: 'option',
+		// 				value 			: JSON.stringify(filter_value),
+		// 				text_content 	: item.name,
+		// 				parent 			: fragment
+		// 			})		
+		// 		}
 
-				// self
-					filter_value["OR"].push({
-						'field' : 'section_id',
-						'value' : `${item.section_id}`,
-						'op' 	: '='
-					})
+		// 	// select node
+		// 		const select = common.create_dom_element({
+		// 			  element_type 	: "select",
+		// 			  class_name 	: "select_" + term_table
+		// 		})
+		// 		select.addEventListener("change", function(e){
 
-				// childrens
-					filter_value["OR"].push({
-						'field' : 'parents',
-						'value' : `'%"${item.section_id}"%'`,
-						'op' 	: 'LIKE'
-					})
+		// 			const value = e.target.value
+		// 			if (!value) return false
 
-				common.create_dom_element({
-					element_type	: 'option',
-					value 			: JSON.stringify(filter_value),
-					text_content 	: item.name,
-					parent 			: fragment
-				})		
-			}
+		// 			// fix selected term_table (start point)
+		// 				self.selected_term_table = term_table
 
-		// select node
-			const select = common.create_dom_element({
-				  element_type 	: "select",
-				  class_name 	: "select_" + term_table
-			})
-			select.addEventListener("change", function(e){
+		// 			// clean container and add_spinner
+		// 				const container = document.querySelector("#rows_list")
+		// 				while (container.hasChildNodes()) {
+		// 					container.removeChild(container.lastChild);
+		// 				}					
+		// 				page.add_spinner(container)
 
-				const value = e.target.value
-				if (!value) return false
+		// 			// search
+		// 				const filter = JSON.parse(value)
 
-				// fix selected term_table (start point)
-					self.selected_term_table = term_table
+		// 				// fix global_filter value (!)						
+		// 					self.filters[filter_id] = filter
+		// 						console.log("self.filters:",self.filters);
 
-				// clean container and add_spinner
-					const container = document.querySelector("#rows_list")
-					while (container.hasChildNodes()) {
-						container.removeChild(container.lastChild);
-					}					
-					page.add_spinner(container)
+		// 				const search_promise = self.search_rows({						
+		// 					limit	: 0
+		// 				})
 
-				// search
-					// const search_promise = self.search_rows({
-					// 	filter : {
-					// 		"OR": [
-					// 			{
-					// 				'field' : 'term_data',
-					// 				'value' : `'["${value}"]'`,
-					// 				'op' 	: '='
-					// 			},
-					// 			{
-					// 				'field' : 'parents',
-					// 				'value' : `'%"${value}"%'`,
-					// 				'op' 	: 'LIKE'
-					// 			}
-					// 		]
-					// 	},
-					// 	limit : 0
-					// })
-					const filter = JSON.parse(value)
-					const search_promise = self.search_rows({
-						filter	: filter,
-						limit	: 0
-					})
-
-				// draw response rows
-					search_promise.then(function(response){
-						setTimeout(()=>{
-							self.draw_rows({
-								target  : 'rows_list',
-								ar_rows : response.result
-							})
-						},200)
-					})
-			})
-			select.appendChild(fragment)
+		// 			// draw response rows
+		// 				search_promise.then(function(response){
+		// 					setTimeout(()=>{
+		// 						self.draw_rows({
+		// 							target  : 'rows_list',
+		// 							ar_rows : response.result
+		// 						})
+		// 					}, self.draw_delay)
+		// 				})
+		// 		})
+		// 		select.appendChild(fragment)
 
 
-		return select
-	},//end draw_select
-
+		// 	return select
+		// },//end draw_select
 
 
 	/**
-	* SET_VALUE
+	* ADD_SELECTED_VALUE
 	*/
-	set_value : function(object, value, real_value) {
-
-		const container = document.getElementById(object.id + "_values")
+	add_selected_value : function(form_item, label, value) {
+		
+		const container = form_item.node_values
 
 		// Check if already exists
 			const inputs 		= container.querySelectorAll(".input_values")
 			const inputs_length = inputs.length
-			for (var i = inputs_length - 1; i >= 0; i--) {
+			for (let i = inputs_length - 1; i >= 0; i--) {
 				if (value===inputs[i].value) return false;
 			}
 
@@ -234,38 +600,60 @@ var catalog =  {
 				element_type 	: "div",
 				class_name   	: "line_value",
 				parent 			: container
-				})
-				// <i class="fal fa-trash-alt"></i>
-				var trash = common.create_dom_element({
-					element_type 	: "i",
-					//class_name   	: "far fa-trash-alt", // awesome font 5
-					class_name   	: "icon fa-trash", //awesome font 4
-					parent 			: line
-					})
-					trash.addEventListener("click",function(){
-						this.parentNode.remove()
-					})
+			})
 
-				// if (object.dataset.q_name.indexOf(' AS ')!==-1) {
-				// 	const ar_parts = object.dataset.q_name.split(' AS ')
-				// 	// overwrite q_name fro input value
-				// 	object.dataset.q_name = ar_parts[1]
-				// 	// use real_value
-				// 	object.dataset.real_value = real_value[0]
-				// }
+		// trash. <i class="fal fa-trash-alt"></i>
+			const trash = common.create_dom_element({
+				element_type 	: "i",
+				class_name   	: "icon fa-trash", //awesome font 4
+				parent 			: line
+			})
+			trash.addEventListener("click",function(){
 
-				var input = common.create_dom_element({
-					element_type 	: "input",
-					class_name   	: "input_values",
-					parent 			: line,
-					data_set 		: object.dataset // Inherit dataset
-				})
-				input.value = value
+				// remove from form_item q_selected
+				const index = form_item.q_selected.indexOf(value);
+				if (index > -1) {
+					// remove array element
+					form_item.q_selected.splice(index, 1);
+					
+					// remove dom node
+					this.parentNode.remove()
+
+					// debug
+					if(SHOW_DEBUG===true) {
+						console.log("form_item.q_selected removed value:",value,form_item.q_selected);
+					}
+				}			
+			})
+
+		// label 
+			const value_label = common.create_dom_element({
+				element_type 	: "span",
+				class_name   	: "value_label",
+				text_content 	: label,
+				parent 			: line
+			})
+
+		// input 
+			const input = common.create_dom_element({
+				element_type 	: "input",
+				class_name   	: "input_values",
+				parent 			: line
+			})
+			input.value = value
+
+		// add to form_item
+			form_item.q_selected.push(value)
+
+		// clean values
+			form_item.node_input.value 	= ""
+			form_item.q 				= ""
+
 
 		return true
-	},//end set_value
+	},//end add_selected_value
 
-
+	
 
 	/**
 	* ACTIVATE_AUTOCOMPLETE
@@ -274,71 +662,157 @@ var catalog =  {
 
 		const self = this
 
-		// const cache = {}
+		// define current_form_item in this scope 
+		// to allow acces from different places
+		let current_form_item
+
+		const cache = {}
 		$(element).autocomplete({
 			delay 	 : 150,
 			minLength: 0,
 			source 	 : function( request, response ) {
+				
+				const term = request.term
+				
+				// fix selected form_item (needed to access from select)
+				current_form_item = self.form_items[element.id]
 
-				const term  = request.term;
+				const field		= current_form_item.q_name // Like 'mint'
+				const q_column	= current_form_item.q_column // Like 'term'
 
-				// // Cache
-				// 	if ( term in cache ) {
-				// 		response( cache[ term ] );
-				// 		return;
-				// 	}
+				// filter build 
+					const op 	 = "AND"
+					const filter = {}
+						  filter[op] = []
 
-				const trigger_url  = self.trigger_url
-				const trigger_vars = {
-						q				: term,
-						mode			: element.dataset.mode,
-						q_name  		: element.dataset.q_name || null,
-						q_search  		: element.dataset.q_search || element.dataset.q_name,
-						q_table 		: element.dataset.q_table || null,
-						dd_relations 	: element.dataset.dd_relations || null
-				}
-				if(SHOW_DEBUG===true) {
-					console.log("[catalog.activate_autocomplete] trigger_vars:", trigger_vars);
-				}
+					const value_parsed = (current_form_item.eq_in || '') + term + (current_form_item.eq_out || '%')
 
-				common.get_json_data(trigger_url, trigger_vars).then(function(response_data) {
-					// if(SHOW_DEBUG===true) {
-						console.log("[catalog.activate_autocomplete] response_data",response_data)
-					// }
-
-					const result = (element.id==="fecha_publicacion")
-						? response_data.result.map( item => {
-							item.label = item.label.substring(0, 4)
-							return item
+					// main column search item
+						filter[op].push({
+							field	: q_column,
+							value	: `'${value_parsed}'`,
+							op		: current_form_item.eq, // 'LIKE',
+							group 	: q_column
 						})
-						: response_data.result
 
-					response(result)
+					// optional second column 'term_table' search item. Add column name filter
+						// const q_table	= current_form_item.q_table
+						// if (q_table!=="any") {
+						// 	filter[op].push({
+						// 		field	: "term_table",
+						// 		value	: `'${q_table}'`,
+						// 		op		: '='
+						// 	})
+						// }
 
-				}, function(error) {
-					console.error("[activate_autocomplete] Failed get_json!", error);
-				});
+					// cross filter. Add other selected values to the filter to create a interactive filter					
+						const c_op 	 = "OR"
+						const c_filter = {}
+							  c_filter[c_op] = []
+						for (let [id, form_item] of Object.entries(self.form_items)) {
+							if (form_item.id===current_form_item.id) continue; // skip self
+
+							// q . Value from input
+								if (form_item.q.length>0) {
+
+									const value = form_item.q
+
+									c_filter[c_op].push({
+										field	: form_item.q_column,
+										value	: `'%${value}%'`,
+										op		: "LIKE"
+									})
+								}
+
+							// q_selected. Values from user already selected values
+								if (form_item.q_selected.length>0) {
+									for (let k = 0; k < form_item.q_selected.length; k++) {
+										
+										const value = form_item.q_selected[k]
+										
+										c_filter[c_op].push({
+											field	: form_item.q_column,
+											value	: (form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
+											op		: (form_item.is_term===true) ? "LIKE" : "="
+										})
+									}
+								}
+						}
+						if (c_filter[c_op].length>0) {
+							filter[op].push(c_filter)
+						}
+
+					// cache . Use only when there are no cross filters
+						if (filter[op].length===1) {
+							if ( term in cache ) {
+								if(SHOW_DEBUG===true) {
+									console.warn("Returning values from cache:", cache[term])
+								}
+								response( cache[ term ] );
+								return;
+							}
+						}
+					
+					// search
+						const search = self.search_rows({
+							filter		: filter,
+							ar_fields	: [q_column + " AS name"],
+							order 		: q_column + " ASC" // "term ASC"
+						})
+
+					// return results in standard format (label, value)
+						search.then((api_response) => {							
+								
+							const ar_result = []
+							const len  		= api_response.result.length
+							for (let i = 0; i < len; i++) {
+								
+								const item = api_response.result[i]
+								
+								const current_ar_value = (item.name.indexOf("[")===0)
+									? JSON.parse(item.name)
+									: [item.name]
+																
+								for (let j = 0; j < current_ar_value.length; j++) {
+								
+									const item_name = current_ar_value[j]
+									// const item_name = item.name.replace(/[\["|"\]]/g, '')
+
+									const found = ar_result.find(el => el.value===item_name)
+									if (!found) {
+										ar_result.push({
+											label : item_name, // item_name,
+											value : item_name // item.name
+										})
+									}
+								}																
+							}
+
+							// cache . Use only when there are no cross filters
+								if (filter[op].length===1) {
+									cache[ term ] = ar_result
+								}
+							
+							// debug
+								if(SHOW_DEBUG===true) {
+									console.log("--- autocomplete api_response:",api_response);
+									console.log("autocomplete ar_result:",ar_result);
+								}
+
+							response(ar_result)
+						})				
 			},
 			// When a option is selected in list
 			select: function( event, ui ) {
 				// prevent set selected value to autocomplete input
-				event.preventDefault();
+				event.preventDefault();		
 
-				/* MULTI
-				  var terms = split( this.value );
-		          // remove the current input
-		          terms.pop();
-		          // add the selected item
-		          terms.push( ui.item.label );
-		          // add placeholder to get the comma-and-space at the end
-		          terms.push( "" );
-		          this.value = terms.join( ", " );
-		          return false; */
-				self.set_value(this, ui.item.label, ui.item.value)
+				// self.set_value(this, ui.item.label, ui.item.value)
+				self.add_selected_value(current_form_item, ui.item.label, ui.item.value)				
+				
+				// reset input value
 				this.value = ''
-				//this.value = ui.item.label
 
-				//$(this).blur()
 				return false;
 			},
 			// When a option is focus in list
@@ -346,9 +820,9 @@ var catalog =  {
 				// prevent value inserted on focus
 				return false;
 			},
-	        close: function( event, ui ) {
+			close: function( event, ui ) {
 
-	        },
+			},
 			change: function( event, ui ) {
 
 			},
@@ -359,12 +833,12 @@ var catalog =  {
 		.on("keydown", function( event ) {
 			//return false
 			//console.log(event)
-			if ( event.keyCode === $.ui.keyCode.ENTER  ) {
+			if ( event.keyCode===$.ui.keyCode.ENTER  ) {
 				// prevent set selected value to autocomplete input
 				//event.preventDefault();
 				//var term = $(this).val();
 				$(this).autocomplete('close')
-			}//end if ( event.keyCode === $.ui.keyCode.ENTER  )
+			}//end if ( event.keyCode===$.ui.keyCode.ENTER  )
 		})// bind
 		.focus(function() {
 		    $(this).autocomplete('search', null)
@@ -376,107 +850,231 @@ var catalog =  {
 
 		return true
 	},//end activate_autocomplete
-
+	
 
 
 	/**
-	* SEARCH
+	* FORM_SUBMIT
+	* Form submit launch search
 	*/
-	search : function(form_obj, event) {
-		if (event) event.preventDefault(); // Prevent submit and navigate to url
-		//console.log("form_obj:",form_obj,event);
-
+	form_submit : function(form_obj) {
+		
 		const self = this
 
-		// ar_query
-			var ar_query 		= []
-			var ar_form_inputs  = form_obj.querySelectorAll("input.input_values, input.form-control")
-			var ar_input_len 	= ar_form_inputs.length
-			for (let i = 0; i < ar_input_len; i++) {
+		const form_items 		= self.form_items
 
-				const input = ar_form_inputs[i]
+			console.log("form_items:",form_items);
+		
+		// ar_is_term
+			const ar_is_term = []
+			for (let [id, form_item] of Object.entries(form_items)) {
+				if (form_item.is_term===true) ar_is_term.push(form_item)
+			}	
 
-				if (input.value.length>0) {
+		const ar_query_elements = []	
+		for (let [id, form_item] of Object.entries(form_items)) {
 
-						// console.log("input:",input);
+				console.log("form_item:",form_item);
+			
+			const current_group = []
 
-					// value
-						// const current_value = typeof input.dataset.real_value!=="undefined"
-						// 	? input.dataset.real_value
-						// 	: input.value
-						let current_value = input.value
+			const group_op = (form_item.is_term===true) ? "OR" : "AND"
+			const group = {}
+				  group[group_op] = []
 
-					// column
-						let current_column = input.dataset.q_name
-						if (input.dataset.q_name.indexOf(' AS ')!==-1) {
-							const ar_parts = input.dataset.q_name.split(' AS ')
-							// overwrite current_column
-							current_column = ar_parts[1]
-							if (current_column==="authors") {
-								const regex = /\,/gi;
-								current_value = current_value.replace(regex, '');
-							}
+			// q value
+				if (form_item.q.length>0) {					
+
+					const c_group_op = 'AND'
+					const c_group = {}
+						  c_group[c_group_op] = []
+
+					// q element
+						const element = {
+							field	: form_item.q_column,
+							value	: `'%${form_item.q}%'`,
+							op		: form_item.eq // default is 'LIKE'
 						}
 
-					const current_obj = {
-						name 		: current_column, // input.dataset.q_name, // input.name,
-						value 		: current_value,  // input.value
-						search_mode : input.dataset.search,
-						table 		: input.dataset.q_table
-					}
+						c_group[c_group_op].push(element)
 
-					ar_query.push(current_obj)
+					// q_table element
+						// if (form_item.q_table && form_item.q_table!=="any") {
+
+						// 	const element_table = {
+						// 		field	: form_item.q_table_name,
+						// 		value	: `'${form_item.q_table}'`,
+						// 		op		: '='
+						// 	}
+
+						// 	c_group[c_group_op].push(element_table)
+						// }
+
+					// add basic group
+						group[group_op].push(c_group)
+					
+					// is_term
+						// const t_group_op = 'AND'
+						// const t_group = {}
+						// 	  t_group[t_group_op] = []
+
+						// if (form_item.is_term===true) {
+							
+						// 	const element = {
+						// 		field	: 'parents_text',
+						// 		value	: `'%${form_item.q}%'`,
+						// 		op		: 'LIKE',
+						// 		debug_name 	: form_item.name
+						// 	}
+						// 	t_group[t_group_op].push(element)
+						
+						// }else{
+
+						// 	for (let g = 0; g < ar_is_term.length; g++) {
+						// 		const is_term_item = ar_is_term[g]
+
+						// 		if (is_term_item.q.length<1) continue
+								
+						// 		const element = {
+						// 			field	: 'parents_text',
+						// 			value	: `'%${is_term_item.q}%'`,
+						// 			op		: 'LIKE',
+						// 			debug_name 	: form_item.name
+						// 		}
+						// 		t_group[t_group_op].push(element)
+						// 	}
+						// }
+						
+						// if (t_group[t_group_op].length>0) {
+						// 	group[group_op].push(t_group)
+						// }										
 				}
-			}
+
+			// q_selected values
+				if (form_item.q_selected.length>0) {
+
+					for (let j = 0; j < form_item.q_selected.length; j++) {
+						
+						const value = form_item.q_selected[j]
+
+						const c_group_op = "AND"
+						const c_group = {}
+							  c_group[c_group_op] = []
+
+						// elemet
+						const element = {
+							field	: form_item.q_column,
+							value	: (form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
+							op		: (form_item.is_term===true) ? "LIKE" : "="
+						}
+						c_group[c_group_op].push(element)
+
+						// q_table element
+							// if (form_item.q_table && form_item.q_table!=="any") {
+
+							// 	const element_table = {
+							// 		field	: form_item.q_table_name,
+							// 		value	: `'${form_item.q_table}'`,
+							// 		op		: '='
+							// 	}
+
+							// 	c_group[c_group_op].push(element_table)
+							// }
+							
+						group[group_op].push(c_group)
+					}
+				}
+
+			if (group[group_op].length>0) {
+				ar_query_elements.push(group)
+			}			
+		}
+
+		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("search.ar_query:", ar_query);
+				// console.log("self.form_items:",self.form_items);
+				// console.log("ar_query_elements:",ar_query_elements);
+			}
+
+		// empty form case
+			if (ar_query_elements.length<1) {
+				// self.form_items.mint.node_input.focus()
+				return false;
 			}
 
 		// operators value
 			const operators_value = form_obj.querySelector('input[name="operators"]:checked').value;
+				// console.log("operators_value:",operators_value);
+			
+			const filter = {}
+				  filter[operators_value] = ar_query_elements
+			
+		// search rows exec against API
+			const js_promise = self.search_rows({
+				filter			: filter,
+				process_result	: {
+					fn 		: 'process_result::add_parents_and_children_recursive',
+					columns : [{name : "parents"}]
+				}
+			}).then((response)=>{
+
+				// if(SHOW_DEBUG===true) {
+					console.log("--- form_submit response:",response)
+				// }
+	
+				// clean container and add_spinner
+					const container = document.querySelector("#rows_list")
+					while (container.hasChildNodes()) {
+						container.removeChild(container.lastChild);
+					}
+					page.add_spinner(container)
+
+				// draw
+					setTimeout(()=>{
+						self.draw_rows({
+							target  : 'rows_list',
+							ar_rows : response.result
+						})
+					},  self.draw_delay)
+
+				// scrool to head result
+					if (response.result.length>0) {
+						const div_result = document.querySelector(".result")
+						if (div_result) {
+							div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+						}
+					}
+			})		
 
 
-		// search_rows. exec query (promise)
-			const response = self.search_rows({
-				ar_query : ar_query,
-				operator : operators_value
-			}).then(function(response){
-				self.draw_rows({
-					target  : 'rows_list',
-					ar_rows : response.result
-				})
-			})
-
-		// scrool to head result
-			const div_result = document.querySelector(".result")
-			if (div_result) {
-				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-			}
-
-
-		return response
-	},//end search
+		return js_promise
+	},//end form_submit
 
 
 
 	/**
 	* SEARCH_ROWS
-	* Call to trigger and load json data results of search. On complete load, draw list items
+	* Call to API and load json data results of search
 	*/
 	search_rows : function(options) {
 
 		const self = this
 
-		// search options store
-			self.search_options = options
+		// sort vars
+			const filter		= options.filter || null
+			const ar_fields 	= options.ar_fields || ["*"]
+			const order 		= options.order || "norder ASC"
+			const lang 			= page_globals.WEB_CURRENT_LANG_CODE
+			const process_result= options.process_result || null
+		
+		// parse_sql_filter
+			const group = []
+			const parse_sql_filter = function(filter){
 
-		// filter parse
-			const sql_filter = (function(){
-
-				if (options.filter) {
-
-					const op		= Object.keys(options.filter)[0]
-					const ar_query	= options.filter[op]
+				if (filter) {
+					
+					const op		= Object.keys(filter)[0]
+					const ar_query	= filter[op]
 					
 					const ar_filter = []
 					const ar_query_length = ar_query.length
@@ -484,101 +1082,62 @@ var catalog =  {
 						
 						const item = ar_query[i]
 
-						const filter_line = "`"+item.field+"`" +" "+ item.op +" "+ item.value
+						const item_op = Object.keys(item)[0]
+						if(item_op==="AND" || item_op==="OR") {
+
+							const current_filter_line = "(" + parse_sql_filter(item) + ")"
+							ar_filter.push(current_filter_line)
+							continue;
+						}
+
+						const filter_line = (item.field.indexOf("AS")!==-1)
+							? "" +item.field+""  +" "+ item.op +" "+ item.value
+							: "`"+item.field+"`" +" "+ item.op +" "+ item.value
 
 						ar_filter.push(filter_line)
+
+						// group
+							if (item.group) {
+								group.push(item.group)
+							}
 					}
 					return ar_filter.join(" "+op+" ")
 				}
 
 				return null
-			})()			
+			}
 
+		// parsed_filters
+			const sql_filter = parse_sql_filter(filter)
+
+		// debug
+			if(SHOW_DEBUG===true) {
+				console.log("--- search_rows parsed sql_filter:")
+				console.log(sql_filter)
+			}	
+		
 		const js_promise = page.request({
 			body : {
-				dedalo_get 	: 'records',
-				table 		: 'catalog',
-				ar_fields 	: ['*'],
-				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
-				sql_filter	: sql_filter,
-				limit 		: 0,
-				count 		: false,
-				order 		: 'norder ASC'				
+				dedalo_get		: 'records',
+				table			: 'catalog',
+				ar_fields		: ar_fields,
+				lang			: lang,
+				sql_filter		: sql_filter,
+				limit			: 0,
+				group			: (group.length>0) ? group.join(",") : null,
+				count			: false,
+				order			: order,
+				process_result	: process_result
 			}
 		})
 
 		js_promise.then((response)=>{
-			console.log("API response:",response);
+			// console.log("--- search_rows API response:",response);
 		})
 		
 
 		return js_promise
 	},//end search_rows
-
-
-
-	/**
-	* SEARCH_ROWS
-	* Call to trigger and load json data results of search. On complete load, draw list items
-	*/
-	search_rows_SERVER : function(options) {
-
-		const self = this
-
-		// search options store
-			self.search_options = options
-
-		// const container = document.getElementById("rows_list")
-			  // container.style.opacity = "0.4"
-
-		const trigger_url  = self.trigger_url
-		const trigger_vars = {
-			mode 	 : "search_rows",
-			ar_query : typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit 	 : options.limit || 10,
-			// pagination
-			offset 	 : options.offset || 0,
-			// count 	 : options.count || false,
-			total 	 : options.total || false,
-			order 	 : options.order || 'section_id ASC',
-			operator : options.operator || 'OR'
-		}
-
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("[catalog.search_rows] trigger_vars:",trigger_vars);
-			}
-
-		// Http request directly in javascript to the API is possible too..
-		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
-				if(SHOW_DEBUG===true) {
-					console.log("[catalog.search_rows] get_json_data response:", response);
-				}
-
-				// container.style.opacity = "1"
-
-				if (!response) {
-					// Error on load data from trigger
-					console.warn("[catalog.search_rows] Error. Received response data is null");
-					return false
-
-				}else{
-					// Success
-
-					// fix totals
-						self.search_options.total 	= (response.result.total && response.result.total>0)
-							? response.result.total // new total
-							: self.search_options.total // previous calculated total
-						self.search_options.limit 	= trigger_vars.limit
-						self.search_options.offset 	= trigger_vars.offset
-
-					return response.result
-				}
-		})
-
-		return js_promise
-	},//end search_rows
-
 
 
 
@@ -600,48 +1159,65 @@ var catalog =  {
 
 		// container select and clean container div
 			const container = document.getElementById(target)
-			while (container.hasChildNodes()) {
-				container.removeChild(container.lastChild);
-			}
+			// while (container.hasChildNodes()) {
+			// 	container.removeChild(container.lastChild);
+			// }
 
 		// add_spinner
-			// page.add_spinner(container)			
+			// page.add_spinner(container)
 
-		const fragment = new DocumentFragment();
+		// const render_nodes = async () => {
+		async function render_nodes() {
 
-		const ar_mints = ar_rows.filter(item => item.term_table === 'mints')
+			const fragment = new DocumentFragment();
 
-		for (let i = 0; i < ar_mints.length; i++) {
-			const parent = JSON.parse(ar_mints[i].parent)[0]
-			const mint_poarent 	= ar_rows.find(item => item.section_id === parent)
-			const render_mints = self.get_children(ar_rows, mint_poarent, fragment)
-		}
-		
+			const ar_mints = ar_rows.filter(item => item.term_table==='mints')
 
-		// sort rows
-			// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
-			// ar_rows.sort( (a,b) => {
-			// 		let order_a = a.autoria +" "+ a.fecha_publicacion
-			// 		let order_b = b.autoria +" "+ b.fecha_publicacion
-			// 		//console.log("order_a",order_a, order_b);
-			// 		//console.log(collator.compare(order_a , order_b));
-			// 	return collator.compare(order_a , order_b)
-			// });
-
-		// set row_fields items var
-			row_fields.ar_rows = ar_rows
-
-		// rows build
-			for (let i = 0; i < ar_rows_length; i++) {
-
+			const ar_parent = []
+			for (let i = 0; i < ar_mints.length; i++) {
+				const parent = JSON.parse(ar_mints[i].parent)[0]
+				const mint_parent 	= ar_rows.find(item => item.section_id===parent)
+				if(!mint_parent){
+						console.error("mint don't have public parent:",ar_mints[i]);
+					continue
+				}
+				// check if the parent is inside the ar_aprents, if not push inside else nothing
+				const unique_parent 	= ar_parent.find(item => item.section_id===parent)
+				if(typeof unique_parent === 'undefined'){
+					ar_parent.push(mint_parent)
+				}
 				
-			}//end for (var i = 0; i < len; i++)
+			}
+			// create the nodes with the unique parents: ar_parents
+			for (let i = 0; i < ar_parent.length; i++) {
+				const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
+			}		
+			
+			
+			// sort rows
+				// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+				// ar_rows.sort( (a,b) => {
+				// 		let order_a = a.autoria +" "+ a.fecha_publicacion
+				// 		let order_b = b.autoria +" "+ b.fecha_publicacion
+				// 		//console.log("order_a",order_a, order_b);
+				// 		//console.log(collator.compare(order_a , order_b));
+				// 	return collator.compare(order_a , order_b)
+				// });
 
-		
+			return fragment
+		}
 
+		render_nodes().then(fragment => {
 
-		// bulk fragment nodes to container
-			container.appendChild(fragment)
+			// setTimeout(()=>{
+				while (container.hasChildNodes()) {
+					container.removeChild(container.lastChild);
+				}
+
+				// bulk fragment nodes to container
+				container.appendChild(fragment)
+			// },800)
+		})
 
 
 		return true
@@ -652,7 +1228,7 @@ var catalog =  {
 
 		const self = this
 
-		const children = JSON.parse(parent.children)
+		const children =  JSON.parse(parent.children)
 
 		// wrapper
 			const catalog_row_wrapper = common.create_dom_element({
@@ -672,7 +1248,7 @@ var catalog =  {
 
 		const self = this
 
-		const row_object 	= ar_rows.find(item => item.section_id === section_id)
+		const row_object 	= ar_rows.find(item => item.section_id===section_id)
 		if (row_object) {
 			const row_node 	= self.render_rows(row_object)
 			parent_node.appendChild( row_node )
@@ -699,82 +1275,11 @@ var catalog =  {
 			const node = row_fields.draw_item(row_object)
 
 		return node
-	},
+	}
 
 
-	/**
-	* DRAW_PAGINATOR
-	* Return a DocumentFragment with all pagination nodes
-	*/
-	draw_paginator : function(options) {
-	
-		const self = this
 
-		// short vars
-			const total 	= options.total
-			const limit 	= options.limit
-			const offset 	= options.offset
-			const count 	= options.count
-			const n_nodes 	= 10
-	
-		const pagination_fragment = new DocumentFragment();
-		
-		// paginator (nav bar)
-			const paginator_node = paginator.get_full_paginator({
-				total  	: total,
-				limit  	: limit,
-				offset 	: offset,
-				n_nodes : n_nodes,
-				callback: (item) => {
-
-					// update search_options
-						self.search_options.offset = item.offset
-						self.search_options.total  = item.total
-
-					// search (returns promise)
-						const search = self.search_rows(self.search_options)
-
-					// scroll page to navigato header
-						search.then(function(response){
-							
-							// scroll to result
-								const div_result = document.querySelector(".result")
-								if (div_result) {
-									div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-								}
-
-							// draw records
-								self.draw_rows({
-									target  : 'rows_list',
-									ar_rows : response.result
-								})
-						})					
-
-					return search
-				}
-			})
-			pagination_fragment.appendChild(paginator_node)
-		
-		// spacer
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "spacer",
-				parent 			: pagination_fragment
-			})
-		
-		// totals (info about showed and total records)
-			const totals_node = paginator.get_totals_node({
-				total  	: total,
-				limit  	: limit,
-				offset 	: offset,
-				count 	: count
-			})
-			pagination_fragment.appendChild(totals_node)
-
-
-		return pagination_fragment
-	},//end draw_paginator
-
+}//end catalog
 
 
 }//end catalog

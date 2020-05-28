@@ -1282,6 +1282,3 @@ var catalog =  {
 }//end catalog
 
 
-}//end catalog
-
-

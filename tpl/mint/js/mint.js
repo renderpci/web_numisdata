@@ -208,10 +208,10 @@ var mint =  {
 
 				const history = row_object.history
 				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "info_value",
-					text_content 	: history,
-					parent 			: line
+					element_type	: "div",
+					class_name		: "info_value",
+					inner_html		: history,
+					parent			: line
 				})
 			}
 

@@ -36,14 +36,15 @@ var row_fields = {
 		// name
 		if (row_object.name && row_object.name.length>0) {
 
-			const name = row_object.name
-			common.create_dom_element({
+			const name		= row_object.name
+			const link_mint	= common.create_dom_element({
 				element_type 	: "a",
 				class_name 		: "info_value",
 				text_content 	: name,
 				href 			: "./mint/" + row_object.section_id,
 				parent 			: line
 			})
+			link_mint.setAttribute('target', '_blank');
 
 		}else{
 

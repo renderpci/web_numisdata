@@ -1192,8 +1192,7 @@ var catalog =  {
 			for (let i = 0; i < ar_parent.length; i++) {
 				const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
 			}		
-			
-			
+						
 			// sort rows
 				// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
 				// ar_rows.sort( (a,b) => {

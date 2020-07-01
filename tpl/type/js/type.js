@@ -1,3 +1,7 @@
+/*global get_label, page_globals, SHOW_DEBUG, DEDALO_CORE_URL*/
+/*eslint no-undef: "error"*/
+
+
 "use strict";
 
 
@@ -314,18 +318,18 @@ var type =  {
 			if (row_object.design_obverse && row_object.design_obverse.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.design_obverse || "Design obverse",
-					parent 			: line
+					element_type	: "label",
+					class_name		: "",
+					inner_html		: tstring.design_obverse || "Design obverse",
+					parent			: line
 				})
 
 				const design_obverse = common.clean_gaps(row_object.design_obverse) // , splitter=" | ", joinner=", "
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: design_obverse,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: design_obverse,
+					parent			: line
 				})
 			}
 
@@ -333,18 +337,18 @@ var type =  {
 			if (row_object.legend_obverse && row_object.legend_obverse.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.legend_obverse || "Legend obverse",
-					parent 			: line
+					element_type	: "label",
+					class_name		: "",
+					inner_html		: tstring.legend_obverse || "Legend obverse",
+					parent			: line
 				})
 
 				const legend_obverse = common.clean_gaps(row_object.legend_obverse) // , splitter=" | ", joinner=", "
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: legend_obverse,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: legend_obverse,
+					parent			: line
 				})
 			}
 
@@ -354,7 +358,7 @@ var type =  {
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "",
-					text_content 	: tstring.simbol_obverse || "Simbol obverse",
+					inner_html 	: tstring.simbol_obverse || "Simbol obverse",
 					parent 			: line
 				})
 
@@ -362,7 +366,7 @@ var type =  {
 				common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value",
-					text_content 	: simbol_obverse,
+					inner_html 	: simbol_obverse,
 					parent 			: line
 				})
 			}
@@ -371,10 +375,10 @@ var type =  {
 			if (typeof row_object.coins[0]!=="undefined" && typeof row_object.coins[0].images_obverse[0]!=="undefined") {
 
 				common.create_dom_element({
-					element_type 	: "img",
-					class_name 		: "image_reverse",
-					src 			: row_object.coins[0].images_obverse[0].image,
-					parent 			: line
+					element_type	: "img",
+					class_name		: "image_reverse",
+					src				: row_object.coins[0].images_obverse[0].image,
+					parent			: line
 				})
 			}
 
@@ -382,18 +386,18 @@ var type =  {
 			if (row_object.design_reverse && row_object.design_reverse.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.design_reverse || "Design reverse",
-					parent 			: line
+					element_type	: "label",
+					class_name		: "",
+					inner_html		: tstring.design_reverse || "Design reverse",
+					parent			: line
 				})
 
 				const design_reverse = common.clean_gaps(row_object.design_reverse) // , splitter=" | ", joinner=", "
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: design_reverse,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: design_reverse,
+					parent			: line
 				})
 			}
 
@@ -401,18 +405,18 @@ var type =  {
 			if (row_object.legend_reverse && row_object.legend_reverse.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.legend_reverse || "Legend reverse",
-					parent 			: line
+					element_type	: "label",
+					class_name		: "",
+					inner_html		: tstring.legend_reverse || "Legend reverse",
+					parent			: line
 				})
 				
 				const legend_reverse = common.clean_gaps(row_object.legend_reverse) // , splitter=" | ", joinner=", "
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: legend_reverse,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: legend_reverse,
+					parent			: line
 				})
 			}
 
@@ -422,7 +426,7 @@ var type =  {
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "",
-					text_content 	: tstring.simbol_reverse || "Simbol reverse",
+					inner_html		: tstring.simbol_reverse || "Simbol reverse",
 					parent 			: line
 				})
 
@@ -430,7 +434,7 @@ var type =  {
 				common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value",
-					text_content 	: simbol_reverse,
+					inner_html		: simbol_reverse,
 					parent 			: line
 				})
 			}
@@ -441,7 +445,7 @@ var type =  {
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "",
-					text_content 	: tstring.equivalents || "Equivalents",
+					inner_html		: tstring.equivalents || "Equivalents",
 					parent 			: line
 				})
 
@@ -460,7 +464,7 @@ var type =  {
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "",
-					text_content 	: tstring.bibliography || "Bibliography",
+					inner_html		: tstring.bibliography || "Bibliography",
 					parent 			: line
 				})
 

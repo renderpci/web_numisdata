@@ -96,7 +96,7 @@ var row_fields = {
 						})	
 
 
-					// term
+					// term						
 						self.node_factory(item, "term", type_info, "span", null)
 
 					// conditionals
@@ -161,6 +161,12 @@ var row_fields = {
 							? parseFloat(item['ref_type_averages_diameter'].replace(',', '.'))
 							: 15
 
+
+						const coins_images_container = common.create_dom_element({
+							  element_type 	: "div",
+							  class_name 	: "coins_images_container",
+							  parent 		: type_container,
+						})
 
 						const coins_images = common.create_dom_element({
 							  element_type 	: "div",
@@ -237,7 +243,7 @@ var row_fields = {
 	* @return bool
 	*/
 	node_factory : function(item, name, parent, nodetype, class_name) {
-
+	// item, "term", type_info, "span", null
 		if (item[name] && item[name].length>0) {
 
 			const current_node_type = nodetype || "span"
@@ -267,6 +273,18 @@ var row_fields = {
 					current_value = item[name].replace(/<br>/g,' - ')
 				break;
 
+			case "term":
+					const a_term = common.create_dom_element({
+					  element_type 	: "a",
+					  class_name : "a_term",
+					  href:'./type/'+ JSON.parse(item.term_data)[0]  ,
+					 
+					  inner_html 	 : item[name]
+				})
+					a_term.target = "_blank"
+				
+				current_value = a_term.outerHTML
+						break;
 
 				default:
 				current_value = item[name]

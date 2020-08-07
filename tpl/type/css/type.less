@@ -12,6 +12,9 @@
 }
 
 
+
+
+
 .result {
 
 	a.section_id {
@@ -23,46 +26,212 @@
 		// background-color: #fffc9f;
 	}
 
-	// mint row detail
-	#row_detail {
-		label {
-			margin: 0;
+	// .row_wrapper 
+	.row_wrapper {
+		// font-size: 1.15em;
+
+		.info_line {
+			&.inline {
+				display: inline-block;
+			}
+		}
+
+		.breadcrumb{
+			&.mints{
+				font-variant: small-caps;
+				font-size: 1.2em;
+			}
+		}
+		.identify_coin{
+			font-size: 0.8em;
+		}
+		
+
+		img {
+			vertical-align: middle;
+		}
+
+		.ref_coins_image_obverse, .ref_coins_image_reverse {
+			img {
+				max-height: 12em;
+				display: inline-block;
+				margin: 1em;
+				margin-left: 0;
+			}
+		}
+
+		.id_line {
+			font-size: 1.2em;
+		}
+		.catalogue {
+			font-weight: 600;
 		}
 		.info_value {
-
+			padding-right: 0.25em;
 		}
-		img {
-			max-height: 12em;
+
+		.design_obverse, .symbol_obverse, .legend_obverse, .design_reverse, .symbol_reverse, .legend_reverse{
+			text-indent : 2em;
+		}
+
+		.equivalents {
+			font-size: 0.8em;
+		}
+
+		.big_label {
+			font-size: 1em;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			font-weight: 400;
+			padding: 0;
+			margin-bottom: 1em;
+			margin-top: 1em;
+			background-color: #a33e1f;
+			color: #fff;
+			padding: 0.5em;
 			display: inline-block;
-			margin: 1em;
-			margin-left: 0;
+			border-radius: 0.25em;
+			padding-left: 1em;
+			padding-right: 1em;
 		}
-	}
+		.medium_label {
+			font-size: 1.3em;
+		}
+
+		.items_list {
+			.typology_coins {
+				display: flex;
+				flex-wrap: wrap;
+
+				.sorted_coin:last-child  {
+					border-right: none;
+				}
+				.sorted_coin:nth-child(3n){
+				// .sorted_coin:last-child(3n)  {
+					border-right: none;
+				}
+		
+				.sorted_coin {
+					flex: 0 0 32.6%;
+					margin-bottom: 0.5em;
+					margin-right: 0.5em;
+					font-size: 80%;
+					border-right: 1px solid rgb(227, 227, 227);
+					// background-color: #f6f6f6;
+					padding: 0.5em;
+					border-radius: 4px;
+
+					.images_wrapper {
+						margin-bottom: 0.5em;
+
+						img {
+							width: 50%;
+							height: 200px;
+							object-fit: contain;
+							object-position: center;
+							background-color: white;
+						}
+					}
+					
+				}
+			}
+		}
+
+		.find_coins {
+			display: flex;
+			flex-wrap: wrap;
+
+			.find_coin:last-child  {
+					border-bottom: none;
+				}
+		
+			.find_coin {
+				flex: 0 0 100%;
+				display: flex;
+				margin-bottom: 0.5em;
+				margin-right: 0.5em;
+				font-size: 75%;
+				border-bottom: 1px solid rgb(227, 227, 227);
+				padding: 0.5em;
+				border-radius: 4px;
+
+
+				.images_wrapper, .info_wrapper {
+					// margin-bottom: 0.5em;
+					flex: 0 0 50%;
+				}
+				.images_wrapper {
+					background-color: #ffffff;					
+
+					img {
+						width: 50%;
+						height: 200px;
+						object-fit: contain;
+						object-position: center;
+						background-color: white;
+					}
+				}
+				.info_wrapper {
+					// background-color: #f2f093;
+					padding: 0.5em;
+					padding-left: 1em;
+				}
+			}
+		}
+		
+		.bibliographic_reference {
+			margin-top: 1px;
+			color: #ab6438;
+			list-style: circle;
+			text-indent: -1em;
+			padding-left: 1em;
+		}
+
+		.map_container {
+			position: relative;
+			height: 60vh;
+			font-size: 1rem;
+			margin-bottom: 3em;
+			background-color: #585858;
+			border-top: 1px solid #dcdcdc;
+			border-bottom: 1px solid #dcdcdc;
+		}
+		
+	}//end row_wrapper
 	
+
 	// mint types list
-	#types {
-		// background-color: #3d3d3d;
-		padding: 1em;
-		// color: white;	
-		border-radius: 0.25em;
-		margin-top: 1em;
-		border-radius: 0.25em;
-		border: 1px solid #cccccc;
+		// #types {
+		// 	// background-color: #3d3d3d;
+		// 	padding: 1em;
+		// 	// color: white;	
+		// 	border-radius: 0.25em;
+		// 	margin-top: 1em;
+		// 	border-radius: 0.25em;
+		// 	border: 1px solid #cccccc;
 
-		>.type_row {
-			display: table;
-			width: 100%;
-			border-bottom: 1px solid #ccc;
-			padding-bottom: 0.5em;
-			margin-bottom: 0.5em;
+		// 	>.type_row {
+		// 		display: table;
+		// 		width: 100%;
+		// 		border-bottom: 1px solid #ccc;
+		// 		padding-bottom: 0.5em;
+		// 		margin-bottom: 0.5em;
 
-			>span {
-				padding-right: 1em;
-			}
-			.equivalents {
-				display: block;
-			}
-		}
-	}
-
+		// 		>span {
+		// 			padding-right: 1em;
+		// 		}
+		// 		.equivalents {
+		// 			display: block;
+		// 		}
+		// 	}
+		// }
 }
+
+
+
+
+
+
+
+
+

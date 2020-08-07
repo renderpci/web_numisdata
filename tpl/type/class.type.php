@@ -58,9 +58,9 @@ class type {
 			$ar_fields = ['*'];
 
 			$portals_custom = [
-				'coins' => 'coins',
-				'coins.images_obverse' => 'images',
-				'coins.images_reverse' => 'images'
+				'ref_coins_union' => 'coins',
+				// 'coins.images_obverse' => 'images',
+				// 'coins.images_reverse' => 'images'
 			];
 
 			$filter = 'section_id=' . (int)$section_id;		

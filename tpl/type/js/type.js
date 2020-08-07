@@ -1,7 +1,5 @@
 /*global get_label, page_globals, SHOW_DEBUG, DEDALO_CORE_URL*/
 /*eslint no-undef: "error"*/
-
-
 "use strict";
 
 
@@ -10,8 +8,14 @@ var type =  {
 
 
 
-	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/type/trigger.type.php",
-	search_options 	: {},
+	// trigger_url
+	trigger_url : page_globals.__WEB_TEMPLATE_WEB__ + "/type/trigger.type.php",
+	
+	// search_options
+	search_options : {},
+
+	// map. Instance of map_factory
+	map : null,
 
 
 
@@ -23,23 +27,46 @@ var type =  {
 
 		const self = this
 
+			console.log("options:",options);
+
 		// trigger render type with current options.section_id 
 			if (typeof options.section_id!=="undefined") {
 				
-				// search by section_id			
-					const search = self.get_row_data({
-						section_id : options.section_id
-					})
-					
-				// draw then
-					search.then(function(response){
+				// search by section_id	and draw on receive data		
+					self.get_row_data({
 						
-						// row draw
-							const type = response.result.find( el => el.id==='type')					
-							self.draw_row({
-								target  : document.getElementById('row_detail'),
-								ar_rows : type.result
-							})			
+						section_id : options.section_id
+					
+					}).then(function(response){
+							console.log("/// response:", response);
+							console.log("/// row:", response.result[0]);
+							
+
+						const container	= document.getElementById('row_detail')
+						// container. clean container div
+						while (container.hasChildNodes()) {
+							container.removeChild(container.lastChild);
+						}
+						
+						const ar_rows	= response.result
+						const type 		= ar_rows.find(item => item.id === 'type')
+						const catalog 	= ar_rows.find(item => item.id === 'catalog')
+
+						type.result[0].catalog = catalog.result[0]
+
+						const row = type.result[0]
+							console.log("row:",row);
+
+						// debug
+							// const pre = common.create_dom_element({
+							// 	element_type 	: "pre",
+							// 	inner_html 		: JSON.stringify(row, null, 2),
+							// 	parent 			: container
+							// })
+						
+						// row render
+							const row_wrapper = self.list_row_builder(row)
+							container.appendChild(row_wrapper)
 					})
 			}
 	
@@ -54,6 +81,8 @@ var type =  {
 			// 	}		
 			// }
 
+
+
 		return true
 	},//end set_up
 
@@ -61,47 +90,373 @@ var type =  {
 
 	/**
 	* GET_ROW_DATA
-	* 
+	* Call public API for row data based on current type section_id
 	*/
 	get_row_data : function(options) {
 
 		const self = this
 
-		const section_id = options.section_id
+		// options
+				const section_id	= options.section_id
+				const lang			= options.lang || page_globals.WEB_CURRENT_LANG_CODE
 
-		// trigger vars
-			const trigger_url  = self.trigger_url
-			const trigger_vars = {
-				mode 	 	: "get_row_data",
-				section_id 	: section_id
-			}
-	
-		// Http request directly in javascript to the API is possible too..
-		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
-				if(SHOW_DEBUG===true) {
-					console.log("[type.get_row_data] get_json_data response:", response);
+
+		// combined call
+			const ar_calls = []			
+			
+		// TYPE CALL
+				
+			ar_calls.push({
+				id		: "type",
+				options	: {
+					dedalo_get				: 'records',
+					table					: "types",
+					ar_fields				: ["*"],
+					lang					: lang,
+					sql_filter				: "section_id = " + parseInt(section_id),
+					resolve_portal			: true,
+					resolve_portals_custom	: {
+						"bibliography_data"				: "bibliographic_references",
+						// coins resolution
+						"ref_coins_union"				: "coins",
+						"coins.bibliography_data"		: "bibliographic_references",
+						// "coins.images_obverse"		: "images",
+						// findspots resolution
+						"ref_coins_findspots_data"		: "findspots",
+						"findspots.bibliography_data"	: "bibliographic_references",
+						// hoard resolution
+						"ref_coins_hoard_data"			: "hoards",
+						"hoards.bibliography_data"		: "bibliographic_references"				
+					},
+					// group				: (group.length>0) ? group.join(",") : null,
+					count					: false,
+					// limit				: null,
+					// offset				: 0,
+					// order				: null,
+					// process_result		: process_result
 				}
+			})
 
-				if (!response) {
-					// Error on load data from trigger
-					console.warn("[type.get_row_data] Error. Received response data is null");
-					return false
+		// catalog call
 
-				}else{
-					// Success
-					return response.result
+			ar_calls.push({
+				id		: "catalog",
+				options	: {
+					dedalo_get				: 'records',
+					table					: "catalog",
+					ar_fields				: ["section_id","term","term_data","term_table","term_section_tipo","parents"],
+					lang					: lang,
+					sql_filter				: "term_data like '%\"" + parseInt(section_id) + "\"%' AND term_table ='types'" ,
+					// group				: (group.length>0) ? group.join(",") : null,
+					resolve_portal			: true,
+					resolve_portals_custom	: {
+						"parents"				: "catalog"
+					},
+					count					: false,
+					// limit				: null,
+					// offset				: 0,
+					// order				: null,
+					// process_result		: process_result
 				}
-		})
+			})
 
+				console.log("ar_calls:",ar_calls);
+
+			
+		// request
+			const js_promise = data_manager.request({
+				body : {
+					dedalo_get	: 'combi',
+					ar_calls	: ar_calls
+				}
+			})
+
+
+		// OLD WAY (SERVER CALL)
+			// // trigger vars
+			// 	const trigger_url  = self.trigger_url
+			// 	const trigger_vars = {
+			// 		mode 	 	: "get_row_data",
+			// 		section_id 	: section_id
+			// 	}
+		
+			// // Http request directly in javascript to the API is possible too..
+			// 	const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
+			// 		if(SHOW_DEBUG===true) {
+			// 			console.log("--[type.get_row_data] get_json_data response:", response);
+			// 		}
+
+			// 		if (!response) {
+			// 			// Error on load data from trigger
+			// 			console.warn("[type.get_row_data] Error. Received response data is null");
+			// 			return false
+
+			// 		}else{
+			// 			// Success
+			// 			return response.result
+			// 		}
+			// 	})
+		
 		return js_promise
 	},//end get_row_data
 
 
 
 	/**
-	* DRAW_ROW
+	* LIST_ROW_BUILDER
+	* Build DOM nodes to insert into list pop-up
 	*/
-	draw_row : function(options) {
+	list_row_builder : function(row) {
+		
+		const self = this
+
+		// parse type bibliography_data
+			self.parse_publication(row.bibliography_data)
+
+		// parse type coins.bibliography_data
+			const coins_length = row.ref_coins_union.length
+			for (let i = 0; i < coins_length; i++) {
+				const item = row.ref_coins_union[i]
+				self.parse_publication(item.bibliography_data)
+			}
+		
+		// parse type findspots.bibliography_data			
+			const findspots_length = row.ref_coins_findspots_data.length;
+			for (let i = 0; i < findspots_length; i++) {
+				const item = row.ref_coins_findspots_data[i]
+				self.parse_publication(item.bibliography_data)
+			}
+
+		// parse type hoards.bibliography_data
+			const hoards_length = row.ref_coins_hoard_data.length
+			for (let i = 0; i < hoards_length; i++) {
+				const item = row.ref_coins_hoard_data[i]
+				self.parse_publication(item.bibliography_data)
+			}
+
+		// parse parse_ordered_coins creating _coins_group	
+			self.parse_ordered_coins(row)
+			
+
+		// render row
+			row_fields.caller	= self
+			const row_node		= row_fields.draw_item(row)
+
+
+		return row_node
+	},//end list_row_builder
+
+
+
+	split_data : function(value, separator) {
+		const result = value ? value.split(separator) : []
+		return result;
+	},//end split_data
+
+
+
+	/**
+	* PARSE_PUBLICATION
+	* Modify the received data by recombining publication information
+	* @return array parsed_data
+	*/
+	parse_publication : function(data) {
+
+		const self = this
+
+		const parsed_data	= []
+		const separator		= " # ";
+		const data_length	= data.length
+		for (let i = 0; i < data_length; i++) {
+			
+			const reference = data[i]
+
+			// add publications property to store all resolved references
+				reference._publications = []
+
+			const publications_data			= JSON.parse(reference.publications_data)
+			const publications_data_length	= publications_data.length
+			if (publications_data_length>0) {
+
+				const ref_publications_authors	= self.split_data(reference.ref_publications_authors, separator)
+				const ref_publications_date		= self.split_data(reference.ref_publications_date, separator)
+				const ref_publications_editor	= self.split_data(reference.ref_publications_editor, separator)
+				const ref_publications_magazine	= self.split_data(reference.ref_publications_magazine, separator)
+				const ref_publications_place	= self.split_data(reference.ref_publications_place, separator)
+				const ref_publications_title	= self.split_data(reference.ref_publications_title, separator)
+				const ref_publications_url		= self.split_data(reference.ref_publications_url, separator)
+				
+				for (let j = 0; j < publications_data_length; j++) {
+					
+					const section_id = publications_data[j]
+
+					const parsed_item = {
+						reference	: reference.section_id,
+						section_id	: section_id,
+						authors		: ref_publications_authors[j] || null,
+						date		: ref_publications_date[j] || null,
+						editor		: ref_publications_editor[j] || null,
+						magazine	: ref_publications_magazine[j] || null,
+						place		: ref_publications_place[j] || null,
+						title		: ref_publications_title[j] || null,
+						url			: ref_publications_url[j] || null,
+					}
+
+					reference._publications.push(parsed_item)
+					parsed_data.push(parsed_item)
+				}
+			}
+			
+		}
+		// console.log("parsed_data:",parsed_data);
+
+		return parsed_data
+	},//end parse_publication
+
+
+
+	/**
+	* PARSE_ordered_coins
+	* Modify the received data by recombining coins information
+	* @return array parsed_data
+	*/
+	parse_ordered_coins : function(row) {
+
+		const self = this
+
+		const parsed_data	= []
+		const separator		= " | "
+
+		const typology_data			= self.split_data(row.ref_coins_typology_data, separator) // format is '["1"] | ["2"]'
+		const typology_data_length	= typology_data.length
+
+		const typology	=  self.split_data(row.ref_coins_typology, separator)
+		const ref_coins	=  self.split_data(row.ref_coins, separator)
+
+		for (let i = 0; i < typology_data_length; i++) {
+			
+			const typology_id = JSON.parse(typology_data[i])[0] // format is ["1"]
+			
+			const parsed_item = {
+				typology_id	: typology_id,
+				typology	: typology[i] || null,
+				coins		: JSON.parse(ref_coins[i]) || null,
+				
+			}
+
+			parsed_data.push(parsed_item)
+		}
+
+		// assign to new property '_coins_group'
+			row._coins_group = parsed_data
+		
+		
+		return parsed_data
+	},//end parse_ordered_coins
+
+
+
+	/**
+	* RENDER_MAP
+	* Note: map_factory draw a base map on init. If no points to render are required,
+	* render command is not necessary
+	*/
+	render_map : function(options) {
+		
+		const self = this
+
+		const target		= options.target
+		const map_data		= options.map_data || []
+		const map_position	= options.map_position
+		if (map_position) {
+			map_position.zoom = 11 // force max zoom for dare
+		}
+		
+		self.map = self.map || new map_factory() // creates / get existing instance of map
+		self.map.init({
+			target				: target,
+			map_position		: map_position,
+			// data				: map_data,			
+			// popup_builder	: self.map_popup_builder,
+			source_maps			: [
+				{
+					name	: "dare",
+					// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
+					url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
+					options	: { maxZoom: 11 },
+					default	: true
+				},
+				{
+					name	: "arcgis",
+					url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+					options	: {}
+				},
+				{
+					name	: "osm",
+					url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+					options	: {}
+				},
+				// {
+				// 	name	: "grey",
+				// 	url 	: '//{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYWxleGFkZXYiLCJhIjoiY2lrOHdvaTQzMDEwbHY5a3UxcDYxb25ydiJ9.h737F1gRyib-MFj6uAXs9A',
+				// 	options	: {
+				// 		maxZoom	: 20,
+				// 		id		: 'alexadev.p2lbljap'
+				// 	}
+				// }
+			]
+		})
+
+		const map_data_clean = self.map_data(map_data) // prepares data to use in map
+		self.map.render({
+			map_data : map_data_clean
+		})
+
+		
+		return true
+	},//end render_map
+
+
+
+	/**
+	* MAP_DATA
+	* @return array data
+	*/
+	map_data : function(data) {
+		
+		const self = this
+
+		console.log("--map_data data:",data);
+
+		const data_clean = []
+		for (let i = 0; i < data.length; i++) {
+			
+			const item = {
+				lat		: data[i].data.lat,
+				lon		: data[i].data.lon,
+				data	: {
+					section_id	: data[i].section_id,
+					name		: data[i].name,
+					place		: data[i].place,
+					type 		: data[i].type,
+					items 		: data[i].items,
+					total_items	: data[i].total_items
+				},
+			}
+			data_clean.push(item)
+		}
+
+		console.log("--map_data data_clean:",data_clean);
+
+		return data_clean
+	},//end map_data
+
+
+
+	/**
+	* DRAW_ROW
+	*//*
+	draw_row__OLD_use_row_fields_instead : function(options) {
 
 		const row_object	= options.ar_rows[0]
 		const container 	= options.target
@@ -111,7 +466,7 @@ var type =  {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("Type row_object:",row_object);
+				console.log("--Type row_object:",row_object);
 			}		
 
 		// container. clean container div
@@ -484,7 +839,7 @@ var type =  {
 
 		return container
 	},//end draw_row
-
+	*/
 
 	
 }//end type

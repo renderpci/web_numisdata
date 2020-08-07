@@ -9,32 +9,143 @@
 .result > div {
   margin-bottom: 2em;
 }
-.result #row_detail label {
-  margin: 0;
+.result .row_wrapper .info_line.inline {
+  display: inline-block;
 }
-.result #row_detail img {
+.result .row_wrapper .breadcrumb.mints {
+  font-variant: small-caps;
+  font-size: 1.2em;
+}
+.result .row_wrapper .identify_coin {
+  font-size: 0.8em;
+}
+.result .row_wrapper img {
+  vertical-align: middle;
+}
+.result .row_wrapper .ref_coins_image_obverse img,
+.result .row_wrapper .ref_coins_image_reverse img {
   max-height: 12em;
   display: inline-block;
   margin: 1em;
   margin-left: 0;
 }
-.result #types {
-  padding: 1em;
+.result .row_wrapper .id_line {
+  font-size: 1.2em;
+}
+.result .row_wrapper .catalogue {
+  font-weight: 600;
+}
+.result .row_wrapper .info_value {
+  padding-right: 0.25em;
+}
+.result .row_wrapper .design_obverse,
+.result .row_wrapper .symbol_obverse,
+.result .row_wrapper .legend_obverse,
+.result .row_wrapper .design_reverse,
+.result .row_wrapper .symbol_reverse,
+.result .row_wrapper .legend_reverse {
+  text-indent: 2em;
+}
+.result .row_wrapper .equivalents {
+  font-size: 0.8em;
+}
+.result .row_wrapper .big_label {
+  font-size: 1em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  padding: 0;
+  margin-bottom: 1em;
   margin-top: 1em;
+  background-color: #a33e1f;
+  color: #fff;
+  padding: 0.5em;
+  display: inline-block;
   border-radius: 0.25em;
-  border: 1px solid #cccccc;
-}
-.result #types > .type_row {
-  display: table;
-  width: 100%;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 0.5em;
-  margin-bottom: 0.5em;
-}
-.result #types > .type_row > span {
+  padding-left: 1em;
   padding-right: 1em;
 }
-.result #types > .type_row .equivalents {
-  display: block;
+.result .row_wrapper .medium_label {
+  font-size: 1.3em;
+}
+.result .row_wrapper .items_list .typology_coins {
+  display: flex;
+  flex-wrap: wrap;
+}
+.result .row_wrapper .items_list .typology_coins .sorted_coin:last-child {
+  border-right: none;
+}
+.result .row_wrapper .items_list .typology_coins .sorted_coin:nth-child(3n) {
+  border-right: none;
+}
+.result .row_wrapper .items_list .typology_coins .sorted_coin {
+  flex: 0 0 32.6%;
+  margin-bottom: 0.5em;
+  margin-right: 0.5em;
+  font-size: 80%;
+  border-right: 1px solid #e3e3e3;
+  padding: 0.5em;
+  border-radius: 4px;
+}
+.result .row_wrapper .items_list .typology_coins .sorted_coin .images_wrapper {
+  margin-bottom: 0.5em;
+}
+.result .row_wrapper .items_list .typology_coins .sorted_coin .images_wrapper img {
+  width: 50%;
+  height: 200px;
+  object-fit: contain;
+  object-position: center;
+  background-color: white;
+}
+.result .row_wrapper .find_coins {
+  display: flex;
+  flex-wrap: wrap;
+}
+.result .row_wrapper .find_coins .find_coin:last-child {
+  border-bottom: none;
+}
+.result .row_wrapper .find_coins .find_coin {
+  flex: 0 0 100%;
+  display: flex;
+  margin-bottom: 0.5em;
+  margin-right: 0.5em;
+  font-size: 75%;
+  border-bottom: 1px solid #e3e3e3;
+  padding: 0.5em;
+  border-radius: 4px;
+}
+.result .row_wrapper .find_coins .find_coin .images_wrapper,
+.result .row_wrapper .find_coins .find_coin .info_wrapper {
+  flex: 0 0 50%;
+}
+.result .row_wrapper .find_coins .find_coin .images_wrapper {
+  background-color: #ffffff;
+}
+.result .row_wrapper .find_coins .find_coin .images_wrapper img {
+  width: 50%;
+  height: 200px;
+  object-fit: contain;
+  object-position: center;
+  background-color: white;
+}
+.result .row_wrapper .find_coins .find_coin .info_wrapper {
+  padding: 0.5em;
+  padding-left: 1em;
+}
+.result .row_wrapper .bibliographic_reference {
+  margin-top: 1px;
+  color: #ab6438;
+  list-style: circle;
+  text-indent: -1em;
+  padding-left: 1em;
+}
+.result .row_wrapper .map_container {
+  position: relative;
+  height: 60vh;
+  font-size: 1rem;
+  margin-bottom: 3em;
+  background-color: #585858;
+  border-top: 1px solid #dcdcdc;
+  border-bottom: 1px solid #dcdcdc;
 }
 /*# sourceMappingURL=type.css.map */

@@ -17,7 +17,7 @@
 # RewriteCond $1 !^maternidades_robadas/
 # RewriteCond $1 /*web_app
 
-# Redirect exceptions. All calls to base directory will be redirect except this special list (tpl,dedalo,web_app,web)
+# Redirect exceptions. All calls to base directory will be redirect except this special list (tpl,web_app,dedalo,web)
 	RewriteCond $1 !^tpl/
 	RewriteCond $1 !^web_app/
 	#RewriteCond $1 !^dedalo/	

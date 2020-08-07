@@ -22,6 +22,9 @@
 
 
 	# js
+		// app_utils . web application useful es6 modules compatible with old browsers (Configure CodeKit to ES6 Bundle IIFE)
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app_utils-min.js';
+		
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/browser.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/breakpoints.min.js';

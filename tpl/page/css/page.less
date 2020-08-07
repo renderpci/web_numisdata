@@ -110,32 +110,31 @@
 
 // maintain footer at bottom
 	// flex way
-		#wrapper {
-			min-height: 100vh;
-			display: flex;
-			flex-direction: column;
-			background: white;
-			#main {
-				flex: 1 0 auto;
-				min-height: 50vh;
-			}
-			#footer {
-				flex-shrink: 0;
-			}
-		}
+		// #wrapper {
+		// 	min-height: 100vh;
+		// 	display: flex;
+		// 	flex-direction: column;
+		// 	#main {
+		// 		flex: 1 0 auto;
+		// 		min-height: 50vh;
+		// 	}
+		// 	#footer {
+		// 		flex-shrink: 0;
+		// 	}
+		// }
 	// grid way
-		//html {
+		// html {
 		//  height: 100%;
-		//}
-		//body {
+		// }
+		// body {
 		//  min-height: 100%;
 		//  display: grid;
 		//  grid-template-rows: 1fr auto;
-		//}
-		//#footer {
+		// }
+		// #footer {
 		//  grid-row-start: 2;
 		//  grid-row-end: 3;
-		//}
+		// }
 
 
 
@@ -147,6 +146,7 @@
 		//margin-right: auto;
 		//height: 100%;
 		//position: relative;
+		background: white;
 		background-image: url('../../assets/images/overlay_white.png');
 	}
 
@@ -154,9 +154,9 @@
 
 // header
 	#header {
-		padding-top: 2em;		
+		// padding-top: 2em;		
 
-		>.inner {
+		>.head_inner {
 
 			>div.logo_big {
 				text-align: center;
@@ -172,8 +172,8 @@
 					display: flex;
 					align-items: center;
 					padding: .75em;
-					background-color: #585858;
-					border-radius: 5px;
+					background-color: #333333;
+					// border-radius: 5px;
 
 					>img {
 						height: 5em;
@@ -184,7 +184,7 @@
 						// font-family: 'Varela Round', sans-serif;
 						.font_logo;
 						font-size: 2.25em;
-						color: #be875a;
+						color: #B7996D;
 						padding-left: 1em;
 					}
 				}
@@ -196,6 +196,8 @@
 
 // main
 	#main {
+		display: table;
+		width: 100%;	
 
 		.inner {
 

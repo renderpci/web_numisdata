@@ -49,7 +49,7 @@ var forms = {
 		// grouper
 			const group = common.create_dom_element({
 				element_type	: 'div',
-				class_name 		: "form-group field",
+				class_name 		: "form-group field field_" + form_item.id,
 				parent 			: parent
 			})
 
@@ -59,10 +59,15 @@ var forms = {
 				type			: 'text',
 				id 				: form_item.id,
 				class_name		: "form-control ui-autocomplete-input",
-				placeholder 	: form_item.label,				
+				placeholder 	: form_item.label,
 				parent			: group
 			})
-			node_input.addEventListener("keyup", function(e){				
+			// keyup event. User input using keyboard 
+			node_input.addEventListener("keyup", function(e){
+				form_item.q = e.target.value
+			})
+			// change event. See event_manager.fire_event to know how trigger this event
+			node_input.addEventListener("change", function(e){
 				form_item.q = e.target.value
 			})
 			form_item.node_input = node_input

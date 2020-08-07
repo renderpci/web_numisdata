@@ -34,29 +34,29 @@ class common {
 			$response = new stdClass();
 				$response->result 	= false;
 				$response->msg 		= "Error on read php://input data";
-			echo json_encode($response);
+			echo json_encode($response, JSON_UNESCAPED_UNICODE);
 			exit();
-		}		
+		}
 		
 		
 		#dump($json_data, ' json_data ++ '.to_string());
 
 		# MODE Verify
-		if(empty($json_data->mode)) exit( json_encode("<span class='error'> Trigger: Error Need mode..</span>") );
+		if(empty($json_data->mode)) exit( json_encode("<span class='error'> Trigger: Error Need mode..</span>", JSON_UNESCAPED_UNICODE) );
 		
 		# CALL FUNCTION
 		if ( function_exists($json_data->mode) ) {
 			$response = (object)call_user_func($json_data->mode, $json_data);
-			$json_params = null;
 			if(SHOW_DEBUG===true) {
-				$json_params = JSON_PRETTY_PRINT;
+				echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+			}else{
+				echo json_encode($response, JSON_UNESCAPED_UNICODE);
 			}
-			echo json_encode($response, $json_params);
 		}else{
 			$response = new stdClass();
 				$response->result 	= false;
 				$response->msg 		= 'Error. Request failed.'.$json_data->mode.' not exists';
-			echo json_encode($response);
+			echo json_encode($response, JSON_UNESCAPED_UNICODE);
 		}
 	}//end trigger_manager
 

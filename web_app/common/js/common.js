@@ -748,6 +748,10 @@ var common = {
 	*/
 	clean_gaps : function(text, splitter=" | ", joinner=", ") {
 
+		if (!text) {
+			return ""
+		}
+
 		// trim start and end spaces. i.e. ' | label1 | label2 | ' => '| label1 | label2 |'
 		text = text.trim()
 
@@ -761,7 +765,31 @@ var common = {
 		const result = (text.split(splitter).filter( el => el.length>0 )).join(joinner)
 
 		return result
-	}//end clean_gaps
+	},//end clean_gaps
+
+
+
+	/**
+	* WHEN_IN_DOM
+	* Exec a callback when node element is placed in the DOM (then is possible to know their size, etc.)
+	* Useful to render leaflet maps and so forth
+	* @return mutation observer
+	*/
+	when_in_dom : function(node, callback) {
+
+		const observer = new MutationObserver(function(mutations) {
+			if (document.contains(node)) {
+				// console.log("It's in the DOM!");
+				observer.disconnect();
+
+				callback(this)
+			}
+		});
+
+		observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+
+		return observer
+	},//end when_in_dom
 
 
 
@@ -797,6 +825,5 @@ function ready(fn) {
 	/* init - you can init any event */
 	throttle("resize", "optimizedResize");
 })();
-
 
 

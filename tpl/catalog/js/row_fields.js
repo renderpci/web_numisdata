@@ -216,10 +216,20 @@ var row_fields = {
 				}				
 				break;		
 
+
+			case "mints":
+				common.create_dom_element({
+						  element_type 	: "div",
+						  class_name 	: "mint",
+						  text_content 	: item.term, // + " [" + term_table + "]",
+						  parent 		: fragment
+					})
+					break;
+
 			default:
 				common.create_dom_element({
 					  element_type 	: "div",
-					  class_name 	: "term " + term_table,
+					  class_name 	: term_table,
 					  text_content 	: item.term, // + " [" + term_table + "]",
 					  parent 		: fragment
 				})
@@ -274,17 +284,23 @@ var row_fields = {
 				break;
 
 			case "term":
-					const a_term = common.create_dom_element({
-					  element_type 	: "a",
-					  class_name : "a_term",
-					  href:'./type/'+ JSON.parse(item.term_data)[0]  ,
-					 
-					  inner_html 	 : item[name]
-				})
-					a_term.target = "_blank"
-				
-				current_value = a_term.outerHTML
+				const item_term_data = JSON.parse(item.term_data)
+				if (item_term_data && !item.children) {
+						const a_term = common.create_dom_element({
+						  element_type 	: "a",
+						  class_name : "a_term",
+						  href:'./type/' + item_term_data[0]  ,
+						 
+						  inner_html 	 : item[name]
+					})
+						a_term.target = "_blank"
+					
+					current_value = a_term.outerHTML
+				}else{
+					current_value = item[name]
+					}
 						break;
+				
 
 				default:
 				current_value = item[name]

@@ -70,6 +70,11 @@
 			text-overflow: ellipsis;
 			background-color: transparent;
 			display: none;
+
+			// display: block;
+			// background-color: #cdf736;
+			// text-overflow: unset;
+			// pointer-events: unset;
 		}
 	}
 
@@ -269,7 +274,7 @@
 // children container
 
 	.children_contanier{
-		margin-left: 3em;
+		margin-left: 2em;
 	}
 
 	#rows_list >.children_contanier {
@@ -308,8 +313,9 @@
 	}//end .form-inline
 
 	.term{
-		font-weight: bold;
-		text-transform: uppercase;
+		// font-variant-caps: normal;
+		// font-weight: bold;
+		// text-transform: uppercase;
 	}
 
 	span{
@@ -324,8 +330,10 @@
 		font-size: 16px;
 	}
 
-	.mints{
-		// font-size: 1.4em;
+	.mint{
+		font-size: 1.4em;
+		font-weight: bold;
+		font-variant-caps: small-caps;
 	}
 
 	
@@ -433,6 +441,12 @@
 	// 		width: calc( attr(data-print_w) / 2);
 	// 	}
 	// }
+
+
+// global_search
+	.field_global_search  {
+		display: none;
+	}
 	
 
 

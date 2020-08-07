@@ -120,7 +120,7 @@ section.result {
   padding-right: 0.5em;
 }
 .children_contanier {
-  margin-left: 3em;
+  margin-left: 2em;
 }
 #rows_list > .children_contanier {
   margin-left: 0;
@@ -143,10 +143,6 @@ section.result {
 .form-inline .form-row .operators {
   padding-right: 2em;
 }
-.term {
-  font-weight: bold;
-  text-transform: uppercase;
-}
 span {
   margin-right: 1em;
 }
@@ -158,6 +154,11 @@ span {
 .ref_type_total_weight_items,
 .ref_type_total_diameter_items {
   font-size: 16px;
+}
+.mint {
+  font-size: 1.4em;
+  font-weight: bold;
+  font-variant-caps: small-caps;
 }
 .descriptions {
   display: grid;
@@ -240,6 +241,9 @@ span {
 }
 .types {
   display: grid;
+}
+.field_global_search {
+  display: none;
 }
 .pagination.bottom {
   margin-top: 3em;

@@ -46,6 +46,8 @@
 <?php echo $this->get_header_links('js') ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
-	catalog.set_up()
+	catalog.set_up({
+		global_search : <?php echo json_encode($global_search) ?>
+	})
 })
 </script>

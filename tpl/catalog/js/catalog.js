@@ -13,7 +13,7 @@ var catalog =  {
 	// global filters
 	filters : {},
 	filter_op : "AND",
-	draw_delay : 390, // ms
+	draw_delay : 10, // ms 390
 
 	// form_items
 	form_items : [],
@@ -24,7 +24,7 @@ var catalog =  {
 	* SET_UP
 	*/
 	set_up : function(options) {
-
+	
 		const self = this
 
 		const container = document.getElementById("items_container")
@@ -181,17 +181,32 @@ var catalog =  {
 			const form = self.build_form()		
 			container.appendChild(form)
 		
+		// first search
+		if (options.global_search && options.global_search.length>1) {
 
-		// exec first default search without params
-			// self.search_rows({
-			// 	ar_query : [],
-			// 	limit 	 : 10
-			// }).then(function(response){
-			// 	self.draw_rows({
-			// 		target  : 'rows_list',
-			// 		ar_rows : response.result
-			// 	})
-			// })
+			// global_search string param is received case (via url as ../catalog/my_search_string)
+			const input_global_search = document.getElementById("global_search") // this input is in DOm but hidden by default
+			if (input_global_search) {
+				input_global_search.value = options.global_search
+				// fire change event on input
+				event_manager.fire_event(input_global_search, 'change')
+				// submit form
+				self.form_submit(form)
+			}							
+		
+		}else{
+
+			// exec first default auto search without params
+				// self.search_rows({
+				// 	ar_query : [],
+				// 	limit 	 : 10
+				// }).then(function(response){
+				// 	self.draw_rows({
+				// 		target  : 'rows_list',
+				// 		ar_rows : response.result
+				// 	})
+				// })
+		}
 
 
 		return true
@@ -213,7 +228,13 @@ var catalog =  {
 			forms.build_form_node(form_item, options.parent)
 		
 		// autocomplete activate			
-			self.activate_autocomplete(form_item.node_input)
+			// self.activate_autocomplete(form_item.node_input)
+
+		// callback
+			if (options.callback) {
+				options.callback(form_item.node_input)
+			}
+
 		
 		// store current instance
 			self.form_items[options.id] = form_item
@@ -240,65 +261,172 @@ var catalog =  {
 		})
 		
 
-		// mint
+		// global_search
 			self.create_form_item({
-				id 			: "mint",
-				name 		: "mint",
-				label		: tstring["mint"] || "mint",
-				q_column 	: "p_mint",
+				id 			: "global_search",
+				name 		: "global_search",
+				label		: tstring["global_search"] || "global_search",
+				q_column 	: "global_search",
 				eq 			: "LIKE",
 				eq_in 		: "%",
-				// q_table 	: "mints",
-				is_term 	: true,
-				parent		: form_row
+				eq_out 		: "%",
+				// q_table 	: "mints",				
+				parent		: form_row,
+				callback	: function(node_input) {
+					// nothing to do here
+				}
+			})
+
+
+		// mint
+			self.create_form_item({
+				id			: "mint",
+				name		: "mint",
+				label		: tstring["mint"] || "mint",
+				q_column	: "p_mint",
+				eq			: "LIKE",
+				eq_in		: "%",
+				// q_table	: "mints",
+				is_term		: true,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// period
 			self.create_form_item({
-				id 			: "period",
-				name 		: "period",
+				id			: "period",
+				name		: "period",
 				label		: tstring["period"] || "period",
-				q_column 	: "p_period",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: true,
-				parent		: form_row
+				q_column	: "p_period",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: true,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// culture
 			self.create_form_item({
-				id 			: "culture",
-				name 		: "culture",
+				id			: "culture",
+				name		: "culture",
 				label		: tstring["culture"] || "culture",
-				q_column 	: "p_culture",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: true,
-				parent		: form_row
+				q_column	: "p_culture",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: true,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// creator
 			self.create_form_item({
-				id 			: "creator",
-				name 		: "creator",
+				id			: "creator",
+				name		: "creator",
 				label		: tstring["creator"] || "creator",
-				q_column 	: "p_creator",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: true,
-				parent		: form_row
+				q_column	: "p_creator",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: true,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
-		// role
+		// design_obverse
 			self.create_form_item({
-				id 			: "role",
-				name 		: "role",
-				label		: tstring["role"] || "role",
-				q_column 	: "p_role",
+				id			: "design_obverse",
+				name		: "design_obverse",
+				label		: tstring["design_obverse"] || "design obverse",
+				q_column	: "ref_type_design_obverse",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// design_reverse
+			self.create_form_item({
+				id			: "design_reverse",
+				name		: "design_reverse",
+				label		: tstring["design_reverse"] || "design reverse",
+				q_column	: "ref_type_design_reverse",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// symbol_obverse
+			self.create_form_item({
+				id			: "symbol_obverse",
+				name		: "symbol_obverse",
+				label		: tstring["symbol_obverse"] || "symbol obverse",
+				q_column	: "ref_type_symbol_obverse",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// symbol_reverse
+			self.create_form_item({
+				id			: "symbol_reverse",
+				name		: "symbol_reverse",
+				label		: tstring["symbol_reverse"] || "symbol reverse",
+				q_column	: "ref_type_symbol_reverse",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// legend_obverse
+			self.create_form_item({
+				id 			: "legend_obverse",
+				name 		: "legend_obverse",
+				label		: tstring["legend_obverse"] || "legend obverse",
+				q_column 	: "ref_type_legend_obverse",
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
-				is_term 	: true,
-				parent		: form_row
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// legend_reverse
+			self.create_form_item({
+				id 			: "legend_reverse",
+				name 		: "legend_reverse",
+				label		: tstring["legend_reverse"] || "legend reverse",
+				q_column 	: "ref_type_legend_reverse",
+				eq_in 		: "%",
+				// q_table 	: "ts_period",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// territory
@@ -310,7 +438,10 @@ var catalog =  {
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
 				is_term 	: true,
-				parent		: form_row
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// group
@@ -322,7 +453,10 @@ var catalog =  {
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
 				is_term 	: true,
-				parent		: form_row
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// material
@@ -333,7 +467,10 @@ var catalog =  {
 				q_table 	: "any",
 				label		: tstring["material"] || "material",
 				is_term 	: false,
-				parent		: form_row
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// collection
@@ -344,7 +481,10 @@ var catalog =  {
 				q_table 	: "any",
 				label		: tstring["collection"] || "collection",
 				is_term 	: false,
-				parent		: form_row
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 
 		// denomination
@@ -355,7 +495,10 @@ var catalog =  {
 				q_table 	: "any",
 				label		: tstring["denomination"] || "denomination",
 				is_term 	: false,
-				parent		: form_row
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
 			})
 		
 
@@ -389,6 +532,7 @@ var catalog =  {
 				class_name 		: "form-inline"
 			})			
 			form.appendChild(fragment)
+
 
 
 		return form
@@ -628,17 +772,17 @@ var catalog =  {
 
 		// label 
 			const value_label = common.create_dom_element({
-				element_type 	: "span",
-				class_name   	: "value_label",
-				text_content 	: label,
-				parent 			: line
+				element_type	: "span",
+				class_name		: "value_label",
+				inner_html		: label,
+				parent			: line
 			})
 
 		// input 
 			const input = common.create_dom_element({
-				element_type 	: "input",
-				class_name   	: "input_values",
-				parent 			: line
+				element_type	: "input",
+				class_name		: "input_values",
+				parent			: line
 			})
 			input.value = value
 
@@ -666,11 +810,70 @@ var catalog =  {
 		// to allow acces from different places
 		let current_form_item
 
+
+		/*
+		 * jQuery UI Autocomplete HTML Extension
+		 *
+		 * Copyright 2010, Scott González (http://scottgonzalez.com)
+		 * Dual licensed under the MIT or GPL Version 2 licenses.
+		 *
+		 * http://github.com/scottgonzalez/jquery-ui-extensions
+		 */
+		(function( $ ) {
+
+			var proto = $.ui.autocomplete.prototype,
+				initSource = proto._initSource;
+
+			function filter( array, term ) {
+				var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );
+				return $.grep( array, function(value) {
+					return matcher.test( $( "<div>" ).html( value.label || value.value || value ).text() );
+				});
+			}
+
+			$.extend( proto, {
+				_initSource: function() {
+					if ( this.options.html && $.isArray(this.options.source) ) {
+						this.source = function( request, response ) {
+							response( filter( this.options.source, request.term ) );
+						};
+					} else {
+						initSource.call( this );
+					}
+				},
+
+				_renderItem: function( ul, item) {					
+
+					var final_label = item.label
+
+					// remove empty values when separator is present						
+						var ar_parts 	= final_label.split(' | ')
+						var ar_clean 	= []
+						for (var i = 0; i < ar_parts.length; i++) {
+							var current = ar_parts[i]
+							if (current.length>1 && current!=='<i>.</i>') {
+								ar_clean.push(current)
+							}
+						}
+						final_label = ar_clean.join(' | ') // overwrite
+
+					return $( "<li></li>" )
+						.data( "item.autocomplete", item )
+						//.append( $( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.label ) )
+						.append( $( "<div></div>" )[ this.options.html ? "html" : "text" ]( final_label ) )
+						.appendTo( ul );
+				}
+			});
+
+		})( jQuery );
+
+
 		const cache = {}
 		$(element).autocomplete({
-			delay 	 : 150,
-			minLength: 0,
-			source 	 : function( request, response ) {
+			delay		: 150,
+			minLength	: 0,
+			html		: true,
+			source		: function( request, response ) {
 				
 				const term = request.term
 				
@@ -692,7 +895,7 @@ var catalog =  {
 							field	: q_column,
 							value	: `'${value_parsed}'`,
 							op		: current_form_item.eq, // 'LIKE',
-							group 	: q_column
+							group	: q_column
 						})
 
 					// optional second column 'term_table' search item. Add column name filter
@@ -757,7 +960,8 @@ var catalog =  {
 						const search = self.search_rows({
 							filter		: filter,
 							ar_fields	: [q_column + " AS name"],
-							order 		: q_column + " ASC" // "term ASC"
+							limit		: 30,
+							order		: q_column + " ASC" // "term ASC"
 						})
 
 					// return results in standard format (label, value)
@@ -768,8 +972,9 @@ var catalog =  {
 							for (let i = 0; i < len; i++) {
 								
 								const item = api_response.result[i]
-								
-								const current_ar_value = (item.name.indexOf("[")===0)
+
+
+								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
 									: [item.name]
 																
@@ -861,8 +1066,7 @@ var catalog =  {
 		
 		const self = this
 
-		const form_items 		= self.form_items
-
+		const form_items = self.form_items
 			console.log("form_items:",form_items);
 		
 		// ar_is_term
@@ -874,7 +1078,7 @@ var catalog =  {
 		const ar_query_elements = []	
 		for (let [id, form_item] of Object.entries(form_items)) {
 
-				console.log("form_item:",form_item);
+			// console.log("form_item:",form_item);
 			
 			const current_group = []
 
@@ -955,7 +1159,12 @@ var catalog =  {
 
 					for (let j = 0; j < form_item.q_selected.length; j++) {
 						
-						const value = form_item.q_selected[j]
+						// value
+							const value = form_item.q_selected[j]
+
+							// escape html strings containing single quotes inside.
+							// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
+							const safe_value = value.replace(/(')/g, "''")
 
 						const c_group_op = "AND"
 						const c_group = {}
@@ -964,7 +1173,7 @@ var catalog =  {
 						// elemet
 						const element = {
 							field	: form_item.q_column,
-							value	: (form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
+							value	: (form_item.is_term===true) ? `'%"${safe_value}"%'` : `'${safe_value}'`,
 							op		: (form_item.is_term===true) ? "LIKE" : "="
 						}
 						c_group[c_group_op].push(element)
@@ -1012,6 +1221,7 @@ var catalog =  {
 		// search rows exec against API
 			const js_promise = self.search_rows({
 				filter			: filter,
+				limit			: 0,
 				process_result	: {
 					fn 		: 'process_result::add_parents_and_children_recursive',
 					columns : [{name : "parents"}]
@@ -1064,9 +1274,12 @@ var catalog =  {
 			const filter		= options.filter || null
 			const ar_fields 	= options.ar_fields || ["*"]
 			const order 		= options.order || "norder ASC"
+			const limit 		= options.limit != undefined
+				? options.limit
+				: 30
 			const lang 			= page_globals.WEB_CURRENT_LANG_CODE
 			const process_result= options.process_result || null
-		
+
 		// parse_sql_filter
 			const group = []
 			const parse_sql_filter = function(filter){
@@ -1089,10 +1302,13 @@ var catalog =  {
 							ar_filter.push(current_filter_line)
 							continue;
 						}
+						
+						// item_value
+						const item_value = item.value
 
 						const filter_line = (item.field.indexOf("AS")!==-1)
-							? "" +item.field+""  +" "+ item.op +" "+ item.value
-							: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+							? "" +item.field+""  +" "+ item.op +" "+ item_value
+							: "`"+item.field+"`" +" "+ item.op +" "+ item_value
 
 						ar_filter.push(filter_line)
 
@@ -1114,16 +1330,16 @@ var catalog =  {
 			if(SHOW_DEBUG===true) {
 				console.log("--- search_rows parsed sql_filter:")
 				console.log(sql_filter)
-			}	
+			}		
 		
-		const js_promise = page.request({
+		const js_promise = data_manager.request({
 			body : {
 				dedalo_get		: 'records',
 				table			: 'catalog',
 				ar_fields		: ar_fields,
 				lang			: lang,
 				sql_filter		: sql_filter,
-				limit			: 0,
+				limit			: limit,
 				group			: (group.length>0) ? group.join(",") : null,
 				count			: false,
 				order			: order,
@@ -1254,6 +1470,18 @@ var catalog =  {
 
 			if(row_object.children){
 				self.get_children(ar_rows, row_object, row_node)
+				row_node.addEventListener('mouseup', (event) => {
+					event.preventDefault()
+					const target = event.target.tagName === 'SPAN'
+						? event.target.parentNode
+						: event.target
+						// console.log("event.target:",event.target);
+					if (target === row_node.firstChild ){
+						const children_node = row_node.querySelector('.children_contanier')
+						children_node.classList.toggle("hide")
+					}
+					
+				}, false);
 			}
 		}
 	},

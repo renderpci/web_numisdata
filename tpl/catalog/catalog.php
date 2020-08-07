@@ -11,6 +11,18 @@
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/forms'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/row_fields.js';
+
+
+	// area name
+		$area_name 	= $_GET['area_name'];
+		$ar_parts 	= explode('/', $area_name);
+
+			// dump($_GET, ' $_GET ++ '.to_string());
+			// dump($ar_parts, ' ar_parts ++ '.to_string());
+
+
+	// global_search (is inside get var 'area_name' as '/min/36')
+		$global_search = !empty($ar_parts[1]) ? $ar_parts[1] : null;
 		
 
 

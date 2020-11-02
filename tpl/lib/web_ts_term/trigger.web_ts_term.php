@@ -57,53 +57,76 @@ if ($mode==='toggle_childrens') {
 
 
 
-
 if ($mode==='toggle_indexation') {
 
-	$vars = array('term_id','ar_indexation','term');
+	$vars = array('term_id','ar_legends','ar_cmk');
 		foreach($vars as $name)	$$name = common::setVar($name);
-	
-		if(!$term_id || !$ar_indexation) return 'Error: few vars';
-		#dump($ar_indexation, ' ar_indexation ++ '.to_string($term_id)); #die();
 
-	$html='';
-	if (!empty($ar_indexation)) {
+	$ar_api_calls = [];
+	if (!empty($ar_legends)) {
 		#dump($ar_indexation, ' ar_indexation ++ '.to_string());
+
+		$legends_filter = [];
+		foreach ($ar_legends as $section_id) {
+			$legends_filter[] = "`legend_obverse_data` like '%\"".$section_id. "\"%' OR `legend_reverse_data` like '%\"".$section_id. "\"%'";
+		};
+
+		$sql_filter = implode(' OR ', $legends_filter);
 
 		# Load indexation data from server api as json
 		$options = new stdClass();
-			$options->dedalo_get 	= 'thesaurus_indexation_node';
-			$options->term_id 		= $term_id;
-			$options->ar_locators 	= $ar_indexation;
+			$options->dedalo_get 	= 'records';
+			$options->table 		= 'types';
+			$options->sql_filter 	= $sql_filter;
 			$options->lang  	 	= WEB_CURRENT_LANG_CODE;
-			$options->image_type   	= 'posterframe';
-		$ar_indexation_node = json_web_data::get_data($options);
-			#dump($ar_indexation_node, ' ar_indexation_node ++ '.to_string()); #die();
 
-		echo json_encode($ar_indexation_node); exit();
+		$api_call = new stdClass();
+			$api_call->id 		= 'type';
+			$api_call->options 	= $options;
 
-		#$ar_resolved = array();
-		#foreach ($ar_indexation_node->result as $current_indexation_node_data) {
-		#	#dump($current_indexation_node_data, ' $current_indexation_node_data ++ '.to_string());
-		#	
-		#	$current_locator = $current_indexation_node_data->locator;
-		#	#dump($current_locator, ' current_locator ++ '.to_string());
-		#	if (in_array($current_locator->section_top_id, $ar_resolved)) {
-		#		continue; # Only one by interview
-		#	}
-		#
-		#	# Inject term
-		#	$current_indexation_node_data->term = $term;
-		#	
-		#	$web_indexation_node = new web_indexation_node($current_indexation_node_data);
-		#
-		#	$html .= $web_indexation_node->get_html('icon');			
-		#
-		#	$ar_resolved[] = $current_locator->section_top_id;
-		#}
+		$ar_api_calls[] = $api_call;
+		// $ar_legends_data = json_web_data::get_data($options);
+			// dump($ar_legends_data, ' ar_legends_data ++ '.to_string()); die();
+
+		// echo json_encode($ar_legends_data); exit();
 	}//end if ($ar_indexation = json_decode($ar_indexation))
 
 
-	#echo $html;
+	if (!empty($ar_cmk)) {
+
+		$sql_filter = implode(',', $ar_cmk);
+
+		# Load indexation data from server api as json
+		$options = new stdClass();
+			$options->dedalo_get 	= 'records';
+			$options->table 		= 'coins';
+			$options->section_id 	= $sql_filter;
+			$options->lang  	 	= WEB_CURRENT_LANG_CODE;
+
+		$api_call = new stdClass();
+			$api_call->id 		= 'coins';
+			$api_call->options 	= $options;
+
+		$ar_api_calls[] = $api_call;
+
+			// dump($api_call, ' api_call ++ '.to_string()); die();
+		
+	}//end if ($ar_indexation = json_decode($ar_indexation))
+
+	if(!empty($ar_api_calls)){
+
+		$options = new stdClass();
+			$options->dedalo_get 	= 'combi';
+			$options->ar_calls 		= $ar_api_calls;
+
+		$result_data = json_web_data::get_data($options);
+		echo json_encode($result_data); exit();
+	}else{
+		$response = new stdClass();
+			$response->result 	= false;
+			$response->msg 		= 'Error. Request failed ['.__FUNCTION__.']';	
+		echo json_encode($response);
+	}
+
 	#exit();
 }//end toggle_indexation

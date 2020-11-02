@@ -994,14 +994,20 @@ var row_fields = {
 			}		
 		
 		// draw map
-			common.when_in_dom(map_container, draw_map)
-			function draw_map() {
-				self.caller.render_map({
-					target			: map_container,
-					map_position	: null, // use default position
-					map_data		: map_data
-				})
+			console.log("// map_data:",map_data);
+			if (map_data.length>0) {
+				common.when_in_dom(map_container, draw_map)
+				function draw_map() {
+					self.caller.render_map({
+						target			: map_container,
+						map_position	: null, // use default position
+						map_data		: map_data
+					})
+				}
+			}else{
+				map_container.remove()
 			}
+			
 
 
 		return line

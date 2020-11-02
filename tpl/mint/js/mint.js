@@ -1,3 +1,7 @@
+/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page, console, DocumentFragment  */
+/*eslint no-undef: "error"*/
+
+
 "use strict";
 
 
@@ -59,9 +63,10 @@ var mint =  {
 					})
 
 				// map draw. Init default map
-					self.init_map({
-						map_data : JSON.parse(mint.result[0].map)
-					})	
+					self.render_map({
+						map_position	: JSON.parse(mint.result[0].map),
+						target			: document.getElementById("map_container")
+					})
 
 				// types draw
 					const types = response.result.find( el => el.id==='types')
@@ -181,8 +186,7 @@ var mint =  {
 			if (row_object.place && row_object.place.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
+					element_type 	: "label",					
 					text_content 	: tstring.place || "Place",
 					parent 			: line
 				})
@@ -200,10 +204,9 @@ var mint =  {
 			if (row_object.history && row_object.history.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.history || "History",
-					parent 			: line
+					element_type	: "label",					
+					text_content	: tstring.history || "History",
+					parent			: line
 				})
 
 				const history = row_object.history
@@ -219,18 +222,17 @@ var mint =  {
 			if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.numismatic_comments || "Numismatic comments",
-					parent 			: line
+					element_type	: "label",					
+					text_content	: tstring.numismatic_comments || "Numismatic comments",
+					parent			: line
 				})
 
 				const numismatic_comments = row_object.numismatic_comments
 				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "info_value",
-					text_content 	: numismatic_comments,
-					parent 			: line
+					element_type	: "div",
+					class_name		: "info_value",
+					inner_html		: numismatic_comments,
+					parent			: line
 				})
 			}
 
@@ -238,10 +240,9 @@ var mint =  {
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.bibliographic_references || "Bibliographic references",
-					parent 			: line
+					element_type	: "label",					
+					text_content	: tstring.bibliographic_references || "Bibliographic references",
+					parent			: line
 				})
 
 				for (var i = 0; i < row_object.bibliography_data.length; i++) {
@@ -257,17 +258,16 @@ var mint =  {
 						const description = bibliographic_reference.description
 						if (description.length>0) {
 							common.create_dom_element({
-								element_type 	: "label",
-								class_name 		: "",
-								text_content 	: tstring.description || "Description",
-								parent 			: line
+								element_type	: "label",								
+								text_content	: tstring.description || "Description",
+								parent			: line
 							})
 							
 							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								inner_html 		: description,
-								parent 			: line
+								element_type	: "div",
+								class_name		: "info_value",
+								inner_html		: description,
+								parent			: line
 							})
 						}
 
@@ -275,10 +275,9 @@ var mint =  {
 						const items = common.clean_gaps(bibliographic_reference.items, " | ", ", ")
 						if (items.length>0) {
 							common.create_dom_element({
-								element_type 	: "label",
-								class_name 		: "",
-								text_content 	: tstring.info || "Info",
-								parent 			: line
+								element_type	: "label",								
+								text_content	: tstring.info || "Info",
+								parent			: line
 							})
 												
 							common.create_dom_element({
@@ -293,8 +292,7 @@ var mint =  {
 						const pages = bibliographic_reference.pages
 						if (pages.length>0) {
 							common.create_dom_element({
-								element_type 	: "label",
-								class_name 		: "",
+								element_type 	: "label",								
 								text_content 	: tstring.pages || "Pages",
 								parent 			: line
 							})
@@ -348,7 +346,6 @@ var mint =  {
 		// label types
 			common.create_dom_element({
 				element_type 	: "label",
-				class_name 		: "",
 				text_content 	: tstring.types || "Types",
 				parent 			: fragment
 			})
@@ -374,11 +371,11 @@ var mint =  {
 				if (dedalo_logged===true) {
 
 					const link = common.create_dom_element({
-						element_type 	: "a",
-						class_name 		: "section_id go_to_dedalo",
-						text_content 	: row_object.section_id,
-						href 			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-						parent 			: row_line
+						element_type	: "a",
+						class_name		: "section_id go_to_dedalo",
+						text_content	: row_object.section_id,
+						href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
+						parent			: row_line
 					})
 					link.setAttribute('target', '_blank');
 				}
@@ -386,20 +383,18 @@ var mint =  {
 
 			// name
 				const name = common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "",
-					text_content 	: row_object.catalogue + " " +row_object.number,
-					parent 			: row_line
+					element_type	: "span",
+					text_content	: row_object.catalogue + " " +row_object.number,
+					parent			: row_line
 				})
 
 			// material
 				const material = common.clean_gaps(row_object.material, " | ", ", ")
 				if (material.length>0) {
 					const material_info = common.create_dom_element({
-						element_type 	: "span",
-						class_name 		: "",
-						text_content 	: " ("+material+")",
-						parent 			: row_line
+						element_type	: "span",
+						text_content	: " ("+material+")",
+						parent			: row_line
 					})
 				}
 			
@@ -427,21 +422,69 @@ var mint =  {
 
 
 	/**
-	* INIT_MAP
+	* RENDER_MAP
+	* Note: map_factory draw a base map on init. If no points to render are required,
+	* render command is not necessary
 	*/
-	init_map : function(options) {
-
+	render_map : function(options) {
+		
 		const self = this
 
-		// init page common map
-			page.init_map({
-				map_data : options.map_data,
-				div_container_id : "map_container"
-			})
-		
+		const target		= options.target
+		const map_position	= options.map_position
+		if (map_position) {
+			map_position.zoom = 11 // force max zoom for dare
+		}		 
 
+		const map_data	= self.map_data([]) // prepares data to use in map
+		self.map		= self.map || new map_factory() // creates / get existing instance of map
+		self.map.init({
+			target				: target,
+			// data				: map_data,
+			map_position		: map_position,
+			// popup_builder	: self.map_popup_builder,
+			source_maps			: [
+				{
+					name	: "dare",
+					// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
+					url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
+					options	: { maxZoom: 11 },
+					default	: true
+				},
+				{
+					name	: "arcgis",
+					url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+					options	: {}
+				},
+				{
+					name	: "osm",
+					url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+					options	: {}
+				},
+				// {
+				// 	name	: "grey",
+				// 	url 	: '//{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYWxleGFkZXYiLCJhIjoiY2lrOHdvaTQzMDEwbHY5a3UxcDYxb25ydiJ9.h737F1gRyib-MFj6uAXs9A',
+				// 	options	: {
+				// 		maxZoom	: 20,
+				// 		id		: 'alexadev.p2lbljap'
+				// 	}
+				// }
+			]
+		})
+		// self.map.render({
+		// 	data : []
+		// })
+
+		
 		return true
-	},//end init_map
+	},//end render_map
+
+
+
+	map_data : function(data) {
+
+		return data
+	},//end map_data
 	
 
 

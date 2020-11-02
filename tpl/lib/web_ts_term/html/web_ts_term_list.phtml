@@ -1,8 +1,54 @@
 <?php
 $html = '';
 
-$html .= "<li class=\"web_ts_term_li clearfix\">";
+
+if (!empty($this->illustration)) {
+
+		$dd_relations = json_decode($this->dd_relations);
+		//get legends id
+		$ar_legends_locators = array_filter($dd_relations, function($locator){
+			return ($locator->from_section_tipo === 'numisdata41' ) ? $locator : false ;
+		});
+
+		$legends = array_map(function($locator){
+			return (int)$locator->from_section_id;
+		}, $ar_legends_locators);
+
+		$legends = array_values($legends);
+
+		//get countermark id
+		$ar_cmk_locators = array_filter($dd_relations, function($locator){
+			return ($locator->from_section_tipo === 'numisdata4' ) ? $locator : false ;
+		});
+
+		$countermarck = array_map(function($locator){
+			return (int)$locator->from_section_id;
+		}, $ar_cmk_locators);
+
+		$countermarck = array_values($countermarck);
+			// dump($countermarck, ' legends ++ '.to_string());
+
+
+		$html .= "<li class=\"web_ts_illustation_li clearfix\">";
+			$html .= "<img id=\"button_toggle_indexation_{$this->term_id}\" ";
+			$html .= "class=\"icon_show_illustration unselectable tooltip\" ";
+			$html .= "rel=\"tooltip\" ";
+			$html .= "title=\"" . tstring('mostrar_ilustacion') . "\" ";
+			$html .= "onclick=\"web_ts_term.toggle_indexation(this)\" ";
+			$html .= "data-term_id=\"" . $this->term_id  . "\" ";
+			$html .= "data-ar_legends=\"" . json_encode($legends) . "\" ";
+			$html .= "data-ar_cmk=\"" . json_encode($countermarck) . "\" ";
+			$html .= "src=\"".$this->illustration. "\" ";
+			$html .= "></img>";
+
+			#
+			# INDEX_WRAPPER
+			$html .= "<div id=\"index_wrapper_{$this->term_id}\" class=\"index_wrapper hidden\"></div>";
+		$html .= "</li>";
 	
+}else{
+	$html .= "<li class=\"web_ts_term_li clearfix\">";
+
 	#
 	# TERM Name
 	#dump($this->options, ' this->options ++ '.to_string());
@@ -16,37 +62,7 @@ $html .= "<li class=\"web_ts_term_li clearfix\">";
 		$html .= " <small>[".$this->term_id."]</small>";
 	}
 	$html .= "</div>";
-	
 
-
-	#
-	# INDEX TOGGLE BUTTON
-	# Note that $this->indexation is a string (array json encoded)
-	if (!empty($this->indexation) && $this->indexation!=='[]') {
-
-		// Check indexation target is publicated. If at least one is published, go..
-			$ar_index  = json_decode($this->indexation);
-			$published = false;
-			foreach ($ar_index as $key => $current_locator) {
-				$published = self::check_published($current_locator);
-				if ($published===true) {
-					break;
-				}
-			}
-		if ($published===true) {
-			$html .= "<div id=\"button_toggle_indexation_{$this->term_id}\" ";
-			$html .= "class=\"web_ts_term_icon icon_show_indexation unselectable tooltip\" ";
-			$html .= "rel=\"tooltip\" ";
-			$html .= "title=\"" . tstring('mostrar_ocultar_videos') . "\" ";
-			$html .= "onclick=\"web_ts_term.toggle_indexation(this)\" ";
-			$html .= "data-term_id=\"" . $this->term_id . "\" ";
-			$html .= "data-term=\"" . encodeURIComponent($this->term) . "\" ";
-			$html .= "data-ar_indexation='".$this->indexation."' ";
-			$html .= "></div>";
-		}
-	}
-
-	
 
 	#
 	# CHILDRENS TOGGLE BUTTON
@@ -64,18 +80,13 @@ $html .= "<li class=\"web_ts_term_li clearfix\">";
 	}
 
 
+	$html .= "</li>";
+
 
 	#
-	# INDEX_WRAPPER
-	$html .= "<div id=\"index_wrapper_{$this->term_id}\" class=\"index_wrapper\"></div>";
-
-
-$html .= "</li>";
-
-
-#
-# CHILDRENS_WRAPPER . Ajax target to load childrens
-$html .= "<ul id=\"childrens_wrapper_{$this->term_id}\" class=\"childrens_wrapper\"></ul>";
+	# CHILDRENS_WRAPPER . Ajax target to load childrens
+	$html .= "<ul id=\"childrens_wrapper_{$this->term_id}\" class=\"childrens_wrapper\"></ul>";
+}
 
 
 

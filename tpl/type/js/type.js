@@ -371,6 +371,10 @@ var type =  {
 		if (map_position) {
 			map_position.zoom = 11 // force max zoom for dare
 		}
+
+		if (map_data.length<1) {
+			return null;
+		}
 		
 		self.map = self.map || new map_factory() // creates / get existing instance of map
 		self.map.init({

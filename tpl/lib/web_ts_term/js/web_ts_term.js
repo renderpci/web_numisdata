@@ -216,32 +216,35 @@ var web_ts_term = new function() {
 	*/
 	this.toggle_indexation = function( button_obj ) {
 
-		const term 			= button_obj.dataset.term
 		const term_id 		= button_obj.dataset.term_id
-		const ar_indexation = JSON.parse(button_obj.dataset.ar_indexation)
+		const ar_legends 	= JSON.parse(button_obj.dataset.ar_legends)
+		const ar_cmk 		= JSON.parse(button_obj.dataset.ar_cmk)
 		
-		var	mydata  = {
+		const mydata  = {
 				mode 		 	: 'toggle_indexation',
 				term_id 		: term_id,
-				term 		 	: term,
-				ar_indexation  	: ar_indexation
-			}; //console.log(mydata);
+				ar_legends  	: ar_legends,
+				ar_cmk  		: ar_cmk
+			}; console.log(mydata);
 
 		// index_wrapper
 		var wrapper  = document.getElementById('index_wrapper_'+term_id)
 
-		if (wrapper.style.display=='table') {
-			wrapper.style.display='none'			
+		wrapper.classList.toggle("hidden");
+
+		if (wrapper.classList.contains("hidden")) {
+			wrapper.parentNode.classList.remove("open")		
 			return false;
 		}
 
-		if (web_ts_term.ar_index_loaded[term_id]) {
-			wrapper.style.display = 'table';
-			return false; //TEMPORAL DEACTIVATED !!!!!!!!!!!!!!!!!!!!!!!!!
-		}
+		// if (web_ts_term.ar_index_loaded[term_id]) {
+		// 	wrapper.style.display = 'table';
+		// 	return false; //TEMPORAL DEACTIVATED !!!!!!!!!!!!!!!!!!!!!!!!!
+		// }
 
 		wrapper.classList.add("loading");
-		wrapper.style.display = 'table';
+		wrapper.parentNode.classList.add("open")
+		// wrapper.style.display = 'table';
 
 		// AJAX CALL
 		$.ajax({
@@ -251,50 +254,231 @@ var web_ts_term = new function() {
 		})
 		// DONE
 		.done(function(data_response) {
-
+				// console.log("data_response:",data_response); return
 			// parse result
 				const ar_indexation_node = JSON.parse(data_response)
-				
+				if(ar_indexation_node.result === false) return
+
 			// clean wrapper
 				while (wrapper.hasChildNodes()) {
 					wrapper.removeChild(wrapper.lastChild);
 				}
 
 			// create nodes
-				const rows_data 	= ar_indexation_node.result
-				const rows_data_len = rows_data.length
-				const ar_interview  = []
-				for (var i = 0; i < rows_data_len; i++) {
+				// get the types
+					const types 	= ar_indexation_node.result.find(item => item.id === 'type')
+					const coins 	= ar_indexation_node.result.find(item => item.id === 'coins')
 				
-					const item = rows_data[i]
+				//types
+					const rows_types 		= (types) ? types.result : []
+					const rows_types_len 	= rows_types.length
+					for (var i = 0; i < rows_types_len; i++) {
+					
+						const item = rows_types[i]
+						const title = []
+						const type_id = "MIB " + item.section_id + "/"+ item.number
+						
+						title.push(type_id)
+						if(item.denomination){
+							title.push(item.denomination)
+						}
 
-					const interview_id = item.node_id
-					if (ar_interview.indexOf(interview_id)!==-1) {
-						continue;
+						if(item.material){
+							title.push(item.material)
+						}			
+						
+						const ar_beats = []
+						if (item.averages_weight && item.averages_weight.length>0) {
+							const averages_weight = (item.total_weight_items)
+								? item.averages_weight + " g" +" ("+ item.total_weight_items +")"
+								: item.averages_weight + " g"
+
+							ar_beats.push( averages_weight )
+						}
+		
+						if (item.averages_diameter && item.averages_diameter.length>0) {
+
+							const averages_diameter = (item.total_diameter_items)
+								? item.averages_diameter + " mm" +" ("+ item.total_diameter_items +")"
+								: item.averages_diameter + " mm"+
+
+							ar_beats.push( averages_diameter)
+						}
+						const size_text = ar_beats.join("; ")
+
+						title.push(size_text)	
+
+						const type_text = title.join(" | ")
+
+						//type_wrapper
+							const type_wrapper = common.create_dom_element({
+								element_type	: "span",
+								class_name		: "type_wrapper",
+								parent			: wrapper
+							})
+
+							type_wrapper.addEventListener('mouseup', function(){
+								window.open('./type/'+item.section_id, '_blank');
+							})
+
+
+						// mint 
+							const mint = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "value_label type_mint",
+								inner_html		: item.mint,
+								parent			: type_wrapper
+							})
+						// type 
+							const type = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "value_label type",
+								inner_html		: type_text,
+								parent			: type_wrapper
+							})
+
+						//img_wrapper
+							const img_wrapper = common.create_dom_element({
+								element_type	: "span",
+								class_name		: "img_wrapper",
+								parent			: type_wrapper
+							})
+
+
+						// imag  obverse
+							const img_obv = common.create_dom_element({
+								element_type 	: "img",
+								class_name 		: "image image_obverse",
+								src				: page.remote_image(item.ref_coins_image_obverse),
+								parent			: img_wrapper
+							})
+						// imag  reverse
+							const img_rev = common.create_dom_element({
+								element_type 	: "img",
+								class_name 		: "image image_reverse",
+								src				: page.remote_image(item.ref_coins_image_reverse),
+								parent			: img_wrapper
+							})
 					}
 
-					const node_id 			= item.node_id
-					//const term_id 	  	= item.term_id
-					//const term 	  		= "" // item.term
-					const locator_json 		= item.group_locators
-					const locator_key  		= 0
-					const total_locators 	= item.group_locators.length
-					const image_url 		= item.image_url
+				//coins
+					const rows_coins 		= (coins) ? coins.result : []
+					const rows_coins_len 	= rows_coins.length
 
-					const indexation_item = ui.thematic.build_indexation_item({
-						node_id			: node_id,
-						term_id 		: term_id,
-						term 			: term,
-						locator_json 	: locator_json,
-						locator_key  	: locator_key,
-						total_locators 	: total_locators,
-						image_url 	 	: image_url					
-					})
+					for (var i = 0; i < rows_coins_len; i++) {
+					
+						const item = rows_coins[i]
 
-					wrapper.appendChild(indexation_item)
+						//type_wrapper
+							const type_wrapper = common.create_dom_element({
+								element_type	: "span",
+								class_name		: "type_wrapper",
+								parent			: wrapper
+							})
 
-					ar_interview.push(interview_id)		
-				}
+							type_wrapper.addEventListener('mouseup', function(){
+								window.open('./coin/'+item.section_id, '_blank');
+							})
+
+
+						//img_wrapper
+							const img_wrapper = common.create_dom_element({
+								element_type	: "span",
+								class_name		: "img_wrapper",
+								parent			: type_wrapper
+							})
+
+
+						// imag  obverse
+							const img_obv = common.create_dom_element({
+								element_type 	: "img",
+								class_name 		: "image image_obverse",
+								src				: page.remote_image(item.image_obverse),
+								parent			: img_wrapper
+							})
+						// imag  reverse
+							const img_rev = common.create_dom_element({
+								element_type 	: "img",
+								class_name 		: "image image_reverse",
+								src				: page.remote_image(item.image_reverse),
+								parent			: img_wrapper
+							})
+
+						
+						// collection 
+							const mint = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "value_label type_collection",
+								inner_html		: item.collection,
+								parent			: type_wrapper
+							})
+
+						// auction  Classical Numismatic Group | 18-05-2011, nº 87 (13.47 g; 6 h; 26 mm)
+
+
+							// line
+							const line = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "info_line inline"
+							})
+
+							common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: name,
+								text_content 	: item.ref_auction,
+								parent 			: line
+							})
+
+
+							const split_time 	= (item.ref_auction_date)
+								? item.ref_auction_date.split(' ')
+								: [""]
+							const split_date 	= split_time[0].split('-')
+							const correct_date 	= split_date.reverse()
+							const final_date 	= correct_date.join("-")
+
+							if (final_date) {
+								common.create_dom_element({
+									element_type 	: "span",
+									class_name 		: name,
+									text_content 	: " | "+final_date,
+									parent 			: line
+								})
+							}
+
+							if(item.ref_auction_number){
+								common.create_dom_element({
+									element_type 	: "span",
+									class_name 		: name,
+									text_content 	: ", "+(tstring.n || "nº") +" "+ item.ref_auction_number,
+									parent 			: line
+								})
+							}
+
+							const ar_beats = []
+							if (item.weight && item.weight.length>0) {
+								ar_beats.push( item.weight + " g" )
+							}
+							if (item.dies && item.dies.length>0) {
+								ar_beats.push( item.dies + " h" )
+							}
+							if (item.diameter && item.diameter.length>0) {
+								ar_beats.push( item.diameter + " mm" )
+							}
+							const size_text = ar_beats.join("; ")
+
+						// size_text 
+							common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: name,
+								text_content 	: " ("+size_text+")",
+								parent 			: line
+							})
+
+							type_wrapper.appendChild(line)
+
+						
+					}
 
 			// activate_tooltips
 				tpl_common.activate_tooltips()

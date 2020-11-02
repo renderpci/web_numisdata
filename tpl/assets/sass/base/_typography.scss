@@ -28,8 +28,10 @@
 			'color #{_duration(transition)} ease'
 		));
 		text-decoration: none;
-		color: _palette(fg);
-		border-bottom: dotted 1px transparentize(_palette(fg), 0.5);
+		// color: _palette(fg);
+		// border-bottom: dotted 1px transparentize(_palette(fg), 0.5);
+		color: _palette(accent1);
+		border-bottom: dotted 1px transparentize(_palette(accent1), 0.5);
 
 		&:hover {
 			border-bottom-color: transparent;

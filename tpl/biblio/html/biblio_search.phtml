@@ -72,6 +72,23 @@
 	  <div id="lugar_publicacion_values" class="container_values"></div>
 	</div>
 
+	
+	<div class="form-group field">
+	<?php #  <label for="transcription" class="col-form-label"><?php echo tstring('transcription') </label>?>
+	  <input class="form-control" id="transcription" type="text" name="transcription" 
+	  data-search="string" data-mode="search_distinct" data-q_name="transcription" data-q_table="publications" data-autocomplete="false"
+	  placeholder="<?php echo tstring('transcription') ?>" title="<?php echo tstring('transcription') ?>">
+	  <div id="transcription_values" class="container_values"></div>
+	</div>
+
+	<div class="form-group field">
+	<?php #  <label for="volume" class="col-form-label"><?php echo tstring('volume') </label>?>
+	  <input class="form-control" id="volume" type="text" name="volume" 
+	  data-search="string" data-mode="search_distinct" data-q_name="volume" data-q_table="publications" 
+	  placeholder="<?php echo tstring('volumen') ?>" title="<?php echo tstring('volumen') ?>">
+	  <div id="volume_values" class="container_values"></div>
+	</div>
+
 
 	<div class="form-group field">
 	<?php #  <label for="lugar_publicacion" class="col-form-label"><?php echo tstring('lugar_publicacion') </label>?>

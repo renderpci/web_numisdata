@@ -32,14 +32,13 @@ section.result {
   background-color: transparent;
 }
 .biblio_row_wrapper {
-  margin-bottom: 1em;
+  margin-bottom: 0.3em;
   border-bottom: 1px solid #dedede;
-  padding-bottom: 1em;
+  padding-bottom: 0.3em;
 }
 .biblio_row_wrapper div,
 .biblio_row_wrapper h1 {
   font-family: cambria;
-  font-size: 1.1em;
   font-weight: 100;
   line-height: 1.4;
 }
@@ -60,9 +59,6 @@ section.result {
 }
 .biblio_row_wrapper .grey {
   color: #8C8C8C;
-}
-.biblio_row_wrapper .blue {
-  color: #497FC2;
 }
 .biblio_row_wrapper .row_title {
   display: flex;
@@ -90,12 +86,21 @@ section.result {
   display: flex;
   flex-wrap: wrap;
 }
-.biblio_row_wrapper .row_url a.url_data {
-  color: #497FC2;
-}
 .biblio_row_wrapper .row_url .separator {
   padding-left: 0.5em;
   padding-right: 0.5em;
+}
+.biblio_row_wrapper a.descriptors_link {
+  display: inline-block;
+  padding: 0.35em;
+  padding-bottom: 0;
+  padding-top: 0;
+  background-color: #be875a;
+  margin: 0.25em;
+  margin-left: 0;
+  color: #ffffff !important;
+  border-radius: 3px;
+  font-size: 0.8em;
 }
 .form-inline .form-row {
   display: flex;

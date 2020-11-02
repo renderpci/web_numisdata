@@ -71,6 +71,10 @@ class biblio {
 						$ar_filter[] = '`'.$value_obj->name.'` = '.(int)$value_obj->value;
 						break;
 
+					case 'transcription':
+						$ar_filter[] = 'MATCH (`transcription`) AGAINST (\''.$value_obj->value.'\')';
+						break;
+
 					// case 'authors999':						
 					// 	$delimiter  = ' | ';						
 					// 	$ar_authors = explode($delimiter, $value_obj->value);
@@ -120,7 +124,11 @@ class biblio {
 			'editor',
 			'url_data',
 			'pdf',
-			'descriptors'
+			'pdf_uri',
+			'descriptors',
+			'volume',
+			'other_people_name',
+			'other_people_role'
 		];
 
 		$portals_custom = [

@@ -20,10 +20,18 @@ var biblio =  {
 		if (form) {
 			const ar_form_inputs  	 = form.querySelectorAll("input.form-control")
 			const ar_form_inputs_len = ar_form_inputs.length		
-			for (var i = 0; i < ar_form_inputs_len; i++) {		
+			for (let i = 0; i < ar_form_inputs_len; i++) {
+
+				const item = ar_form_inputs[i]
+
+				const autocomplete = item.dataset.autocomplete
+					? JSON.parse(item.dataset.autocomplete)
+					: true
 		
 				// Activate autocomplete behabiour for each input
-					self.activate_autocomplete(ar_form_inputs[i])
+					if (autocomplete===true) {
+						self.activate_autocomplete(ar_form_inputs[i])
+					}					
 
 				// Add event keyup to all inputs
 				//ar_form_inputs[i].addEventListener("keyup", function(e){
@@ -244,8 +252,6 @@ var biblio =  {
 				
 				if (input.value.length>0) {
 
-						console.log("input:",input);
-
 					// value
 						// const current_value = typeof input.dataset.real_value!=="undefined"
 						// 	? input.dataset.real_value
@@ -318,7 +324,7 @@ var biblio =  {
 		const trigger_vars = {
 			mode 	 : "search_rows",
 			ar_query : typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit 	 : options.limit || 10,
+			limit 	 : options.limit || 100,
 			// pagination
 			offset 	 : options.offset || 0,
 			count 	 : options.count || false,
@@ -360,6 +366,36 @@ var biblio =  {
 
 		return js_promise
 	},//end search_rows
+
+
+
+	/**
+	* SEARCH_ITEM
+	* Build a set of search options for gived column and exec the search
+	*/
+	search_item : function(name, value){
+
+		const self = this
+
+		const ar_query = [{
+			name		: name,
+			search_mode	: "string",
+			table		: "publications",
+			value		: value
+		}]
+		const count = true
+
+		return self.search_rows({
+			ar_query	: ar_query,
+			count		: count
+		}).then(function(){
+			// scrool to head result
+			const div_result = document.querySelector(".result")
+			if (div_result) {
+				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+			}
+		})
+	},//end search_item
 
 
 
@@ -414,7 +450,7 @@ var biblio =  {
 					const biblio_object = ar_rows[i]
 
 					if(SHOW_DEBUG===true) {
-						console.log("i biblio_object:", i, biblio_object);
+						// console.log("i biblio_object:", i, biblio_object);
 					}					
 
 					// for(var a in biblio_object) {
@@ -437,7 +473,9 @@ var biblio =  {
 
 				// row_fields set
 					const row_field = row_fields
-						  row_field.biblio_object = biblio_object
+					// config
+					row_field.biblio_object	= biblio_object
+					row_field.caller		= self
 
 				// author 
 					biblio_row_wrapper.appendChild( row_field.author() )					
@@ -454,10 +492,15 @@ var biblio =  {
 				// row_url
 					biblio_row_wrapper.appendChild( row_fields.row_url() )
 
+				// descriptors
+				if (biblio_object.descriptors && biblio_object.descriptors.length>1) {
+					biblio_row_wrapper.appendChild( row_fields.descriptors(biblio_object.descriptors) )
+				}				
+
 					
 				continue;
 					
-				
+				/*
 				// div body	
 					const row_body = common.create_dom_element({
 						element_type 	: "div",
@@ -534,7 +577,7 @@ var biblio =  {
 								parent 			: line
 							})
 						}
-				/*
+				
 				// notas
 					// if (biblio_object.nota_general) {
 					// 	var line = common.create_dom_element({

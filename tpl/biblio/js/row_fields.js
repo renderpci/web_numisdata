@@ -7,6 +7,7 @@ var row_fields = {
 
 
 	biblio_object : null,
+	caller : null,
 
 
 
@@ -237,10 +238,50 @@ var row_fields = {
 						})
 					}
 
+				// volume 
+					if (biblio_object.volume) {
+						
+						const text_content = (biblio_object.serie.length>0) 
+							? ", "+biblio_object.volume
+							: biblio_object.volume
+
+						common.create_dom_element({
+							element_type 	: "div",
+							class_name 		: "info_value volume grey italic",
+							text_content 	: text_content,
+							parent 			: line
+						})
+					}
+	
+				// other_people_info : name and role other_people_name
+					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
+						
+						const other_people_name = biblio_object.other_people_name.split(" | ");
+						const other_people_role = biblio_object.other_people_role.split(" | ")
+						for (let g = 0; g < other_people_name.length; g++) {
+							
+							const name = other_people_name[g]
+							const role = typeof other_people_role[g]!=='undefined'
+								? ' ('+other_people_role[g]+')' 
+								: ''
+							
+							const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0)) 
+								? ", "+name + role
+								: name + role
+
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: text_content,
+								parent 			: line
+							})
+						}
+					}
+
 				// physical_description 
 					if (biblio_object.physical_description) {
 						
-						const text_content = (biblio_object.serie.length>0) 
+						const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0)) 
 							? ", "+biblio_object.physical_description
 							: biblio_object.physical_description
 
@@ -303,6 +344,42 @@ var row_fields = {
 
 		return line
 	},//end row_url
+
+
+
+	descriptors : function(value) {
+
+		const self = this
+
+		const biblio_object = this.biblio_object
+		
+		// line
+			const line = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "info_line descriptors"
+			})
+
+			const descriptors_list = value.split(' - ')
+			for (let i = 0; i < descriptors_list.length; i++) {
+				
+				const name = descriptors_list[i]
+				// const url = page_globals.__WEB_ROOT_WEB__ + '/biblio/' + '?descriptors=' + name
+
+				const link = common.create_dom_element({
+					element_type 	: "a",
+					class_name 		: "descriptors_link",				
+					text_content 	: name,
+					// href 			: url,
+					parent 			: line
+				})
+				link.addEventListener("click", function(){
+					self.caller.search_item('descriptors', name)
+				})
+			}
+		
+
+		return line
+	},//end descriptors
 
 
 

@@ -149,6 +149,7 @@ function search_distinct($json_data) {
 			if (!empty($dd_relations)) {
 				$options->sql_filter .= PHP_EOL.'AND dd_relations LIKE \'%"'.$dd_relations.'"%\'';
 			}
+			
 		
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($options);

@@ -74,5 +74,9 @@
     "or": "Or",
     "and": "And",
     "operator": "",
-    "period": "Period"
+    "period": "Period",
+    "global_search": "Global search",
+    "reset": "Reset",
+    "transcription": "Transcription",
+    "volumen": "Volume"
 }

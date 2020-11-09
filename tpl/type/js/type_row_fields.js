@@ -12,37 +12,6 @@ var row_fields = {
 
 
 
-	/**
-	* SPLIT_DATA
-	* Safe value split
-	*/
-	split_data : function(value, separator) {
-		const result = value ? value.split(separator) : []
-		return result;
-	},//end split_data
-
-
-
-	/**
-	* REMOVE_GAPS
-	* Removes empty values in multimple values string. 
-	* Like 'pepe | lepe' when 'pepe | lepe | '
-	*/
-	remove_gaps : function(value, separator) {
-		const beats		= value.split(separator).filter(Boolean)
-		const result	= beats.join(separator)
-		
-		return result
-	},//end remove_gaps
-
-
-
-	local_to_remote_paths : function(value) {
-		return value.replace(/\/dedalo\/media_test\/media_monedaiberica/g, page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')
-	},//end local_to_remote_paths
-
-
-
 	draw_item : function(item) {
 
 		const self = this
@@ -64,7 +33,7 @@ var row_fields = {
 
 		const identify_coin = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "identify_coin_wrapper",
+			class_name		: "identify_coin_wrapper gallery",
 			parent 			: fragment
 		})
 
@@ -100,7 +69,7 @@ var row_fields = {
 
 		// legend_obverse
 			fragment.appendChild(
-				self.default(item, "legend_obverse", self.local_to_remote_paths)
+				self.default(item, "legend_obverse", page.local_to_remote_path)
 			)	
 		
 		// design_reverse
@@ -115,13 +84,13 @@ var row_fields = {
 
 		// legend_reverse
 			fragment.appendChild(
-				self.default(item, "legend_reverse", self.local_to_remote_paths)
+				self.default(item, "legend_reverse", page.local_to_remote_path)
 			)
 
 		// equivalents : "ACIP | 1567<br>CNH | 237/1"
 			fragment.appendChild(
 				self.default(item, "equivalents", function(value){
-					const beats = self.split_data(value, "<br>")
+					const beats = page.split_data(value, "<br>")
 					const ar_final = []
 					for (let i = 0; i < beats.length; i++) {
 						ar_final.push( beats[i].replace(/ \| /g, ' ') )
@@ -133,10 +102,10 @@ var row_fields = {
 		// permanent_uri
 			fragment.appendChild(
 				self.default(item, "section_id", function(value){
-					const label	= tstring.permanent_uri || "Permanent URI"
-					const url	= page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + value 
-					
-					return label + ": <a href=\"" + url + "\">" +  url + "</a>"
+					const label		= tstring.permanent_uri || "Permanent URI"
+					const url		= page_globals.__WEB_ROOT_WEB__ + "/type/" + value 
+					const full_url	= page_globals.__WEB_BASE_URL__ + url
+					return label + ": <a href=\"" + url + "\">" +  full_url + "</a>"
 				})
 			)
 
@@ -149,9 +118,8 @@ var row_fields = {
 
 		// public_info
 			fragment.appendChild(
-				self.default(item, "public_info", self.local_to_remote_paths)
+				self.default(item, "public_info", page.local_to_remote_path)
 			)
-
 
 		// label items (ejemplares)
 			fragment.appendChild(
@@ -226,7 +194,7 @@ var row_fields = {
 			
 			const item_text = (typeof fn==="function")
 				? fn(item[name])
-				: self.remove_gaps(item[name], " | ")
+				: page.remove_gaps(item[name], " | ")
 
 			common.create_dom_element({
 				element_type	: "span",
@@ -327,14 +295,23 @@ var row_fields = {
 			})
 
 		if (item[name] && item[name].length>0) {
+
+			const url = item[name]
+
+			const image_link = common.create_dom_element({
+				element_type	: "a",
+				class_name		: "image_link",
+				href			: url,
+				parent			: line
+			})
 	
 			common.create_dom_element({
 				element_type 	: "img",
-				class_name 		: "image " + item[name],
-				src 			: item[name],
-				parent 			: line
+				class_name 		: "image " + name,
+				src 			: url,
+				parent 			: image_link
 			})
-		}		
+		}
 
 
 		return line
@@ -352,7 +329,7 @@ var row_fields = {
 				class_name		: "info_line inline " + name
 			})
 
-		const ar_str_coins = self.split_data(item.ref_coins, ' | ')
+		const ar_str_coins = page.split_data(item.ref_coins, ' | ')
 
 		const ar_coins = []
 		for (var i = 0; i < ar_str_coins.length; i++) {
@@ -370,33 +347,32 @@ var row_fields = {
 				parent 			: line
 			})
 
+			// final_date
+				const split_time 	= (identify_coin.ref_auction_date)
+					? identify_coin.ref_auction_date.split(' ')
+					: [""]
+				const split_date 	= split_time[0].split('-')
+				const correct_date 	= split_date.reverse()
+				const final_date 	= correct_date.join("-")
 
+				if (final_date) {
+					common.create_dom_element({
+						element_type 	: "span",
+						class_name 		: name,
+						text_content 	: " | "+final_date,
+						parent 			: line
+					})
+				}
 
-			const split_time 	= (identify_coin.ref_auction_date)
-				? identify_coin.ref_auction_date.split(' ')
-				: [""]
-			const split_date 	= split_time[0].split('-')
-			const correct_date 	= split_date.reverse()
-			const final_date 	= correct_date.join("-")
-
-			if (final_date) {
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: name,
-					text_content 	: " | "+final_date,
-					parent 			: line
-				})
-			}
-
-			
-			if(identify_coin.ref_auction_number){
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: name,
-					text_content 	: ", "+(tstring.n || "nº") +" "+ identify_coin.ref_auction_number,
-					parent 			: line
-				})
-			}
+			// ref_auction_number
+				if(identify_coin.ref_auction_number){
+					common.create_dom_element({
+						element_type 	: "span",
+						class_name 		: name,
+						text_content 	: ", "+(tstring.n || "nº") +" "+ identify_coin.ref_auction_number,
+						parent 			: line
+					})
+				}
 
 			// size_text. weight / dies / diameter				
 				const ar_beats = []
@@ -473,7 +449,7 @@ var row_fields = {
 			name = "material"
 			if (item[name] && item[name].length>0) {
 		
-				const beats		= self.split_data(item[name], ' | ')
+				const beats		= page.split_data(item[name], ' | ')
 				const item_text	= beats.filter(Boolean).join(", ")
 				
 				const node = common.create_dom_element({
@@ -546,15 +522,27 @@ var row_fields = {
 					class_name		: "images_wrapper",
 					parent			: wrapper
 				})
+				const image_link_obverse = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "image_link",
+					href			: data.image_obverse,
+					parent			: images
+				})
 				common.create_dom_element({
 					element_type	: "img",					
 					src				: data.image_obverse,
+					parent			: image_link_obverse
+				})
+				const image_link_reverse = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "image_link",
+					href			: data.image_reverse,
 					parent			: images
 				})
 				common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_reverse,
-					parent			: images
+					parent			: image_link_reverse
 				})
 			// collection
 				common.create_dom_element({
@@ -582,8 +570,9 @@ var row_fields = {
 					parent			: wrapper
 				})
 			// uri
-				const uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id 
-				const uri_text = "URI: <a href=\""+uri+"\">" + uri + "</a>"
+				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
+				const full_url	= page_globals.__WEB_BASE_URL__ + uri
+				const uri_text	= "URI: <a href=\""+uri+"\">" + full_url + "</a>"
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "",
@@ -617,6 +606,7 @@ var row_fields = {
 					inner_html		: find_text,
 					parent			: wrapper
 				})
+
 			// biblio
 				const references_container = common.create_dom_element({
 					element_type	: "div",
@@ -626,8 +616,7 @@ var row_fields = {
 				const references = data.bibliography_data
 				for (let r = 0; r < references.length; r++) {
 					self.draw_bibliographic_reference(references[r], references_container)	
-				}
-				
+				}				
 
 		}//end draw_coin
 
@@ -651,7 +640,7 @@ var row_fields = {
 
 				const typology_coins = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "typology_coins",
+					class_name		: "typology_coins gallery",
 					parent			: line
 				})
 
@@ -741,7 +730,7 @@ var row_fields = {
 
 		function draw_coin(data, container) {
 
-			console.log("--draw_coin data:",data);
+			// console.log("--draw_coin data:",data);
 
 			const wrapper = common.create_dom_element({
 				element_type	: "div",
@@ -798,8 +787,9 @@ var row_fields = {
 						parent			: info
 					})
 				// uri
-					const uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id 
-					const uri_text = "URI: <a href=\""+uri+"\">" + uri + "</a>"
+					const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
+					const full_uri	= page_globals.__WEB_BASE_URL__ + uri
+					const uri_text	= "URI: <a href=\""+uri+"\">" + full_uri + "</a>"
 					common.create_dom_element({
 						element_type	: "div",
 						class_name		: "",
@@ -1012,10 +1002,6 @@ var row_fields = {
 
 		return line
 	},//end findspots
-
-
-
-
 
 
 
@@ -1405,7 +1391,7 @@ var row_fields = {
 						class_name		: "url_data",
 						title			: title,
 						text_content	: title,
-						href			: url_item.iri,
+						href			: url_item.iri,						
 						parent			: line
 					})
 					link.setAttribute('target', '_blank');
@@ -1505,6 +1491,37 @@ var row_fields = {
 
 		return line
 	},//end typology_name
+
+
+
+	// /**
+	// * SPLIT_DATA
+	// * Safe value split
+	// */
+	// split_data : function(value, separator) {
+	// 	const result = value ? value.split(separator) : []
+	// 	return result;
+	// },//end split_data
+
+
+
+	// /**
+	// * REMOVE_GAPS
+	// * Removes empty values in multimple values string. 
+	// * Like 'pepe | lepe' when 'pepe | lepe | '
+	// */
+	// remove_gaps : function(value, separator) {
+	// 	const beats		= value.split(separator).filter(Boolean)
+	// 	const result	= beats.join(separator)
+		
+	// 	return result
+	// },//end remove_gaps
+
+
+
+	// local_to_remote_paths : function(value) {
+	// 	return value.replace(/\/dedalo\/media_test\/media_monedaiberica/g, page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')
+	// },//end local_to_remote_paths
 
 
 

@@ -126,7 +126,6 @@ section.result {
   margin-left: 0;
 }
 .row_node {
-  page-break-inside: avoid;
   border-top: 1px solid #ddd;
 }
 .row_node:first-child {
@@ -241,6 +240,7 @@ span {
 }
 .types {
   display: grid;
+  page-break-inside: avoid;
 }
 .field_global_search {
   display: none;
@@ -264,7 +264,8 @@ span {
 }
 @media print {
   .inner > h1,
-  .form {
+  .form,
+  nav {
     display: none !important;
   }
   #header {

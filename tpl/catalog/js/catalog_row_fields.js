@@ -1,8 +1,11 @@
+/*global tstring, page_globals, SHOW_DEBUG, item, common, page, forms, document, DocumentFragment, tstring, console, tree_factory, map_factory */
+/*eslint no-undef: "error"*/
+/*jshint esversion: 6 */
 "use strict";
 
 
 
-var row_fields = {
+var catalog_row_fields = {
 
 
 
@@ -175,19 +178,33 @@ var row_fields = {
 						})			
 						coins_images.style.width = (diameter * 4 ) + 'mm'
 						const url_ref_coins_image_obverse = page.remote_image(item.ref_coins_image_obverse)
+
+						const image_link_obverse = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "image_link",
+							href			: url_ref_coins_image_obverse,
+							parent			: coins_images
+						})
 						const img_obverse = common.create_dom_element({
 							  element_type 	: "img",
 							  class_name 	: "image_obverse",
 							  src 			: url_ref_coins_image_obverse,
-							  parent 		: coins_images
+							  parent 		: image_link_obverse
 						})
 						img_obverse.style.width = (diameter * 2 ) + 'mm'
 						const url_ref_coins_image_reverse = page.remote_image(item.ref_coins_image_reverse)
-						const img_reverse =common.create_dom_element({
+						
+						const image_link_reverse = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "image_link",
+							href			: url_ref_coins_image_reverse,
+							parent			: coins_images
+						})
+						const img_reverse = common.create_dom_element({
 							  element_type 	: "img",
 							  class_name 	: "image_reverse",
 							  src 			: url_ref_coins_image_reverse,
-							  parent 		: coins_images
+							  parent 		: image_link_reverse
 						})
 						img_reverse.style.width = (diameter * 2 ) + 'mm'
 
@@ -373,4 +390,4 @@ var row_fields = {
 
 
 
-}//end row_fields
+}//end catalog_row_fields

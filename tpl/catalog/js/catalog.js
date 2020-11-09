@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, catalog_row_fields, common, page*/
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -1226,11 +1226,15 @@ var catalog =  {
 					fn 		: 'process_result::add_parents_and_children_recursive',
 					columns : [{name : "parents"}]
 				}
-			}).then((response)=>{
+			})
+			.then((response)=>{
 
 				// if(SHOW_DEBUG===true) {
 					console.log("--- form_submit response:",response)
 				// }
+
+				// data parsed
+					const data = page.parse_catalog_data(response.result)
 	
 				// clean container and add_spinner
 					const container = document.querySelector("#rows_list")
@@ -1346,10 +1350,9 @@ var catalog =  {
 				process_result	: process_result
 			}
 		})
-
-		js_promise.then((response)=>{
-			// console.log("--- search_rows API response:",response);
-		})
+		// js_promise.then((response)=>{
+		// 	// console.log("--- search_rows API response:",response);
+		// })
 		
 
 		return js_promise
@@ -1364,78 +1367,88 @@ var catalog =  {
 
 		const self = this
 
-		const target 		 = options.target
-		const ar_rows 		 = options.ar_rows || []
-		const ar_rows_length = ar_rows.length
+		return new Promise(function(resolve){		
 
-		const total  		 = self.search_options.total
-		const limit  		 = self.search_options.limit
-		const offset 		 = self.search_options.offset
+			const target 		 = options.target
+			const ar_rows 		 = options.ar_rows || []
+			const ar_rows_length = ar_rows.length
+
+			const total  		 = self.search_options.total
+			const limit  		 = self.search_options.limit
+			const offset 		 = self.search_options.offset
 
 
-		// container select and clean container div
-			const container = document.getElementById(target)
-			// while (container.hasChildNodes()) {
-			// 	container.removeChild(container.lastChild);
-			// }
+			// container select and clean container div
+				const container = document.getElementById(target)
+				// while (container.hasChildNodes()) {
+				// 	container.removeChild(container.lastChild);
+				// }
 
-		// add_spinner
-			// page.add_spinner(container)
+			// add_spinner
+				// page.add_spinner(container)
 
-		// const render_nodes = async () => {
-		async function render_nodes() {
+			// const render_nodes = async () => {
+			async function render_nodes() {
 
-			const fragment = new DocumentFragment();
+				const fragment = new DocumentFragment();
 
-			const ar_mints = ar_rows.filter(item => item.term_table==='mints')
+				const ar_mints = ar_rows.filter(item => item.term_table==='mints')
 
-			const ar_parent = []
-			for (let i = 0; i < ar_mints.length; i++) {
-				const parent = JSON.parse(ar_mints[i].parent)[0]
-				const mint_parent 	= ar_rows.find(item => item.section_id===parent)
-				if(!mint_parent){
-						console.error("mint don't have public parent:",ar_mints[i]);
-					continue
+				const ar_parent = []
+				for (let i = 0; i < ar_mints.length; i++) {
+					const parent = JSON.parse(ar_mints[i].parent)[0]
+					const mint_parent 	= ar_rows.find(item => item.section_id===parent)
+					if(!mint_parent){
+							console.error("mint don't have public parent:",ar_mints[i]);
+						continue
+					}
+					// check if the parent is inside the ar_aprents, if not push inside else nothing
+					const unique_parent 	= ar_parent.find(item => item.section_id===parent)
+					if(typeof unique_parent === 'undefined'){
+						ar_parent.push(mint_parent)
+					}
+					
 				}
-				// check if the parent is inside the ar_aprents, if not push inside else nothing
-				const unique_parent 	= ar_parent.find(item => item.section_id===parent)
-				if(typeof unique_parent === 'undefined'){
-					ar_parent.push(mint_parent)
-				}
-				
+				// create the nodes with the unique parents: ar_parents
+				for (let i = 0; i < ar_parent.length; i++) {
+					const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
+				}		
+							
+				// sort rows
+					// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+					// ar_rows.sort( (a,b) => {
+					// 		let order_a = a.autoria +" "+ a.fecha_publicacion
+					// 		let order_b = b.autoria +" "+ b.fecha_publicacion
+					// 		//console.log("order_a",order_a, order_b);
+					// 		//console.log(collator.compare(order_a , order_b));
+					// 	return collator.compare(order_a , order_b)
+					// });
+
+				return fragment
 			}
-			// create the nodes with the unique parents: ar_parents
-			for (let i = 0; i < ar_parent.length; i++) {
-				const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
-			}		
+
+			render_nodes()
+			.then(fragment => {
+
+				// setTimeout(()=>{
+					while (container.hasChildNodes()) {
+						container.removeChild(container.lastChild);
+					}
+
+					// bulk fragment nodes to container
+					container.appendChild(fragment)
+
+					// activate images lightbox
+						const images_gallery_containers = container						
+						page.activate_images_gallery(images_gallery_containers, true)
 						
-			// sort rows
-				// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
-				// ar_rows.sort( (a,b) => {
-				// 		let order_a = a.autoria +" "+ a.fecha_publicacion
-				// 		let order_b = b.autoria +" "+ b.fecha_publicacion
-				// 		//console.log("order_a",order_a, order_b);
-				// 		//console.log(collator.compare(order_a , order_b));
-				// 	return collator.compare(order_a , order_b)
-				// });
+				// },800)
 
-			return fragment
-		}
+				resolve(container)
+			})
 
-		render_nodes().then(fragment => {
-
-			// setTimeout(()=>{
-				while (container.hasChildNodes()) {
-					container.removeChild(container.lastChild);
-				}
-
-				// bulk fragment nodes to container
-				container.appendChild(fragment)
-			// },800)
+			return true
 		})
-
-
-		return true
 	},//end draw_rows
 
 
@@ -1498,8 +1511,8 @@ var catalog =  {
 				// console.log("i row_object:", i, row_object);
 			}
 
-		// row_fields set
-			const node = row_fields.draw_item(row_object)
+		// catalog_row_fields set
+			const node = catalog_row_fields.draw_item(row_object)
 
 		return node
 	}

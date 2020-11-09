@@ -592,7 +592,346 @@ var page = {
 		// /dedalo/media_test/media_monedaiberica		
 
 		return null
-	}//end remote_image
+	},//end remote_image
+
+
+
+	/**
+	* PARSE_LEGEND_SVG
+	* @return 
+	*/
+	parse_legend_svg : function(value) {
+		return value.replace(/\/dedalo\/media\/svg\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/svg/")
+	},//end parse_legend_svg
+
+
+
+	/**
+	* PARSE_CATALOG_DATA
+	* @return 
+	*/
+	parse_catalog_data : function(data) {
+		console.log("------------> parse_catalog_data data:",data);
+		const self = this
+
+		// array case
+			if (Array.isArray(data)) {
+				const new_data = []
+				const data_length = data.length
+				for (let i = 0; i < data_length; i++) {
+					new_data.push( self.parse_catalog_data(data[i]) )
+				}
+				return new_data
+			}
+
+		const row = data
+
+		// url
+		row.ref_coins_image_obverse = common.local_to_remote_path(data.ref_coins_image_obverse)
+		row.ref_coins_image_reverse = common.local_to_remote_path(data.ref_coins_image_reverse)
+
+		row.ref_type_legend_obverse = row.ref_type_legend_obverse
+			? self.parse_legend_svg(row.ref_type_legend_obverse)
+			: null
+		row.ref_type_legend_reverse = row.ref_type_legend_reverse
+			? self.parse_legend_svg(row.ref_type_legend_reverse)
+			: null
+
+		return row
+	},//end parse_catalog_data
+
+
+
+	/**
+	* PARSE_TYPE_DATA
+	*/
+	parse_type_data : function(data) {
+		// console.log("------------> parse_type_data data:",data);
+		
+		const self = this
+
+		// array case
+			if (Array.isArray(data)) {
+				const new_data = []
+				for (let i = 0; i < data.length; i++) {
+					new_data.push( self.parse_type_data(data[i]) )
+				}
+				return new_data
+			}
+
+		const row = data
+
+		// url
+		row.ref_coins_image_obverse = common.local_to_remote_path(data.ref_coins_image_obverse)
+		row.ref_coins_image_reverse = common.local_to_remote_path(data.ref_coins_image_reverse)
+
+		// ref_coins_union
+		if (row.ref_coins_union) {
+			for (let j = 0; j < row.ref_coins_union.length; j++) {
+				if (row.ref_coins_union[j].image_obverse) {
+					row.ref_coins_union[j].image_obverse = common.local_to_remote_path(row.ref_coins_union[j].image_obverse)
+				}
+				if (row.ref_coins_union[j].image_reverse) {
+					row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
+				}				
+			}
+		}
+
+		// json encoded
+		// row.dd_relations		= JSON.parse(row.dd_relations)
+		// row.collection_data		= JSON.parse(row.collection_data)
+		// row.image_obverse_data	= JSON.parse(row.image_obverse_data)
+		// row.image_reverse_data	= JSON.parse(row.image_reverse_data)
+		// row.type_data			= JSON.parse(row.type_data)
+
+		// legend text includes svg url
+		row.legend_obverse = row.legend_obverse
+			? self.parse_legend_svg(row.legend_obverse)
+			: null
+		row.legend_reverse = row.legend_reverse 
+			? self.parse_legend_svg(row.legend_reverse)
+			: null
+
+		// permanent uri
+		// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+
+
+		return row
+	},//end parse_type_data
+
+
+
+	/**
+	* PARSE_COIN_DATA
+	*/
+	parse_coin_data : function(data) {
+		// console.log("------------> parse_coin_data data:",data);
+		
+		const self = this
+
+		// array case
+			if (Array.isArray(data)) {
+				const new_data = []
+				for (let i = 0; i < data.length; i++) {
+					new_data.push( self.parse_coin_data(data[i]) )
+				}
+				return new_data
+			}
+
+		const row = data
+
+		// url
+		row.image_obverse = common.local_to_remote_path(data.image_obverse)
+		row.image_reverse = common.local_to_remote_path(data.image_reverse)
+
+		// type_data
+		// if (row.type_data) {
+		// 	row.type_data = self.parse_type_data(row.type_data)
+		// }		
+		if (row.type_data && row.type_data.length>0) {			
+			row.type_data = self.parse_type_data(row.type_data)
+		}
+
+		// legend text includes svg url
+		row.legend_obverse = row.legend_obverse
+			? self.parse_legend_svg(row.legend_obverse)
+			: null
+		row.legend_reverse = row.legend_reverse 
+			? self.parse_legend_svg(row.legend_reverse)
+			: null
+
+		// countermark text includes svg url
+		row.countermark_obverse = row.countermark_obverse
+			? self.parse_legend_svg(row.countermark_obverse)
+			: null
+		row.countermark_reverse = row.countermark_reverse 
+			? self.parse_legend_svg(row.countermark_reverse)
+			: null
+
+		// auction
+		row.ref_auction_date = self.parse_date(row.ref_auction_date)
+
+		// find
+		row.find_date = self.parse_date(row.find_date)
+
+		row.uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+
+		// bibliography
+		row.bibliography = page.parse_publication(row.bibliography_data)
+
+
+		return row
+	},//end parse_coin_data
+
+
+
+	/**
+	* REMOVE_GAPS
+	* Removes empty values in multimple values string. 
+	* Like 'pepe | lepe' when 'pepe | lepe | '
+	*/
+	remove_gaps : function(value, separator) {
+		const beats		= value.split(separator).filter(Boolean)
+		const result	= beats.join(separator)
+		
+		return result
+	},//end remove_gaps
+
+
+
+	/**
+	* SPLIT_DATA
+	* Safe value split
+	*/
+	split_data : function(value, separator) {
+		const result = value ? value.split(separator) : []
+		return result;
+	},//end split_data
+
+
+
+	/**
+	* IS_EMPTY
+	* Check if value is empty
+	*/
+	is_empty : function(value) {
+		
+		return value && value.length>0
+	},//end is_empty
+
+
+
+	/**
+	* PARSE_DATE
+	* Converts date like '2001-00-00 00:00:00' -> '2001'
+	*/
+	parse_date : function(timestamp) {
+	
+		if (!timestamp || timestamp.length<4) {
+			return null
+		}		
+
+		const year 	= timestamp.substring(0, 4) // 2014-06-24
+		const month 	= timestamp.substring(5, 7)
+		const day 	= timestamp.substring(8, 10)
+
+		// push in order when not empty
+			const ar_parts = []
+				if (day && day!='00') {
+					ar_parts.push(day)
+				}
+				if (month && month!='00') {
+					ar_parts.push(month)
+				}
+				if (year && year!='00') {
+					ar_parts.push(year)
+				}
+
+		const date = ar_parts.join('-')	
+
+
+		return date
+	},//end parse_date
+
+
+
+	/**
+	* PARSE_PUBLICATION
+	* Modify the received data by recombining publication information
+	* @return array parsed_data
+	*/
+	parse_publication : function(data) {
+
+		const parsed_data	= []
+		const separator		= " # ";
+		const data_length	= data.length
+		for (let i = 0; i < data_length; i++) {
+			
+			const reference = data[i]
+
+			// add publications property to store all resolved references
+				reference._publications = []
+
+			const publications_data			= JSON.parse(reference.publications_data)
+			const publications_data_length	= publications_data.length
+			if (publications_data_length>0) {
+
+				const ref_publications_authors	= page.split_data(reference.ref_publications_authors, separator)
+				const ref_publications_date		= page.split_data(reference.ref_publications_date, separator)
+				const ref_publications_editor	= page.split_data(reference.ref_publications_editor, separator)
+				const ref_publications_magazine	= page.split_data(reference.ref_publications_magazine, separator)
+				const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
+				const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
+				const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
+				
+				for (let j = 0; j < publications_data_length; j++) {
+					
+					const section_id = publications_data[j]
+
+					const parsed_item = {
+						reference	: reference.section_id,
+						section_id	: section_id,
+						authors		: ref_publications_authors[j] || null,
+						date		: ref_publications_date[j] || null,
+						editor		: ref_publications_editor[j] || null,
+						magazine	: ref_publications_magazine[j] || null,
+						place		: ref_publications_place[j] || null,
+						title		: ref_publications_title[j] || null,
+						url			: ref_publications_url[j] || null,
+					}
+
+					reference._publications.push(parsed_item)
+					parsed_data.push(parsed_item)
+				}
+			}
+			
+		}
+		// console.log("parsed_data:",parsed_data);
+
+		return parsed_data
+	},//end parse_publication
+
+
+
+	/**
+	* ACTIVATE_IMAGES_GALLERY
+	* @return promise
+	*/
+	activate_images_gallery : function(images_gallery_container, clean) {
+
+		// clean existing
+			if (clean===true) {
+				const old_poptrox_overlay = document.querySelectorAll('.poptrox-overlay')
+				if (old_poptrox_overlay) {
+					for (let i = old_poptrox_overlay.length - 1; i >= 0; i--) {
+						old_poptrox_overlay[i].remove()
+					}
+				}
+			}
+						
+				
+		return $(images_gallery_container).poptrox({
+			baseZIndex: 20000,
+			fadeSpeed: 1,
+			// onPopupClose: function() { $body.removeClass('modal-active'); },
+			// onPopupOpen: function() { $body.addClass('modal-active'); },
+			overlayOpacity: 0.5,
+			popupCloserText: '',
+			popupHeight: 150,
+			popupLoaderText: '',
+			popupSpeed: 1,
+			popupWidth: 150,
+			selector: 'a.image_link',
+			usePopupCaption: false,
+			usePopupCloser: true,
+			usePopupDefaultStyling: false,
+			usePopupForceClose: true,
+			usePopupLoader: true,
+			usePopupNav: true,
+			windowMargin: 50
+		})
+	},//end activate_images_gallery
+
 
 
 

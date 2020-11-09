@@ -7,6 +7,15 @@
 
 
 .result {
+	min-height: 70vh;
+	display: block;
+
+	&:after {
+		content: " ";
+		display: block;
+		clear: both;
+	}
+	
 
 	a.section_id {
 		float: right;
@@ -17,22 +26,132 @@
 		// background-color: #fffc9f;
 	}
 
-	// mint row detail
+	// row detail
 	#row_detail {
-		label {
-			margin: 0;
-		}
-		.info_value {
+		
+		
 
+		.identify_images_wrapper {
+			// display: flex;
+			// flex-wrap: wrap;
+			float: right;
+			display: grid;
+
+			>a.image_link {		
+
+				>img {
+					// height: calc(50vh - 12em);
+					height: 18em;
+					display: block;
+					margin: 1em;
+					margin-top: 0;
+					margin-right: 0;
+					object-fit: contain;
+				}
+			}
 		}
-		img {
-			max-height: 12em;
-			display: block;
-			margin: 1em;
-			margin-left: 0;
+
+		.block_wrapper {
+			@_height : 1.2em;
+			display: flex;
+			flex-wrap: wrap;
+			// background-color: #a9fed5;		
+			margin: 0;
+
+			&.block {
+				display: grid;
+				// width: 100%;
+			}
+
+			&:after {
+				content: " ";
+				clear: both;
+			}			
+
+			>label {
+				display: block;
+				width: 100%;
+				padding: 0.25em;
+				padding: 0.5em;
+				line-height: 1em;
+				margin: 0;
+				font-size: 1em;
+				font-weight: normal;
+				opacity: 0.5;
+				margin-left: 0.25em;
+				&:after {
+					content: ":";
+				}
+			}
+
+			.group {
+				display: flex;
+				flex-wrap: wrap;
+				// background-color: #fcdbec;
+				margin: 0.5em;
+
+				&.id {
+					width: 100%;
+					font-size: 2em;
+					padding-left: 0;
+					margin: 0;
+					margin-bottom: 0.25em;
+				}
+
+				>label, >span {
+					padding: 0.25em;
+					line-height: 1em;
+					margin: 0;
+					font-size: 1em;
+					height: @_height;
+				}
+
+				&.former_collection {
+					&:before {
+						content: "(";
+						display: inline-block;
+						line-height: 1.5em;
+					}
+					&:after {
+						content: ")";
+						display: inline-block;
+						line-height: 1.5em;
+					}
+				}
+
+				label {				
+					// background-color: #fdfbad;
+					font-weight: normal;
+					opacity: 0.5;
+					&:after {
+						content: ":";
+					}
+				}
+
+				&.bibliography {
+					// background-color: #fbcd99;
+					display: block;
+					line-height: @_height;
+					padding-left: 0.25em;
+
+					span {
+						padding: 0;
+					}
+				}
+			}
+			
+
+			.value {
+				// background-color: #fcc1b3;
+				
+				img {
+					height: @_height;
+				}
+			}	
 		}
 	}
 	
+
 	// mint types list
 	#types {
 		// background-color: #3d3d3d;

@@ -23,19 +23,25 @@ var coin =  {
 			if (typeof options.section_id!=="undefined") {
 				
 				// search by section_id			
-					const search = self.get_row_data({
+					self.get_row_data({
 						section_id : options.section_id
 					})
-					
-				// draw then
-					search.then(function(response){
+					.then(function(response){
+						
+						console.log("--> set_up get_row_data response:",response);						
 						
 						// row draw
-							const coin = response.result.find( el => el.id==='coin')					
-							self.draw_row({
-								target  : document.getElementById('row_detail'),
-								ar_rows : coin.result
-							})			
+						const coin = response.result.find( el => el.id==='coin')
+						const data = page.parse_coin_data(coin.result)
+						const target = document.getElementById('row_detail')
+						self.draw_row({
+							target  : target,
+							ar_rows : data
+						})
+						.then(function(){
+							const images_gallery_container = target.querySelector('.gallery')
+							page.activate_images_gallery(images_gallery_container)
+						})		
 					})
 			}
 	
@@ -50,8 +56,13 @@ var coin =  {
 			// 	}		
 			// }
 
+
+
 		return true
 	},//end set_up
+
+
+
 
 
 
@@ -99,23 +110,45 @@ var coin =  {
 	*/
 	draw_row : function(options) {
 
-		const row_object	= options.ar_rows[0]
-		const container 	= options.target
+		const self = this
 
-		// fix row_object
-			self.row_object = row_object
+		return new Promise(function(resolve){		
 
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("coin row_object:",row_object);
-			}		
+			const row_object	= options.ar_rows[0]
+			const container 	= options.target
 
-		// container. clean container div
-			while (container.hasChildNodes()) {
-				container.removeChild(container.lastChild);
-			}
+				console.log("row_object:",row_object);
 
-		const fragment = new DocumentFragment();
+			// fix row_object
+				self.row_object = row_object
+
+			// debug
+				if(SHOW_DEBUG===true) {
+					console.log("coin row_object:",row_object);
+				}		
+
+			// container. clean container div
+				while (container.hasChildNodes()) {
+					container.removeChild(container.lastChild);
+				}
+
+			const fragment = new DocumentFragment();	
+
+			// draw row coin
+				const coin_row_wrapper = coin_row.draw_coin(row_object)
+					console.log("coin_row_wrapper:",coin_row_wrapper);
+				fragment.appendChild(coin_row_wrapper)
+			
+
+			// container final fragment add
+				container.appendChild(fragment)
+
+
+			resolve(container)
+		})
+
+
+
 
 		// line
 			const line = common.create_dom_element({
@@ -138,7 +171,7 @@ var coin =  {
 			}
 
 		// image_obverse
-			if (typeof row_object.images_obverse[0]!=="undefined") {
+			if (row_object.images_obverse && typeof row_object.images_obverse[0]!=="undefined") {
 
 				common.create_dom_element({
 					element_type 	: "img",
@@ -149,7 +182,7 @@ var coin =  {
 			}
 
 		// image_reverse
-			if (typeof row_object.images_obverse[0]!=="undefined") {
+			if (row_object.images_obverse && typeof row_object.images_obverse[0]!=="undefined") {
 
 				common.create_dom_element({
 					element_type 	: "img",

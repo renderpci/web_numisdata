@@ -54,7 +54,8 @@ class coin {
 			$portals_custom = [
 				'type_data'			=> 'types',
 				'images_obverse'	=> 'images',
-				'images_reverse'	=> 'images'
+				'images_reverse'	=> 'images',
+				'bibliography_data'	=> 'bibliographic_references'
 			];
 
 			$filter = 'section_id=' . (int)$section_id;		

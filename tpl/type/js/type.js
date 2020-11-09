@@ -9,7 +9,7 @@ var type =  {
 
 
 	// trigger_url
-	trigger_url : page_globals.__WEB_TEMPLATE_WEB__ + "/type/trigger.type.php",
+	// trigger_url : page_globals.__WEB_TEMPLATE_WEB__ + "/type/trigger.type.php",
 	
 	// search_options
 	search_options : {},
@@ -27,20 +27,21 @@ var type =  {
 
 		const self = this
 
-			console.log("options:",options);
+		// debug
+			if(SHOW_DEBUG===true) {
+				console.log("type set_up options:",options);
+			}			
 
 		// trigger render type with current options.section_id 
 			if (typeof options.section_id!=="undefined") {
 				
 				// search by section_id	and draw on receive data		
-					self.get_row_data({
-						
-						section_id : options.section_id
-					
-					}).then(function(response){
-							console.log("/// response:", response);
-							console.log("/// row:", response.result[0]);
-							
+					self.get_row_data({						
+						section_id : options.section_id					
+					})
+					.then(function(response){
+						console.log("/// response:", response);
+						console.log("/// row:", response.result[0]);							
 
 						const container	= document.getElementById('row_detail')
 						// container. clean container div
@@ -54,19 +55,27 @@ var type =  {
 
 						type.result[0].catalog = catalog.result[0]
 
-						const row = type.result[0]
-							console.log("row:",row);
-
-						// debug
-							// const pre = common.create_dom_element({
-							// 	element_type 	: "pre",
-							// 	inner_html 		: JSON.stringify(row, null, 2),
-							// 	parent 			: container
-							// })
 						
-						// row render
-							const row_wrapper = self.list_row_builder(row)
-							container.appendChild(row_wrapper)
+						if (typeof type.result[0]!=="undefined") {
+							 
+							// parse data
+							const row = page.parse_type_data(type.result[0])
+							
+							// render row nodes
+							self.list_row_builder(row)
+							.then(function(row_wrapper){
+								container.appendChild(row_wrapper)
+
+								// activate images lightbox
+									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
+									// console.log("images_gallery_containers:",images_gallery_containers);
+									if (images_gallery_containers) {
+										for (let i = 0; i < images_gallery_containers.length; i++) {
+											page.activate_images_gallery(images_gallery_containers[i])
+										}
+									}									
+							})
+						}
 					})
 			}
 	
@@ -80,8 +89,7 @@ var type =  {
 			// 		if (button) button.click()
 			// 	}		
 			// }
-
-
+		
 
 		return true
 	},//end set_up
@@ -171,7 +179,6 @@ var type =  {
 				}
 			})
 
-
 		// OLD WAY (SERVER CALL)
 			// // trigger vars
 			// 	const trigger_url  = self.trigger_url
@@ -210,48 +217,44 @@ var type =  {
 		
 		const self = this
 
-		// parse type bibliography_data
-			self.parse_publication(row.bibliography_data)
+		return new Promise(function(resolve){		
 
-		// parse type coins.bibliography_data
-			const coins_length = row.ref_coins_union.length
-			for (let i = 0; i < coins_length; i++) {
-				const item = row.ref_coins_union[i]
-				self.parse_publication(item.bibliography_data)
-			}
-		
-		// parse type findspots.bibliography_data			
-			const findspots_length = row.ref_coins_findspots_data.length;
-			for (let i = 0; i < findspots_length; i++) {
-				const item = row.ref_coins_findspots_data[i]
-				self.parse_publication(item.bibliography_data)
-			}
+			// parse type bibliography_data
+				self.parse_publication(row.bibliography_data)
 
-		// parse type hoards.bibliography_data
-			const hoards_length = row.ref_coins_hoard_data.length
-			for (let i = 0; i < hoards_length; i++) {
-				const item = row.ref_coins_hoard_data[i]
-				self.parse_publication(item.bibliography_data)
-			}
-
-		// parse parse_ordered_coins creating _coins_group	
-			self.parse_ordered_coins(row)
+			// parse type coins.bibliography_data
+				const coins_length = row.ref_coins_union.length
+				for (let i = 0; i < coins_length; i++) {
+					const item = row.ref_coins_union[i]
+					self.parse_publication(item.bibliography_data)
+				}
 			
+			// parse type findspots.bibliography_data			
+				const findspots_length = row.ref_coins_findspots_data.length;
+				for (let i = 0; i < findspots_length; i++) {
+					const item = row.ref_coins_findspots_data[i]
+					self.parse_publication(item.bibliography_data)
+				}
 
-		// render row
-			row_fields.caller	= self
-			const row_node		= row_fields.draw_item(row)
+			// parse type hoards.bibliography_data
+				const hoards_length = row.ref_coins_hoard_data.length
+				for (let i = 0; i < hoards_length; i++) {
+					const item = row.ref_coins_hoard_data[i]
+					self.parse_publication(item.bibliography_data)
+				}
+
+			// parse parse_ordered_coins creating _coins_group	
+				self.parse_ordered_coins(row)
+				
+
+			// render row
+				row_fields.caller	= self
+				const row_node		= row_fields.draw_item(row)
 
 
-		return row_node
+			resolve(row_node)
+		})
 	},//end list_row_builder
-
-
-
-	split_data : function(value, separator) {
-		const result = value ? value.split(separator) : []
-		return result;
-	},//end split_data
 
 
 
@@ -261,56 +264,57 @@ var type =  {
 	* @return array parsed_data
 	*/
 	parse_publication : function(data) {
+		return page.parse_publication(data)
 
-		const self = this
+		// const self = this
 
-		const parsed_data	= []
-		const separator		= " # ";
-		const data_length	= data.length
-		for (let i = 0; i < data_length; i++) {
+		// const parsed_data	= []
+		// const separator		= " # ";
+		// const data_length	= data.length
+		// for (let i = 0; i < data_length; i++) {
 			
-			const reference = data[i]
+		// 	const reference = data[i]
 
-			// add publications property to store all resolved references
-				reference._publications = []
+		// 	// add publications property to store all resolved references
+		// 		reference._publications = []
 
-			const publications_data			= JSON.parse(reference.publications_data)
-			const publications_data_length	= publications_data.length
-			if (publications_data_length>0) {
+		// 	const publications_data			= JSON.parse(reference.publications_data)
+		// 	const publications_data_length	= publications_data.length
+		// 	if (publications_data_length>0) {
 
-				const ref_publications_authors	= self.split_data(reference.ref_publications_authors, separator)
-				const ref_publications_date		= self.split_data(reference.ref_publications_date, separator)
-				const ref_publications_editor	= self.split_data(reference.ref_publications_editor, separator)
-				const ref_publications_magazine	= self.split_data(reference.ref_publications_magazine, separator)
-				const ref_publications_place	= self.split_data(reference.ref_publications_place, separator)
-				const ref_publications_title	= self.split_data(reference.ref_publications_title, separator)
-				const ref_publications_url		= self.split_data(reference.ref_publications_url, separator)
+		// 		const ref_publications_authors	= page.split_data(reference.ref_publications_authors, separator)
+		// 		const ref_publications_date		= page.split_data(reference.ref_publications_date, separator)
+		// 		const ref_publications_editor	= page.split_data(reference.ref_publications_editor, separator)
+		// 		const ref_publications_magazine	= page.split_data(reference.ref_publications_magazine, separator)
+		// 		const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
+		// 		const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
+		// 		const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
 				
-				for (let j = 0; j < publications_data_length; j++) {
+		// 		for (let j = 0; j < publications_data_length; j++) {
 					
-					const section_id = publications_data[j]
+		// 			const section_id = publications_data[j]
 
-					const parsed_item = {
-						reference	: reference.section_id,
-						section_id	: section_id,
-						authors		: ref_publications_authors[j] || null,
-						date		: ref_publications_date[j] || null,
-						editor		: ref_publications_editor[j] || null,
-						magazine	: ref_publications_magazine[j] || null,
-						place		: ref_publications_place[j] || null,
-						title		: ref_publications_title[j] || null,
-						url			: ref_publications_url[j] || null,
-					}
+		// 			const parsed_item = {
+		// 				reference	: reference.section_id,
+		// 				section_id	: section_id,
+		// 				authors		: ref_publications_authors[j] || null,
+		// 				date		: ref_publications_date[j] || null,
+		// 				editor		: ref_publications_editor[j] || null,
+		// 				magazine	: ref_publications_magazine[j] || null,
+		// 				place		: ref_publications_place[j] || null,
+		// 				title		: ref_publications_title[j] || null,
+		// 				url			: ref_publications_url[j] || null,
+		// 			}
 
-					reference._publications.push(parsed_item)
-					parsed_data.push(parsed_item)
-				}
-			}
+		// 			reference._publications.push(parsed_item)
+		// 			parsed_data.push(parsed_item)
+		// 		}
+		// 	}
 			
-		}
-		// console.log("parsed_data:",parsed_data);
+		// }
+		// // console.log("parsed_data:",parsed_data);
 
-		return parsed_data
+		// return parsed_data
 	},//end parse_publication
 
 
@@ -327,11 +331,11 @@ var type =  {
 		const parsed_data	= []
 		const separator		= " | "
 
-		const typology_data			= self.split_data(row.ref_coins_typology_data, separator) // format is '["1"] | ["2"]'
+		const typology_data			= page.split_data(row.ref_coins_typology_data, separator) // format is '["1"] | ["2"]'
 		const typology_data_length	= typology_data.length
 
-		const typology	=  self.split_data(row.ref_coins_typology, separator)
-		const ref_coins	=  self.split_data(row.ref_coins, separator)
+		const typology	=  page.split_data(row.ref_coins_typology, separator)
+		const ref_coins	=  page.split_data(row.ref_coins, separator)
 
 		for (let i = 0; i < typology_data_length; i++) {
 			

@@ -1,17 +1,104 @@
+.result {
+  min-height: 70vh;
+  display: block;
+}
+.result:after {
+  content: " ";
+  display: block;
+  clear: both;
+}
 .result a.section_id {
   float: right;
 }
 .result > div {
   margin-bottom: 2em;
 }
-.result #row_detail label {
-  margin: 0;
+.result #row_detail .identify_images_wrapper {
+  float: right;
+  display: grid;
 }
-.result #row_detail img {
-  max-height: 12em;
+.result #row_detail .identify_images_wrapper > a.image_link > img {
+  height: 18em;
   display: block;
   margin: 1em;
-  margin-left: 0;
+  margin-top: 0;
+  margin-right: 0;
+  object-fit: contain;
+}
+.result #row_detail .block_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.result #row_detail .block_wrapper.block {
+  display: grid;
+}
+.result #row_detail .block_wrapper:after {
+  content: " ";
+  clear: both;
+}
+.result #row_detail .block_wrapper > label {
+  display: block;
+  width: 100%;
+  padding: 0.25em;
+  padding: 0.5em;
+  line-height: 1em;
+  margin: 0;
+  font-size: 1em;
+  font-weight: normal;
+  opacity: 0.5;
+  margin-left: 0.25em;
+}
+.result #row_detail .block_wrapper > label:after {
+  content: ":";
+}
+.result #row_detail .block_wrapper .group {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0.5em;
+}
+.result #row_detail .block_wrapper .group.id {
+  width: 100%;
+  font-size: 2em;
+  padding-left: 0;
+  margin: 0;
+  margin-bottom: 0.25em;
+}
+.result #row_detail .block_wrapper .group > label,
+.result #row_detail .block_wrapper .group > span {
+  padding: 0.25em;
+  line-height: 1em;
+  margin: 0;
+  font-size: 1em;
+  height: 1.2em;
+}
+.result #row_detail .block_wrapper .group.former_collection:before {
+  content: "(";
+  display: inline-block;
+  line-height: 1.5em;
+}
+.result #row_detail .block_wrapper .group.former_collection:after {
+  content: ")";
+  display: inline-block;
+  line-height: 1.5em;
+}
+.result #row_detail .block_wrapper .group label {
+  font-weight: normal;
+  opacity: 0.5;
+}
+.result #row_detail .block_wrapper .group label:after {
+  content: ":";
+}
+.result #row_detail .block_wrapper .group.bibliography {
+  display: block;
+  line-height: 1.2em;
+  padding-left: 0.25em;
+}
+.result #row_detail .block_wrapper .group.bibliography span {
+  padding: 0;
+}
+.result #row_detail .block_wrapper .value img {
+  height: 1.2em;
 }
 .result #types {
   padding: 1em;

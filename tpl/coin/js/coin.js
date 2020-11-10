@@ -28,11 +28,10 @@ var coin =  {
 					})
 					.then(function(response){
 						
-						console.log("--> set_up get_row_data response:",response);						
+						console.log("--> set_up get_row_data response:",response);					
 						
 						// row draw
-						const coin = response.result.find( el => el.id==='coin')
-						const data = page.parse_coin_data(coin.result)
+						const data = page.parse_coin_data(response.result)
 						const target = document.getElementById('row_detail')
 						self.draw_row({
 							target  : target,
@@ -63,9 +62,6 @@ var coin =  {
 
 
 
-
-
-
 	/**
 	* GET_ROW_DATA
 	* 
@@ -76,31 +72,28 @@ var coin =  {
 
 		const section_id = options.section_id
 
-		// trigger vars
-			const trigger_url  = self.trigger_url
-			const trigger_vars = {
-				mode 	 	: "get_row_data",
-				section_id 	: section_id
+		const ar_fields = ['*']
+		
+		// request
+		return data_manager.request({
+			body : {
+				dedalo_get		: 'records',
+				db_name			: page_globals.WEB_DB,
+				lang			: page_globals.WEB_CURRENT_LANG_CODE,
+				table			: 'coins',
+				ar_fields		: ar_fields,
+				sql_filter		: 'section_id=' + section_id,
+				limit			: 1,
+				count			: false,
+				offset			: 0,
+				resolve_portals_custom	: {
+					type_data			: 'types',
+					images_obverse		: 'images_obverse',
+					images_reverse		: 'images_reverse',
+					bibliography_data	: 'bibliography_data'
+				}
 			}
-	
-		// Http request directly in javascript to the API is possible too..
-		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
-				if(SHOW_DEBUG===true) {
-					console.log("[coin.get_row_data] get_json_data response:", response);
-				}
-
-				if (!response) {
-					// Error on load data from trigger
-					console.warn("[coin.get_row_data] Error. Received response data is null");
-					return false
-
-				}else{
-					// Success
-					return response.result
-				}
 		})
-
-		return js_promise
 	},//end get_row_data
 
 

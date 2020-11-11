@@ -323,64 +323,64 @@ var type =  {
 	* Note: map_factory draw a base map on init. If no points to render are required,
 	* render command is not necessary
 	*/
-	render_map : function(options) {
+	// render_map : function(options) {
 		
-		const self = this
+	// 	const self = this
 
-		const target		= options.target
-		const map_data		= options.map_data || []
-		const map_position	= options.map_position
-		if (map_position) {
-			map_position.zoom = 11 // force max zoom for dare
-		}
+	// 	const target		= options.target
+	// 	const map_data		= options.map_data || []
+	// 	const map_position	= options.map_position
+	// 	if (map_position) {
+	// 		map_position.zoom = 11 // force max zoom for dare
+	// 	}
 
-		if (map_data.length<1) {
-			return null;
-		}
+	// 	if (map_data.length<1) {
+	// 		return null;
+	// 	}
 		
-		self.map = self.map || new map_factory() // creates / get existing instance of map
-		self.map.init({
-			target				: target,
-			map_position		: map_position,
-			// data				: map_data,			
-			// popup_builder	: self.map_popup_builder,
-			source_maps			: [
-				{
-					name	: "dare",
-					// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
-					url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
-					options	: { maxZoom: 11 },
-					default	: true
-				},
-				{
-					name	: "arcgis",
-					url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-					options	: {}
-				},
-				{
-					name	: "osm",
-					url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-					options	: {}
-				},
-				// {
-				// 	name	: "grey",
-				// 	url 	: '//{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYWxleGFkZXYiLCJhIjoiY2lrOHdvaTQzMDEwbHY5a3UxcDYxb25ydiJ9.h737F1gRyib-MFj6uAXs9A',
-				// 	options	: {
-				// 		maxZoom	: 20,
-				// 		id		: 'alexadev.p2lbljap'
-				// 	}
-				// }
-			]
-		})
+	// 	self.map = self.map || new map_factory() // creates / get existing instance of map
+	// 	self.map.init({
+	// 		target				: target,
+	// 		map_position		: map_position,
+	// 		// data				: map_data,			
+	// 		// popup_builder	: self.map_popup_builder,
+	// 		source_maps			: [
+	// 			{
+	// 				name	: "dare",
+	// 				// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
+	// 				url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
+	// 				options	: { maxZoom: 11 },
+	// 				default	: true
+	// 			},
+	// 			{
+	// 				name	: "arcgis",
+	// 				url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+	// 				options	: {}
+	// 			},
+	// 			{
+	// 				name	: "osm",
+	// 				url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+	// 				options	: {}
+	// 			},
+	// 			// {
+	// 			// 	name	: "grey",
+	// 			// 	url 	: '//{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYWxleGFkZXYiLCJhIjoiY2lrOHdvaTQzMDEwbHY5a3UxcDYxb25ydiJ9.h737F1gRyib-MFj6uAXs9A',
+	// 			// 	options	: {
+	// 			// 		maxZoom	: 20,
+	// 			// 		id		: 'alexadev.p2lbljap'
+	// 			// 	}
+	// 			// }
+	// 		]
+	// 	})
 
-		const map_data_clean = self.map_data(map_data) // prepares data to use in map
-		self.map.render({
-			map_data : map_data_clean
-		})
+	// 	const map_data_clean = self.map_data(map_data) // prepares data to use in map
+	// 	self.map.render({
+	// 		map_data : map_data_clean
+	// 	})
 
 		
-		return true
-	},//end render_map
+	// 	return true
+	// },//end render_map
 
 
 
@@ -398,8 +398,8 @@ var type =  {
 		for (let i = 0; i < data.length; i++) {
 			
 			const item = {
-				lat		: data[i].data.lat,
-				lon		: data[i].data.lon,
+				lat		: parseFloat(data[i].data.lat),
+				lon		: parseFloat(data[i].data.lon),
 				data	: {
 					section_id	: data[i].section_id,
 					name		: data[i].name,
@@ -420,392 +420,119 @@ var type =  {
 
 
 	/**
-	* DRAW_ROW
-	*//*
-	draw_row__OLD_use_row_fields_instead : function(options) {
+	* DRAW_MAP
+	*/
+	draw_map : function(options) {
 
-		const row_object	= options.ar_rows[0]
-		const container 	= options.target
+		const self = this
 
-		// fix row_object
-			self.row_object = row_object
+		// options
+			const map_data		= options.map_data
+			const container		= options.container
+			const map_position	= options.map_position
+			const popup_data	= options.popup_data
 
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("--Type row_object:",row_object);
-			}		
+		// const map_position	= map_data
 
-		// container. clean container div
-			while (container.hasChildNodes()) {
-				container.removeChild(container.lastChild);
-			}
+		self.map = self.map || new map_factory() // creates / get existing instance of map
+		self.map.init({
+			map_container	: container,
+			map_position	: map_position,
+			popup_builder	: self.map_popup_builder,
+			popup_options	: page.maps_config.popup_options,
+			source_maps		: page.maps_config.source_maps
+		})
+		// draw points
+		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map
+		self.map.parse_data_to_map(map_data_clean, null)
+		.then(function(){
+			container.classList.remove("hide_opacity")
+		})
+		
 
-		const fragment = new DocumentFragment();
+		return true
+	},//end draw_map
 
-		// line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "",
-				parent 			: fragment
+
+
+	/**
+	* MAP_POPUP_BUILDER
+	*/
+	map_popup_builder : function(data) {
+			console.log("-- map_popup_builder data:",data);
+
+		const data_group = data.group[0]
+
+		const title			= data_group.name
+		const total_items	= data_group.total_items
+		const section_id	= data_group.section_id
+
+		const popup_wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "popup_wrapper",
+		})
+
+		// popup_item
+			const popup_item = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "popup_item",
+				title			: section_id,
+				parent			: popup_wrapper
 			})
 
-		// section_id (dedalo users only)
-			if (dedalo_logged===true) {
+		// text_title
+			const text_title = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "text_title",
+				inner_html		: title,
+				parent			: popup_item
+			})
 
-				const link = common.create_dom_element({
-					element_type 	: "a",
-					class_name 		: "section_id go_to_dedalo",
-					text_content 	: row_object.section_id,
-					href 			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-					parent 			: line
-				})
-				link.setAttribute('target', '_blank');
-			}
+		// descriptions
+			const description = tstring.total +" "+ tstring.items + ": " + total_items		
+			const text_description = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "text_description",
+				inner_html		: description,
+				parent			: popup_item
+			})
+			
 
-		// mint
-			if (row_object.mint && row_object.mint.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.mint || "Mint",
-					parent 			: line
-				})
-
-				const mint = row_object.mint
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: mint,
-					parent 			: line
-				})
-			}
-
-		// creators
-			if (row_object.creators && row_object.creators.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.creators || "Creators",
-					parent 			: line
-				})
-
-				const creators = common.clean_gaps(row_object.creators) // , splitter=" | ", joinner=", "				
-				const creators_value = common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: creators,
-					parent 			: line
-				})
-
-				if (row_object.creators_rol && row_object.creators_rol.length>0) {
-					const creators_rol = " (" + common.clean_gaps(row_object.creators_rol) + ")" // , splitter=" | ", joinner=", "				
-					common.create_dom_element({
-						element_type 	: "span",
-						class_name 		: "info_value",
-						text_content 	: creators_rol,
-						parent 			: creators_value
-					})
-				}
-			}
-
-		// date
-			if (row_object.date && row_object.date.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.date || "Date",
-					parent 			: line
-				})
-
-				const date = row_object.date
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: date,
-					parent 			: line
-				})
-			}
-
-		// number
-			if (row_object.number && row_object.number.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.number || "Number",
-					parent 			: line
-				})
-
-				const number = row_object.number
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: number,
-					parent 			: line
-				})
-			}
-
-		// material
-			if (row_object.material && row_object.material.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.material || "Material",
-					parent 			: line
-				})
-
-				const material = row_object.material
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: material,
-					parent 			: line
-				})
-			}
-
-		// denomination
-			if (row_object.denomination && row_object.denomination.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.denomination || "Denomination",
-					parent 			: line
-				})
-
-				const denomination = row_object.denomination
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: denomination,
-					parent 			: line
-				})
-			}
-
-		// averages_diameter
-			if (row_object.averages_diameter && row_object.averages_diameter.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.averages_diameter || "Averages diameter",
-					parent 			: line
-				})
-
-				const averages_diameter = row_object.averages_diameter
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: averages_diameter,
-					parent 			: line
-				})
-			}
-
-		// averages_weight
-			if (row_object.averages_weight && row_object.averages_weight.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.averages_weight || "averages_weight",
-					parent 			: line
-				})
-
-				const averages_weight = row_object.averages_weight
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: averages_weight,
-					parent 			: line
-				})
-			}
-
-		// image_obverse
-			if (typeof row_object.coins[0]!=="undefined" && typeof row_object.coins[0].images_obverse[0]!=="undefined") {
-
-				common.create_dom_element({
-					element_type 	: "img",
-					class_name 		: "image_obverse",
-					src 			: row_object.coins[0].images_obverse[0].image,
-					parent 			: line
-				})
-			}
-
-		// design_obverse
-			if (row_object.design_obverse && row_object.design_obverse.length>0) {
-
-				common.create_dom_element({
-					element_type	: "label",
-					class_name		: "",
-					inner_html		: tstring.design_obverse || "Design obverse",
-					parent			: line
-				})
-
-				const design_obverse = common.clean_gaps(row_object.design_obverse) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: design_obverse,
-					parent			: line
-				})
-			}
-
-		// legend_obverse
-			if (row_object.legend_obverse && row_object.legend_obverse.length>0) {
-
-				common.create_dom_element({
-					element_type	: "label",
-					class_name		: "",
-					inner_html		: tstring.legend_obverse || "Legend obverse",
-					parent			: line
-				})
-
-				const legend_obverse = common.clean_gaps(row_object.legend_obverse) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: legend_obverse,
-					parent			: line
-				})
-			}
-
-		// simbol_obverse
-			if (row_object.simbol_obverse && row_object.simbol_obverse.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					inner_html 	: tstring.simbol_obverse || "Simbol obverse",
-					parent 			: line
-				})
-
-				const simbol_obverse = common.clean_gaps(row_object.simbol_obverse) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					inner_html 	: simbol_obverse,
-					parent 			: line
-				})
-			}
-
-		// image_reverse
-			if (typeof row_object.coins[0]!=="undefined" && typeof row_object.coins[0].images_obverse[0]!=="undefined") {
-
-				common.create_dom_element({
-					element_type	: "img",
-					class_name		: "image_reverse",
-					src				: row_object.coins[0].images_obverse[0].image,
-					parent			: line
-				})
-			}
-
-		// design_reverse
-			if (row_object.design_reverse && row_object.design_reverse.length>0) {
-
-				common.create_dom_element({
-					element_type	: "label",
-					class_name		: "",
-					inner_html		: tstring.design_reverse || "Design reverse",
-					parent			: line
-				})
-
-				const design_reverse = common.clean_gaps(row_object.design_reverse) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: design_reverse,
-					parent			: line
-				})
-			}
-
-		// legend_reverse
-			if (row_object.legend_reverse && row_object.legend_reverse.length>0) {
-
-				common.create_dom_element({
-					element_type	: "label",
-					class_name		: "",
-					inner_html		: tstring.legend_reverse || "Legend reverse",
-					parent			: line
-				})
-				
-				const legend_reverse = common.clean_gaps(row_object.legend_reverse) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: legend_reverse,
-					parent			: line
-				})
-			}
-
-		// simbol_reverse
-			if (row_object.simbol_reverse && row_object.simbol_reverse.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					inner_html		: tstring.simbol_reverse || "Simbol reverse",
-					parent 			: line
-				})
-
-				const simbol_reverse = common.clean_gaps(row_object.simbol_reverse) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					inner_html		: simbol_reverse,
-					parent 			: line
-				})
-			}
-
-		// equivalents
-			if (row_object.equivalents && row_object.equivalents.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					inner_html		: tstring.equivalents || "Equivalents",
-					parent 			: line
-				})
-
-				const equivalents = common.clean_gaps(row_object.equivalents) // , splitter=" | ", joinner=", "
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: equivalents,
-					parent			: line
-				})
-			}
-
-		// bibliography
-			if (row_object.bibliography && row_object.bibliography.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					inner_html		: tstring.bibliography || "Bibliography",
-					parent 			: line
-				})
-
-				const bibliography = common.clean_gaps(row_object.bibliography) // , splitter=" | ", joinner=", "				
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: bibliography,
-					parent			: line
-				})
-			}
+		return popup_wrapper
+	},//end map_popup_builder
 
 
-		// container final fragment add
-			container.appendChild(fragment)
 
-
-		return container
-	},//end draw_row
+	/**
+	* MAP_DATA
+	* @return array data
 	*/
+	// map_data : function(data, popup_data) {
+		
+	// 	const self = this
+
+	// 	console.log("--map_data data:",data);
+
+	// 	const ar_data = Array.isArray(data)
+	// 		? data
+	// 		: [data]
+
+	// 	const data_clean = []
+	// 	for (let i = 0; i < ar_data.length; i++) {
+			
+	// 		const item = {
+	// 			lat		: ar_data[i].lat,
+	// 			lon		: ar_data[i].lon,
+	// 			data	: popup_data
+	// 		}
+	// 		data_clean.push(item)
+	// 	}
+
+	// 	console.log("--map_data data_clean:",data_clean);
+
+	// 	return data_clean
+	// },//end map_data
+
 
 	
 }//end type

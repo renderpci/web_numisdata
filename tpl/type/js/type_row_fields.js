@@ -529,7 +529,7 @@ var row_fields = {
 					parent			: images
 				})
 				common.create_dom_element({
-					element_type	: "img",					
+					element_type	: "img",
 					src				: data.image_obverse,
 					parent			: image_link_obverse
 				})
@@ -640,7 +640,7 @@ var row_fields = {
 
 				const typology_coins = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "typology_coins gallery",
+					class_name		: "typology_coins",
 					parent			: line
 				})
 
@@ -744,15 +744,27 @@ var row_fields = {
 					class_name		: "images_wrapper",
 					parent			: wrapper
 				})
+				const image_link_obverse = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "image_link",
+					href			: data.image_obverse,
+					parent			: images
+				})
 				common.create_dom_element({
 					element_type	: "img",					
 					src				: data.image_obverse,
+					parent			: image_link_obverse
+				})
+				const image_link_reverse = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "image_link",
+					href			: data.image_reverse,
 					parent			: images
 				})
 				common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_reverse,
-					parent			: images
+					parent			: image_link_reverse
 				})
 
 			// info
@@ -840,8 +852,6 @@ var row_fields = {
 				if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
 					continue;
 				}
-
-
 				
 				
 				const wrapper = common.create_dom_element({
@@ -865,7 +875,7 @@ var row_fields = {
 				// draw_coins
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "find_coins findspot",
+						class_name		: "find_coins findspot gallery",
 						parent			: line
 					})
 

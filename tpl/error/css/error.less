@@ -1,16 +1,23 @@
 // Variables
 	@assets_path: "../../assets";
 	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
 
 // Usage library
-	// @import "@{assets_path}/css/library.less";
+	@import "@{page_path}/css/library.less";
+
+
+
+#wrapper {
+	background-color: @color_grey_dark;
+}
 
 
 // error_content div
 	#error_content {
 		padding: 40px;
 		border-radius: 4px;
-		background-color: #be875a;
+		background-color: @color_gold_logo;
 		background-image: url('../../assets/images/logo_mib_marron.svg');
 		background-size: cover;
 		background-repeat: no-repeat;
@@ -18,6 +25,7 @@
 		height: 100vh;
 		color: #ffffff;
 		padding-top: 75px;
+		margin-bottom: 7em;
 
 		a {
 			color: #ffffff;

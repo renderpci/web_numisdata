@@ -1,7 +1,10 @@
+#wrapper {
+  background-color: #333333;
+}
 #error_content {
   padding: 40px;
   border-radius: 4px;
-  background-color: #be875a;
+  background-color: #b7996d;
   background-image: url('../../assets/images/logo_mib_marron.svg');
   background-size: cover;
   background-repeat: no-repeat;
@@ -9,6 +12,7 @@
   height: 100vh;
   color: #ffffff;
   padding-top: 75px;
+  margin-bottom: 7em;
 }
 #error_content a {
   color: #ffffff;

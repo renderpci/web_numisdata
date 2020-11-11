@@ -14,7 +14,7 @@
 		
 		// row_fields js add
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/type_row_fields.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/map_factory'.JS_SUFFIX.'.js';
+		
 	
 	// area name
 		$area_name	= $_GET['area_name'];

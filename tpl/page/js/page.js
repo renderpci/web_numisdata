@@ -13,6 +13,48 @@ var page = {
 
 	trigger_url : page_globals.__WEB_ROOT_WEB__ + "/web/trigger.web.php",
 
+	// maps common config 
+	maps_config : {
+		// source maps. Used on catalog and item maps
+		source_maps : [
+			{
+				name	: "DARE",
+				// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
+				url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
+				options	: { maxZoom: 11 },
+				default	: true
+			},			
+			{
+				name	: "OSM",
+				url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+				options	: {
+					maxZoom	: 19,
+				}
+			},
+			{
+				name	: 'Map Tiles',
+				// url	: 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}@2x.png?key=udlBrEEE2SPm1In5dCNb', // 512 ...
+				url		: 'https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}@2x.png?key=udlBrEEE2SPm1In5dCNb', // 256 ok 
+				// url	: 'https://api.maptiler.com/maps/9512807c-ffd5-4ee0-9781-c354711d15e5/style.json?key=udlBrEEE2SPm1In5dCNb', // vector grey
+				options	: {
+					maxZoom	: 20,
+				}
+			},			
+			{
+				name	: "ARCGIS",
+				url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+				options	: {}
+			}
+		],
+		// popup otions
+		popup_options	: {
+			maxWidth	: 420,
+			closeButton	: false,
+			className	: 'map_popup'
+		}
+	},
+
+
 
 
 	/**

@@ -1,3 +1,5 @@
+/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page, forms, document, DocumentFragment, tstring, console */
+/*eslint no-undef: "error"*/
 "use strict";
 /**
 * COMMON JS
@@ -13,7 +15,7 @@ var common = {
 	* Exec a XMLHttpRequest to trigger url and return a promise with object response
 	*/
 	get_json_data : function(trigger_url, trigger_vars, async) {
-
+		
 		const	url		= trigger_url + "?d=" + Date.now();
 		const data_send = JSON.stringify(trigger_vars)
 		
@@ -43,7 +45,7 @@ var common = {
 				// When the request loads, check whether it was successful
 				request.onload = function(e) {
 				  if (request.status === 200) {
-					// If successful, resolve the promise by passing back the request response					
+					// If successful, resolve the promise by passing back the request response
 					resolve(request.response);
 				  }else{
 					// If it fails, reject the promise with a error message
@@ -68,27 +70,26 @@ var common = {
 	* Builds single dom element
 	*/
 	create_dom_element : function(element_options) {
-
-		const element_type			= element_options.element_type
-		const parent				= element_options.parent
-		const class_name			= element_options.class_name
-		const style					= element_options.style		
-		const data_set 				= (typeof element_options.dataset!=="undefined")
-										? element_options.dataset
-										: element_options.data_set
-		const custom_function_events= element_options.custom_function_events
-		const title_label			= element_options.title_label || element_options.title || null
-		const text_node				= element_options.text_node
-		const text_content			= element_options.text_content
-		const inner_html			= element_options.inner_html
-		const href					= element_options.href		
-		const id 					= element_options.id
-		const draggable				= element_options.draggable
-		const value					= element_options.value
-		const download				= element_options.download
-		const src					= element_options.src
-		const type					= element_options.type // Like button, text ..
-		const placeholder			= element_options.placeholder
+		
+		const element_type				= element_options.element_type
+		const parent					= element_options.parent
+		const class_name				= element_options.class_name
+		const style						= element_options.style
+		const data_set					= element_options.data_set || element_options.dataset
+		const custom_function_events	= element_options.custom_function_events
+		const title_label				= element_options.title_label || element_options.title
+		const text_node					= element_options.text_node
+		const text_content				= element_options.text_content
+		const inner_html				= element_options.inner_html
+		const href						= element_options.href
+		const id						= element_options.id
+		const draggable					= element_options.draggable
+		const value						= element_options.value
+		const download					= element_options.download
+		const src						= element_options.src
+		const placeholder				= element_options.placeholder
+		const type						= element_options.type // Like button, text ..
+		const target					= element_options.target
 		
 		const element = document.createElement(element_type);
 	
@@ -99,11 +100,13 @@ var common = {
 
 		// A element. Add href property to element
 		if(element_type==='a'){
-
 			if(href){
 				element.href = href;
 			}else{
-				element.href = 'javascript:;';
+				element.href = 'javascript:;'
+			}
+			if (target) {
+				element.target = target
 			}		
 		}
 		
@@ -146,10 +149,10 @@ var common = {
 		// Click event attached to element
 		if(custom_function_events){
 			const len = custom_function_events.length
-			for (var i = 0; i < len; i++) {
-				var function_name 		= custom_function_events[i].name
-				var event_type			= custom_function_events[i].type
-				var function_arguments	= custom_function_events[i].function_arguments					
+			for (let i = 0; i < len; i++) {
+				const function_name			= custom_function_events[i].name
+				const event_type			= custom_function_events[i].type
+				const function_arguments	= custom_function_events[i].function_arguments					
 
 				// Create event caller
 				this.create_custom_events(element, event_type, function_name, function_arguments)
@@ -163,17 +166,17 @@ var common = {
 			if (element_type==='span') {
 				element.textContent = text_node
 			}else{
-				var el = document.createElement('span')
-					el.innerHTML = " "+text_node // Note that prepend a space to span for avoid Chrome bug on selection
+				const el = document.createElement('span')
+					  // el.innerHTML = " "+text_node // Note that prepend a space to span for avoid Chrome bug on selection
+					  el.insertAdjacentHTML('afterbegin', " "+text_node)
 				element.appendChild(el)
 			}			
 		}else if(text_content) {
 			element.textContent = text_content
 		}else if(inner_html) {
 			// element.innerHTML = inner_html
-			element.insertAdjacentHTML('afterbegin', inner_html);
+			element.insertAdjacentHTML('afterbegin', inner_html)
 		}
-
 
 		// Append created element to parent
 		if (parent) {
@@ -196,8 +199,8 @@ var common = {
 		}
 
 		// placeholder
-		if(placeholder){
-			element.placeholder = placeholder;
+		if (placeholder) {
+			element.placeholder = placeholder
 		}
 
 
@@ -206,9 +209,132 @@ var common = {
 
 
 
+	// /**
+	// * BUILD_PLAYER
+	// * @return dom element vide
+	// */
+	// build_player : function(options) {
+	// 	if(SHOW_DEBUG===true) {
+	// 		console.log("[common.build_player] options",options)
+	// 	}
+
+	// 	const self = this		
+		
+	// 	var type = options.type || ["video/mp4"]
+	// 	var src  = options.src  || [""]
+	// 	if (!Array.isArray(src)) {
+	// 		src = [src]
+	// 	}
+
+	// 	// video
+	// 		var video = document.createElement("video")
+	// 			video.id 			= options.id || "video_player"
+	// 			video.controls 		= options.controls || true
+	// 			video.poster 		= options.poster || ""
+	// 			video.className 	= options.class || "video-js video_hidden"
+	// 			video.preload 		= options.preload || "auto"
+	// 			video.dataset.setup = '{}' // {"trackTimeOffset":<?php echo $trackTimeOffset ?>}
+
+	// 			if (options.height) {
+	// 				video.height = options.height
+	// 			}
+	// 			if (options.width) {
+	// 				video.width = options.width
+	// 			}
+
+	// 	// src			
+	// 		for (let i = 0; i < src.length; i++) {			
+	// 			var source = document.createElement("source")
+	// 				source.src  = src[i]
+	// 				source.type = type[i]
+	// 			video.appendChild(source)
+	// 		}
+	// 		const base_url 	= src[0]
+	// 		const tcin_secs = parseInt( self.get_query_variable( base_url, "vbegin" ) )
+		
+	// 	// subtitles
+	// 		// <track src=\"$subtitles_file_url\" kind=\"$vtt_kind\" srclang=\"en\" label=\"English\" default>
+	// 		// <track kind="subtitles" src="http://example.com/path/to/captions.vtt" srclang="en" label="English" default>
+	// 		var ar_subtitles = options.ar_subtitles || null
+	// 		if (ar_subtitles) {			
+	// 			for (var i = 0; i < ar_subtitles.length; i++) {
+	// 				var subtitle_obj = ar_subtitles[i]
+	// 				// Build track
+	// 				var track = document.createElement("track")
+	// 					track.kind 		= "subtitles"
+	// 					track.src 		= subtitle_obj.src
+	// 					track.srclang 	= subtitle_obj.srclang
+	// 					track.label 	= subtitle_obj.label
+	// 					//if (track.default) {
+	// 					//	video.default = options.default
+	// 					//}
+	// 					if (subtitle_obj.srclang===options.default) {
+	// 						track.default = true
+	// 					}						
+	// 				video.appendChild(track)				
+	// 			}//end for (var i = 0; i < ar_subtitles.length; i++)
+	// 		}
+
+	// 	// msj no html5 
+	// 		var msg_no_js = document.createElement("p")
+	// 			msg_no_js.className = "vjs-no-js"
+	// 		var msj_text = document.createTextNode("To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video")
+	// 			msg_no_js.appendChild(msj_text)
+	// 		video.appendChild(msg_no_js)
+
+	// 	/*
+	// 		<video id="my-video" class="video-js" controls preload="auto" width="640" height="264" poster="MY_VIDEO_POSTER.jpg" data-setup="{}">
+	// 		<source src="MY_VIDEO.mp4" type='video/mp4'>
+	// 		<source src="MY_VIDEO.webm" type='video/webm'>
+	// 		<p class="vjs-no-js">
+	// 		  To view this video please enable JavaScript, and consider upgrading to a web browser that
+	// 		  <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+	// 		</p>
+	// 		</video>
+	// 		*/
+
+	// 	// Activate
+	// 		var player 
+	// 		setTimeout(function(){
+
+	// 			window.ready(function(e){
+					
+	// 				// player set
+	// 					player = videojs(video)
+
+	// 					player.ready(function() {
+	// 							// show hidden element
+	// 								this.addClass('video_show');
+	// 								//this.removeClass('video_hide')
+	// 								//this.removeClass('video_hide');
+	// 								//this.removeClass('video_hide')
+	// 								//console.log("+++++ e:",this);
+
+	// 							// restricted fragments. Set ar_restricted_fragments on build player to activate skip restricted fragments
+	// 								if (typeof options.ar_restricted_fragments!=="undefined" && options.ar_restricted_fragments.length>0) {										
+	// 									this.on('timeupdate', function(e){
+	// 										self.skip_restricted(this, options.ar_restricted_fragments, tcin_secs);
+	// 									});
+	// 								}
+	// 					});
+						
+	// 				// Optional play
+	// 					if (options.play===true) {
+	// 						player.play()
+	// 					}
+	// 			})//end window.ready(function(e)
+				
+	// 		}, 1)
+			
+			
+	// 	return video
+	// },//end build_player
+
+
+
 	/**
 	* BUILD_PLAYER
-	* @return dom element vide
+	* @return DOM element video
 	*/
 	build_player : function(options) {
 		if(SHOW_DEBUG===true) {
@@ -224,11 +350,11 @@ var common = {
 		}
 
 		// video
-			var video = document.createElement("video")
+			const video = document.createElement("video")
 				video.id 			= options.id || "video_player"
 				video.controls 		= options.controls || true
-				video.poster 		= options.poster || ""
-				video.className 	= options.class || "video-js video_hidden"
+				video.poster 		= options.poster || common.get_posterframe_from_video(src)
+				video.className 	= options.class || "video-js video_hidden hide"
 				video.preload 		= options.preload || "auto"
 				video.dataset.setup = '{}' // {"trackTimeOffset":<?php echo $trackTimeOffset ?>}
 
@@ -240,24 +366,23 @@ var common = {
 				}
 
 		// src			
-			for (var i = 0; i < src.length; i++) {			
-				var source = document.createElement("source")
-					source.src  = src[i]
-					source.type = type[i]
+			for (let i = 0; i < src.length; i++) {			
+				const source = document.createElement("source")
+					  source.src	= src[i]
+					  source.type	= type[i]
 				video.appendChild(source)
 			}
-			const base_url 	= src[0]
-			const tcin_secs = parseInt( self.get_query_variable( base_url, "vbegin" ) )
-		
+			
 		// subtitles
 			// <track src=\"$subtitles_file_url\" kind=\"$vtt_kind\" srclang=\"en\" label=\"English\" default>
 			// <track kind="subtitles" src="http://example.com/path/to/captions.vtt" srclang="en" label="English" default>
-			var ar_subtitles = options.ar_subtitles || null
+			const ar_subtitles = options.ar_subtitles || null
 			if (ar_subtitles) {			
-				for (var i = 0; i < ar_subtitles.length; i++) {
-					var subtitle_obj = ar_subtitles[i]
+				for (let i = 0; i < ar_subtitles.length; i++) {
+					const subtitle_obj = ar_subtitles[i]
+
 					// Build track
-					var track = document.createElement("track")
+					const track = document.createElement("track")
 						track.kind 		= "subtitles"
 						track.src 		= subtitle_obj.src
 						track.srclang 	= subtitle_obj.srclang
@@ -267,15 +392,16 @@ var common = {
 						//}
 						if (subtitle_obj.srclang===options.default) {
 							track.default = true
-						}						
+						}
+									
 					video.appendChild(track)				
 				}//end for (var i = 0; i < ar_subtitles.length; i++)
 			}
 
 		// msj no html5 
-			var msg_no_js = document.createElement("p")
+			const msg_no_js = document.createElement("p")
 				msg_no_js.className = "vjs-no-js"
-			var msj_text = document.createTextNode("To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video")
+			const msj_text = document.createTextNode("To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video")
 				msg_no_js.appendChild(msj_text)
 			video.appendChild(msg_no_js)
 
@@ -291,28 +417,26 @@ var common = {
 			*/
 
 		// Activate
-			var player 
 			setTimeout(function(){
 
 				window.ready(function(e){
 					
 					// player set
-						player = videojs(video)
+						const player = videojs(video)
 
 						player.ready(function() {
-								// show hidden element
-									this.addClass('video_show');
-									//this.removeClass('video_hide')
-									//this.removeClass('video_hide');
-									//this.removeClass('video_hide')
-									//console.log("+++++ e:",this);
+							// show hidden element
+								this.addClass('video_show');
+								this.removeClass('hide')
 
-								// restricted fragments. Set ar_restricted_fragments on build player to activate skip restricted fragments
-									if (typeof options.ar_restricted_fragments!=="undefined" && options.ar_restricted_fragments.length>0) {										
-										this.on('timeupdate', function(e){
-											self.skip_restricted(this, options.ar_restricted_fragments, tcin_secs);
-										});										
-									}
+							// restricted fragments. Set ar_restricted_fragments on build player to activate skip restricted fragments
+								if (typeof options.ar_restricted_fragments!=="undefined" && options.ar_restricted_fragments.length>0) {										
+									const base_url 	= src[0]
+									const tcin_secs = parseInt( self.get_query_variable( base_url, "vbegin" ) )		
+									this.on('timeupdate', function(e){
+										self.skip_restricted(this, options.ar_restricted_fragments, tcin_secs);
+									});										
+								}
 						});
 						
 					// Optional play
@@ -437,10 +561,16 @@ var common = {
 
 		url = url.replace('/dedalo4/', '/dedalo/')
 		url = url.replace('/media_test/media_'+WEB_ENTITY, '/media')
+
+		// if first char is not /, add it
+		if (url.charAt(0)!=='/') {
+			url = '/' + url
+		}
+
 		url = page_globals.__WEB_MEDIA_BASE_URL__ + url
 
 		return url
-	},//end local_to_remote_path
+	},//end local_to_remote_path	
 
 
 
@@ -461,6 +591,26 @@ var common = {
 
 		return posterframe_url
 	},//end get_posterframe_from_video
+
+
+
+	/**
+	* GET_MEDIA_ENGINE_URL
+	* Create a url ready to use with media engine (safe acces to Dédalo files)
+	*/
+	get_media_engine_url : function(file_name, type, quality, full_name) {
+
+		// id. from 'rsc29_rsc170_1.jpg' to '1'
+			const regex	= /^.{3,}_.{3,}_(\d{1,})\.[\S]{3,4}$/;
+			const id	= (full_name)
+				? file_name
+				: regex.exec(file_name)[1]
+
+		const media_engine_url = __WEB_MEDIA_ENGINE_URL__ + '/' + type + '/' + id + (quality ? ('/'+quality) : '')
+
+		return media_engine_url
+	},//end get_media_engine_url
+
 
 
 	/**
@@ -777,12 +927,16 @@ var common = {
 	*/
 	when_in_dom : function(node, callback) {
 
+		if (document.contains(node)) {
+			return callback()
+		}
+
 		const observer = new MutationObserver(function(mutations) {
 			if (document.contains(node)) {
 				// console.log("It's in the DOM!");
 				observer.disconnect();
 
-				callback(this)
+				callback()
 			}
 		});
 
@@ -791,6 +945,118 @@ var common = {
 		return observer
 	},//end when_in_dom
 
+
+
+	/**
+	* REMOVE_GAPS
+	* Removes empty values in multimple values string. 
+	* Like 'pepe | lepe' when 'pepe | lepe | '
+	*/
+	remove_gaps : function(value, separator) {
+		const beats		= value.split(separator).filter(Boolean)
+		const result	= beats.join(separator)
+		
+		return result
+	},//end remove_gaps
+
+
+
+	/**
+	* SPLIT_DATA
+	* Safe value split
+	*/
+	split_data : function(value, separator) {
+		const result = value ? value.split(separator) : []
+		return result;
+	},//end split_data
+
+
+
+	/**
+	* CLEAN_DATE
+	* Format date values
+	* input sample: 1920-00-00 00:00:00,1950-00-00 00:00:00
+	* @return array dates
+	*/
+	clean_date : function(value, separator) {
+
+		const ar_values = value ? value.split(separator) : []
+
+		const dates = []
+		for (let i = 0; i < ar_values.length; i++) {
+			
+			const date			= ar_values[i]
+			const split_date	= date.split('-')
+			const ar_elements	= []
+			
+			// day
+				if (split_date[2] && split_date[2]!=='00 00:00:00') {
+					const month = split_date[2].split(' ')[0]
+					ar_elements.push(month)
+				}
+
+			// month
+				if (split_date[1] && split_date[1]!=='00') {
+					ar_elements.push(split_date[1])
+				}			
+
+			// year
+				if (split_date[0] && split_date[0]!=='0000') {
+					ar_elements.push(split_date[0])
+				}
+
+			const final_date = ar_elements.join('-')
+
+			dates.push(final_date)
+		}
+		// console.log("/////////////// dates:",dates);
+
+		return dates;
+	},//end clean_date
+
+
+
+	/**
+	* DOWNLOAD_ITEM
+	* @return bool true
+	*/
+	download_item : function(donwload_url, file_name) {		
+
+		fetch(donwload_url)
+		.then(function (response) {
+			return response.blob();
+		})
+		.then(function (blob) {
+			const href = URL.createObjectURL(blob)
+
+			// link_obj
+			const link_obj = common.create_dom_element({
+				element_type	: "a",
+				href			: href,
+				download		: file_name || 'image.jpg'
+			})
+			
+			link_obj.click();
+
+			link_obj.remove()
+		});
+
+		return true
+	},//end download_item
+
+
+
+	/**
+	* IS_NODE
+	* Check if value is a DOM node
+	* @return bool
+	*/
+	is_node : function(element) {
+		if (element instanceof HTMLElement || element.nodeType) {
+			return true
+		}
+		return false
+	},//end is_node
 
 
 
@@ -825,5 +1091,6 @@ function ready(fn) {
 	/* init - you can init any event */
 	throttle("resize", "optimizedResize");
 })();
+
 
 

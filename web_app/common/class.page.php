@@ -8,7 +8,7 @@ class page {
 
 
 	# Version. Important!
-	static $version = "1.0.5"; // 05-04-2019
+	static $version = "1.0.6"; // 14-07-2020
 
 	# css_ar_url : css files to include on render page
 	static $css_ar_url = array();
@@ -46,6 +46,13 @@ class page {
 	# web_fields_map
 	static $web_fields_map;
 
+	# status . like 'initied'
+	public $status = null;
+
+	# data_combi
+	public $data_combi;
+
+
 
 	/**
 	* __CONSTRUCT
@@ -61,14 +68,13 @@ class page {
 		// default title
 			$this->page_title = 'Untitled';
 
-		// set_up
-			if ($reference_page===false) {
-				// load page basic data
-					$this->set_up();
-			}else{
+		// init
+			if ($reference_page!==false) {				
 				// use reference page to get already calculated data. inject data					
 					$this->data_combi 	= $reference_page->data_combi;
 					$this->template_map = (array)$this->get_template_map();
+
+				$this->status = 'initied';
 			}
 
 		return true;	
@@ -77,10 +83,14 @@ class page {
 
 
 	/**
-	* SET_UP
+	* INIT
 	* @return bool true
 	*/
-	private function set_up() {		
+	public function init() {
+
+		if ($this->status==='initied') {
+			return false;
+		}
 
 		// load page data combi	(templates, menu all)		
 			$this->get_page_data_combi();			
@@ -89,7 +99,7 @@ class page {
 			$this->template_map = (array)$this->get_template_map();	
 	
 		return true;
-	}//end set_up
+	}//end init
 
 
 
@@ -114,31 +124,40 @@ class page {
 
 			$ar_calls[] = $call;
 
-		// menu all
-			// ar_fields. Search fields		
-				# $ar_fields = array(
-				# 	#self::$web_fields_map->term_id,
-				# 	#self::$web_fields_map->term,
-				# 	#self::$web_fields_map->web_path,
-				# 	#self::$web_fields_map->title,
-				# 	#self::$web_fields_map->parent,
-				# 	#self::$web_fields_map->childrens
-				# 	'*'
-				# );
-				$ar_fields = array_values(get_object_vars(self::$web_fields_map));
+		// menu all			
+			$ar_fields = array_values(get_object_vars(self::$web_fields_map));
 
-			// search
-				$options = new stdClass();
-					$options->dedalo_get 	= 'records';
-					$options->table 		= WEB_MENU_TABLE;					
-					$options->ar_fields 	= $ar_fields;
-					$options->lang 			= WEB_CURRENT_LANG_CODE;
+			$options = new stdClass();
+				$options->dedalo_get 	= 'records';
+				$options->table 		= WEB_MENU_TABLE;					
+				$options->ar_fields 	= $ar_fields;
+				$options->lang 			= WEB_CURRENT_LANG_CODE;
+				$options->order 		= 'norder ASC';
 
-				$call = new stdClass();
-					$call->id 		= 'menu_all';
-					$call->options 	= $options;
+			$call = new stdClass();
+				$call->id 		= 'menu_all';
+				$call->options 	= $options;
 
-				$ar_calls[] = $call;
+			$ar_calls[] = $call;
+		
+		// record detail. table and section_id is received. We are in a portal link
+			if (isset($this->area_section_id) && isset($this->area_table) && !isset($this->lang_from_path)) {
+
+				// http request in php to API
+					$options = new stdClass();
+						$options->dedalo_get 		= 'records';
+						$options->lang 				= WEB_CURRENT_LANG_CODE;
+						$options->table 			= $this->area_table;
+						$options->ar_fields 		= array('*'); // all fields
+						$options->sql_filter 		= "section_id = {$this->area_section_id}";
+						$options->limit 			= 1;
+
+					$call = new stdClass();
+						$call->id 		= 'record_detail';
+						$call->options 	= $options;
+
+					$ar_calls[] = $call;
+			}
 
 		// call to api
 			$options = new stdClass();
@@ -146,12 +165,8 @@ class page {
 				$options->ar_calls 		= $ar_calls;
 			# Http request in php to the API
 			$response = json_web_data::get_data($options);
-
-
-			if (empty($response->result)) {
-				dump($response, ' response ++ '.to_string());
-			}
-
+				#dump($response->result, ' response ++ '.to_string());
+		
 		// filter page by config WEB_MENU_PARENT
 			# $ar_terms = [];
 			# foreach ($response->result[1]->result as $key => $item) {
@@ -162,9 +177,15 @@ class page {
 			# 	}
 			# }
 			# $response->result[1]->result = $ar_terms; // overwrite with filtered records
+
 		
 		// fix
 			$this->data_combi = $response->result;
+
+		// check combi data
+			if (!isset($this->data_combi[0]) || !isset($this->data_combi[0]->result) || !isset($this->data_combi[1]->result)) {
+				return false;
+			}
 
 		// fix global_page info
 			// menu_items
@@ -186,6 +207,7 @@ class page {
 			// set
 			$global_page->template 	= json_decode($global_template->data);
 			$this->global_page 		= $global_page;
+
 
 		return $this->data_combi;
 	}//end get_page_data_combi
@@ -224,6 +246,7 @@ class page {
 				if (empty($this->data_combi)) {
 					exit("Error. Empty page data_combi. API connection seems broken.");
 				}
+
 				$data = array_reduce($this->data_combi, function($carry, $item){
 					return ($item->id==='templates_all') ? $item : $carry;
 				});
@@ -300,16 +323,10 @@ class page {
 				#array_unshift(page::$css_ar_url, __WEB_ROOT_WEB__ . '/page/css/page.css');
 
 				# Remove duplicates
-				#page::$css_ar_url = array_unique(page::$css_ar_url);
-
-				
-				$ar_url = array_map(function($url){					
-					return self::build_css_tag($url);
-				}, array_unique(page::$css_ar_url));
-				$html = implode(PHP_EOL."\t", $ar_url);
-				// foreach (page::$css_ar_url as $url) {
-				// 	$html .= self::build_css_tag($url) . PHP_EOL;
-				// }
+				page::$css_ar_url = array_unique(page::$css_ar_url);
+				foreach (page::$css_ar_url as $url) {
+					$html .= self::build_css_tag($url) .PHP_EOL;
+				}
 				break;
 			
 			case 'js':
@@ -375,7 +392,7 @@ class page {
 				$url .= '_' . WEB_CURRENT_LANG_CODE;
 			}
 
-		$tag = '<script defer src="'.$url.'"></script>';
+		$tag = '<script src="'.$url.'"></script>';
 
 		return $tag;
 	}//edn build_js_tag
@@ -528,7 +545,7 @@ class page {
 	* GET_MENU_TREE_PLAIN
 	* @return array  $ar_data
 	*/
-	public function get_menu_tree_plain( $term_id=WEB_MENU_PARENT ) {
+	public function get_menu_tree_plain( $term_id=WEB_MENU_PARENT, $exclude=[] ) {
 
 		#// ar_fields. Search fields		
 		#	$ar_fields = array(			
@@ -556,9 +573,25 @@ class page {
 			return ($item->id==='menu_all') ? $item : $carry;
 		});
 
-		$ar_data = $data->result;
+		if (empty($exclude)) {
+			$ar_data = $data->result;
+		}else{
+			$ar_data = [];
+			foreach ($data->result as $key => $value) {
+				if (!in_array($value->section_id, $exclude)) {
+					$ar_data[] = $value;
+				}
+			}
+		}
 
-		return $ar_data;		
+		// empty web_path fix. Use term_id as fallback when empty web_path
+			foreach ($ar_data as $item) {
+				if (empty($item->web_path)) {
+					$item->web_path = $item->term_id;
+				}
+			}
+
+		return $ar_data;
 		
 		/* OLD 
 			// term_id_search. Sometimes parent is term_id. Unify search format here
@@ -629,6 +662,11 @@ class page {
 				foreach ($items as $menu_element) {
 
 					$current_term_id = $menu_element->term_id;
+
+					// menu active check
+						if (property_exists($menu_element, 'menu') && $menu_element->menu==='no') {
+							continue;
+						}
 					
 					
 					if (!empty($menu_element->childrens) && $current_term_id!==WEB_MENU_PARENT) {
@@ -746,8 +784,13 @@ class page {
 			# Postprocess some complex elements
 			switch ($column_obj->type) {
 				case 'image':
-					# Image value (url)			
+					# Image value (url)
 					$column_obj->value = $this->get_image_value($column_obj, $row);
+					break;
+				case 'video':
+				case 'audio':
+					# video value (url)
+					$column_obj->value = $this->get_video_value($column_obj, $row);
 					break;
 				case 'reference':
 					# reference value (array)			
@@ -854,6 +897,17 @@ class page {
 		
 		return $image_url;
 	}//end get_image_value
+
+
+
+	/**
+	* GET_video_VALUE
+	* @return 
+	*/
+	public function get_video_value($column_obj, $row) {
+		
+		return $this->get_image_value($column_obj, $row);
+	}//end get_video_value
 
 
 
@@ -1245,9 +1299,11 @@ class page {
 		$mode 			= $options->mode;
 			
 		if(SHOW_DEBUG===true) {
+			#$db = debug_backtrace();
+			#dump($db, ' db ++ '.to_string());
+			#throw new Exception("Error Processing Request", 1);			
 			#dump($options, ' $options ++ '.to_string());
-		}
-		
+		}		
 		
 		if ($options->template_map===false) {
 			# error template
@@ -1255,7 +1311,14 @@ class page {
 
 		}else{
 			# RESOLVE VALUES
-			if ($options->resolve_values===true) {		
+			if ($options->resolve_values===true) {
+				if (!isset($template_map->{$mode})) {
+					if(SHOW_DEBUG===true) {
+						dump($template_map, ' invalid template_map ++ '.to_string());						
+						echo "Error on get template on mode: $mode";
+					}					
+					return false;
+				}			
 				foreach ($template_map->{$mode} as $key => $column_obj) {
 					$this->resolve_column_value( $column_obj, $this->row );
 				}//end foreach ($template_map->{$mode} as $key => $column_obj)
@@ -1342,14 +1405,14 @@ class page {
 	public function get_menu_link($main_menu_data, $area_name, $table_name, $section_id) {
 		
 		# Default link, using table name path
-		$link = __WEB_TEMPLATE_WEB__ ."/$area_name/$table_name/$section_id";
+		$link = __WEB_ROOT_WEB__ ."/$area_name/$table_name/$section_id";
 
 		# Try to find in menu data the target section
 		# $main_menu_data = $this->main_menu_data;
 		if($main_menu_data!==false) foreach ($main_menu_data as $obj_value) {
 			#dump($obj_value, ' obj_value ++ '.to_string());
 			if ($obj_value->term_id === WEB_MENU_SECTION_TIPO .'_'. $section_id) {
-				$link = __WEB_TEMPLATE_WEB__ .'/'. $obj_value->web_path;
+				$link = __WEB_ROOT_WEB__ .'/'. $obj_value->web_path;
 				break;
 			}
 		}
@@ -1368,8 +1431,49 @@ class page {
 	public function get_element_from_template_map( $type, $template_map, $custom_filter=null ) {
 		#dump($template_map, ' template_map ++ '.to_string($type));
 
+		// reduce array template_map
+			$element_objects = array_filter($template_map, function($item) use($type, $custom_filter){
+				
+				if($item->type!==$type) return false;
+
+				if (!empty($custom_filter)) {
+					// additional filter check using '$custom_filter' array like ['colname'=>'logos']
+					foreach ($custom_filter as $property_name => $property_value) {
+						if (property_exists($item, $property_name) && $item->{$property_name}===$property_value) {
+							return $item;
+						}
+					}
+				}else{
+					// default case. only filtered by type
+					return $item;
+				}				
+			});
+			#dump($element_objects, ' element_objects ++ '.to_string());
+
+			if (count($element_objects)>1) {
+				// merge equal type elements in one
+				$element_object = reset($element_objects); // uses the first as base
+		
+				$mix_value = [];
+				foreach ($element_objects as $key => $current_element_object) {					
+					if(empty($current_element_object->value)) continue;
+						
+					$mix_value = array_merge($mix_value, $current_element_object->value);
+
+					// removel old item
+					unset($current_element_object);
+				}
+				$element_object->value   = $mix_value;
+				$element_object->variant = 'mixed_value';
+				#dump($element_object, ' element_object ++ '.to_string());
+
+			}else{
+				$element_object = reset($element_objects);
+			}
+			
 
 		// reduce array template_map
+			/*
 			$element_object = array_reduce($template_map, function($carry, $item) use($type, $custom_filter){
 				#dump($item, ' item ++ '.to_string($type)." - ".json_encode($item->type===$type));		
 				if($item->type===$type) {
@@ -1389,7 +1493,7 @@ class page {
 				}
 				return $carry;
 			});
-			#dump($element_object, ' element_object ++ '.to_string($type));
+			*/
 		
 
 		/* OLD way array filter
@@ -1422,11 +1526,11 @@ class page {
 			#	dump($ar_elements, ' ar_elements ++ custom_filter: '.to_string($custom_filter));
 			#}		
 			*/
-
+		
 		$element_value = isset($element_object->value) ? $element_object->value : '';
 
 		// debug fallback 
-			if(SHOW_DEBUG===true) {
+			if(SHOW_DEBUG===true && isset($patata)) {
 				if (empty($element_value)) {
 					switch ($type) {
 						case 'title':
@@ -1461,13 +1565,13 @@ class page {
 
 	/**
 	* SET_TEMPLATE_FROM_TABLE
-	* @return 
+	* @return string $template_name
 	*/
 	public function set_template_from_table($area_table, $area_name, $custom=null) {
 
 		# Config values
-		$TABLE_TO_TEMPLATE = (object)json_decode(TABLE_TO_TEMPLATE);
-		
+		$TABLE_TO_TEMPLATE = (object)TABLE_TO_TEMPLATE;
+	
 		switch (true) {
 			# case received custom
 			case (!is_null($custom)):
@@ -1489,7 +1593,12 @@ class page {
 		}
 	
 		# Set template_name
-		$this->row->template_name = $template_name;			
+		$this->row->template_name = $template_name;
+
+
+		if(SHOW_DEBUG===true) {
+			error_log("!!! Maped table '$area_table' to template_map name: '$template_name'");			
+		}	
 
 
 		return $template_name;
@@ -1510,10 +1619,10 @@ class page {
 		if(is_array($search_data)) $search_data = reset($search_data);
 		if ( isset($search_data->total) ) {
 
-			$viewed_records = count($search_data->result);
-			$total_records  = isset($search_data->total) ? $search_data->total : $viewed_records;
-			$page_number 	= $search_data->page_number;
-			$rows_per_page 	= $search_data->rows_per_page;
+			$viewed_records	= count($search_data->result);
+			$total_records	= isset($search_data->total) ? $search_data->total : $viewed_records;
+			$page_number	= $search_data->page_number;
+			$rows_per_page	= $search_data->rows_per_page;
 
 			if ($total_records > $viewed_records) {
 				# pagination is needed
@@ -1531,5 +1640,40 @@ class page {
 
 
 
-}//end page
-?>
+	/**
+	* GET_CHILDREN
+	*/
+	public static function get_children($term_id, $menu_elements, $recursive=false) {
+	
+		// filter menu tree for parent $term_id (and include root parent when is $term_id)
+			$items = array_filter($menu_elements,function($item) use($term_id) {
+				return ($item->parent===$term_id); //  || ($term_id===WEB_MENU_PARENT && $item->term_id===WEB_MENU_PARENT)
+			});
+
+		// sort by norder asc
+			usort($items, function($a, $b){
+				return (int)$a->norder > (int)$b->norder;
+			});
+
+		// iterate items from filter 
+			if ($recursive===true) {
+				
+				foreach ($items as $menu_element) {
+					
+					if (!empty($menu_element->childrens)) {
+
+						// recursion
+							$childrens = self::get_children($menu_element->term_id, $menu_elements, $recursive);
+
+							$items = array_merge($items, $childrens);
+					}
+				}
+			}		
+
+
+		return $items;
+	}//end get_children
+
+
+
+}//end class page

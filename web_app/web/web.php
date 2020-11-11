@@ -1,12 +1,13 @@
 <?php
 // Version. Important!
-	$version = "1.0.5"; // 05-04-2019
+	$version = "1.0.7"; // 14-07-2020
 
 
 // area_name check get var 
 	if (!isset($_GET['area_name'])) {
 		exit("Sorry, bad url requested. Please, review your rewrite config");
 	}
+
 
 
 // lang check in url path 
@@ -19,8 +20,11 @@
 	}
 
 
+
 // include config file
-	include(dirname(dirname(__FILE__)) . '/config/config.php');
+	$site_safe_path = dirname(dirname(dirname($_SERVER["SCRIPT_FILENAME"]))) . '/tpl/config/config.php';
+	include($site_safe_path);
+
 
 
 // area_name . web_path 
@@ -55,10 +59,12 @@
 	}
 
 
+
 // map area name 
 	if ( defined('WEB_PATH_MAP') && isset(WEB_PATH_MAP[$area_name]) ) {
 		$area_name = WEB_PATH_MAP[$area_name]; // Overwrite
 	}
+
 
 
 // session save area name
@@ -66,10 +72,16 @@
 	#error_log($area_name);		
 
 
-// page. Init page class (load basic data to generate current page) 
+
+// page. Init page class (load basic data to generate current page, including data_combi) 
 	$page = new page();
-		$page->area_name  = $area_name;
-		$page->area_table = $area_table;
+		$page->area_name  		= $area_name;
+		$page->area_table 		= $area_table;
+		$page->area_section_id 	= $area_section_id ?? null;
+		$page->lang_from_path 	= $lang_from_path ?? null;
+
+	$page->init();
+
 
 
 // template 
@@ -94,63 +106,64 @@
 			break;
 		case 'db':
 		default:
-			# DB ROW 
-			$term_data = array_reduce($page->data_combi, function($carry, $item) use($area_name){
-				if ($item->id==='menu_all') {
-					return array_reduce($item->result, function($carry2, $item2) use($area_name){
-						return ($item2->web_path===$area_name) ? $item2 : $carry2;
-					});
-				}
-				return $carry;
-			});
+			
+			// menu_all records (from ts_web)
+				$term_data = array_reduce($page->data_combi, function($carry, $item) use($area_name){
+					if ($item->id==='menu_all') {
+						return array_reduce($item->result, function($carry2, $item2) use($area_name){
+							return ($item2->web_path===$area_name || $item2->term_id===$area_name) ? $item2 : $carry2;
+						});
+					}
+					return $carry;
+				});
 
 			if (!empty($term_data)) {
 				
 				// template_found Ok. Term (area_name) located in DDBB. Resolving template
 					$template_found = true;
-
-				// add page row
-					$page->row = $term_data;
 				
 				// set page vars
 					$mode 				= 'detail';	
-					$term_id 		 	= $page->row->term_id;
+					$term_id 		 	= $term_data->term_id;
 					$page->term_id 		= $term_id;
-					$page->menu_parent 	= $page->row->childrens==='[]' ? $page->row->parent : $term_id;
-
-				// menu data (!) not used here anymore
-					# $menu_data 			= $page->get_menu_data($page->menu_parent);
-						#dump($menu_data, ' menu_data ++ '.to_string($page->menu_parent));
+					$page->menu_parent 	= $term_data->childrens==='[]' ? $term_data->parent : $term_id;
 				
-				// single row from portal. Resolve current detail portal record
-					if (!isset($lang_from_path) && isset($area_table) && isset($area_section_id)) {
-
-						// http request in php to API
-							$options = new stdClass();
-								$options->dedalo_get 		= 'records';
-								$options->lang 				= WEB_CURRENT_LANG_CODE;
-								$options->table 			= $area_table;
-								$options->ar_fields 		= array('*');
-								$options->sql_filter 		= "section_id = {$area_section_id}";
-								$options->limit 			= 1;
-							$term_data_portal = json_web_data::get_data($options);
+				// set page row
+					if (isset($area_section_id) && isset($area_table) && !isset($lang_from_path)) {
 						
-						// add page row
+						// single row from portal. Resolve current detail portal record
+						// When url path is like 'web_jaciments/jornadas/actividades/140', we solve the target record
+						// using last elements (actividades/140) as template name / record section_id 
+
+						// data from previous data_combi call							
+							$term_data_portal = array_reduce($page->data_combi, function($carry, $item){
+								return ($item->id==='record_detail') ? $item : $carry;								
+							});
+						
+						// add page row (a record from target table like 'actividades')
 							$page->row = $term_data_portal->result===false ? false : reset($term_data_portal->result);
 						
 						// asign page template manually	
 							$template_name = $page->set_template_from_table($area_table, $area_name);
-						
+					}else{
+
+						// default case
+
+						// add page row (a record from ts_web)
+							$page->row = $term_data;
+
 					}//end if (isset($area_table) && isset($area_section_id))
 						
 				// template. Filter and selects first result
 					$template_name 	= $page->row->template_name;
 					$template_map 	= array_reduce($page->template_map, function($carry, $item) use($template_name, $area_table){
-						return ($item->template===$template_name && $item->table === $area_table) ? $item : $carry;
+						#return ($item->template===$template_name && $item->table === $area_table) ? $item : $carry;
+						return ($item->id===$template_name) ? $item : $carry;
 					});
 			}
 			break;
 	}//end switch (WEB_TEMPLATE_MAP_DEFAULT_SOURCE)	
+
 
 	
 // error. Not valid template found case 
@@ -165,10 +178,12 @@
 	}
 
 
+
 // html. Render full page html 
 	$options = new stdClass();
 		$options->template_map 	= $template_map;
 		$options->mode 			= $mode;
 		
 	echo $page->render_page_html( $options );
+
 

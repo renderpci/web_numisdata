@@ -10,6 +10,7 @@ class json_web_data {
 	# Version. Important!
 	static $version = "1.0.7"; // 21-05-2019
 
+
 	/**
 	* GET_DATA
 	* Exec a remote connection and get remote data with options as JSON
@@ -209,4 +210,3 @@ class json_web_data {
 
 
 }//end json_web_data
-?>

@@ -12,6 +12,56 @@ class common {
 
 	
 
+	// /**
+	// * TRIGGER_MANAGER
+	// * @param php://input
+	// * @return object $response
+	// */
+	// public static function trigger_manager($request_options=false) {
+
+	// 	$options = new stdClass();
+	// 		$options->test_login = false;
+	
+
+	// 	# Set JSON headers for all responses
+	// 	header('Content-Type: application/json');
+
+	// 	# JSON_DATA
+	// 	# javascript common.get_json_data sends a stringify json object
+	// 	# this object is getted here and decoded with all ajax request vars
+	// 	$str_json = file_get_contents('php://input');
+	// 	if (!$json_data = json_decode($str_json)) {
+	// 		$response = new stdClass();
+	// 			$response->result 	= false;
+	// 			$response->msg 		= "Error on read php://input data";
+	// 		echo json_encode($response);
+	// 		exit();
+	// 	}		
+		
+		
+	// 	#dump($json_data, ' json_data ++ '.to_string());
+
+	// 	# MODE Verify
+	// 	if(empty($json_data->mode)) exit( json_encode("<span class='error'> Trigger: Error Need mode..</span>") );
+		
+	// 	# CALL FUNCTION
+	// 	if ( function_exists($json_data->mode) ) {
+	// 		$response = (object)call_user_func($json_data->mode, $json_data);
+	// 		$json_params = null;
+	// 		if(SHOW_DEBUG===true) {
+	// 			$json_params = JSON_PRETTY_PRINT;
+	// 		}
+	// 		echo json_encode($response, $json_params);
+	// 	}else{
+	// 		$response = new stdClass();
+	// 			$response->result 	= false;
+	// 			$response->msg 		= 'Error. Request failed.'.$json_data->mode.' not exists';
+	// 		echo json_encode($response);
+	// 	}
+	// }//end trigger_manager
+
+
+
 	/**
 	* TRIGGER_MANAGER
 	* @param php://input
@@ -534,4 +584,3 @@ function encodeURIComponent($str) {
 
 
 
-?>

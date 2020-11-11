@@ -63,9 +63,8 @@ var mint =  {
 					})
 
 				// map draw. Init default map
-					self.render_map({
-						map_position	: JSON.parse(mint.result[0].map),
-						target			: document.getElementById("map_container")
+					self.draw_map({
+						map_data : JSON.parse(mint.result[0].map)
 					})
 
 				// types draw
@@ -422,68 +421,66 @@ var mint =  {
 
 
 	/**
-	* RENDER_MAP
-	* Note: map_factory draw a base map on init. If no points to render are required,
-	* render command is not necessary
+	* DRAW_MAP
 	*/
-	render_map : function(options) {
+	draw_map : function(options) {
+
+		const self = this
+
+		// options
+			const map_data = options.map_data
+
+		const map_position	= map_data
+		const container		= document.getElementById("map_container")
+
+		self.map = self.map || new map_factory() // creates / get existing instance of map
+		self.map.init({
+			map_container	: container,
+			map_position	: map_position,
+			popup_builder	: page.map_popup_builder,
+			popup_options	: page.maps_config.popup_options,
+			source_maps		: page.maps_config.source_maps
+		})
+		// draw points
+		const map_data_clean = self.map_data(map_data) // prepares data to used in map
+		self.map.parse_data_to_map(map_data_clean, null)
+		.then(function(){
+			container.classList.remove("hide_opacity")
+		})
+		
+
+		return true
+	},//end draw_map
+
+
+	/**
+	* MAP_DATA
+	* @return array data
+	*/
+	map_data : function(data) {
 		
 		const self = this
 
-		const target		= options.target
-		const map_position	= options.map_position
-		if (map_position) {
-			map_position.zoom = 11 // force max zoom for dare
-		}		 
+		console.log("--map_data data:",data);
 
-		const map_data	= self.map_data([]) // prepares data to use in map
-		self.map		= self.map || new map_factory() // creates / get existing instance of map
-		self.map.init({
-			target				: target,
-			// data				: map_data,
-			map_position		: map_position,
-			// popup_builder	: self.map_popup_builder,
-			source_maps			: [
-				{
-					name	: "dare",
-					// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
-					url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
-					options	: { maxZoom: 11 },
-					default	: true
-				},
-				{
-					name	: "arcgis",
-					url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-					options	: {}
-				},
-				{
-					name	: "osm",
-					url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-					options	: {}
-				},
-				// {
-				// 	name	: "grey",
-				// 	url 	: '//{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYWxleGFkZXYiLCJhIjoiY2lrOHdvaTQzMDEwbHY5a3UxcDYxb25ydiJ9.h737F1gRyib-MFj6uAXs9A',
-				// 	options	: {
-				// 		maxZoom	: 20,
-				// 		id		: 'alexadev.p2lbljap'
-				// 	}
-				// }
-			]
-		})
-		// self.map.render({
-		// 	data : []
-		// })
+		const ar_data = Array.isArray(data)
+			? data
+			: [data]
 
-		
-		return true
-	},//end render_map
+		const data_clean = []
+		for (let i = 0; i < ar_data.length; i++) {
+			
+			const item = {
+				lat		: ar_data[i].lat,
+				lon		: ar_data[i].lon,
+				data	: {}
+			}
+			data_clean.push(item)
+		}
 
+		console.log("--map_data data_clean:",data_clean);
 
-
-	map_data : function(data) {
-
-		return data
+		return data_clean
 	},//end map_data
 	
 

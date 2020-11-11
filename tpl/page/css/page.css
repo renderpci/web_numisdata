@@ -180,6 +180,9 @@ p img.svg {
 .hide {
   display: none !important;
 }
+.hide_opacity {
+  opacity: 0 !important;
+}
 .go_to_dedalo {
   text-decoration: none;
   color: #e68214;

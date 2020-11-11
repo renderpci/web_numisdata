@@ -33,7 +33,14 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.poptrox.min.js';
 
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/map_factory'.JS_SUFFIX.'.js';
+		
+		// factory libs
+		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/list_factory'.JS_SUFFIX.'.js';
+		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/form_factory'.JS_SUFFIX.'.js';	
+		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/map_factory'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/map_factory'.JS_SUFFIX.'.js';
+		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/tree_factory'.JS_SUFFIX.'.js';
+		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/timeline_factory'.JS_SUFFIX.'.js';
 		
 		
 		page::$js_ar_url[] = __WEB_ROOT_WEB__  	  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';

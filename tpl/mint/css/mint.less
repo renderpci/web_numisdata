@@ -1,9 +1,10 @@
 // Variables
 	@assets_path: "../../assets";
 	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
 
 // Usage library
-	//@import "@{assets_path}/css/library.less";
+	@import "@{page_path}/css/library.less";
 
 
 .result {
@@ -32,9 +33,10 @@
 		height: 60vh;		
 		font-size: 1rem;
 		margin-bottom: 3em;
-		background-color: #585858;
+		background-color: @blue_ocean;
 		border-top: 1px solid #dcdcdc;
 		border-bottom: 1px solid #dcdcdc;
+		transition: opacity 0.5s ease-in-out 0.5s;
 
 		// wide
 		// width: 100vw;

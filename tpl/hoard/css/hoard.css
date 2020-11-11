@@ -17,9 +17,10 @@
   height: 60vh;
   font-size: 1rem;
   margin-bottom: 3em;
-  background-color: #585858;
+  background-color: #b1c9e2;
   border-top: 1px solid #dcdcdc;
   border-bottom: 1px solid #dcdcdc;
+  transition: opacity 0.5s ease-in-out 0.5s;
 }
 .result #types {
   padding: 1em;

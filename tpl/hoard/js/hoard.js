@@ -32,23 +32,26 @@ var hoard =  {
 					.then(function(response){
 						console.log("[set_up->get_row_data] response:",response);
 
-						// row draw
-							self.draw_row({
-								target  : row_detail,
-								ar_rows : response.result
-							})
-							.then(function(){
-								// map draw. Init default map
-								const map_data = JSON.parse(response.result[0].map)
-								self.draw_map({
-									map_data : map_data
-								})	
-							})
+						if (response.result && response.result.length>0) {
 
-						
+							// row draw
+								self.draw_row({
+									target  : row_detail,
+									ar_rows : response.result
+								})
+								.then(function(){
+									// map draw. Init default map
+									const map_data = JSON.parse(response.result[0].map)
+									self.draw_map({
+										map_data : map_data
+									})	
+								})
+						}else{
+							row_detail.innerHTML = 'Sorry. Empty result for section_id: ' + options.section_id
+						}
 					})
 			}else{
-				row_detail.innerHTML = 'Error. invalid section_id'
+				row_detail.innerHTML = 'Error. Invalid section_id'
 			}
 	
 		// navigate across records group
@@ -160,16 +163,17 @@ var hoard =  {
 
 		self.map = self.map || new map_factory() // creates / get existing instance of map
 		self.map.init({
-			target			: container,
+			map_container	: container,
 			map_position	: map_position,
 			popup_builder	: page.map_popup_builder,
 			popup_options	: page.maps_config.popup_options,
 			source_maps		: page.maps_config.source_maps
 		})
-
-		const map_data_clean = self.map_data(map_data) // prepares data to use in map
-		self.map.render({
-			map_data : map_data_clean
+		// draw points
+		const map_data_clean = self.map_data(map_data) // prepares data to used in map
+		self.map.parse_data_to_map(map_data_clean, null)
+		.then(function(){
+			container.classList.remove("hide_opacity")
 		})
 		
 

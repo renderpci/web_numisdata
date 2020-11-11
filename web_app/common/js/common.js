@@ -555,19 +555,24 @@ var common = {
 		if (!url) {
 			return null
 		}
+		
+		if ( url.indexOf('http://')===false && url.indexOf('https://')===false ) {
 
-		// LIke /dedalo/media_test/media_emakumeak/image/1.5MB/0/rsc29_rsc170_626.jpg
-		const WEB_ENTITY = page_globals.WEB_ENTITY
+			// Like /dedalo/media_test/media_emakumeak/image/1.5MB/0/rsc29_rsc170_626.jpg
+			const WEB_ENTITY = page_globals.WEB_ENTITY
 
-		url = url.replace('/dedalo4/', '/dedalo/')
-		url = url.replace('/media_test/media_'+WEB_ENTITY, '/media')
+			url = url.replace('/dedalo4/', '/dedalo/')
+			url = url.replace('/media_test/media_'+WEB_ENTITY, '/media')
 
-		// if first char is not /, add it
-		if (url.charAt(0)!=='/') {
-			url = '/' + url
+			// if first char is not /, add it
+			if (url.charAt(0)!=='/') {
+				url = '/' + url
+			}
+
+			// absolute
+			url = page_globals.__WEB_MEDIA_BASE_URL__ + url
 		}
-
-		url = page_globals.__WEB_MEDIA_BASE_URL__ + url
+		
 
 		return url
 	},//end local_to_remote_path	

@@ -4,7 +4,7 @@
 
 var mints =  {
 
-	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/mints/trigger.mints.php",
+	// trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/mints/trigger.mints.php",
 	search_options 	: {},
 
 
@@ -34,12 +34,13 @@ var mints =  {
 
 		// exec first default search without params
 			self.search_rows({
-				ar_query : [],
-				limit 	 : 10
-			}).then(function(response){
+				ar_query	: [],
+				limit		: 10
+			})
+			.then(function(response){
 				self.draw_rows({
-					target  : 'rows_list',
-					ar_rows : response.result
+					target	: 'rows_list',
+					ar_rows	: response.result
 				})
 			})
 
@@ -57,8 +58,8 @@ var mints =  {
 		const container = document.getElementById(object.id + "_values")
 
 		// Check if already exists
-			const inputs 		= container.querySelectorAll(".input_values")
-			const inputs_length = inputs.length
+			const inputs		= container.querySelectorAll(".input_values")
+			const inputs_length	= inputs.length
 			for (var i = inputs_length - 1; i >= 0; i--) {
 				if (value===inputs[i].value) return false;
 			}
@@ -110,9 +111,9 @@ var mints =  {
 
 		// const cache = {}
 		$(element).autocomplete({
-			delay 	 : 150,
-			minLength: 0,
-			source 	 : function( request, response ) {
+			delay		: 150,
+			minLength	: 0,
+			source		: function( request, response ) {
 
 				const term  = request.term;
 
@@ -223,16 +224,14 @@ var mints =  {
 		const self = this
 
 		// ar_query
-			var ar_query 		= []
-			var ar_form_inputs  = form_obj.querySelectorAll("input.input_values, input.form-control")
-			var ar_input_len 	= ar_form_inputs.length
-			for (var i = 0; i < ar_input_len; i++) {
+			const ar_query			= []
+			const ar_form_inputs	= form_obj.querySelectorAll("input.input_values, input.form-control")
+			const ar_input_len		= ar_form_inputs.length
+			for (let i = 0; i < ar_input_len; i++) {
 
 				const input = ar_form_inputs[i]
 
 				if (input.value.length>0) {
-
-						console.log("input:",input);
 
 					// value
 						// const current_value = typeof input.dataset.real_value!=="undefined"
@@ -272,12 +271,15 @@ var mints =  {
 
 		// search_rows. exec query (promise)
 			const response = self.search_rows({
-				ar_query : ar_query,
-				operator : operators_value
-			}).then(function(response){
+				ar_query	: ar_query,
+				operator	: operators_value
+			})
+			.then(function(response){
+				console.log("search response:",response);
+
 				self.draw_rows({
-					target  : 'rows_list',
-					ar_rows : response.result
+					target	: 'rows_list',
+					ar_rows	: response.result
 				})
 			})
 
@@ -301,58 +303,81 @@ var mints =  {
 
 		const self = this
 
-		// search options store
+		// options
+			const ar_query	= typeof(options.ar_query)!=="undefined" ? options.ar_query : null
+			const limit		= options.limit || 10
+			const offset	= options.offset || 0
+			const total		= options.total || false
+			const order		= options.order || 'section_id ASC'
+			const operator	= options.operator || 'OR'
+
+		// fix search options store
 			self.search_options = options
 
-		// const container = document.getElementById("rows_list")
-			  // container.style.opacity = "0.4"
+		const container = document.getElementById("rows_list")
+			  container.style.opacity = "0.4"
 
-		const trigger_url  = self.trigger_url
-		const trigger_vars = {
-			mode 	 : "search_rows",
-			ar_query : typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit 	 : options.limit || 10,
-			// pagination
-			offset 	 : options.offset || 0,
-			// count 	 : options.count || false,
-			total 	 : options.total || false,
-			order 	 : options.order || 'section_id ASC',
-			operator : options.operator || 'OR'
-		}
 
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("[mints.search_rows] trigger_vars:",trigger_vars);
-			}
+		const sql_filter	= null
+		const ar_fields		= [
+			'section_id', // int(12) unsigned NULL	Campo creado automáticamente para guardar section_id (sin correspondencia en estructura)
+			'lang', // 	varchar(8) NULL	Campo creado automáticamente para guardar el idioma (sin correspondencia en estructura)
+			'name',	//	text NULL	Ceca - numisdata16
+			'place_data',	//	text NULL	Localización - numisdata585
+			'place',	//	text NULL	Localización - numisdata585
+			'history',	//	text NULL	Historia - numisdata18
+			'numismatic_comments',	//	text NULL	Comentario numismático - numisdata17
+			'bibliography_data',	//	text NULL	Bibliografía - numisdata163
+			'map'
+		]
+		const count = !total ? true : false;
 
-		// Http request directly in javascript to the API is possible too..
-		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
+		return new Promise(function(resolve, reject){
+		
+			// request
+			data_manager.request({
+				body : {
+					dedalo_get				: 'records',
+					db_name					: page_globals.WEB_DB,
+					lang					: page_globals.WEB_CURRENT_LANG_CODE,
+					table					: 'mints',
+					ar_fields				: ar_fields,
+					sql_filter				: sql_filter,
+					limit					: limit,
+					count					: count,
+					offset					: offset,
+					order					: order,
+					resolve_portals_custom	: {
+						bibliography_data : 'bibliographic_references' // publications
+					}
+				}
+			})
+			.then(function(response){
 				if(SHOW_DEBUG===true) {
-					console.log("[mints.search_rows] get_json_data response:", response);
+					// console.log("[mints.search_rows] get_json_data response:", response);
 				}
 
-				// container.style.opacity = "1"
+				container.style.opacity = "1"
 
 				if (!response) {
 					// Error on load data from trigger
 					console.warn("[mints.search_rows] Error. Received response data is null");
-					return false
+					reject("[mints.search_rows] Error. Received response data is null")
 
 				}else{
 					// Success
 
 					// fix totals
-						self.search_options.total 	= (response.result.total && response.result.total>0)
-							? response.result.total // new total
+						self.search_options.total 	= (response.total && response.total>0)
+							? response.total // new total
 							: self.search_options.total // previous calculated total
-						self.search_options.limit 	= trigger_vars.limit
-						self.search_options.offset 	= trigger_vars.offset
+						self.search_options.limit 	= limit
+						self.search_options.offset 	= offset
 
-					return response.result
+					resolve(response)
 				}
+			})
 		})
-
-		return js_promise
 	},//end search_rows
 
 
@@ -426,15 +451,15 @@ var mints =  {
 						  parent 		: fragment
 					})
 
-				// row_fields set
-					const row_field = row_fields
+				// mint_rows set
+					const row_field = mint_rows
 						  row_field.row_object = row_object
 
 				// name
 					mints_row_wrapper.appendChild( row_field.name() )
 
 				// place
-					mints_row_wrapper.appendChild( row_fields.place() )				
+					mints_row_wrapper.appendChild( row_field.place() )				
 				
 			}//end for (var i = 0; i < len; i++)
 

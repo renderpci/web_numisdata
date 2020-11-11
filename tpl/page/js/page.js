@@ -812,6 +812,145 @@ var page = {
 
 
 
+	/**
+	* MAP_POPUP_BUILDER
+	* Build DOM nodes to insert into map pop-up
+	*/
+	map_popup_builder : function(item) {
+		// console.log("-> map_popup_builder item:",item);
+		
+		const self = this
+
+		const popup_wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "popup_wrapper"
+		})
+
+		const group = item.group
+
+		// order group
+			const collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+			group.sort( (a,b) => {return collator.compare(a.title , b.title)});
+
+		const build_pop_item = function(group_data){
+			
+			const section_id	= group_data.section_id
+			// const table			= group_data.table
+			const title			= group_data.title || "Undefined title " + section_id
+			const description	= group_data.description
+			// const image_url		= group_data.identifying_images
+			
+			
+			// popup_item
+				const popup_item = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "popup_item",
+					parent			: popup_wrapper
+				})				
+
+			// image
+				// const image_wrapper = common.create_dom_element({
+				// 	element_type	: "div",
+				// 	class_name		: "image_wrapper",
+				// 	parent			: popup_item
+				// })
+				// image_wrapper.addEventListener("click",function(e){
+				// 	// event publish map_selected_marker
+				// 	event_manager.publish('map_popup_selected_item', {
+				// 		item		: image_wrapper,
+				// 		section_id	: section_id,
+				// 		table		: table,
+				// 		title		: title
+				// 	})	
+				// })
+				// const item_image = common.create_dom_element({
+				// 	element_type	: "img",
+				// 	src				: image_url,
+				// 	parent			: image_wrapper
+				// })
+				// // calculate bg color and load hi res image
+				// page.build_image_with_background_color(image_url, image_wrapper)
+				// .then(function(response){
+					
+				// 	const img			= response.img // dom node
+				// 	const format		= response.format // vertical | horinzontal
+				// 	const bg_color_rgb	= response.bg_color_rgb
+
+				// 	// set item_wrapper format class vertical / horizontal
+				// 	// popup_item.classList.add(format)
+
+				// 	// set image node style to loaded (activate opacity transition)
+				// 	item_image.classList.add('loaded')
+
+				// 	// load high resolution image
+				// 		// const image_url = row.identifying_images_combi && row.identifying_images_combi[0]
+				// 		// 	? row.identifying_images_combi[0].url
+				// 		// 	: __WEB_TEMPLATE_WEB__ + '/assets/images/default.jpg'
+
+				// 		// item_image.src = image_url
+				// })
+
+			// text_title
+				const text_title = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "text_title",
+					inner_html		: title,
+					parent			: popup_item
+				})
+
+			// tooltip descriptions
+				if (description && description.length>3) {
+					// page.add_tooltip({
+					// 	element : text_title,
+					// 	content : description
+					// })
+					const text_description = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "text_description",
+						inner_html		: description,
+						parent			: popup_item
+					})
+				}
+		}
+
+		const group_length	= group.length
+		let limit			= 100		
+
+		function iterate(from, to) {
+			for (let i = from; i < to; i++) {
+				build_pop_item(group[i])
+			}
+			// Load more button
+			if (to<(group_length-1)) {
+				const more_node = common.create_dom_element({
+					element_type	: "input",
+					type			: 'button',
+					value			: tstring['load_more'] || "Load more..",
+					class_name		: "more_node btn btn-light btn-block primary",
+					// inner_html	: tstring['load_more'] || "Load more..",
+					parent			: popup_wrapper
+				})
+				more_node.addEventListener("click", function(){
+					const _from	= this.offset + 1
+					const _to	= ((_from + limit) < group_length) ? (_from + limit) : group_length
+					iterate(_from, _to)
+
+					this.remove()
+				})
+				more_node.offset = to
+			}
+		}
+		
+		// first elements from zero to limit 
+		const to = limit < group_length ? limit : group_length		
+		iterate(0, to)
+		
+
+		return popup_wrapper
+	},//end map_popup_builder
+
+
+
 
 }//end page
 

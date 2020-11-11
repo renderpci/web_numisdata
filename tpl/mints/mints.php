@@ -1,6 +1,6 @@
 <?php
 
-// bibio
+// mints
 
 	// css
 		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.css';
@@ -11,7 +11,7 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator'.JS_SUFFIX.'.js';
 
 		// row_fields js add
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/row_fields.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/mints_rows'.JS_SUFFIX.'.js';
 
 
 	// page basic vars

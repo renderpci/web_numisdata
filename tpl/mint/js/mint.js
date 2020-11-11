@@ -17,9 +17,43 @@ var mint =  {
 
 		const self = this
 
-		if (typeof options.section_id!=="undefined") {
+		// options
+			const section_id = options.section_id
+
+		if (section_id) {
 			
-			mint.render_mint(options.section_id)			
+
+			// search by section_id
+			self.get_row_data({
+				section_id : section_id
+			})
+			.then(function(response){
+				console.log("set_up get_row_data response:",response);
+				
+				// mint draw
+					const mint = response.result.find( el => el.id==='mint')
+					self.draw_row({
+						target	: document.getElementById('row_detail'),
+						ar_rows	: mint.result
+					})
+
+				// map draw. Init default map
+					self.draw_map({
+						map_data : JSON.parse(mint.result[0].map),
+						popup_data : {
+							section_id	: mint.result[0].section_id,
+							title		: mint.result[0].name,
+							description	: mint.result[0].history.trim()
+						}
+					})
+
+				// types draw
+					const types = response.result.find( el => el.id==='types')
+					self.draw_types({
+						target	: document.getElementById('types'),
+						ar_rows	: types.result
+					})	
+			})		
 		}
 
 		
@@ -37,44 +71,6 @@ var mint =  {
 		return true
 	},//end set_up
 
-
-
-	/**
-	* RENDER_MINT
-	*/
-	render_mint : function(section_id) {
-
-		const self = this
-
-		// search by section_id			
-			self.get_row_data({
-				section_id : section_id
-			})
-			.then(function(response){
-					console.log("render_mint get_row_data response:",response);
-				
-				// mint draw
-					const mint = response.result.find( el => el.id==='mint')					
-					self.draw_row({
-						target  : document.getElementById('row_detail'),
-						ar_rows : mint.result
-					})
-
-				// map draw. Init default map
-					self.draw_map({
-						map_data : JSON.parse(mint.result[0].map)
-					})
-
-				// types draw
-					const types = response.result.find( el => el.id==='types')
-					self.draw_types({
-						target  : document.getElementById('types'),
-						ar_rows : types.result
-					})				
-			})
-
-		return true
-	},//end render_mint
 
 
 
@@ -460,7 +456,9 @@ var mint =  {
 		const self = this
 
 		// options
-			const map_data = options.map_data
+			const map_data		= options.map_data
+			const popup_data	= options.popup_data
+
 
 		const map_position	= map_data
 		const container		= document.getElementById("map_container")
@@ -474,7 +472,7 @@ var mint =  {
 			source_maps		: page.maps_config.source_maps
 		})
 		// draw points
-		const map_data_clean = self.map_data(map_data) // prepares data to used in map
+		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map
 		self.map.parse_data_to_map(map_data_clean, null)
 		.then(function(){
 			container.classList.remove("hide_opacity")
@@ -489,7 +487,7 @@ var mint =  {
 	* MAP_DATA
 	* @return array data
 	*/
-	map_data : function(data) {
+	map_data : function(data, popup_data) {
 		
 		const self = this
 
@@ -505,7 +503,7 @@ var mint =  {
 			const item = {
 				lat		: ar_data[i].lat,
 				lon		: ar_data[i].lon,
-				data	: {}
+				data	: popup_data
 			}
 			data_clean.push(item)
 		}

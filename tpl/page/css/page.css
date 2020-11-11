@@ -216,6 +216,16 @@ a.image_link {
 a.image_link img {
   border-radius: initial;
 }
+.popup_item > .text_title {
+  font-size: 1.15em;
+  padding-bottom: 0.5em;
+  font-weight: 500;
+}
+.popup_item > .text_description {
+  max-height: 14em;
+  overflow-y: auto;
+  padding-right: 0.5em;
+}
 .poptrox-overlay {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }

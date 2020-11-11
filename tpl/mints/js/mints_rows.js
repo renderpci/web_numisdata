@@ -2,7 +2,7 @@
 
 
 
-var row_fields = {
+var mint_rows = {
 
 
 
@@ -314,4 +314,4 @@ var row_fields = {
 
 
 
-}//end row_fields
+}//end mint_rows

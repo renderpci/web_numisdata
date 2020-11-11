@@ -6,9 +6,10 @@ var hoard =  {
 
 
 
-	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/hoard/trigger.hoard.php",
+	// trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/hoard/trigger.hoard.php",
 	search_options 	: {},
 
+	map : null,
 
 
 	/**
@@ -19,29 +20,35 @@ var hoard =  {
 
 		const self = this
 
+		const row_detail =  document.getElementById('row_detail')
+
 		// trigger render hoard with current options.section_id 
-			if (typeof options.section_id!=="undefined") {
+			if (typeof options.section_id!=="undefined" && options.section_id>0) {
 				
 				// search by section_id			
 					const search = self.get_row_data({
 						section_id : options.section_id
 					})
-					
-				// draw then
-					search.then(function(response){
-						
+					.then(function(response){
+						console.log("[set_up->get_row_data] response:",response);
+
 						// row draw
-							const hoard = response.result.find( el => el.id==='hoard')					
 							self.draw_row({
-								target  : document.getElementById('row_detail'),
-								ar_rows : hoard.result
+								target  : row_detail,
+								ar_rows : response.result
+							})
+							.then(function(){
+								// map draw. Init default map
+								const map_data = JSON.parse(response.result[0].map)
+								self.draw_map({
+									map_data : map_data
+								})	
 							})
 
-						// map draw. Init default map
-							self.init_map({
-								map_data : JSON.parse(hoard.result[0].map)
-							})	
+						
 					})
+			}else{
+				row_detail.innerHTML = 'Error. invalid section_id'
 			}
 	
 		// navigate across records group
@@ -62,209 +69,143 @@ var hoard =  {
 
 	/**
 	* GET_ROW_DATA
-	* 
+	* @return promise
 	*/
 	get_row_data : function(options) {
 
 		const self = this
 
-		const section_id = options.section_id
+		const section_id	= options.section_id
+		const ar_fields		= ['*']
+		const sql_filter	= 'section_id=' + parseInt(section_id);
 
-		// trigger vars
-			const trigger_url  = self.trigger_url
-			const trigger_vars = {
-				mode 	 	: "get_row_data",
-				section_id 	: section_id
+		// request
+		return data_manager.request({
+			body : {
+				dedalo_get		: 'records',
+				db_name			: page_globals.WEB_DB,
+				lang			: page_globals.WEB_CURRENT_LANG_CODE,
+				table			: 'hoards',
+				ar_fields		: ar_fields,
+				sql_filter		: sql_filter,
+				limit			: 1,
+				count			: false,
+				offset			: 0,
+				resolve_portals_custom	: {
+					coins_data : 'coins'
+				}
 			}
-	
-		// Http request directly in javascript to the API is possible too..
-		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
-				if(SHOW_DEBUG===true) {
-					console.log("[hoard.get_row_data] get_json_data response:", response);
-				}
-
-				if (!response) {
-					// Error on load data from trigger
-					console.warn("[hoard.get_row_data] Error. Received response data is null");
-					return false
-
-				}else{
-					// Success
-					return response.result
-				}
 		})
-
-		return js_promise
 	},//end get_row_data
 
 
 
 	/**
 	* DRAW_ROW
+	* @return promise
 	*/
 	draw_row : function(options) {
 
-		const row_object	= options.ar_rows[0]
-		const container 	= options.target
+		const self = this
 
-		// fix row_object
-			self.row_object = row_object
+		return new Promise(function(resolve){
 
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("hoard row_object:",row_object);
-			}		
+			// options
+				const row_object	= options.ar_rows[0]
+				const container 	= options.target
 
-		// container. clean container div
-			while (container.hasChildNodes()) {
-				container.removeChild(container.lastChild);
-			}
+				console.log("draw_row row_object:", row_object)
 
-		const fragment = new DocumentFragment();
+			// fix row_object
+				self.row_object = row_object
 
-		// line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "",
-				parent 			: fragment
-			})
+			// debug
+				if(SHOW_DEBUG===true) {
+					console.log("coin row_object:",row_object);
+				}
 
+			// container. clean container div
+				while (container.hasChildNodes()) {
+					container.removeChild(container.lastChild);
+				}
 
-		// section_id (dedalo users only)
-			if (dedalo_logged===true) {
+			const fragment = new DocumentFragment();	
 
-				const link = common.create_dom_element({
-					element_type 	: "a",
-					class_name 		: "section_id go_to_dedalo",
-					text_content 	: row_object.section_id,
-					href 			: '/dedalo/lib/dedalo/main/?t=numisdata5&id=' + row_object.section_id,
-					parent 			: line
-				})
-				link.setAttribute('target', '_blank');
-			}
+			// draw row wrapper
+				const hoard_row_wrapper = hoard_row.draw_hoard(row_object)				
+				fragment.appendChild(hoard_row_wrapper)			
 
-		// name
-			if (row_object.name && row_object.name.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.name || "Name",
-					parent 			: line
-				})
-
-				const name = row_object.name
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: name,
-					parent 			: line
-				})
-			}
-
-		// place
-			if (row_object.place && row_object.place.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.place || "Place",
-					parent 			: line
-				})
-
-				const place = row_object.place
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: place,
-					parent 			: line
-				})
-			}
-
-		// public_info
-			if (row_object.public_info && row_object.public_info.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.public_info || "Public info",
-					parent 			: line
-				})
-
-				const public_info = row_object.public_info
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: public_info,
-					parent 			: line
-				})
-			}
-
-		// link
-			if (row_object.link && row_object.link.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.link || "Link",
-					parent 			: line
-				})
-
-				const link = row_object.link
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: link,
-					parent 			: line
-				})
-			}
-
-		// bibliography
-			if (row_object.bibliography && row_object.bibliography.length>0) {
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.bibliography || "Bibliography",
-					parent 			: line
-				})
-
-				const bibliography = common.clean_gaps(row_object.bibliography) // , splitter=" | ", joinner=", "				
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: bibliography,
-					parent			: line
-				})
-			}
+			// container final fragment add
+				container.appendChild(fragment)
 
 
-
-		// container final fragment add
-			container.appendChild(fragment)
-
-
-		return container
+			resolve(container)
+		})
 	},//end draw_row
 
 
 
 	/**
-	* INIT_MAP
+	* DRAW_MAP
 	*/
-	init_map : function(options) {
+	draw_map : function(options) {
 
 		const self = this
 
-		// init page common map
-			page.init_map({
-				map_data			: options.map_data,
-				div_container_id	: "map_container"
-			})
+		// options
+			const map_data = options.map_data
+
+		const map_position	= map_data
+		const container		= document.getElementById("map_container")
+
+		self.map = self.map || new map_factory() // creates / get existing instance of map
+		self.map.init({
+			target			: container,
+			map_position	: map_position,
+			popup_builder	: page.map_popup_builder,
+			popup_options	: page.maps_config.popup_options,
+			source_maps		: page.maps_config.source_maps
+		})
+
+		const map_data_clean = self.map_data(map_data) // prepares data to use in map
+		self.map.render({
+			map_data : map_data_clean
+		})
 		
 
 		return true
-	},//end init_map
+	},//end draw_map
+
+
+	/**
+	* MAP_DATA
+	* @return array data
+	*/
+	map_data : function(data) {
+		
+		const self = this
+
+		console.log("--map_data data:",data);
+
+		const ar_data = Array.isArray(data)
+			? data
+			: [data]
+
+		const data_clean = []
+		for (let i = 0; i < ar_data.length; i++) {
+			
+			const item = {
+				lat		: ar_data[i].lat,
+				lon		: ar_data[i].lon,
+				data	: {}
+			}
+			data_clean.push(item)
+		}
+
+		console.log("--map_data data_clean:",data_clean);
+
+		return data_clean
+	},//end map_data
 
 
 	

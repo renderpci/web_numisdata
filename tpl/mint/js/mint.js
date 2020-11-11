@@ -47,13 +47,11 @@ var mint =  {
 		const self = this
 
 		// search by section_id			
-			const search = self.get_row_data({
+			self.get_row_data({
 				section_id : section_id
 			})
-			
-		// draw
-			search.then(function(response){
-					console.log("response:",response);
+			.then(function(response){
+					console.log("render_mint get_row_data response:",response);
 				
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')					
@@ -72,8 +70,7 @@ var mint =  {
 					self.draw_types({
 						target  : document.getElementById('types'),
 						ar_rows : types.result
-					})
-				
+					})				
 			})
 
 		return true
@@ -91,28 +88,63 @@ var mint =  {
 
 		const section_id = options.section_id
 
-		const trigger_url  = mints.trigger_url
-		const trigger_vars = {
-			mode 	 	: "get_row_data",
-			section_id 	: section_id
-		}
-	
-		// Http request directly in javascript to the API is possible too..
-		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
-				if(SHOW_DEBUG===true) {
-					console.log("[mints.get_row_data] get_json_data response:", response);
+		// combined call
+			const ar_calls = []
+			
+		// type call				
+			ar_calls.push({
+				id		: "mint",
+				options	: {
+					dedalo_get				: 'records',
+					table					: "mints",
+					db_name					: page_globals.WEB_DB,
+					lang					: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields				: [
+						'section_id',
+						'lang',
+						'name',
+						'place_data',
+						'place',
+						'history',
+						'numismatic_comments',
+						'bibliography_data',
+						'map'
+					],
+					sql_filter				: "section_id = " + parseInt(section_id),
+					count					: false,
+					resolve_portals_custom	: {
+						"bibliography_data" : "bibliographic_references"
+					}
 				}
+			})
 
-				if (!response) {
-					// Error on load data from trigger
-					console.warn("[mints.get_row_data] Error. Received response data is null");
-					return false
-
-				}else{
-					// Success
-					return response.result
+		// catalog call
+			ar_calls.push({
+				id		: "types",
+				options	: {
+					dedalo_get				: 'records',
+					table					: 'types',
+					db_name					: page_globals.WEB_DB,
+					lang					: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields				: ['*'],
+					count					: false,
+					limit					: 2000,
+					sql_filter				: "mint_data LIKE '[\"" + parseInt(section_id) + "\"]'",
+					resolve_portals_custom	: {
+						"parents" : "catalog"
+					}
 				}
-		})
+			})
+
+			
+		// request
+			const js_promise = data_manager.request({
+				body : {
+					dedalo_get	: 'combi',
+					ar_calls	: ar_calls
+				}
+			})
+
 
 		return js_promise
 	},//end get_row_data

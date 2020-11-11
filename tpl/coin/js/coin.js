@@ -104,10 +104,11 @@ var coin =  {
 
 		const self = this
 
-		return new Promise(function(resolve){		
+		return new Promise(function(resolve){
 
-			const row_object	= options.ar_rows[0]
-			const container 	= options.target
+			// options
+				const row_object	= options.ar_rows[0]
+				const container		= options.target
 
 				console.log("row_object:",row_object);
 
@@ -117,7 +118,7 @@ var coin =  {
 			// debug
 				if(SHOW_DEBUG===true) {
 					console.log("coin row_object:",row_object);
-				}		
+				}
 
 			// container. clean container div
 				while (container.hasChildNodes()) {
@@ -128,9 +129,7 @@ var coin =  {
 
 			// draw row coin
 				const coin_row_wrapper = coin_row.draw_coin(row_object)
-					console.log("coin_row_wrapper:",coin_row_wrapper);
-				fragment.appendChild(coin_row_wrapper)
-			
+				fragment.appendChild(coin_row_wrapper)			
 
 			// container final fragment add
 				container.appendChild(fragment)

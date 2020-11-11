@@ -556,7 +556,7 @@ var common = {
 			return null
 		}
 		
-		if ( url.indexOf('http://')===false && url.indexOf('https://')===false ) {
+		if ( url.indexOf('http://')===-1 && url.indexOf('https://')===-1 ) {
 
 			// Like /dedalo/media_test/media_emakumeak/image/1.5MB/0/rsc29_rsc170_626.jpg
 			const WEB_ENTITY = page_globals.WEB_ENTITY

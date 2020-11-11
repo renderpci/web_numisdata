@@ -14,14 +14,14 @@ class biblio {
 	public static function search_biblio($request_options) {
 		
 		$options = new stdClass();
-			$options->ar_query 	= [];
-			$options->limit 	= 10;
+			$options->ar_query	= [];
+			$options->limit		= 10;
 			// pagination
-			$options->offset 	= 0;
-			$options->count 	= true;
-			$options->operator 	= 'or';
-			$options->total 	= false;
-			$options->order 	= 'section_id ASC';
+			$options->offset	= 0;
+			$options->count		= true;
+			$options->operator	= 'or';
+			$options->total		= false;
+			$options->order		= 'section_id ASC';
 			foreach ($request_options as $key => $value) {if (property_exists($options, $key)) $options->$key = $value;}
 
 
@@ -137,18 +137,18 @@ class biblio {
 
 		# Search		
 		$rows_options = new stdClass();
-			$rows_options->dedalo_get 				= 'bibliography_rows'; //	'records';
-			$rows_options->table  	 				= 'publications';
-			$rows_options->ar_fields  				= $ar_fields;
-			$rows_options->lang  	 				= WEB_CURRENT_LANG_CODE;
-			$rows_options->limit 					= (int)$options->limit;
-			$rows_options->offset 					= $options->offset;
-			$rows_options->count 					= empty($options->total) ? true : false; // $options->count;
-			#$rows_options->total 					= $options->total;
-			$rows_options->order 					= $options->order;
-			$rows_options->sql_filter 				= $filter;
-			$rows_options->use_union  				= $use_union ?? false;
-			$rows_options->resolve_portals_custom 	= $portals_custom;
+			$rows_options->dedalo_get				= 'bibliography_rows'; //	'records';
+			$rows_options->table					= 'publications';
+			$rows_options->ar_fields				= $ar_fields;
+			$rows_options->lang						= WEB_CURRENT_LANG_CODE;
+			$rows_options->limit					= (int)$options->limit;
+			$rows_options->offset					= $options->offset;
+			$rows_options->count					= empty($options->total) ? true : false; // $options->count;
+			#$rows_options->total					= $options->total;
+			$rows_options->order					= $options->order;
+			$rows_options->sql_filter				= $filter;
+			$rows_options->use_union				= $use_union ?? false;
+			$rows_options->resolve_portals_custom	= $portals_custom;
 		
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($rows_options);

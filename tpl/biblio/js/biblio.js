@@ -322,15 +322,15 @@ var biblio =  {
 	
 		const trigger_url  = self.trigger_url		
 		const trigger_vars = {
-			mode 	 : "search_rows",
-			ar_query : typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit 	 : options.limit || 100,
+			mode		: "search_rows",
+			ar_query	: typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
+			limit		: options.limit || 100,
 			// pagination
-			offset 	 : options.offset || 0,
-			count 	 : options.count || false,
-			total 	 : options.total || false,
-			order 	 : options.order || 'section_id ASC',
-			operator : options.operator || 'OR'
+			offset		: options.offset || 0,
+			count		: options.count || false,
+			total		: options.total || false,
+			order		: options.order || 'section_id ASC',
+			operator	: options.operator || 'OR'
 		}
 
 		// debug
@@ -354,12 +354,12 @@ var biblio =  {
 				}else{
 					// Success
 					return biblio.draw_rows({
-						target  : 'biblio_rows_list',
-						ar_rows : response.result.result,
+						target	: 'biblio_rows_list',
+						ar_rows	: response.result.result,
 						// pagination
-						total   : response.result.total,
-						limit 	: trigger_vars.limit,
-						offset 	: trigger_vars.offset
+						total	: response.result.total,
+						limit	: trigger_vars.limit,
+						offset	: trigger_vars.offset
 					})
 				}
 		})
@@ -410,7 +410,7 @@ var biblio =  {
 		const ar_rows_length = ar_rows.length
 		
 		
-		// container select and clean container div
+		// clean container select and clean container div
 			const container = document.getElementById(options.target)	
 			while (container.hasChildNodes()) {
 				container.removeChild(container.lastChild);
@@ -420,19 +420,19 @@ var biblio =  {
 
 		// pagination top
 			const pagination_container = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "pagination top"
+				element_type	: "div",
+				class_name		: "pagination top"
 			})
 			pagination_container.appendChild( self.draw_paginator({
-				total  		: options.total,
-				limit  		: options.limit,
-				offset 		: options.offset,
-				count  		: ar_rows_length
+				total	: options.total,
+				limit	: options.limit,
+				offset	: options.offset,
+				count	: ar_rows_length
 			}))
 			fragment.appendChild(pagination_container)			
 	
 		// sort rows 
-			let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+			const collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
 			ar_rows.sort( (a,b) => {
 					let order_a = a.autoria +" "+ a.fecha_publicacion
 					let order_b = b.autoria +" "+ b.fecha_publicacion
@@ -442,7 +442,7 @@ var biblio =  {
 			});
 
 		// rows build
-			for (var i = 0; i < ar_rows_length; i++) {
+			for (let i = 0; i < ar_rows_length; i++) {
 
 				// Build dom row
 

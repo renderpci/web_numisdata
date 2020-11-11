@@ -356,184 +356,6 @@ var page = {
 
 
 	/**
-	* INIT_MAP. Moved to map_factory (!)
-	*/
-	// init_map : function(options) {
-
-	// 	const self = this
-
-	// 	// short vars
-	// 		const map_data			= options.map_data	
-	// 		const div_container_id	= options.div_container_id // "map_container"
-	// 			console.log("div_container_id:",div_container_id);
-
-	// 	// default vars set
-	// 		self.map = null
-	// 		self.layer_control = false
-	// 		self.loaded_document = false
-	// 		self.icon_main = null
-	// 		self.icon_finds= null
-	// 		self.icon_uncertain = null
-	// 		self.popupOptions = null
-	// 		self.current_layer = null
-	// 		self.current_group = null
-	// 		self.initial_map_data = {
-	// 			x 		: 40.1,
-	// 			y 		: 9,
-	// 		 	zoom 	: 8, // (13 for dare, 8 for osm)
-	// 		 	alt 	: 16
-	// 		}
-	// 		self.option_selected = null
-
-		
-		
-
-	// 	// MAP_DATA : defaults Define main map element default data			
-	// 		const map_x 	= map_data.lat
-	// 		const map_y 	= map_data.lon
-	// 		const map_zoom 	= map_data.zoom
-		
-				
-	// 	// layer. Add layer to map 
-	// 		//var dare 		= new L.TileLayer('http://dare.ht.lu.se/tiles/imperium/{z}/{x}/{y}.png');
-	// 		const dare 		= new L.TileLayer('http://pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',{ maxZoom: 11 });		
-	// 		const arcgis 	= new L.tileLayer('//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
-	// 		const osm 		= new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-			
-	// 	// map
-	// 		// self.map = new L.map(div_container_id, {layers: [osm], center: new L.LatLng(map_data.x, map_data.y), zoom: map_data.zoom});
-	// 		self.map = new L.map(div_container_id, {layers: [osm], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
-
-	// 	// layer selector
-	// 		const base_maps = {
-	// 			dare 	: dare,
-	// 			arcgis 	: arcgis,
-	// 			osm 	: osm
-	// 		}
-	// 		// if(self.layer_control===false || self.loaded_document===true) {
-	// 			self.layer_control = L.control.layers(base_maps).addTo(self.map);
-	// 		// }
-
-	// 	// disable zoom handlers
-	// 		self.map.scrollWheelZoom.disable();
-
-	// 	// icons 
-	// 		self.icon_main = L.icon({
-	// 		    //iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
-	// 		    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/naranja.png",
-	// 		    shadowUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-	// 		    iconSize:     [47, 43], // size of the icon
-	// 		    shadowSize:   [41, 41], // size of the shadow
-	// 		    iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
-	// 		    shadowAnchor: [0, 20],  // the same for the shadow
-	// 		    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-	// 		});
-
-	// 		self.icon_finds = L.icon({
-	// 		    //iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
-	// 		    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/verde.png",
-	// 		    shadowUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-	// 		    iconSize:     [47, 43], // size of the icon
-	// 		    shadowSize:   [41, 41], // size of the shadow
-	// 		    iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
-	// 		    shadowAnchor: [0, 20],  // the same for the shadow
-	// 		    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-	// 		});
-
-	// 		self.icon_uncertain = L.icon({
-	// 		    iconUrl: 	  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-uncertainty.png",
-	// 		    //shadowUrl:  __WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-	// 		    iconSize:     [50, 50], // size of the icon
-	// 		    //shadowSize:   [41, 41], // size of the shadow
-	// 		    iconAnchor:   [25, 25], // point of the icon which will correspond to marker's location
-	// 		    //shadowAnchor: [0, 20],  // the same for the shadow
-	// 		    popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-	// 		});
-
-	// 	// popupOptions
-	// 		self.popupOptions =	{
-	// 			maxWidth	: '758',
-	// 			closeButton	: true
-	// 		}
-
-	// 	return true
-	// },//end init_map
-
-
-
-	/**
-	* REQUEST
-	* Make a fetch request to server api
-	* @param object options
-	* @return promise api_response
-	*/
-	request : async function(options) {
-
-		console.log("request options:",options);
-
-		const url			= options.url || page_globals.JSON_TRIGGER_URL
-		const method		= options.method || 'POST' // *GET, POST, PUT, DELETE, etc.
-		const mode			= options.mode || 'cors' // no-cors, cors, *same-origin
-		const cache			= options.cache || 'no-cache' // *default, no-cache, reload, force-cache, only-if-cached
-		const credentials	= options.credentials || 'same-origin' // include, *same-origin, omit
-		const headers		= options.headers || {'Content-Type': 'application/json'}// 'Content-Type': 'application/x-www-form-urlencoded'
-		const redirect		= options.redirect || 'follow' // manual, *follow, error
-		const referrer		= options.referrer || 'no-referrer' // no-referrer, *client
-		const body			= options.body // body data type must match "Content-Type" header
-
-		// code defaults
-			if (!body.code) {
-				body.code = '654asdiKrhdTetQksl?uoQaW2'
-			}
-		// lang defaults
-			if (!body.lang) {
-				body.lang = page_globals.WEB_CURRENT_LANG_CODE
-			}			
-
-		const handle_errors = function(response) {
-			if (!response.ok) {
-				console.warn("-> handle_errors response:",response);
-				throw Error(response.statusText);
-			}
-			return response;
-		}
-
-	 	const api_response = fetch(
-	 		url,
-	 		{
-				method		: method,
-				mode		: mode,
-				cache		: cache,
-				credentials	: credentials,
-				headers		: headers,
-				redirect	: redirect,
-				referrer	: referrer,
-				body		: JSON.stringify(body)
-			})
-			.then(handle_errors)
-			.then(response => {
-				// console.log("-> json response 1 ok:",response.body);
-				const json_parsed = response.json().then((result)=>{
-					//console.log("-> json result 2:",result);
-					return result
-				})
-				return json_parsed
-			})// parses JSON response into native Javascript objects
-			.catch(error => {
-				console.error("!!!!! [page data_manager.request] ERROR:", error)
-				return {
-					result 	: false,
-					msg 	: error.message,
-					error 	: error
-				}
-			});
-
-		return api_response
-	},//end request
-
-
-
-	/**
 	* ADD_SPINNER
 	* @return 
 	*/
@@ -608,7 +430,8 @@ var page = {
 
 	/**
 	* PARSE_CATALOG_DATA
-	* @return 
+	* @param object row | array rows
+	* @return object row | array rows
 	*/
 	parse_catalog_data : function(data) {
 		console.log("------------> parse_catalog_data data:",data);
@@ -644,6 +467,8 @@ var page = {
 
 	/**
 	* PARSE_TYPE_DATA
+	* @param object row | array rows
+	* @return object row | array rows
 	*/
 	parse_type_data : function(data) {
 		// console.log("------------> parse_type_data data:",data);
@@ -678,7 +503,7 @@ var page = {
 		}
 
 		// json encoded
-		// row.dd_relations		= JSON.parse(row.dd_relations)
+		// row.dd_relations			= JSON.parse(row.dd_relations)
 		// row.collection_data		= JSON.parse(row.collection_data)
 		// row.image_obverse_data	= JSON.parse(row.image_obverse_data)
 		// row.image_reverse_data	= JSON.parse(row.image_reverse_data)
@@ -703,6 +528,8 @@ var page = {
 
 	/**
 	* PARSE_COIN_DATA
+	* @param object row | array rows
+	* @return object row | array rows
 	*/
 	parse_coin_data : function(data) {
 		// console.log("------------> parse_coin_data data:",data);
@@ -758,6 +585,15 @@ var page = {
 
 		// bibliography
 		row.bibliography = page.parse_publication(row.bibliography_data)
+
+		// add
+		row.mint	= typeof row.type_data[0]!=="undefined"
+			? row.type_data[0].mint
+			: null
+		row.type_number	= typeof row.type_data[0]!=="undefined"
+			? row.type_data[0].number
+			: null
+		// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
 
 
 		return row

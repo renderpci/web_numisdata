@@ -307,7 +307,7 @@ var row_fields = {
 	
 			common.create_dom_element({
 				element_type 	: "img",
-				class_name 		: "image " + name,
+				class_name 		: "image",
 				src 			: url,
 				parent 			: image_link
 			})

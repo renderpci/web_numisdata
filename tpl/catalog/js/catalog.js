@@ -546,7 +546,7 @@ var catalog =  {
 	*/
 		// load_mint_list : function() {
 			
-		// 	const js_promise = page.request({
+		// 	const js_promise = data_manager.request({
 		// 		body : {
 		// 			dedalo_get 	: 'records',
 		// 			table 		: 'catalog',
@@ -571,7 +571,7 @@ var catalog =  {
 	*/
 		// load_period_list : function() {
 			
-		// 	const js_promise = page.request({
+		// 	const js_promise = data_manager.request({
 		// 		body : {
 		// 			dedalo_get 	: 'records',
 		// 			table 		: 'catalog',
@@ -597,7 +597,7 @@ var catalog =  {
 		// load_material_list : async function() {
 			
 		// 	// search base . Gets list of values for real table like 'materials'
-		// 		const search_base = await page.request({
+		// 		const search_base = await data_manager.request({
 		// 			body : {
 		// 				dedalo_get 	: 'records',
 		// 				table 		: 'material',
@@ -611,7 +611,7 @@ var catalog =  {
 		// 		})
 			
 		// 	// search secondary. Gets main table matches
-		// 		const search_secondary = await page.request({
+		// 		const search_secondary = await data_manager.request({
 		// 			body : {
 		// 				dedalo_get 	: 'records',
 		// 				table 		: 'catalog',

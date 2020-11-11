@@ -224,13 +224,12 @@ var coin_row = {
 						text_content	: tstring.type || "type",
 						parent			: group
 					})
-					const mint		= typeof row.type_data[0]!=="undefined"
-						? row.type_data[0].mint
-						: null
-					const number	= typeof row.type_data[0]!=="undefined"
-						? row.type_data[0].number
-						: null
-					const value = common.clean_gaps((mint + " " + number), " | ", " | ") 
+					const mint			= row.mint
+					const type_number	= row.type_number
+					// const number		= typeof row.type_data[0]!=="undefined"
+					// 	? row.type_data[0].number
+					// 	: null
+					const value = common.clean_gaps((mint + " " + type_number), " | ", " | ") 
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",

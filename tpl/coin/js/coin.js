@@ -6,11 +6,6 @@ var coin =  {
 
 
 
-	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/coin/trigger.coin.php",
-	search_options 	: {},
-
-
-
 	/**
 	* SET_UP
 	* When the HTML page is loaded
@@ -28,16 +23,19 @@ var coin =  {
 					})
 					.then(function(response){
 						
-						console.log("--> set_up get_row_data response:",response);					
+						console.log("--> set_up get_row_data response:",response);
 						
-						// row draw
+						// parse server data
 						const data = page.parse_coin_data(response.result)
+
+						// draw row
 						const target = document.getElementById('row_detail')
 						self.draw_row({
 							target  : target,
 							ar_rows : data
 						})
 						.then(function(){
+							// activate images gallery light box
 							const images_gallery_container = target.querySelector('.gallery')
 							page.activate_images_gallery(images_gallery_container)
 						})		
@@ -64,15 +62,16 @@ var coin =  {
 
 	/**
 	* GET_ROW_DATA
-	* 
+	* Make a request to Dédalo public API to get current section_id record
 	*/
 	get_row_data : function(options) {
 
 		const self = this
 
-		const section_id = options.section_id
-
-		const ar_fields = ['*']
+		const section_id	= options.section_id
+		const sql_filter	= 'section_id=' + section_id
+		const ar_fields		= ['*']
+		
 		
 		// request
 		return data_manager.request({
@@ -82,7 +81,7 @@ var coin =  {
 				lang			: page_globals.WEB_CURRENT_LANG_CODE,
 				table			: 'coins',
 				ar_fields		: ar_fields,
-				sql_filter		: 'section_id=' + section_id,
+				sql_filter		: sql_filter,
 				limit			: 1,
 				count			: false,
 				offset			: 0,

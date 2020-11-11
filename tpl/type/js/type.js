@@ -7,10 +7,7 @@
 var type =  {
 
 
-
-	// trigger_url
-	// trigger_url : page_globals.__WEB_TEMPLATE_WEB__ + "/type/trigger.type.php",
-	
+		
 	// search_options
 	search_options : {},
 
@@ -41,22 +38,21 @@ var type =  {
 					})
 					.then(function(response){
 						console.log("/// response:", response);
-						console.log("/// row:", response.result[0]);							
+						// console.log("/// row:", response.result[0]);							
 
-						const container	= document.getElementById('row_detail')
 						// container. clean container div
-						while (container.hasChildNodes()) {
-							container.removeChild(container.lastChild);
-						}
-						
-						const ar_rows	= response.result
-						const type 		= ar_rows.find(item => item.id === 'type')
-						const catalog 	= ar_rows.find(item => item.id === 'catalog')
+							const container	= document.getElementById('row_detail')
+							while (container.hasChildNodes()) {
+								container.removeChild(container.lastChild);
+							}
 
-						type.result[0].catalog = catalog.result[0]
-
+						// combi request split results
+							const type		= response.result.find(item => item.id==='type')
+							const catalog	= response.result.find(item => item.id==='catalog')
 						
 						if (typeof type.result[0]!=="undefined") {
+
+							type.result[0].catalog = catalog.result[0]
 							 
 							// parse data
 							const row = page.parse_type_data(type.result[0])
@@ -64,7 +60,9 @@ var type =  {
 							// render row nodes
 							self.list_row_builder(row)
 							.then(function(row_wrapper){
-								container.appendChild(row_wrapper)
+
+								// append final rendered node
+									container.appendChild(row_wrapper)
 
 								// activate images lightbox
 									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
@@ -105,15 +103,14 @@ var type =  {
 		const self = this
 
 		// options
-				const section_id	= options.section_id
-				const lang			= options.lang || page_globals.WEB_CURRENT_LANG_CODE
+			const section_id	= options.section_id
+			const lang			= options.lang || page_globals.WEB_CURRENT_LANG_CODE
 
 
 		// combined call
-			const ar_calls = []			
+			const ar_calls = []
 			
-		// TYPE CALL
-				
+		// type call				
 			ar_calls.push({
 				id		: "type",
 				options	: {
@@ -122,7 +119,7 @@ var type =  {
 					ar_fields				: ["*"],
 					lang					: lang,
 					sql_filter				: "section_id = " + parseInt(section_id),
-					resolve_portal			: true,
+					count					: false,
 					resolve_portals_custom	: {
 						"bibliography_data"				: "bibliographic_references",
 						// coins resolution
@@ -134,19 +131,12 @@ var type =  {
 						"findspots.bibliography_data"	: "bibliographic_references",
 						// hoard resolution
 						"ref_coins_hoard_data"			: "hoards",
-						"hoards.bibliography_data"		: "bibliographic_references"				
-					},
-					// group				: (group.length>0) ? group.join(",") : null,
-					count					: false,
-					// limit				: null,
-					// offset				: 0,
-					// order				: null,
-					// process_result		: process_result
+						"hoards.bibliography_data"		: "bibliographic_references"
+					}					
 				}
 			})
 
 		// catalog call
-
 			ar_calls.push({
 				id		: "catalog",
 				options	: {
@@ -154,21 +144,13 @@ var type =  {
 					table					: "catalog",
 					ar_fields				: ["section_id","term","term_data","term_table","term_section_tipo","parents"],
 					lang					: lang,
-					sql_filter				: "term_data like '%\"" + parseInt(section_id) + "\"%' AND term_table ='types'" ,
-					// group				: (group.length>0) ? group.join(",") : null,
-					resolve_portal			: true,
-					resolve_portals_custom	: {
-						"parents"				: "catalog"
-					},
 					count					: false,
-					// limit				: null,
-					// offset				: 0,
-					// order				: null,
-					// process_result		: process_result
+					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]' AND term_table='types'",
+					resolve_portals_custom	: {
+						"parents" : "catalog"
+					}
 				}
 			})
-
-				console.log("ar_calls:",ar_calls);
 
 			
 		// request
@@ -179,30 +161,6 @@ var type =  {
 				}
 			})
 
-		// OLD WAY (SERVER CALL)
-			// // trigger vars
-			// 	const trigger_url  = self.trigger_url
-			// 	const trigger_vars = {
-			// 		mode 	 	: "get_row_data",
-			// 		section_id 	: section_id
-			// 	}
-		
-			// // Http request directly in javascript to the API is possible too..
-			// 	const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
-			// 		if(SHOW_DEBUG===true) {
-			// 			console.log("--[type.get_row_data] get_json_data response:", response);
-			// 		}
-
-			// 		if (!response) {
-			// 			// Error on load data from trigger
-			// 			console.warn("[type.get_row_data] Error. Received response data is null");
-			// 			return false
-
-			// 		}else{
-			// 			// Success
-			// 			return response.result
-			// 		}
-			// 	})
 		
 		return js_promise
 	},//end get_row_data

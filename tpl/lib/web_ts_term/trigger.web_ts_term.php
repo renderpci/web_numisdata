@@ -1,5 +1,5 @@
 <?php
-include( dirname(dirname(dirname(dirname(__FILE__)))) .'/web_app/config/config.php');
+include( dirname(dirname(dirname(dirname(__FILE__)))) .'/tpl/config/config.php');
 include(dirname(dirname(__FILE__)) .'/web_ts_term/class.web_ts_term.php');
 #include(dirname(dirname(__FILE__)) .'/web_indexation_node/class.web_indexation_node.php');
 

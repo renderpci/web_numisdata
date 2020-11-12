@@ -645,17 +645,17 @@ var coin_row = {
 				if (row.uri && row.uri.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group uri",
+						class_name		: "group permanent_uri",
 						parent			: nineth_block
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.uri || "uri",
+						text_content	: tstring.permanent_uri || "Permanent URI",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "value uri",
 						inner_html		: row.uri,
 						parent			: group
 					})

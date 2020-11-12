@@ -105,7 +105,8 @@ var row_fields = {
 					const label		= tstring.permanent_uri || "Permanent URI"
 					const url		= page_globals.__WEB_ROOT_WEB__ + "/type/" + value 
 					const full_url	= page_globals.__WEB_BASE_URL__ + url
-					return label + ": <a href=\"" + url + "\">" +  full_url + "</a>"
+					// return label + ": <a href=\"" + url + "\">" +  full_url + "</a>"
+					return label + ": <span class=\"uri\">" +  full_url + "</span>"
 				})
 			)
 

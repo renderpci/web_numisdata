@@ -1959,9 +1959,7 @@ body.is-menu-visible #menu {
 /* Footer */
 #footer {
   padding: 5em 0 6em 0 ;
-  background-color: #333333;
-  background-image: url("../../assets/images/overlay.png");
-  color: #ffffff !important; }
+  background-color: #333333; }
   #footer > .inner {
     display: -moz-flex;
     display: -webkit-flex;

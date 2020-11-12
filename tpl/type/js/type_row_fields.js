@@ -729,6 +729,25 @@ var row_fields = {
 				parent			: line
 			})
 
+		// map_legend
+			const map_legend = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "map_legend",
+				parent			: map_container
+			})
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "legend_item",
+				inner_html		: tstring.hoard + '<img src="'+page.maps_config.markers.hoard.iconUrl+'"/>',
+				parent			: map_legend
+			})
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "legend_item",
+				inner_html		: tstring.findspot + '<img src="'+page.maps_config.markers.findspot.iconUrl+'"/>',
+				parent			: map_legend
+			})
+
 		function draw_coin(data, container) {
 
 			// console.log("--draw_coin data:",data);

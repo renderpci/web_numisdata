@@ -4,13 +4,12 @@
 
 	// css
 		// page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.css';
-		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css';
+		// page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css';
 
 	// js
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/map_factory'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/mints/js/mints'.JS_SUFFIX.'.js';
 	
 	// area name

@@ -11,7 +11,7 @@
 // import files
 	@import 'pagination.less';
 	@import 'poptrox.less';
-
+	@import "@{assets_path}/lib/leaflet/leaflet.less"; // available for all
 
 
 // Usage library
@@ -337,7 +337,7 @@
 
 
 // map_container
-	.map_container {
+	.map_container.leaflet-container {
 		position: relative;
 		height: 60vh;
 		font-size: 1rem;
@@ -346,6 +346,40 @@
 		border-top: 1px solid #dcdcdc;
 		border-bottom: 1px solid #dcdcdc;
 		transition: opacity 0.5s ease-in-out 0.5s;
+
+		.map_legend {
+			z-index: 999;
+			display: block;
+			position: absolute;
+			left: 0;			
+			bottom: 0;
+			background-color: rgb(255 255 255 / 72%);
+			padding: 0.25em;
+			display: flex;
+
+			.legend_item {
+				display: inline-block;
+				font-size: 0.95em;
+				margin-right: 0.5em;
+				img {
+					height: 1em;
+				}
+			}			
+		}
+
+		// leaflet overwrite
+			// .leaflet-default-icon-path {
+			// 	background-image: url(@{assets_path}/images/marker-icon.png);
+			// }
+			.leaflet-control-layers-toggle {
+				background-image: url("@{assets_path}/images/map/layers.png");
+				width: 36px;
+				height: 36px;
+			}
+			.leaflet-retina .leaflet-control-layers-toggle {
+				background-image: url("@{assets_path}/images/map/layers-2x.png");
+				background-size: 26px 26px;
+			}
 	}
 
 
@@ -367,7 +401,28 @@
 	}
 
 
+// big label
+	.big_label {
+		// font		
+		font-size: 1em;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		font-weight: 400;
+		// font-family: 'Raleway', sans-serif;		
+		// font-variant: small-caps;
 
+		display: inline-block;
+		background-color: @color_red_dark;
+		border-radius: 0.25em;
+		color: #fff;
+		
+		margin: 1em;
+		margin-top: 1.5em;
+		margin-left: 0;
+		padding:1em;
+		padding-top: 0.25em;
+		padding-bottom: 0.25em;
+	}
 
 
 

@@ -39,7 +39,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
 	type.set_up({
-		section_id : '<?php echo $section_id ?>'
+		section_id : <?php echo $section_id || null ?>
 	})
 })
 </script>

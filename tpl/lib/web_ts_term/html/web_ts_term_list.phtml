@@ -26,19 +26,20 @@ if (!empty($this->illustration)) {
 		}, $ar_cmk_locators);
 
 		$countermarck = array_values($countermarck);
-			// dump($countermarck, ' legends ++ '.to_string());
+
+		$image_url = __WEB_BASE_URL__ . '/' . $this->illustration;
 
 
 		$html .= "<li class=\"web_ts_illustation_li clearfix\">";
 			$html .= "<img id=\"button_toggle_indexation_{$this->term_id}\" ";
 			$html .= "class=\"icon_show_illustration unselectable tooltip\" ";
-			$html .= "rel=\"tooltip\" ";
-			$html .= "title=\"" . tstring('mostrar_ilustacion') . "\" ";
+			// $html .= "rel=\"tooltip\" ";
+			// $html .= "title=\"" . tstring('mostrar_ilustacion') . "\" ";
 			$html .= "onclick=\"web_ts_term.toggle_indexation(this)\" ";
 			$html .= "data-term_id=\"" . $this->term_id  . "\" ";
 			$html .= "data-ar_legends=\"" . json_encode($legends) . "\" ";
 			$html .= "data-ar_cmk=\"" . json_encode($countermarck) . "\" ";
-			$html .= "src=\"".$this->illustration. "\" ";
+			$html .= "src=\"".$image_url. "\" ";
 			$html .= "></img>";
 
 			#

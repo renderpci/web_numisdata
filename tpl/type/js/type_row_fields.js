@@ -121,27 +121,26 @@ var row_fields = {
 			fragment.appendChild(
 				self.default(item, "public_info", page.local_to_remote_path)
 			)
-
-		// label items (ejemplares)
-			fragment.appendChild(
-				self.label(item, "items")
-			)
-
-		// items (ejemplares) list
-			fragment.appendChild(
-				self.items_list(item, "items_list")
-			)
-
-		// label findspot (hallazgos)
-			fragment.appendChild(
-				self.label(item, "findspot")
-			)
+		
+		// items (ejemplares) list			
+			if (item._coins_group && item._coins_group.length>0) {
+				// exclude already showed items (identify images)
+				const data = item._coins_group.filter(el => el.typology_id!="1")				
+				if (data.length>0) {
+					fragment.appendChild( self.label(item, "items") )
+					fragment.appendChild(
+						self.items_list(item, "items_list", data)
+					)
+				}
+			}				
 
 		// findspots (hallazgos) list
-			fragment.appendChild(
-				self.findspots(item, "findspots")
-			)
-
+			if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {				
+				fragment.appendChild( self.label(item, "hallazgos_monetarios") )
+				fragment.appendChild(
+					self.findspots(item, "findspots")
+				)
+			}
 
 		// row_wrapper
 			const row_wrapper = common.create_dom_element({
@@ -498,7 +497,7 @@ var row_fields = {
 
 
 
-	items_list : function(item, name) {
+	items_list : function(item, name, data) {
 
 		const self = this
 
@@ -623,10 +622,10 @@ var row_fields = {
 
 
 		// coins group iterate
-			const coins_group_length = item._coins_group.length
+			const coins_group_length = data.length
 			for (let i = 0; i < coins_group_length; i++) {
 				
-				const el = item._coins_group[i]
+				const el = data[i]
 				
 				if (el.typology_id==1) continue; // ignore identify images typology
 
@@ -709,10 +708,11 @@ var row_fields = {
 
 
 	findspots : function(item, name) {
+		if(SHOW_DEBUG===true) {
+			// console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
+		}
 
-		const self = this
-
-		console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data);
+		const self = this		
 
 		// line
 			const line = common.create_dom_element({
@@ -830,7 +830,6 @@ var row_fields = {
 			
 
 		// map, global array with all map data and cache for resolve section_id
-
 			const map_data				= []
 			const findspots_solved		= []
 			const hoards_solved			= []
@@ -913,7 +912,6 @@ var row_fields = {
 				// store already solved
 					findspots_solved.push(findspot.section_id)
 			}
-
 
 		// hoards
 			const hoards_data			= item.ref_coins_hoard_data

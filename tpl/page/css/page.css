@@ -126,6 +126,9 @@ p img.svg {
   background: white;
   background-image: url('../../assets/images/overlay_white.png');
 }
+#wrapper section.content {
+  min-height: 31vh;
+}
 #header > .head_inner > div.logo_big {
   text-align: center;
   margin-bottom: 1.8em;
@@ -163,19 +166,34 @@ p img.svg {
   font-size: 2.8em;
   margin-bottom: 0.5em;
 }
+#footer {
+  background-color: #333333;
+  padding: 6em 0 6em 0;
+  color: #b7996d;
+}
 #footer > section {
   width: 100%;
   text-align: center;
-  font-size: 2em;
-  font-weight: 400;
-  color: #e6e6e6;
 }
-#footer .inner h2 {
+#footer > section h2 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
   text-transform: initial;
-  font-variant-caps: small-caps;
+  font-variant: small-caps;
+  letter-spacing: 0.5em;
+  font-size: 2.25em;
 }
 #footer .inner ul {
   color: #ffffff !important;
+}
+#footer .inner ul > li {
+  filter: sepia(100%) saturate(100%) brightness(71%) hue-rotate(-7deg);
+  opacity: 0.75;
+  transition: all 0.35s linear;
+}
+#footer .inner ul > li:hover {
+  filter: initial;
+  opacity: 1;
 }
 .hide {
   display: none !important;

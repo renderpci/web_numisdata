@@ -11,8 +11,8 @@
 
 		@include padding(5em, 0, (0, 0, 3em, 0));
 		background-color: _palette(bg-alt);
-		background-image: url('../../assets/images/overlay.png');
-		color: #ffffff !important;
+		// background-image: url('../../assets/images/overlay.png');
+		// color: #ffffff !important;
 
 		>.inner {
 			@include vendor('display', 'flex');

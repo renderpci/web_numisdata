@@ -380,42 +380,7 @@ var type =  {
 
 		
 	// 	return true
-	// },//end render_map
-
-
-
-	/**
-	* MAP_DATA
-	* @return array data
-	*/
-	map_data : function(data) {
-		
-		const self = this
-
-		console.log("--map_data data:",data);
-
-		const data_clean = []
-		for (let i = 0; i < data.length; i++) {
-			
-			const item = {
-				lat		: parseFloat(data[i].data.lat),
-				lon		: parseFloat(data[i].data.lon),
-				data	: {
-					section_id	: data[i].section_id,
-					name		: data[i].name,
-					place		: data[i].place,
-					type 		: data[i].type,
-					items 		: data[i].items,
-					total_items	: data[i].total_items
-				},
-			}
-			data_clean.push(item)
-		}
-
-		console.log("--map_data data_clean:",data_clean);
-
-		return data_clean
-	},//end map_data
+	// },//end render_map	
 
 
 
@@ -456,10 +421,42 @@ var type =  {
 
 
 	/**
+	* MAP_DATA
+	* @return array data
+	*/
+	map_data : function(data) {
+		
+		const self = this
+
+		const data_clean = []
+		for (let i = 0; i < data.length; i++) {
+			
+			const item = {
+				lat			: parseFloat(data[i].data.lat),
+				lon			: parseFloat(data[i].data.lon),
+				marker_icon	: data[i].marker_icon || null,
+				data		: {
+					section_id	: data[i].section_id,
+					name		: data[i].name,
+					place		: data[i].place,
+					type 		: data[i].type,
+					items 		: data[i].items,
+					total_items	: data[i].total_items					
+				}
+			}
+			data_clean.push(item)
+		}
+
+		return data_clean
+	},//end map_data
+
+
+
+	/**
 	* MAP_POPUP_BUILDER
 	*/
 	map_popup_builder : function(data) {
-			console.log("-- map_popup_builder data:",data);
+		// console.log("-- map_popup_builder data:",data);
 
 		const data_group = data.group[0]
 
@@ -500,38 +497,6 @@ var type =  {
 
 		return popup_wrapper
 	},//end map_popup_builder
-
-
-
-	/**
-	* MAP_DATA
-	* @return array data
-	*/
-	// map_data : function(data, popup_data) {
-		
-	// 	const self = this
-
-	// 	console.log("--map_data data:",data);
-
-	// 	const ar_data = Array.isArray(data)
-	// 		? data
-	// 		: [data]
-
-	// 	const data_clean = []
-	// 	for (let i = 0; i < ar_data.length; i++) {
-			
-	// 		const item = {
-	// 			lat		: ar_data[i].lat,
-	// 			lon		: ar_data[i].lon,
-	// 			data	: popup_data
-	// 		}
-	// 		data_clean.push(item)
-	// 	}
-
-	// 	console.log("--map_data data_clean:",data_clean);
-
-	// 	return data_clean
-	// },//end map_data
 
 
 	

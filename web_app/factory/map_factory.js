@@ -53,6 +53,9 @@ function map_factory() {
 				}
 			]
 
+		// icon_main (default icon properties)
+			this.icon_main = null // set on parse			
+
 		// popup_options
 			this.popup_options
 	
@@ -92,15 +95,28 @@ function map_factory() {
 				// className					String	''	A custom CSS class name to assign to the popup.
 				className : 'map_popup'
 			}
+			const icon_main = options.marker_icon
+				? L.icon(options.marker_icon)
+				: L.icon({
+					iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/naranja.png",
+					shadowUrl		: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
+					iconSize		: [47, 43], // size of the icon
+					shadowSize		: [41, 41], // size of the shadow
+					iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
+					shadowAnchor	: [0, 20],  // the same for the shadow
+					popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+				})
+
 
 		// fix vars
-			self.source_maps	= source_maps			
+			self.source_maps	= source_maps
 			self.map_position	= map_position
 			self.map_container	= map_container
 			self.popup_builder	= popup_builder
 			self.popup_options	= popup_options
+			self.icon_main		= icon_main
 		
-
+	
 		return self.render_base_map()
 	}//end init
 
@@ -132,7 +148,6 @@ function map_factory() {
 				self.map				= null
 				self.layer_control		= false
 				self.loaded_document	= false
-				self.icon_main			= null
 				self.icon_finds			= null
 				self.icon_uncertain		= null
 				self.popupOptions		= null
@@ -162,30 +177,7 @@ function map_factory() {
 				self.layer_control = L.control.layers(base_maps).addTo(self.map);
 			
 			// disable zoom handlers
-				self.map.scrollWheelZoom.disable();
-
-			// icons 
-				self.icon_main = L.icon({
-					// iconUrl: 	  page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
-					iconUrl: 	  page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/naranja.png",
-					shadowUrl: 	  page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-					iconSize:     [47, 43], // size of the icon
-					shadowSize:   [41, 41], // size of the shadow
-					iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
-					shadowAnchor: [0, 20],  // the same for the shadow
-					popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-				});
-
-				self.icon_green = L.icon({
-					//iconUrl: 	  page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-icon.png",
-					iconUrl: 	  page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/verde.png",
-					shadowUrl: 	  page_globals.__WEB_TEMPLATE_WEB__ + "/assets/lib/leaflet/images/marker-shadow.png",
-					iconSize:     [47, 43], // size of the icon
-					shadowSize:   [41, 41], // size of the shadow
-					iconAnchor:   [10, 19], // point of the icon which will correspond to marker's location
-					shadowAnchor: [0, 20],  // the same for the shadow
-					popupAnchor:  [12, -20] // point from which the popup should open relative to the iconAnchor
-				});		
+				self.map.scrollWheelZoom.disable();			
 
 			// popupOptions
 				self.popupOptions =	self.popup_options
@@ -279,13 +271,17 @@ function map_factory() {
 					// 	});//end current_place.layer_data.forEach(function(layer_data)
 					// }
 
-				const marker_icon	= element.marker_icon || self.icon_main
+				// const marker_icon = element.marker_icon || self.icon_main						
+				const marker_icon = element.marker_icon
+					? L.icon(element.marker_icon)
+					: self.icon_main // already parsed on init
+
 				const popup_content	= self.popup_builder(element)					
 
 				const popup = L.popup(self.popupOptions)
 						.setLatLng([element.lat, element.lon])
 						.setContent(popup_content)
-						// .openOn(self.map);	// auto open		
+						// .openOn(self.map);	// auto open first marker		
 				
 				// marker. Set popup and click event
 				const marker = L.marker([element.lat, element.lon], {icon: marker_icon}).bindPopup(popup) //.openPopup();		

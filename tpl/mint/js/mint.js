@@ -472,7 +472,7 @@ var mint =  {
 			source_maps		: page.maps_config.source_maps
 		})
 		// draw points
-		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map
+		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map		
 		self.map.parse_data_to_map(map_data_clean, null)
 		.then(function(){
 			container.classList.remove("hide_opacity")
@@ -491,7 +491,7 @@ var mint =  {
 		
 		const self = this
 
-		console.log("--map_data data:",data);
+		// console.log("--map_data data:",data);
 
 		const ar_data = Array.isArray(data)
 			? data
@@ -501,14 +501,15 @@ var mint =  {
 		for (let i = 0; i < ar_data.length; i++) {
 			
 			const item = {
-				lat		: ar_data[i].lat,
-				lon		: ar_data[i].lon,
-				data	: popup_data
+				lat			: ar_data[i].lat,
+				lon			: ar_data[i].lon,
+				marker_icon	: page.maps_config.markers.mint,
+				data		: popup_data
 			}
 			data_clean.push(item)
 		}
 
-		console.log("--map_data data_clean:",data_clean);
+		// console.log("--map_data data_clean:",data_clean);
 
 		return data_clean
 	},//end map_data

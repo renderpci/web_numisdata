@@ -51,6 +51,36 @@ var page = {
 			maxWidth	: 420,
 			closeButton	: false,
 			className	: 'map_popup'
+		},
+		// markers
+		markers : {			
+			mint : {
+				iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/purple.png",
+				shadowUrl		: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/marker-shadow.png",
+				iconSize		: [47, 43], // size of the icon
+				shadowSize		: [41, 41], // size of the shadow
+				iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
+				shadowAnchor	: [0, 20],  // the same for the shadow
+				popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+			},
+			findspot : {
+				iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/orange.png",
+				shadowUrl		: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/marker-shadow.png",
+				iconSize		: [47, 43], // size of the icon
+				shadowSize		: [41, 41], // size of the shadow
+				iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
+				shadowAnchor	: [0, 20],  // the same for the shadow
+				popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+			},
+			hoard : {
+				iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/green.png",
+				shadowUrl		: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/marker-shadow.png",
+				iconSize		: [47, 43], // size of the icon
+				shadowSize		: [41, 41], // size of the shadow
+				iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
+				shadowAnchor	: [0, 20],  // the same for the shadow
+				popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+			}
 		}
 	},
 

@@ -199,9 +199,10 @@ var hoard =  {
 		for (let i = 0; i < ar_data.length; i++) {
 			
 			const item = {
-				lat		: ar_data[i].lat,
-				lon		: ar_data[i].lon,
-				data	: {}
+				lat			: ar_data[i].lat,
+				lon			: ar_data[i].lon,
+				marker_icon	: page.maps_config.markers.hoard,
+				data		: {}
 			}
 			data_clean.push(item)
 		}

@@ -891,57 +891,61 @@ var row_fields = {
 						}
 					}
 
-					// map data
-					const findspot_data_map = JSON.parse(findspot.map)
-					if (findspot_data_map) {
-						map_data.push({
-							section_id	: findspot.section_id,
-							name		: findspot.name,
-							place		: findspot.place,
-							georef		: findspot.georef,
-							data		: findspot_data_map,
-							items 		: ar_coins.length,
-							total_items : coins_length,
-							type 		: 'findspot'
-						})
-					}		
-
-				// replace text into the items
+					// replace text into the items
 					items.innerHTML = items.innerHTML + '('+ar_coins.length+')'
 
+
+				// map data
+					const hoard_data_map = JSON.parse(hoard.map)
+					if (hoard_data_map) {
+						map_data.push({
+							section_id	: hoard.section_id,
+							name		: hoard.name,
+							place		: hoard.place,
+							georef		: hoard.georef,
+							data		: hoard_data_map,
+							items		: ar_coins.length,
+							total_items	: coins_length,
+							type		: 'hoard',
+							marker_icon	: page.maps_config.markers.hoard
+						})
+					}			
+
+
 				// store already solved
-					findspots_solved.push(findspot.section_id)
-			}
+					hoards_solved.push(hoard.section_id)
+			}		
+		
+		// findspots
+			const findspots_data		= item.ref_coins_findspots_data
+			const findspots_data_length	= findspots_data.length
 
-		// hoards
-			const hoards_data			= item.ref_coins_hoard_data
-			const hoards_data_length	= hoards_data.length
-
-			for (let i = 0; i < hoards_data_length; i++) {
+			for (let i = 0; i < findspots_data_length; i++) {
 				
-				const hoard			= hoards_data[i]
-				const coins			= JSON.parse(hoard.coins) || []
+				const findspot		= findspots_data[i]
+				const coins			= JSON.parse(findspot.coins) || []
 				const coins_length	= coins.length
 
 				if (coins_length<1) {
-					console.warn("! Skipped hoard without zero coins :", hoards_data);
+					console.warn("! Skipped findspot without zero coins :", findspots_data);
 					continue;
 				}
 
-				if (hoards_solved.find(section_id => section_id===hoard.section_id)) {
+				if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
 					continue;
 				}
 				
+				
 				const wrapper = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "find_wrapper hoard",
+					class_name		: "find_wrapper findspot",
 					parent			: line
 				})
 
 				// title
 					common.create_dom_element({
 						element_type	: "div",
-						inner_html		: " " + (hoard.name || "") + " (" + (hoard.place || "") + ") ",
+						inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
 						parent			: wrapper
 					})
 				// items (ejemplares)
@@ -968,30 +972,29 @@ var row_fields = {
 						}
 					}
 
-					// replace text into the items
-					items.innerHTML = items.innerHTML + '('+ar_coins.length+')'
-
-
-				// map data
-					const hoard_data_map = JSON.parse(hoard.map)
-					if (hoard_data_map) {
+					// map data
+					const findspot_data_map = JSON.parse(findspot.map)
+					if (findspot_data_map) {
 						map_data.push({
-							section_id	: hoard.section_id,
-							name		: hoard.name,
-							place		: hoard.place,
-							georef		: hoard.georef,
-							data		: hoard_data_map,
+							section_id	: findspot.section_id,
+							name		: findspot.name,
+							place		: findspot.place,
+							georef		: findspot.georef,
+							data		: findspot_data_map,
 							items 		: ar_coins.length,
 							total_items : coins_length,
-							type 		: 'hoard'
+							type 		: 'findspot',
+							marker_icon	: page.maps_config.markers.findspot
 						})
-					}			
+					}		
 
+				// replace text into the items
+					items.innerHTML = items.innerHTML + '('+ar_coins.length+')'
 
 				// store already solved
-					hoards_solved.push(hoard.section_id)
-			}		
-		
+					findspots_solved.push(findspot.section_id)
+			}
+
 		// draw map
 			console.log("// map_data:",map_data);
 			if (map_data.length>0) {

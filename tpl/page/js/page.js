@@ -476,7 +476,7 @@ var page = {
 	* @return object row | array rows
 	*/
 	parse_catalog_data : function(data) {
-		console.log("------------> parse_catalog_data data:",data);
+		// console.log("------------> parse_catalog_data data:",data);
 		const self = this
 
 		// array case

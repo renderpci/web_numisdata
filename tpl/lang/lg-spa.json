@@ -62,6 +62,7 @@
     "fecha_fin": "Fecha de fin",
     "refeferencia_bibliografica": "Ref. bibliográfica",
     "tipo": "Tipo",
+    "type": "Tipo",
     "limit": "Registros por página (10)",
     "direccion": "Dirección",
     "telf": "Teléfono",
@@ -78,8 +79,7 @@
     "global_search": "Búsqueda global",
     "reset": "Reset",
     "transcription": "Transcripción",
-    "volumen": "Volumen",
-    "type": "Tipo",
+    "volumen": "Volumen",    
     "design_obverse": "Diseño anverso",
     "design_reverse": "Diseño reverso",
     "symbol_obverse": "Símbolo anverso",
@@ -102,5 +102,6 @@
     "find_date": "Fecha de hallazgo",
     "public_info": "Información pública",
     "bibliography": "Bibliografía",
-    "items": "Items"
+    "items": "Items",
+    "permanent_uri": "URI permanente"
 }

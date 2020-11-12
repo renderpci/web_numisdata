@@ -1000,8 +1000,8 @@ var catalog =  {
 							
 							// debug
 								if(SHOW_DEBUG===true) {
-									console.log("--- autocomplete api_response:",api_response);
-									console.log("autocomplete ar_result:",ar_result);
+									// console.log("--- autocomplete api_response:",api_response);
+									// console.log("autocomplete ar_result:",ar_result);
 								}
 
 							response(ar_result)

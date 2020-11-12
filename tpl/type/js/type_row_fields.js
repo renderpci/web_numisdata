@@ -134,11 +134,11 @@ var row_fields = {
 				}
 			}				
 
-		// findspots (hallazgos) list
+		// findspots - hoards_and_findspots - (hallazgos) list
 			if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {				
 				fragment.appendChild( self.label(item, "hallazgos_monetarios") )
 				fragment.appendChild(
-					self.findspots(item, "findspots")
+					self.hoards_and_findspots(item, "findspots")
 				)
 			}
 
@@ -707,7 +707,7 @@ var row_fields = {
 
 
 
-	findspots : function(item, name) {
+	hoards_and_findspots : function(item, name) {
 		if(SHOW_DEBUG===true) {
 			// console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
 		}
@@ -853,36 +853,35 @@ var row_fields = {
 			const findspots_solved		= []
 			const hoards_solved			= []
 
-		// findspots
-			const findspots_data		= item.ref_coins_findspots_data
-			const findspots_data_length	= findspots_data.length
+		// hoards
+			const hoards_data			= item.ref_coins_hoard_data
+			const hoards_data_length	= hoards_data.length
 
-			for (let i = 0; i < findspots_data_length; i++) {
+			for (let i = 0; i < hoards_data_length; i++) {
 				
-				const findspot		= findspots_data[i]
-				const coins			= JSON.parse(findspot.coins) || []
+				const hoard			= hoards_data[i]
+				const coins			= JSON.parse(hoard.coins) || []
 				const coins_length	= coins.length
 
 				if (coins_length<1) {
-					console.warn("! Skipped findspot without zero coins :", findspots_data);
+					console.warn("! Skipped hoard without zero coins :", hoards_data);
 					continue;
 				}
 
-				if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
+				if (hoards_solved.find(section_id => section_id===hoard.section_id)) {
 					continue;
 				}
 				
-				
 				const wrapper = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "find_wrapper findspot",
+					class_name		: "find_wrapper hoard",
 					parent			: line
 				})
 
 				// title
 					common.create_dom_element({
 						element_type	: "div",
-						inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
+						inner_html		: " " + (hoard.name || "") + " (" + (hoard.place || "") + ") ",
 						parent			: wrapper
 					})
 				// items (ejemplares)
@@ -894,10 +893,9 @@ var row_fields = {
 				// draw_coins
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "find_coins findspot gallery",
+						class_name		: "find_coins hoard",
 						parent			: line
 					})
-
 					const ar_coins = []
 					for (let j = 0; j < coins_length; j++) {
 						const coin_section_id	= coins[j]
@@ -976,9 +974,10 @@ var row_fields = {
 				// draw_coins
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "find_coins hoard",
+						class_name		: "find_coins findspot gallery",
 						parent			: line
 					})
+
 					const ar_coins = []
 					for (let j = 0; j < coins_length; j++) {
 						const coin_section_id	= coins[j]

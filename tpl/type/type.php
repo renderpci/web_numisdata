@@ -5,7 +5,7 @@
 	// css
 		// page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.css';
 		// page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css';
-		array_unshift(page::$css_ar_url, __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css');
+		// array_unshift(page::$css_ar_url, __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css');
 
 	// js
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';

@@ -60,22 +60,6 @@
 .result .row_wrapper .equivalents {
   font-size: 0.8em;
 }
-.result .row_wrapper .big_label {
-  font-size: 1em;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 400;
-  padding: 0;
-  margin-bottom: 1em;
-  margin-top: 1em;
-  background-color: #a33e1f;
-  color: #fff;
-  padding: 0.5em;
-  display: inline-block;
-  border-radius: 0.25em;
-  padding-left: 1em;
-  padding-right: 1em;
-}
 .result .row_wrapper .medium_label {
   font-size: 1.3em;
 }
@@ -118,7 +102,8 @@
 }
 .result .row_wrapper .find_coins .find_coin {
   flex: 0 0 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 36% auto;
   margin-bottom: 0.5em;
   margin-right: 0.5em;
   font-size: 75%;

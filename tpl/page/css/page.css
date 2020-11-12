@@ -1042,4 +1042,20 @@ a.image_link img {
   overflow-y: auto;
   padding-right: 0.5em;
 }
+.big_label {
+  font-size: 1em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 400;
+  display: inline-block;
+  background-color: #a33e1f;
+  border-radius: 0.25em;
+  color: #fff;
+  margin: 1em;
+  margin-top: 1.5em;
+  margin-left: 0;
+  padding: 1em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
 /*# sourceMappingURL=page.css.map */

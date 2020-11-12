@@ -129,6 +129,7 @@ function map_factory() {
 		
 		const self = this
 
+
 		return new Promise(function(resolve){
 
 			// reset map if already exists instance
@@ -195,6 +196,7 @@ function map_factory() {
 
 			// draw map
 				// self.parse_data_to_map(data)
+
 
 			resolve(self.map)
 		})
@@ -330,12 +332,15 @@ function map_factory() {
 			const group_data_item	= group_data.find(el => el.lat===item.lat && el.lon===item.lon)
 			
 			if (group_data_item) {
+				// already exists
 				group_data_item.group.push(item.data)
 			}else{
+				// create new one
 				const new_item = {
-					lat		: item.lat,
-					lon		: item.lon,
-					group	: [item.data],
+					lat			: item.lat,
+					lon			: item.lon,
+					marker_icon	: item.marker_icon,
+					group		: [item.data],
 				}
 				group_data.push(new_item)
 			}

@@ -12,82 +12,81 @@
 		<!-- header -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
 
+		<!-- Main -->
 			<div id="main">
 				<div class="inner">
-					<h1><?php echo $title ?></h1>
-				</div>
-			</div>
-		
 
-		<!-- Main -->
-			<div id="content">
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
 					
+					<!-- content -->
+						<div id="content">								
+							<section class="content_body">
+								
+								<!-- search form container -->
+									<div class="thematic_search_form">
+										<form id="form_thematic">
+											<!-- <label><?php echo tstring('filtro') ?></label>-->
+											<input type="text" name="q" class="q" value="<?php echo htmlspecialchars($q_raw) ?>" id="input_search" placeholder="<?php echo $placeholder ?? '' ?>">
+											<input type="submit" class="gen_button submit" value="<?php echo tstring('buscar') ?>">
+											<input type="button" class="gen_button reset" value="<?php echo tstring('reset') ?>" onclick="search_thematic.reset_tree(this)">
+										</form>
+									</div>
 
-				<!-- Content -->
-					<section class="content_body">
-						
-						<!-- search form container -->
-							<div class="thematic_search_form">
-								<form id="form_thematic">
-									<!-- <label><?php echo tstring('filtro') ?></label>-->
-									<input type="text" name="q" class="q" value="<?php echo htmlspecialchars($q_raw) ?>" id="input_search" placeholder="<?php echo $placeholder ?? '' ?>">
-									<input type="submit" class="gen_button submit" value="<?php echo tstring('buscar') ?>">
-									<input type="button" class="gen_button reset" value="<?php echo tstring('reset') ?>" onclick="search_thematic.reset_tree(this)">
-								</form>
-							</div>
+								
 
-						
+								<!-- tree -->
+									<div id="wrapper_tree">
 
-						<!-- tree -->
-							<div id="wrapper_tree">
-
-								<?php
-								#
-								# ROOT TESAURUS
-								$html = '';
-								#$html .= "<div id=\"jer_title\">".tstring('Descriptores temáticos')." </div>";	
-								#dump($ar_ts_terms, ' ar_ts_terms ++ '.to_string());
-								$parent_name=array();
-								foreach ($ar_ts_terms as $tld => $ar_value) {
-									#dump($ar_value, ' ar_value ++ '.to_string($tld));
-									$html .= "<ul id=\"ul_{$tld}\" class=\"ts_term_ul\">";
-									foreach ($ar_value as $key => $data_object) {
-										// dump($data_object, '$data_object ++ '.to_string());
-										
-										# web_ts_term . Build ts_term html object
-										$web_ts_term = new web_ts_term($data_object);
-										if ($q) {
-											$options_web_ts_term = new stdClass();
-												$options_web_ts_term->open_childrens = true;
-											$web_ts_term->options = $options_web_ts_term;
-												#dump($web_ts_term, ' web_ts_term ++ '.to_string($data_object));
+										<?php
+										#
+										# ROOT TESAURUS
+										$html = '';
+										#$html .= "<div id=\"jer_title\">".tstring('Descriptores temáticos')." </div>";	
+										#dump($ar_ts_terms, ' ar_ts_terms ++ '.to_string());
+										$parent_name=array();
+										foreach ($ar_ts_terms as $tld => $ar_value) {
+											#dump($ar_value, ' ar_value ++ '.to_string($tld));
+											$html .= "<ul id=\"ul_{$tld}\" class=\"ts_term_ul\">";
+											foreach ($ar_value as $key => $data_object) {
+												// dump($data_object, '$data_object ++ '.to_string());
+												
+												# web_ts_term . Build ts_term html object
+												$web_ts_term = new web_ts_term($data_object);
+												if ($q) {
+													$options_web_ts_term = new stdClass();
+														$options_web_ts_term->open_childrens = true;
+													$web_ts_term->options = $options_web_ts_term;
+														#dump($web_ts_term, ' web_ts_term ++ '.to_string($data_object));
+												}
+												$html .= $web_ts_term->get_html();
+											}
+											$html .= "</ul>";
 										}
-										$html .= $web_ts_term->get_html();
+										echo $html;
+										?>
+									</div><!-- /wrapper_tree -->
+
+
+								<div class="clearfix"></div>
+			
+
+								<!-- pagination -->
+									<?php 
+									#
+									# Pagination
+									# dump($response, ' response ++ '.to_string());
+									$data = isset($response->search_data) ? $response->search_data : false;
+									if (!empty($data)) {
+										echo page::get_pagination($data, 10); // $search_data, $max_pages=null, $crumbs=null
 									}
-									$html .= "</ul>";
-								}
-								echo $html;
-								?>
-							</div><!-- /wrapper_tree -->
+									?>							
 
+							</section>
+						</div>
 
-						<div class="clearfix"></div>
-	
-
-						<!-- pagination -->
-							<?php 
-							#
-							# Pagination
-							# dump($response, ' response ++ '.to_string());
-							$data = isset($response->search_data) ? $response->search_data : false;
-							if (!empty($data)) {
-								echo page::get_pagination($data, 10); // $search_data, $max_pages=null, $crumbs=null
-							}
-							?>							
-
-					</section>
-
-			</div>
+				</div>
+			</div>		
 		
 		<!-- footer -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>

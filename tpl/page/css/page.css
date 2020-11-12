@@ -884,8 +884,8 @@ p img.svg {
   background: white;
   background-image: url('../../assets/images/overlay_white.png');
 }
-#wrapper section.content {
-  min-height: 31vh;
+#wrapper #main {
+  min-height: 50vh;
 }
 #header > .head_inner > div.logo_big {
   text-align: center;
@@ -928,6 +928,13 @@ p img.svg {
   background-color: #333333;
   padding: 6em 0 6em 0;
   color: #b7996d;
+  opacity: 1;
+  transition: opacity 0.35s ease-in-out;
+  visibility: visible;
+}
+#footer.hidded {
+  opacity: 0;
+  visibility: hidden;
 }
 #footer > section {
   width: 100%;

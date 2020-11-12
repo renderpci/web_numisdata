@@ -154,8 +154,8 @@
 		background: white;
 		background-image: url('../../assets/images/overlay_white.png');
 
-		section.content {
-			min-height: 31vh;
+		#main {
+			min-height: 50vh;
 		}
 	}
 
@@ -230,6 +230,14 @@
 		//background-image: url(../../assets/images/overlay.png);
 		padding: 6em 0 6em 0;
 		color: @color_gold_logo;
+		opacity: 1;
+		transition: opacity 0.35s ease-in-out;
+		visibility: visible;
+
+		&.hidded {
+			opacity: 0;
+			visibility: hidden;
+		}
 
 		>section {
 			width: 100%;

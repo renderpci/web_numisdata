@@ -97,6 +97,19 @@ var page = {
 		// window.ready(function(){
 			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
 		// })
+
+		window.ready(function(){
+			// init lang selector
+			// self.init_lang_selector()
+
+			// show footer (from opacity zero)
+			const footer = document.getElementById('footer')
+			if (footer) {
+				setTimeout(function(){
+					footer.classList.remove('hidded')
+				},500)
+			}			
+		})
 		
 		return true	
 	},//end setup

@@ -131,7 +131,8 @@ var type =  {
 						"findspots.bibliography_data"	: "bibliographic_references",
 						// hoard resolution
 						"ref_coins_hoard_data"			: "hoards",
-						"hoards.bibliography_data"		: "bibliographic_references"
+						"hoards.bibliography_data"		: "bibliographic_references",
+						"material_data"					: "material"
 					}					
 				}
 			})

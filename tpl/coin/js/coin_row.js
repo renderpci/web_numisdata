@@ -224,12 +224,13 @@ var coin_row = {
 						text_content	: tstring.type || "type",
 						parent			: group
 					})
-					const mint			= row.mint
-					const type_number	= row.type_number
-					// const number		= typeof row.type_data[0]!=="undefined"
-					// 	? row.type_data[0].number
-					// 	: null
-					const value = common.clean_gaps((mint + " " + type_number), " | ", " | ") 
+					const mint		= typeof row.type_data[0]!=="undefined"
+						? row.type_data[0].mint
+						: null
+					const number	= typeof row.type_data[0]!=="undefined"
+						? row.type_data[0].number
+						: null
+					const value = common.clean_gaps((mint + " " + number), " | ", " | ") 
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",
@@ -645,17 +646,17 @@ var coin_row = {
 				if (row.uri && row.uri.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group permanent_uri",
+						class_name		: "group uri",
 						parent			: nineth_block
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.permanent_uri || "Permanent URI",
+						text_content	: tstring.uri || "uri",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value uri",
+						class_name		: "value",
 						inner_html		: row.uri,
 						parent			: group
 					})

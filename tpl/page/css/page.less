@@ -157,6 +157,18 @@
 		#main {
 			min-height: 50vh;
 		}
+
+		.active-pointer {
+			cursor:pointer;
+		}
+
+		.underline-text {
+			border-bottom: dotted 1px rgba(190, 135, 90, 0.5);
+		}
+	}
+
+	.pic {
+		width: 100%;
 	}
 
 
@@ -170,19 +182,29 @@
 			>div.logo_big {
 				text-align: center;
 				margin-bottom: 1.8em;
+				padding-top: 1.8em;
 				img {
 					height: 23em;
 				}
 			}
 
 			>a.logo {
+				border-bottom: #cccccc 6px solid;
+				background-color: #333333;
+				background-image: url("../../assets/images/horse_logo.svg");
+				background-size: 50%;
+				background-repeat: no-repeat;
+				background-position: 80% 5%;
 
 				>.symbol {
 					display: flex;
 					align-items: center;
 					padding: .75em;
-					background-color: #333333;
+					width: 80%;
+					max-width: 1280px;
+					margin: 0 auto;
 					// border-radius: 5px;
+					
 
 					>img {
 						height: 5em;
@@ -194,21 +216,89 @@
 						.font_logo;
 						font-size: 2.25em;
 						color: #B7996D;
-						padding-left: 1em;
+						padding-left: 0.5em;
+
+						@media screen and (max-width: 736px){
+							font-size: 7vw !important;
+						}
+
+						@media screen and (max-width: 520px){
+							width: 50%;
+    						text-align: left;
+    						line-height: 1em;
+						}
+					}
+
+					@media screen and (max-width: 736px){
+						width: 95%;	
 					}
 				}
 			}//end a.logo
 		}
-	}
 
+		nav {
+			right: 10%;
+			display: inline-block;
+			//transform: translateX(-50%);
+
+			
+			@media screen and (min-width: 1280px){
+				right: 12vw;
+			}
+
+			@media screen and (max-width: 736px){
+				top: 2em;
+			}
+
+			.logo {
+				margin:0;
+			}
+		}
+
+		.symbol{ 
+
+			
+
+			img {
+				height: 6em !important;
+			}
+
+			.title {
+				font-size: 3em !important;
+				text-shadow:
+				   -2px -2px 0 #333333,  
+				    2px -2px 0 #333333,
+				    -2px 2px 0 #333333,
+				     2px 2px 0 #333333;
+			}
+		}
+
+
+		@media screen and (max-width: 736px){
+			padding-top:0;		
+		}
+		
+	}
 
 
 // main
 	#main {
 		display: table;
-		width: 100%;	
+		width: 80%;
+		max-width: 1280px;
+		margin: 0 auto;
+
+		@media screen and (max-width: 736px){
+			width: 95%;		
+		}
 
 		.inner {
+
+			.identify_coin_wrapper {
+				margin-top: 1em;
+				float: inherit;
+    			display: flex;
+			}
 
 			>h1 {
 				font-variant: small-caps;
@@ -216,8 +306,48 @@
 				letter-spacing: 0.05em;
 				font-weight: 300;
 				font-size: 2.8em;
-				margin-bottom: 0.5em;
+				margin-bottom: 0em;
 			}
+
+			.info_line.items {
+				margin-top:1em;
+				border-bottom: dotted 2px #a33e1f;
+			}
+
+			.info_line.hallazgos_monetarios{
+				margin-top:1em;
+				border-bottom: dotted 2px #a33e1f;
+			}
+
+			.items_list {
+				margin-top: 2em;
+			}
+
+			.findspots {
+				margin-top: 1em;
+			}
+
+			.find_wrapper {
+				margin-top:2em;
+			}
+
+			.sorted_coin {
+				@media screen and (max-width: 520px){
+					width: 100%;
+				}
+			}
+			
+		}
+
+		.golden-separator{
+			width: 100%;
+			background-color: #b7996d;
+			height: 2px;
+			border-radius: 0 0 5px 5px;
+		}
+
+		@media screen and (max-width: 736px){
+			width: 95%;	
 		}
 	}
 
@@ -228,11 +358,12 @@
 		//color: #ffffff !important;
 		background-color: @color_grey_dark;
 		//background-image: url(../../assets/images/overlay.png);
-		padding: 6em 0 6em 0;
+		padding: 3em 0 3em 0;
 		color: @color_gold_logo;
 		opacity: 1;
 		transition: opacity 0.35s ease-in-out;
 		visibility: visible;
+		border-top: #cccccc 6px solid;
 
 		&.hidded {
 			opacity: 0;
@@ -430,7 +561,52 @@
 		padding:1em;
 		padding-top: 0.25em;
 		padding-bottom: 0.25em;
+
+		margin-bottom: -0.1em;
 	}
+
+	.float-prompt{
+		position: fixed;
+		top: 100px;
+		background-color: #333333;
+		display: flex;
+		flex-flow: column;
+		padding: 2em;
+		padding-top:1em;
+		border-radius:5px;
+		box-shadow: 10px 10px #888888;
+
+		.close-buttom {
+			display: inline-block;
+			background-image: url("@{assets_path}/images/close.svg");
+			background-repeat:no-repeat;
+			background-position: top right;
+			background-size: contain;
+			height: 2em; 
+			cursor: pointer;
+			width: 20%;
+			position: absolute;
+    		right: 1em;
+
+		}
+
+		.prompt-label {
+			width: 80%;
+			float:left;
+			display: inline-block;
+			margin:0;
+			color: white;
+		}
+	}
+
+	.float-prompt a{
+		display:block;
+		padding:0.2em;
+		padding-bottom: 0;
+		margin-bottom: 0.2em;
+	}
+
+
 
 
 

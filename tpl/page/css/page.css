@@ -887,18 +887,38 @@ p img.svg {
 #wrapper #main {
   min-height: 50vh;
 }
+#wrapper .active-pointer {
+  cursor: pointer;
+}
+#wrapper .underline-text {
+  border-bottom: dotted 1px rgba(190, 135, 90, 0.5);
+}
+.pic {
+  width: 100%;
+}
 #header > .head_inner > div.logo_big {
   text-align: center;
   margin-bottom: 1.8em;
+  padding-top: 1.8em;
 }
 #header > .head_inner > div.logo_big img {
   height: 23em;
+}
+#header > .head_inner > a.logo {
+  border-bottom: #cccccc 6px solid;
+  background-color: #333333;
+  background-image: url("../../assets/images/horse_logo.svg");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: 80% 5%;
 }
 #header > .head_inner > a.logo > .symbol {
   display: flex;
   align-items: center;
   padding: 0.75em;
-  background-color: #333333;
+  width: 80%;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 #header > .head_inner > a.logo > .symbol > img {
   height: 5em;
@@ -910,11 +930,69 @@ p img.svg {
   letter-spacing: 0.065em;
   font-size: 2.25em;
   color: #B7996D;
-  padding-left: 1em;
+  padding-left: 0.5em;
+}
+@media screen and (max-width: 736px) {
+  #header > .head_inner > a.logo > .symbol > .title {
+    font-size: 7vw !important;
+  }
+}
+@media screen and (max-width: 520px) {
+  #header > .head_inner > a.logo > .symbol > .title {
+    width: 50%;
+    text-align: left;
+    line-height: 1em;
+  }
+}
+@media screen and (max-width: 736px) {
+  #header > .head_inner > a.logo > .symbol {
+    width: 95%;
+  }
+}
+#header nav {
+  right: 10%;
+  display: inline-block;
+}
+@media screen and (min-width: 1280px) {
+  #header nav {
+    right: 12vw;
+  }
+}
+@media screen and (max-width: 736px) {
+  #header nav {
+    top: 2em;
+  }
+}
+#header nav .logo {
+  margin: 0;
+}
+#header .symbol img {
+  height: 6em !important;
+}
+#header .symbol .title {
+  font-size: 3em !important;
+  text-shadow: -2px -2px 0 #333333, 2px -2px 0 #333333, -2px 2px 0 #333333, 2px 2px 0 #333333;
+}
+@media screen and (max-width: 736px) {
+  #header {
+    padding-top: 0;
+  }
 }
 #main {
   display: table;
-  width: 100%;
+  width: 80%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+@media screen and (max-width: 736px) {
+  #main {
+    width: 95%;
+  }
+}
+#main .inner .identify_coin_wrapper {
+  margin-top: 1em;
+  float: inherit;
+  display: flex;
 }
 #main .inner > h1 {
   font-variant: small-caps;
@@ -922,15 +1000,49 @@ p img.svg {
   letter-spacing: 0.05em;
   font-weight: 300;
   font-size: 2.8em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0em;
+}
+#main .inner .info_line.items {
+  margin-top: 1em;
+  border-bottom: dotted 2px #a33e1f;
+}
+#main .inner .info_line.hallazgos_monetarios {
+  margin-top: 1em;
+  border-bottom: dotted 2px #a33e1f;
+}
+#main .inner .items_list {
+  margin-top: 2em;
+}
+#main .inner .findspots {
+  margin-top: 1em;
+}
+#main .inner .find_wrapper {
+  margin-top: 2em;
+}
+@media screen and (max-width: 520px) {
+  #main .inner .sorted_coin {
+    width: 100%;
+  }
+}
+#main .golden-separator {
+  width: 100%;
+  background-color: #b7996d;
+  height: 2px;
+  border-radius: 0 0 5px 5px;
+}
+@media screen and (max-width: 736px) {
+  #main {
+    width: 95%;
+  }
 }
 #footer {
   background-color: #333333;
-  padding: 6em 0 6em 0;
+  padding: 3em 0 3em 0;
   color: #b7996d;
   opacity: 1;
   transition: opacity 0.35s ease-in-out;
   visibility: visible;
+  border-top: #cccccc 6px solid;
 }
 #footer.hidded {
   opacity: 0;
@@ -1064,5 +1176,42 @@ a.image_link img {
   padding: 1em;
   padding-top: 0.25em;
   padding-bottom: 0.25em;
+  margin-bottom: -0.1em;
+}
+.float-prompt {
+  position: fixed;
+  top: 100px;
+  background-color: #333333;
+  display: flex;
+  flex-flow: column;
+  padding: 2em;
+  padding-top: 1em;
+  border-radius: 5px;
+  box-shadow: 10px 10px #888888;
+}
+.float-prompt .close-buttom {
+  display: inline-block;
+  background-image: url("../../assets/images/close.svg");
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-size: contain;
+  height: 2em;
+  cursor: pointer;
+  width: 20%;
+  position: absolute;
+  right: 1em;
+}
+.float-prompt .prompt-label {
+  width: 80%;
+  float: left;
+  display: inline-block;
+  margin: 0;
+  color: white;
+}
+.float-prompt a {
+  display: block;
+  padding: 0.2em;
+  padding-bottom: 0;
+  margin-bottom: 0.2em;
 }
 /*# sourceMappingURL=page.css.map */

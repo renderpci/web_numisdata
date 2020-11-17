@@ -98,7 +98,8 @@
 			// moved to page.less
 		}
 		.medium_label {
-			font-size: 1.3em;
+			font-size: 1.5em;
+			margin-top:1em;
 		}
 
 		.items_list {
@@ -109,10 +110,10 @@
 				.sorted_coin:last-child  {
 					border-right: none;
 				}
-				.sorted_coin:nth-child(3n){
+				/*.sorted_coin:nth-child(3n){
 				// .sorted_coin:last-child(3n)  {
 					border-right: none;
-				}
+				}*/
 		
 				.sorted_coin {
 					flex: 0 0 32.6%;
@@ -135,6 +136,18 @@
 							object-position: center;
 							background-color: white;
 						}
+					}
+
+					@media screen and (max-width: 590px){
+						flex:inherit;
+						width: 95% !important;
+						border-right:none;
+						margin-top: 1em;
+
+					}
+
+					div {
+						font-size: 120%;
 					}
 					
 				}
@@ -182,6 +195,18 @@
 					padding: 0.5em;
 					padding-left: 1em;
 				}
+
+				@media screen and (max-width: 590px){
+					display:inherit;
+					display: block;
+ 					width: 95%;
+ 					flex:inherit;
+				}
+
+				div {
+					font-size: 120%;
+				}
+
 			}
 		}
 		

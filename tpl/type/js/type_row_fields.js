@@ -99,7 +99,7 @@ var row_fields = {
 				})
 			)
 
-		// permanent_uri
+		// permanent uri
 			fragment.appendChild(
 				self.default(item, "section_id", function(value){
 					const label		= tstring.permanent_uri || "Permanent URI"
@@ -452,13 +452,68 @@ var row_fields = {
 				const beats		= page.split_data(item[name], ' | ')
 				const item_text	= beats.filter(Boolean).join(", ")
 				
-				const node = common.create_dom_element({
+				var material_node = common.create_dom_element({
 					element_type 	: "span",
-					class_name 		: "info_value " + name,
+					class_name 		: "underline-text info_value " + name,
 					text_content 	: item_text
 				})	
-				ar_nodes.push(node)
+				ar_nodes.push(material_node)
 			}
+
+		// material_uris
+			name = "material_data"
+			if (item[name] && item[name].length>0) {
+
+				material_node.classList.add("active-pointer");
+
+				const main_node = document.getElementById("main");
+
+				const float_prompt = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "float-prompt hide",
+					parent 			: main_node
+				})
+
+				const prompt_label = common.create_dom_element({
+					element_type	: "p",
+					class_name		: "prompt-label",
+					inner_html 		: item[name][0].term,
+					parent 			: float_prompt
+				})
+
+				const close_buttom = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "close-buttom",
+					parent 			: float_prompt
+				})
+
+				const uris	= page.split_data(item[name][0].iri, ' | ')
+				for (let i=0; i<uris.length;i++){
+
+					console.log("ITEM: "+uris[i]);
+
+					const eachUrl = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "image_link underline-text",
+						target			: "_blank",
+						href			: uris[i],
+						inner_html		: uris[i],
+						parent			: float_prompt
+					})
+				}
+
+				material_node.addEventListener("click",function(e){
+					float_prompt.style.left = e.clientX+'px'; 
+					float_prompt.style.top = e.clientY+'px';
+					console.log(e.clientX);
+					float_prompt.classList.toggle("hide");
+				})
+
+				close_buttom.addEventListener("click",function(){
+					float_prompt.classList.add("hide");
+				})
+			}
+
 
 		// averages
 			name = "averages"

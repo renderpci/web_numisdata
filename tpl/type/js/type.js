@@ -132,6 +132,7 @@ var type =  {
 						// hoard resolution
 						"ref_coins_hoard_data"			: "hoards",
 						"hoards.bibliography_data"		: "bibliographic_references",
+						"denomination_data"				: "denomination",
 						"material_data"					: "material"
 					}					
 				}

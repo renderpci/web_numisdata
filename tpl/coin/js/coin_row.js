@@ -413,7 +413,7 @@ var coin_row = {
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",
-						inner_html		: row.weight,
+						inner_html		: row.weight+" g",
 						parent			: group
 					})
 				}
@@ -432,7 +432,7 @@ var coin_row = {
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",
-						inner_html		: row.diameter,
+						inner_html		: row.diameter+" mm",
 						parent			: group
 					})
 				}

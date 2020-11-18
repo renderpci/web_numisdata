@@ -103,9 +103,6 @@
     margin-top: 1em;
   }
 }
-.result .row_wrapper .items_list .typology_coins .sorted_coin div {
-  font-size: 120%;
-}
 .result .row_wrapper .find_coins {
   display: flex;
   flex-wrap: wrap;
@@ -151,7 +148,7 @@
   }
 }
 .result .row_wrapper .find_coins .find_coin div {
-  font-size: 120%;
+  font-size: 110%;
 }
 .result .row_wrapper .bibliographic_reference {
   margin-top: 1px;

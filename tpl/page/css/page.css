@@ -1188,6 +1188,13 @@ a.image_link img {
   padding-top: 1em;
   border-radius: 5px;
   box-shadow: 10px 10px #888888;
+  max-width: 600px;
+}
+@media screen and (max-width: 736px) {
+  .float-prompt {
+    width: 90%;
+    left: 5% !important;
+  }
 }
 .float-prompt .close-buttom {
   display: inline-block;

@@ -303,14 +303,13 @@ var catalog_row_fields = {
 			case "term":
 				const item_term_data = JSON.parse(item.term_data)
 				if (item_term_data && !item.children) {
-						const a_term = common.create_dom_element({
-						  element_type 	: "a",
-						  class_name : "a_term",
-						  href:'./type/' + item_term_data[0]  ,
-						 
-						  inner_html 	 : item[name]
+					const a_term = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "a_term",
+						href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item_term_data[0],
+						inner_html		: item[name]
 					})
-						a_term.target = "_blank"
+					a_term.target = "_blank"
 					
 					current_value = a_term.outerHTML
 				}else{

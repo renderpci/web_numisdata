@@ -191,17 +191,40 @@ var row_fields = {
 				// 	parent 			: line
 				// })
 
-			
+			const searchTerms = ["design_obverse","design_reverse","symbol_reverse","symbol_obverse"];	
+
 			const item_text = (typeof fn==="function")
 				? fn(item[name])
 				: page.remove_gaps(item[name], " | ")
 
-			common.create_dom_element({
-				element_type	: "span",
-				class_name		: "info_value",
-				inner_html		: item_text.trim(),
-				parent			: line
-			})	
+			if (searchTerms.includes(name)) {
+
+				// common.create_dom_element({
+				// 	element_type	: "a",
+				// 	class_name		: "info_value",
+				// 	inner_html		: item_text.trim(),
+				// 	parent			: line
+				// })	
+
+				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
+				
+				console.log(catalog_url);
+				const prompt_label = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "info_value underline-text",
+					inner_html 		: item_text.trim(),
+					href			: catalog_url,
+					parent 			: line
+				})
+
+			} else {
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: item_text.trim(),
+					parent			: line
+				})	
+			}
 		}		
 
 
@@ -1533,12 +1556,16 @@ var row_fields = {
 	},//end typology_name
 
 
-	create_float_prompt : function (item,parentNode,name){
+	//CREATE A FLOAT PROMPT WHIT DESCRIPTION AND RELATED LINKS
+	// params:
+	// 	item: OBJECT item info
+	// 	parentNode: HTML node that will have the onclick event
+	// 	data_ref: STRING type of the item in DB ex: material_data
+	create_float_prompt : function (item, parentNode, data_ref){
 		
-
 		const self = this
 
-		if (item[name] && item[name].length>0) {
+		if (item[data_ref] && item[data_ref].length>0) {
 
 			parentNode.classList.add("active-pointer");
 			parentNode.classList.add("underline-text");
@@ -1551,10 +1578,19 @@ var row_fields = {
 				parent 			: main_node
 			})
 
+			if (data_ref==="material_data"){
+				var url_label = item.material;
+			} else {
+				var url_label = item[data_ref][0].term;
+			}
+
+			const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+item[data_ref][0].table+"&label="+url_label+"&value="+url_label;
+
 			const prompt_label = common.create_dom_element({
-				element_type	: "p",
-				class_name		: "prompt-label",
-				inner_html 		: item[name][0].term,
+				element_type	: "a",
+				class_name		: "prompt-label underline-text",
+				inner_html 		: item[data_ref][0].term,
+				href			: catalog_url,
 				parent 			: float_prompt
 			})
 
@@ -1564,20 +1600,18 @@ var row_fields = {
 				parent 			: float_prompt
 			})
 
-			if (item[name][0].definition) {
+			if (item[data_ref][0].definition) {
 				const item_description = common.create_dom_element({
 					element_type	: "p",
 					class_name		: "prompt-description",
-					inner_html		: item[name][0].definition,
+					inner_html		: item[data_ref][0].definition,
 					parent 			: float_prompt
 				})
 			}
 
-			if (item[name][0].iri.length>0){
-				const uris	= page.split_data(item[name][0].iri, ' | ')
+			if (item[data_ref][0].iri.length>0){
+				const uris	= page.split_data(item[data_ref][0].iri, ' | ')
 				for (let i=0; i<uris.length;i++){
-
-					console.log("ITEM: "+uris[i]);
 
 					const eachUrl = common.create_dom_element({
 						element_type	: "a",

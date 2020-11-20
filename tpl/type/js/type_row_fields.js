@@ -207,8 +207,7 @@ var row_fields = {
 				// })	
 
 				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
-				
-				console.log(catalog_url);
+
 				const prompt_label = common.create_dom_element({
 					element_type	: "a",
 					class_name		: "info_value underline-text",
@@ -577,6 +576,7 @@ var row_fields = {
 					src				: data.image_reverse,
 					parent			: image_link_reverse
 				})
+			
 			// collection
 				common.create_dom_element({
 					element_type	: "div",
@@ -584,6 +584,7 @@ var row_fields = {
 					inner_html		: data.collection,
 					parent			: wrapper
 				})
+
 			// size_text. weight / dies / diameter				
 				const ar_beats = []
 				if (data.weight && data.weight.length>0) {

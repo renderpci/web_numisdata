@@ -1187,7 +1187,7 @@ a.image_link img {
   padding: 2em;
   padding-top: 1em;
   border-radius: 5px;
-  box-shadow: 10px 10px #888888;
+  box-shadow: 10px 10px rgba(200, 200, 200, 0.3);
   max-width: 600px;
 }
 @media screen and (max-width: 736px) {
@@ -1216,12 +1216,15 @@ a.image_link img {
   border-radius: 5px;
 }
 .float-prompt .prompt-label {
-  width: 100%;
+  width: auto;
   float: left;
   display: inline-block;
-  margin: 0;
   color: white;
   text-align: center;
+  margin: 0 auto;
+  padding-bottom: -1em;
+  line-height: 1;
+  margin-bottom: 0.5em;
 }
 .float-prompt a {
   display: block;

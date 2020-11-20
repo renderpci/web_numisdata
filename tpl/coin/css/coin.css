@@ -14,6 +14,9 @@
 .result > div {
   margin-bottom: 2em;
 }
+.result #row_detail a.underline-text {
+  margin-top: -0.1em;
+}
 .result #row_detail .identify_images_wrapper {
   float: left;
   display: grid;
@@ -78,6 +81,9 @@
   margin: 0;
   margin-bottom: 0.25em;
 }
+.result #row_detail .block_wrapper .group.id label {
+  color: #b7996d;
+}
 .result #row_detail .block_wrapper .group > label,
 .result #row_detail .block_wrapper .group > span {
   padding: 0.25em;
@@ -97,7 +103,7 @@
   line-height: 1.5em;
 }
 .result #row_detail .block_wrapper .group label {
-  color: #b7996d;
+  color: #585858;
   font-weight: normal;
 }
 .result #row_detail .block_wrapper .group label:after {

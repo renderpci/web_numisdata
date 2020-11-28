@@ -57,7 +57,7 @@
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
 	</div>
 
-<?php echo $this->get_header_links('js') ?>
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
 	console.log("main_home loaded!");

@@ -42,7 +42,7 @@
 
 	</div>
 
-<?php echo $this->get_header_links('js') ?>
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
 	mint.set_up({

@@ -8,7 +8,7 @@ class page {
 
 
 	# Version. Important!
-	static $version = "1.0.6"; // 14-07-2020
+	static $version = "1.0.8"; // 28-11-2020
 
 	# css_ar_url : css files to include on render page
 	static $css_ar_url = array();
@@ -286,7 +286,7 @@ class page {
 		#$page_title 	= $this->get_page_title();
 
 		#$css_links 		= $this->get_header_links('css'); 
-		#$js_links 		= $this->get_header_links('js');
+		#$js_links 		= $this->get_header_links('js', ['js_async' => 'defer']);
 		
 		ob_start();
 		#include ( __WEB_BASE_PATH__ .'/'. WEB_DISPATCH_DIR . '/tpl/'. WEB_ENTITY . '/page/html/page.phtml');
@@ -313,7 +313,7 @@ class page {
 	* GET_HEADER_LINKS
 	* @return string $html
 	*/
-	public function get_header_links($type) {
+	public function get_header_links($type, $options=[]) {
 		
 		$html = '';
 		switch ($type) {
@@ -334,10 +334,13 @@ class page {
 				# JS main. Prepend main page js to the beginning of the array			
 				#array_unshift(page::$js_ar_url, __WEB_ROOT_WEB__ . '/common/js/common.js', __WEB_ROOT_WEB__ . '/page/js/page.js.php');
 
-				# Remove duplicates
-				page::$js_ar_url = array_unique(page::$js_ar_url);
+				// Remove duplicates
+					page::$js_ar_url = array_unique(page::$js_ar_url);
+				// js options
+					$media = isset($options['js_media']) ? $options['js_media'] : null;
+					$async = isset($options['js_async']) ? $options['js_async'] : null;
 				foreach (page::$js_ar_url as $url) {
-					$html .= self::build_js_tag($url) .PHP_EOL;
+					$html .= self::build_js_tag($url, $media, $async) .PHP_EOL;
 				}
 				break;
 		}
@@ -364,10 +367,10 @@ class page {
 
 		$media_attr='';
 		if (!is_null($media)) {
-			$media_attr = " media=\"$media\"";  // Like screen
+			$media_attr = ' media="'.$media.'"';  // Like screen
 		}	
 
-		$tag = "<link href=\"$url\" rel=\"stylesheet\"{$media_attr}>";
+		$tag = '<link href="'.$url.'" rel="stylesheet"'.$media_attr.'>';
 
 		return $tag;
 	}//edn build_css_tag
@@ -378,7 +381,7 @@ class page {
 	* BUILD_JS_TAG
 	* @return string $tag
 	*/
-	static function build_js_tag($url, $media=null) {
+	static function build_js_tag($url, $media=null, $async=null) {
 
 		if (defined('USE_CDN') && USE_CDN!==false) {
 			$url = USE_CDN . $url;
@@ -392,7 +395,12 @@ class page {
 				$url .= '_' . WEB_CURRENT_LANG_CODE;
 			}
 
-		$tag = '<script defer src="'.$url.'"></script>';
+		// async_tag (defer, async)
+			$async_tag = $async!==null
+				? (' '.$async) 
+				: '';
+
+		$tag = '<script'.$async_tag.' src="'.$url.'"></script>';
 
 		return $tag;
 	}//edn build_js_tag
@@ -655,8 +663,11 @@ class page {
 
 			// sort by norder asc
 				usort($items, function($a, $b){
-					return (int)$a->norder > (int)$b->norder;
-				});	
+					if ((int)$a->norder > (int)$b->norder) {
+						return 1;
+					}
+					return 0;
+				});
 
 			// iterate items from filter 
 				foreach ($items as $menu_element) {
@@ -1668,7 +1679,7 @@ class page {
 							$items = array_merge($items, $childrens);
 					}
 				}
-			}		
+			}
 
 
 		return $items;

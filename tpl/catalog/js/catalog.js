@@ -180,7 +180,7 @@ var catalog =  {
 		// form
 			const form = self.build_form()		
 			container.appendChild(form)
-		
+			
 		// first search
 		if (options.global_search && options.global_search.length>1) {
 
@@ -194,7 +194,17 @@ var catalog =  {
 				self.form_submit(form)
 			}							
 		
-		}else{
+		}else if(options.item_type.length>1){
+
+			console.log(options.item_type);
+			console.log(options.label);
+			console.log(options.value);
+
+			self.add_selected_value(self.form_items[options.item_type],options.label,options.value)
+			self.form_submit(form)
+
+
+
 
 			// exec first default auto search without params
 				// self.search_rows({
@@ -729,7 +739,6 @@ var catalog =  {
 	* ADD_SELECTED_VALUE
 	*/
 	add_selected_value : function(form_item, label, value) {
-		
 		const container = form_item.node_values
 
 		// Check if already exists

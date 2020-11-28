@@ -122,12 +122,23 @@ var coin_row = {
 						text_content	: tstring.collection || "collection",
 						parent			: group
 					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.collection,
-						parent			: group
+
+
+					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=collection"+"&label="+row.collection+"&value="+row.collection;
+					const prompt_label = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "value underline-text",
+						inner_html 		: row.collection,
+						href			: catalog_url,
+						parent 			: group
 					})
+
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: row.collection,
+					// 	parent			: group
+					// })
 				}
 			// former_collection
 				if (row.former_collection && row.former_collection.length>0) {
@@ -259,12 +270,15 @@ var coin_row = {
 						element_type	: "label",
 						text_content	: tstring.design_obverse || "design_obverse",
 						parent			: group_design_obverse
-					})					 
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: design_obverse,
-						parent			: group_design_obverse
+					})
+
+					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_obverse"+"&label="+design_obverse+"&value="+design_obverse;
+					const prompt_label = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "value underline-text",
+						inner_html 		: design_obverse,
+						href			: catalog_url,
+						parent 			: group_design_obverse
 					})
 				}
 			// design_reverse
@@ -282,12 +296,22 @@ var coin_row = {
 						text_content	: tstring.design_reverse || "design_reverse",
 						parent			: group_design_reverse
 					})					 
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: design_reverse,
-						parent			: group_design_reverse
+					
+					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_reverse"+"&label="+design_reverse+"&value="+design_reverse;
+					const prompt_label = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "value underline-text",
+						inner_html 		: design_reverse,
+						href			: catalog_url,
+						parent 			: group_design_reverse
 					})
+
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: design_reverse,
+					// 	parent			: group_design_reverse
+					// })
 				}			
 
 		// third_block_2 (design)
@@ -310,13 +334,23 @@ var coin_row = {
 						element_type	: "label",
 						text_content	: tstring.symbol_obverse || "symbol_obverse",
 						parent			: group_symbol_obverse
-					})					 
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: symbol_obverse,
-						parent			: group_symbol_obverse
+					})	
+
+					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=symbol_obverse"+"&label="+symbol_obverse+"&value="+symbol_obverse;
+					const prompt_label = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "value underline-text",
+						inner_html 		: symbol_obverse,
+						href			: catalog_url,
+						parent 			: group_symbol_obverse
 					})
+									 
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: symbol_obverse,
+					// 	parent			: group_symbol_obverse
+					// })
 				}
 			// symbol_reverse
 				const symbol_reverse = typeof row.type_data[0]!=="undefined"

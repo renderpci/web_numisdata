@@ -47,7 +47,11 @@
 <script>
 document.addEventListener('DOMContentLoaded', function(event) {
 	catalog.set_up({
-		global_search : <?php echo json_encode($global_search) ?>
+		global_search 	: <?php echo json_encode($global_search) ?>,
+		item_type 		: <?php echo json_encode($item_type) ?>,
+		label 			: <?php echo json_encode($label) ?>,
+		value 			: <?php echo json_encode($value) ?>
+
 	})
 })
 </script>

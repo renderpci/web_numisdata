@@ -296,15 +296,35 @@
 // form mints
 	.form-inline {
 
+		.form-row.fields {
+			margin-bottom: 0.5em;
+			margin-top: 0.25em;
+		}
+
 
 		.form-row {
 			display: flex;
 			flex-wrap: wrap;
 
 			.form-group {
-				flex: 1 1 50%;
+				flex: 0 1 33%;
 				align-self: baseline;
+				padding-top: 0.5em;
+
+				@media screen and (max-width: 736px){
+					flex: 1 1 50%;
+				}
 			}
+
+			// global_search
+			.field_global_search  {
+				flex: 0 1 100%;
+			}
+
+			.form-group.field_operators {
+				flex: 0 1 50%;
+			}
+			
 
 			.operators {
 				padding-right: 2em;
@@ -446,11 +466,7 @@
 	// }
 
 
-// global_search
-	.field_global_search  {
-		display: none;
-	}
-	
+
 
 
 

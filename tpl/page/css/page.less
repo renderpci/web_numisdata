@@ -358,7 +358,9 @@
 		//color: #ffffff !important;
 		background-color: @color_grey_dark;
 		//background-image: url(../../assets/images/overlay.png);
-		padding: 3em 0 3em 0;
+		padding: 0;
+		padding-top: 8em;
+		padding-bottom: 6em;
 		color: @color_gold_logo;
 		opacity: 1;
 		transition: opacity 0.35s ease-in-out;
@@ -385,16 +387,15 @@
 			}
 		}
 
-		.inner {
-
-			
+		.inner {			
 
 			ul {
 				color: #ffffff !important;
 
 				>li {
 					// filter: sepia(100%) saturate(0%) brightness(80%) hue-rotate(0deg);
-					filter: sepia(100%) saturate(100%) brightness(71%) hue-rotate(-7deg);
+					// filter: sepia(100%) saturate(100%) brightness(71%) hue-rotate(-7deg);
+					filter: sepia(100%) saturate(0) brightness(50%);
 					opacity: 0.75;
 
 					transition: all 0.35s linear;

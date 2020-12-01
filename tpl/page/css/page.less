@@ -311,12 +311,12 @@
 
 			.info_line.items {
 				margin-top:1em;
-				border-bottom: dotted 2px #a33e1f;
+				border-bottom: solid 1px #a33e1f;
 			}
 
 			.info_line.hallazgos_monetarios{
 				margin-top:1em;
-				border-bottom: dotted 2px #a33e1f;
+				border-bottom: solid 1px #a33e1f;
 			}
 
 			.items_list {
@@ -553,7 +553,8 @@
 
 		display: inline-block;
 		background-color: @color_red_dark;
-		border-radius: 0.25em;
+		border-top-left-radius: 0.25em;
+		border-top-right-radius: 0.25em;
 		color: #fff;
 		
 		margin: 1em;
@@ -575,7 +576,7 @@
 		padding: 2em;
 		padding-top:1em;
 		border-radius:5px;
-		box-shadow: 10px 10px rgba(200,200,200,0.3);
+		box-shadow: 8px 8px 10px 0px rgba(180, 180, 180, 0.8);
 		max-width: 600px;
 
 		@media screen and (max-width: 736px){
@@ -615,6 +616,7 @@
 			padding-bottom:-1em;
 			line-height: 1;
 			margin-bottom: 0.5em;
+			font-size: 125%;
 		}
 
 		a {

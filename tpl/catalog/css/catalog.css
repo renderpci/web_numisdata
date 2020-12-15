@@ -9,8 +9,14 @@ form {
   overflow-x: initial;
 }
 section.result {
-  min-height: 60vh;
+  min-height: 25vh;
   padding-top: 2em;
+  position: relative;
+}
+section.result .spinner_svg {
+  position: absolute;
+  top: 3em;
+  z-index: 99999999;
 }
 .line_value {
   display: flex;
@@ -34,6 +40,11 @@ section.result {
   align-self: center;
   text-overflow: ellipsis;
   background-color: transparent;
+  font-size: 0.85em;
+}
+.line_value .value_label img {
+  vertical-align: middle;
+  height: 1em;
 }
 .line_value input.input_values {
   pointer-events: none;
@@ -132,7 +143,7 @@ section.result {
   border-top: none;
 }
 .form-inline .form-row.fields {
-  margin-bottom: 0.5em;
+  margin-bottom: 1.25em;
   margin-top: 0.25em;
 }
 .form-inline .form-row {
@@ -140,7 +151,7 @@ section.result {
   flex-wrap: wrap;
 }
 .form-inline .form-row .form-group {
-  flex: 0 1 33%;
+  flex: 0 1 25%;
   align-self: baseline;
   padding-top: 0.5em;
 }
@@ -153,10 +164,18 @@ section.result {
   flex: 0 1 100%;
 }
 .form-inline .form-row .form-group.field_operators {
-  flex: 0 1 50%;
+  padding: 0;
 }
 .form-inline .form-row .operators {
   padding-right: 2em;
+}
+.form-inline .button_submit {
+  display: inline-block;
+}
+.form-inline .form-group.field_operators {
+  float: right;
+  text-align: right;
+  margin-right: -2.5em;
 }
 span {
   margin-right: 1em;
@@ -171,9 +190,24 @@ span {
   font-size: 16px;
 }
 .mint {
+  display: inline-block;
   font-size: 1.4em;
   font-weight: bold;
   font-variant-caps: small-caps;
+  cursor: pointer;
+}
+.link_mint {
+  margin-left: 1em;
+}
+.link_mint:before {
+  content: " ";
+  width: 0.75em;
+  height: 0.75em;
+  display: inline-block;
+  background-image: url("../../assets/images/icon_link_color.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 .descriptions {
   display: grid;
@@ -200,6 +234,10 @@ span {
   grid-column-start: 1;
   grid-row-start: 2;
 }
+.ref_type_symbol_obverse img {
+  height: 1.2em;
+  vertical-align: middle;
+}
 .legend_obverse {
   grid-column-start: 1;
   grid-row-start: 3;
@@ -212,9 +250,17 @@ span {
   grid-column-start: 2;
   grid-row-start: 1;
 }
+.ref_type_design_reverse img {
+  height: 1.2em;
+  vertical-align: middle;
+}
 .ref_type_symbol_reverse {
   grid-column-start: 2;
   grid-row-start: 2;
+}
+.ref_type_symbol_reverse img {
+  height: 1.2em;
+  vertical-align: middle;
 }
 .legend_reverse {
   grid-column-start: 2;
@@ -270,6 +316,12 @@ span {
   width: 100%;
   border: none !important;
   margin: 0 !important;
+  line-height: 1.4em;
+  font-size: 1em;
+}
+.ui-menu .ui-menu-item-wrapper img {
+  vertical-align: middle;
+  height: 1em;
 }
 .ui-widget.ui-widget-content {
   background-color: #f9f9f9;

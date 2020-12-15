@@ -119,6 +119,7 @@
 }
 .result #row_detail .block_wrapper .value img {
   height: 1.2em;
+  vertical-align: middle;
 }
 .result #types {
   padding: 1em;

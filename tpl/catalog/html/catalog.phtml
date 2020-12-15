@@ -45,7 +45,7 @@
 
 <?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
-document.addEventListener('DOMContentLoaded', function(event) {
+dom_ready(function(){
 	catalog.set_up({
 		global_search 	: <?php echo json_encode($global_search) ?>,
 		item_type 		: <?php echo json_encode($item_type) ?>,

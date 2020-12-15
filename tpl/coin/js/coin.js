@@ -556,7 +556,7 @@ var coin =  {
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "",
-					text_content 	: tstring.bibliography || "Bibliography",
+					text_content 	: tstring.bibliografia || "Bibliography",
 					parent 			: line
 				})
 

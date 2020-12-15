@@ -26,7 +26,7 @@
 	<?php #  <label for="autoria" class="col-form-label"><?php echo tstring('autoria') </label>?>
 	  <input class="form-control" id="autoria" type="text" name="autoridad" 
 	  data-search="string" data-mode="search_distinct" data-q_name="CONCAT(`surname`, ', ', `name`) AS authors" data-q_search="CONCAT(`surname`,`name`)" data-dd_relations="rsc194" data-q_table="other_people" 
-	  placeholder="<?php echo tstring('autoria') ?>" title="<?php echo tstring('autoria') ?>">
+	  placeholder="<?php echo tstring('authorship') ?>" title="<?php echo tstring('authorship') ?>">
 	  <div id="autoria_values" class="container_values"></div>
 	</div>
 
@@ -35,7 +35,7 @@
 	<?php #  <label for="autoria" class="col-form-label"><?php echo tstring('autoria') </label>?>
 	  <input class="form-control" id="autoria" type="text" name="autoridad" 
 	  data-search="string" data-mode="search_distinct" data-q_name="authors" data-q_table="publications" 
-	  placeholder="<?php echo tstring('autoria') ?> grouped (DEBUG ONLY)" title="<?php echo tstring('autoria') ?>">
+	  placeholder="<?php echo tstring('authorship') ?> grouped (DEBUG ONLY)" title="<?php echo tstring('authorship') ?>">
 	  <div id="autoria_values" class="container_values"></div>
 	</div>
 	<?php } ?>
@@ -44,7 +44,7 @@
 	<?php #  <label for="titulo" class="col-form-label"><?php echo tstring('titulo') </label>?>
 	  <input class="form-control" id="titulo" type="text" name="titulo" 
 	  data-search="string" data-mode="search_distinct" data-q_name="title" data-q_table="publications"
-	  placeholder="<?php echo tstring('titulo') ?>" title="<?php echo tstring('titulo') ?>">
+	  placeholder="<?php echo tstring('title') ?>" title="<?php echo tstring('title') ?>">
 	  <div id="titulo_values" class="container_values"></div>
 	</div>
 
@@ -52,7 +52,7 @@
 	<?php #   <label for="fecha_publicacion" class="col-form-label"><?php echo tstring('fecha_publicacion') </label>?>
 	  <input class="form-control" id="fecha_publicacion" type="text" name="fecha_publicacion" 
 	  data-search="string" data-mode="search_distinct" data-q_name="publication_date" data-q_table="publications" 
-	  placeholder="<?php echo tstring('fecha_publicacion') ?>" title="<?php echo tstring('fecha_publicacion') ?>">
+	  placeholder="<?php echo tstring('publication_year') ?>" title="<?php echo tstring('publication_year') ?>">
 	  <div id="fecha_publicacion_values" class="container_values"></div>
 	</div>
 
@@ -60,7 +60,7 @@
 	<?php #  <label for="serie" class="col-form-label"><?php echo tstring('serie') </label>	?>
 	  <input class="form-control" id="serie" type="text"  name="serie" 
 	  data-search="string" data-mode="search_distinct" data-q_name="serie" data-q_table="publications" 
-	  placeholder="<?php echo tstring('series_colecciones') ?>" title="<?php echo tstring('series_colecciones') ?>">
+	  placeholder="<?php echo tstring('series_collections') ?>" title="<?php echo tstring('series_collections') ?>">
 	  <div id="serie_values" class="container_values"></div>
 	</div>
 
@@ -68,7 +68,7 @@
 	<?php #  <label for="lugar_publicacion" class="col-form-label"><?php echo tstring('lugar_publicacion') </label>?>
 	  <input class="form-control" id="lugar_publicacion" type="text" name="lugar_publicacion" 
 	  data-search="string" data-mode="search_distinct" data-q_name="place" data-q_table="publications" 
-	  placeholder="<?php echo tstring('lugar_publicacion') ?>" title="<?php echo tstring('lugar_publicacion') ?>">
+	  placeholder="<?php echo tstring('publication_place') ?>" title="<?php echo tstring('publication_place') ?>">
 	  <div id="lugar_publicacion_values" class="container_values"></div>
 	</div>
 
@@ -85,7 +85,7 @@
 	<?php #  <label for="volume" class="col-form-label"><?php echo tstring('volume') </label>?>
 	  <input class="form-control" id="volume" type="text" name="volume" 
 	  data-search="string" data-mode="search_distinct" data-q_name="volume" data-q_table="publications" 
-	  placeholder="<?php echo tstring('volumen') ?>" title="<?php echo tstring('volumen') ?>">
+	  placeholder="<?php echo tstring('volume') ?>" title="<?php echo tstring('volume') ?>">
 	  <div id="volume_values" class="container_values"></div>
 	</div>
 
@@ -100,7 +100,7 @@
 
 
 	<div class="form-group field">
-	   <input class="btn btn-light btn-block primary" id="button_submit" type="submit" value="<?php echo tstring('buscar') ?>">
+	   <input class="btn btn-light btn-block primary" id="button_submit" type="submit" value="<?php echo tstring('search') ?>">
 	</div>
 
 	</div>	

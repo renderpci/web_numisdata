@@ -136,7 +136,7 @@ var row_fields = {
 
 		// findspots - hoards_and_findspots - (hallazgos) list
 			if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {				
-				fragment.appendChild( self.label(item, "hallazgos_monetarios") )
+				fragment.appendChild( self.label(item, tstring.findspots) )
 				fragment.appendChild(
 					self.hoards_and_findspots(item, "findspots")
 				)

@@ -10,14 +10,14 @@ include dirname(dirname(dirname(__FILE__))) . '/config/config.php';
 			getenv('HTTP_FORWARDED_FOR')?:
 			getenv('HTTP_FORWARDED')?:
 			getenv('REMOTE_ADDR');
-	$allow_ip = ['127.0.0.1'];
+	$allow_ip = ['127.0.0.1','localhost','::1'];
 	if (!in_array($ip, $allow_ip)) {
 		die("You don't have access here! ".$ip);
 	}	
 
 
 // base lang
-	$base_lang = $_GET['lang'] ?? 'lg-spa';
+	$base_lang = $_GET['lang'] ?? 'lg-eng';
 
 // read all files in parent directory
 	chdir('../');
@@ -61,6 +61,8 @@ include dirname(dirname(dirname(__FILE__))) . '/config/config.php';
 		input.header {
 			background-color: #E84B12;
 			color: white;
+			position: sticky;
+			top: 4px;
 		}		
 	</style>
 	<script type="module">

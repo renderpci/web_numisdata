@@ -373,7 +373,7 @@ var mint =  {
 		// label types
 			common.create_dom_element({
 				element_type 	: "label",
-				text_content 	: tstring.types || "Types",
+				text_content 	: tstring.tipos || "Types",
 				parent 			: fragment
 			})
 

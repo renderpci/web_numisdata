@@ -168,7 +168,7 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.ref_auction || "ref_auction",
+						text_content	: tstring.auction || "ref_auction",
 						parent			: group
 					})
 					common.create_dom_element({
@@ -187,7 +187,7 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.ref_auction_number || "ref_auction_number",
+						text_content	: tstring.auction_number || "ref_auction_number",
 						parent			: group
 					})
 					common.create_dom_element({
@@ -206,7 +206,7 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.ref_auction_date || "ref_auction_date",
+						text_content	: tstring.auction_date || "ref_auction_date",
 						parent			: group
 					})
 					common.create_dom_element({
@@ -677,7 +677,7 @@ var coin_row = {
 				parent			: fragment
 			})
 			// uri
-				if (row.uri && row.uri.length>0) {
+				if (row.mib_uri && row.mib_uri.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group uri",
@@ -691,9 +691,37 @@ var coin_row = {
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",
-						inner_html		: row.uri,
+						inner_html		: row.mib_uri,
 						parent			: group
 					})
+				}
+
+			// other permanent uri
+				if (row.uri && row.uri.length>0) {					
+					for (let i = 0; i < row.uri.length; i++) {
+						
+						const el = row.uri[i]
+					
+						const group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "group uri",
+							parent			: nineth_block
+						})
+
+						common.create_dom_element({
+							element_type	: "label",
+							text_content	: (tstring.uri || "uri") + " " + el.label,
+							parent			: group
+						})
+						common.create_dom_element({
+							element_type	: "a",
+							href			: el.value,
+							target			: "_blank",
+							class_name		: "value",
+							inner_html		: el.value,
+							parent			: group
+						})
+					}					
 				}
 
 		// tenth_block (bibliography)

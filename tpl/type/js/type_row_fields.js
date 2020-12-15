@@ -109,6 +109,21 @@ var row_fields = {
 				})
 			)
 
+		// other permanent uri
+			if (item.uri && item.uri.length>0) {				
+				for (let i = 0; i < item.uri.length; i++) {
+					
+					const el = item.uri[i]
+
+					fragment.appendChild(
+						self.default(item, "section_id", function(value){
+							const label	= tstring.uri || "URI"
+							return label + " " + el.label + ": <span class=\"uri\"><a href=\""+el.value+"\" target=\"_blank\">" + el.value + "</a></span>"
+						})
+					)
+				}
+			}
+
 		// // catalog hierarchy
 		// 	fragment.appendChild(
 		// 		self.default(item, "section_id", function(value){					
@@ -238,7 +253,7 @@ var row_fields = {
 		// line
 			const line = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "info_line " + name
+				class_name		: "info_line separator " + name
 			})		
 	
 			common.create_dom_element({
@@ -295,7 +310,7 @@ var row_fields = {
 			common.create_dom_element({
 				element_type 	: "span",
 				class_name 		: "breadcrumb",
-				text_content	: catalog.term,
+				text_content	: "MIB " + catalog.term,
 				parent 			: line
 			})
 		}		
@@ -357,9 +372,20 @@ var row_fields = {
 			ar_coins.push(JSON.parse(ar_str_coins[i]))
 		}
 		const identify_coin_id = ar_coins[0][0]
-		const identify_coin = item.ref_coins_union.find(item => item.section_id === identify_coin_id)
+		const identify_coin = item.ref_coins_union.find(item => item.section_id===identify_coin_id)
 
 		if (identify_coin) {
+
+			// uri
+				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
+				const full_url	= page_globals.__WEB_BASE_URL__ + uri
+				const uri_text	= "URI: <a href=\""+uri+"\">" + full_url + "</a>"
+				common.create_dom_element({
+					element_type	: "div",
+					class_name		: "",
+					inner_html		: uri_text,
+					parent			: line
+				})
 	
 			common.create_dom_element({
 				element_type 	: "span",
@@ -556,22 +582,24 @@ var row_fields = {
 					href			: data.image_obverse,
 					parent			: images
 				})
-				common.create_dom_element({
+				const image_obverse = common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_obverse,
 					parent			: image_link_obverse
 				})
+				image_obverse.loading="lazy"
 				const image_link_reverse = common.create_dom_element({
 					element_type	: "a",
 					class_name		: "image_link",
 					href			: data.image_reverse,
 					parent			: images
 				})
-				common.create_dom_element({
+				const image_reverse = common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_reverse,
 					parent			: image_link_reverse
 				})
+				image_reverse.loading="lazy"
 			
 			// collection
 				common.create_dom_element({
@@ -670,7 +698,7 @@ var row_fields = {
 
 				const typology_coins = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "typology_coins",
+					class_name		: "typology_coins gallery",
 					parent			: line
 				})
 
@@ -800,22 +828,25 @@ var row_fields = {
 					href			: data.image_obverse,
 					parent			: images
 				})
-				common.create_dom_element({
+				const image_obverse = common.create_dom_element({
 					element_type	: "img",					
 					src				: data.image_obverse,
 					parent			: image_link_obverse
 				})
+				image_obverse.loading="lazy"
+				
 				const image_link_reverse = common.create_dom_element({
 					element_type	: "a",
 					class_name		: "image_link",
 					href			: data.image_reverse,
 					parent			: images
 				})
-				common.create_dom_element({
+				const image_reverse = common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_reverse,
 					parent			: image_link_reverse
 				})
+				image_reverse.loading="lazy"
 
 			// info
 				const info = common.create_dom_element({

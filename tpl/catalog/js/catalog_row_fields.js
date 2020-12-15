@@ -20,6 +20,17 @@ var catalog_row_fields = {
 		const term_table = item.term_table
 		const fragment	 = new DocumentFragment()
 
+		function load_hires(e) {
+			
+			this.removeEventListener("load", load_hires, false)
+			
+			const image = this
+			const hires = this.hires
+			setTimeout(function(){
+				image.src = hires
+			}, 1600)			
+		}
+
 
 		switch(term_table){
 
@@ -239,6 +250,16 @@ var catalog_row_fields = {
 						  text_content 	: item.term, // + " [" + term_table + "]",
 						  parent 		: fragment
 					})
+
+					if (item.term_section_id) {
+						const link = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "link link_mint",
+							href			: page_globals.__WEB_ROOT_WEB__ + '/mint/' + item.term_section_id,
+							target			: '_blank',
+							parent			: fragment
+						})						
+					}
 					break;
 
 			default:
@@ -284,12 +305,12 @@ var catalog_row_fields = {
 				break;
 
 				case "ref_type_averages_weight":
-					current_value = item[name]+'g'
+					current_value = item[name]+' g'
 
 				break;
 
 				case "ref_type_averages_diameter":
-					current_value = item[name]+'mm'
+					current_value = item[name]+' mm'
 
 				break;
 
@@ -299,15 +320,14 @@ var catalog_row_fields = {
 				break;
 
 			case "term":
-				const item_term_data = JSON.parse(item.term_data)
-				if (item_term_data && !item.children) {
+				if (item.term_section_id && !item.children) {
 					const a_term = common.create_dom_element({
 						element_type	: "a",
 						class_name		: "a_term",
-						href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item_term_data[0],
-						inner_html		: item[name]
+						href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
+						target			: "_blank",
+						inner_html		: "MIB " + item[name]
 					})
-					a_term.target = "_blank"
 					
 					current_value = a_term.outerHTML
 				}else{

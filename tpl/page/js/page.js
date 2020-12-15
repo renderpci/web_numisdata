@@ -95,12 +95,14 @@ var page = {
 		var self = this
 		
 		// window.ready(function(){
-			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
+			// self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
 		// })
 
 		window.ready(function(){
 			// init lang selector
 			// self.init_lang_selector()
+
+			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
 
 			// show footer (from opacity zero)
 			const footer = document.getElementById('footer')
@@ -122,10 +124,10 @@ var page = {
 	hilite_lang : function(lang) {
 		
 		// Lang selected
-			var page_lang_selector = document.getElementById("page_lang_selector")
+			const page_lang_selector = document.getElementById("page_lang_selector")
 			if (page_lang_selector) {
-				var nodes = page_lang_selector.querySelectorAll("a")
-				for (var i = 0; i < nodes.length; i++) {
+				const nodes = page_lang_selector.querySelectorAll("a")
+				for (let i = 0; i < nodes.length; i++) {
 					if ( nodes[i].href.indexOf(lang) !== -1 ) {
 						nodes[i].classList.add("selected")
 					}
@@ -508,6 +510,9 @@ var page = {
 	* @return 
 	*/
 	parse_legend_svg : function(value) {
+		if (value.indexOf('http')!==-1) {
+			return value
+		}
 		return value.replace(/\/dedalo\/media\/svg\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/svg/")
 	},//end parse_legend_svg
 
@@ -537,13 +542,32 @@ var page = {
 		// url
 		row.ref_coins_image_obverse = common.local_to_remote_path(data.ref_coins_image_obverse)
 		row.ref_coins_image_reverse = common.local_to_remote_path(data.ref_coins_image_reverse)
+		// url thumbs
+		row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
+			? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
+			: null
+		row.ref_coins_image_reverse_thumb = row.ref_coins_image_reverse
+			? row.ref_coins_image_reverse.replace('/1.5MB/', '/thumb/')
+			: null
 
+		// legends
 		row.ref_type_legend_obverse = row.ref_type_legend_obverse
 			? self.parse_legend_svg(row.ref_type_legend_obverse)
 			: null
 		row.ref_type_legend_reverse = row.ref_type_legend_reverse
 			? self.parse_legend_svg(row.ref_type_legend_reverse)
 			: null
+		// symbols
+		row.ref_type_symbol_obverse = row.ref_type_symbol_obverse
+			? self.parse_legend_svg(row.ref_type_symbol_obverse)
+			: null
+		row.ref_type_symbol_reverse = row.ref_type_symbol_reverse
+			? self.parse_legend_svg(row.ref_type_symbol_reverse)
+			: null
+
+		row.term_data		= JSON.parse(row.term_data)
+		row.term_section_id	= row.term_data ? row.term_data[0] : null
+
 
 		return row
 	},//end parse_catalog_data
@@ -586,6 +610,8 @@ var page = {
 				}				
 			}
 		}
+
+		row.uri = self.parse_iri_data(row.uri)
 
 		// json encoded
 		// row.dd_relations			= JSON.parse(row.dd_relations)
@@ -666,7 +692,9 @@ var page = {
 		// find
 		row.find_date = self.parse_date(row.find_date)
 
-		row.uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+		row.mib_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+
+		row.uri = self.parse_iri_data(row.uri)
 
 		// bibliography
 		row.bibliography = page.parse_publication(row.bibliography_data)
@@ -683,6 +711,48 @@ var page = {
 
 		return row
 	},//end parse_coin_data
+
+
+
+	/**
+	* PARSE_IRI_DATA
+	* @return 
+	*/
+	parse_iri_data : function(data) {
+	
+		const items = []
+
+		if (!data || data.length<1) {
+			return items
+		}
+
+		const values = data.split(" | ")		
+		for (let i = 0; i < values.length; i++) {
+			
+			const val	= values[i]
+			const parts	= val.split(", ")
+			if (parts.length>1 && typeof parts[1]==="undefined") {
+				continue;
+			}
+
+			const url	= (parts.length===1) ? parts[0] : parts[1]
+			let source	= (parts.length===1) ? '' : parts[0]
+			if (source.length<1) {
+				try {
+					const _url = new URL(url)
+					source = _url.hostname
+				}catch (error) {
+					console.error(error);
+				}
+			}
+			items.push({
+				label : source,
+				value : url
+			})
+		}
+
+		return items
+	},//end parse_iri_data
 
 
 
@@ -839,9 +909,9 @@ var page = {
 			overlayOpacity: 0.5,
 			popupCloserText: '',
 			popupHeight: 150,
-			popupLoaderText: '',
-			popupSpeed: 1,
 			popupWidth: 150,
+			popupLoaderText: '',
+			popupSpeed: 1,			
 			selector: 'a.image_link',
 			usePopupCaption: false,
 			usePopupCloser: true,

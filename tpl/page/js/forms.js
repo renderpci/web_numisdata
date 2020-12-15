@@ -91,10 +91,11 @@ var forms = {
 	* BUILD_OPERATORS_NODE
 	*/
 	build_operators_node : function() {
+		// return form_factory.build_operators_node()
 
 		const group = common.create_dom_element({
 			element_type	: "div",
-			class_name 		: "form-group field"			
+			class_name 		: "form-group field field_operators"			
 		})
 		const operator_label = common.create_dom_element({
 			element_type	: "span",

@@ -22,7 +22,7 @@ const build_list = (options) => {
 	
 	const main = document.getElementById("main")
 
-	const base_lang_data = options.data[options.base_lang]
+	let base_lang_data = options.data[options.base_lang]
 	const langs 		 = Object.keys(options.data)
 
 	// sort langs with base_lang on top
@@ -30,27 +30,59 @@ const build_list = (options) => {
 	langs.sort(function(x,y){ return x == first ? -1 : y == first ? 1 : 0; });	
 
 	// headers
-		for (let i = 0; i < langs.length; i++) {
+		for (let i = -1; i < langs.length; i++) {
+
+			const label = langs[i] ? langs[i] : 'VAR NAME'
 
 			const input = document.createElement("input")
 			input.type  = "text"
-			input.setAttribute('value', langs[i])
+			input.setAttribute('value', label)
 			input.setAttribute('readonly', true)
 			input.classList.add("header")
 
 			main.appendChild(input)
 		}
-	
+
+	// sort fields
+		console.log("base_lang_data:",base_lang_data);
+		function sortObject(o) {
+		    var sorted = {},
+		    key, a = [];
+
+		    for (key in o) {
+		        if (o.hasOwnProperty(key)) {
+		            a.push(key);
+		        }
+		    }
+
+		    a.sort();
+
+		    for (key = 0; key < a.length; key++) {
+		        sorted[a[key]] = o[a[key]];
+		    }
+		    return sorted;
+		}
+		base_lang_data = sortObject(base_lang_data);	
+		
 		
 	// iterate base lang
-		for(const label in base_lang_data) {
+		for(const label in base_lang_data) {			
 
-			const ar_values 	= []		
-			const value 		= {
+			const ar_values 	= []
+
+			ar_values.push({
+				lang	: 'nolan',
+				value	: label,
+				type	: 'varname'
+			})
+
+			const value = {
 				lang  : options.base_lang,
 				value : base_lang_data[label]
 			}
 			ar_values.push(value)
+
+
 
 			for (let i = 0; i < langs.length; i++) {
 				
@@ -103,10 +135,20 @@ const build_line = (label, ar_values) => {
 			input.dataset.key  = label
 			input.dataset.lang = lang
 
-			input.addEventListener("change", function(e){
-				//console.log("e:",e.target.value, e);
-				save_lang_file(e.target, lang)
-			})
+			if (ar_values[i].type && ar_values[i].type==='varname') {
+				
+				input.setAttribute('readonly', true)
+				input.value =''
+			
+			}else{
+
+				input.addEventListener("change", function(e){
+					//console.log("e:",e.target.value, e);
+					save_lang_file(e.target, lang)
+				})
+			}
+
+			
 
 			line.appendChild(input)
 		}

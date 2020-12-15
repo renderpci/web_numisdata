@@ -17,7 +17,7 @@ var row_fields = {
 		const self = this
 
 		const fragment = new DocumentFragment()
-
+		
 
 		// dedalo_link
 			if (dedalo_logged===true) {
@@ -29,7 +29,6 @@ var row_fields = {
 			fragment.appendChild(
 				self.catalog_hierarchy(item, "catalog_hierarchy")
 			)
-
 
 		const identify_coin = common.create_dom_element({
 			element_type	: "div",
@@ -469,9 +468,6 @@ var row_fields = {
 				// denomination_description
 				self.create_float_prompt(item,node,"denomination_data")
 			}
-
-		
-
 
 		// material
 			name = "material"

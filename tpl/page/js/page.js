@@ -53,7 +53,7 @@ var page = {
 			className	: 'map_popup'
 		},
 		// markers
-		markers : {			
+		markers : {
 			mint : {
 				iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/purple.png",
 				shadowUrl		: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/marker-shadow.png",

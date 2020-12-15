@@ -126,9 +126,7 @@ var catalog_row_fields = {
 		
 						self.node_factory(item, "ref_type_design_obverse", descriptions, null, null)
 						self.node_factory(item, "ref_type_symbol_obverse", descriptions, null, null)
-						if (!IS_PRODUCTION) {
-							item.ref_type_legend_obverse = page.remote_image(item.ref_type_legend_obverse)
-						}
+						
 						const legend_obverse = common.create_dom_element({
 							  element_type 	: "div",
 							  class_name 	: "legend_obverse",
@@ -139,10 +137,7 @@ var catalog_row_fields = {
 							
 					// reverse
 								
-						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)
-						if (!IS_PRODUCTION) {
-							item.ref_type_symbol_reverse = page.remote_image(item.ref_type_symbol_reverse)
-						}
+						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)						
 						self.node_factory(item, "ref_type_symbol_reverse", descriptions, null, null)
 						
 						const legend_reverse = common.create_dom_element({
@@ -150,9 +145,7 @@ var catalog_row_fields = {
 							  class_name 	: "legend_reverse",
 							  parent 		: descriptions
 						})
-						if (!IS_PRODUCTION) {
-							item.ref_type_legend_reverse = page.remote_image(item.ref_type_legend_reverse)
-						}
+						
 						self.node_factory(item, "ref_type_legend_reverse", legend_reverse, null, null)
 						self.node_factory(item, "ref_type_legend_transcription_reverse", legend_reverse, null, null)
 					
@@ -163,7 +156,6 @@ var catalog_row_fields = {
 						const diameter = item['ref_type_averages_diameter'] !==null
 							? parseFloat(item['ref_type_averages_diameter'].replace(',', '.'))
 							: 15
-
 
 						const coins_images_container = common.create_dom_element({
 							  element_type 	: "div",
@@ -177,38 +169,44 @@ var catalog_row_fields = {
 							  parent 		: coins_images_container,
 						})			
 						coins_images.style.width = (diameter * 4 ) + 'mm'
-						const url_ref_coins_image_obverse = page.remote_image(item.ref_coins_image_obverse)
 
-						const image_link_obverse = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "image_link",
-							href			: url_ref_coins_image_obverse,
-							parent			: coins_images
-						})
-						const img_obverse = common.create_dom_element({
-							  element_type 	: "img",
-							  class_name 	: "image_obverse",
-							  src 			: url_ref_coins_image_obverse,
-							  parent 		: image_link_obverse
-						})
-						img_obverse.style.width = (diameter * 2 ) + 'mm'
-						const url_ref_coins_image_reverse = page.remote_image(item.ref_coins_image_reverse)
+						// img_obverse
+							const image_link_obverse = common.create_dom_element({
+								element_type	: "a",
+								class_name		: "image_link",
+								href			: item.ref_coins_image_obverse,
+								parent			: coins_images
+							})
+							const img_obverse = common.create_dom_element({
+								  element_type 	: "img",
+								  class_name 	: "image_obverse",
+								  src 			: item.ref_coins_image_obverse_thumb,
+								  parent 		: image_link_obverse
+							})
+							img_obverse.style.width = (diameter * 2 ) + 'mm'
+							img_obverse.hires = item.ref_coins_image_obverse
+							img_obverse.loading="lazy"
+							img_obverse.addEventListener("load", load_hires, false)							
 						
-						const image_link_reverse = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "image_link",
-							href			: url_ref_coins_image_reverse,
-							parent			: coins_images
-						})
-						const img_reverse = common.create_dom_element({
-							  element_type 	: "img",
-							  class_name 	: "image_reverse",
-							  src 			: url_ref_coins_image_reverse,
-							  parent 		: image_link_reverse
-						})
-						img_reverse.style.width = (diameter * 2 ) + 'mm'
+						// img_reverse
+							const image_link_reverse = common.create_dom_element({
+								element_type	: "a",
+								class_name		: "image_link",
+								href			: item.ref_coins_image_reverse,
+								parent			: coins_images
+							})
+							const img_reverse = common.create_dom_element({
+								  element_type 	: "img",
+								  class_name 	: "image_reverse",
+								  src 			: item.ref_coins_image_reverse_thumb,
+								  parent 		: image_link_reverse
+							})
+							img_reverse.style.width = (diameter * 2 ) + 'mm'
+							img_reverse.hires = item.ref_coins_image_reverse
+							img_reverse.loading="lazy"
+							img_reverse.addEventListener("load", load_hires, false)
 
-						 if (window.matchMedia) {
+						if (window.matchMedia) {
 							window.matchMedia('print').addListener(function(mql) {
 								 if (mql.matches) {
 									coins_images.style.width 	= (diameter * 2 ) + 'mm'

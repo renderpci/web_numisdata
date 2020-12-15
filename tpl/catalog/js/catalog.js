@@ -13,7 +13,7 @@ var catalog =  {
 	// global filters
 	filters : {},
 	filter_op : "AND",
-	draw_delay : 10, // ms 390
+	draw_delay : 1, // ms 390
 
 	// form_items
 	form_items : [],
@@ -182,41 +182,38 @@ var catalog =  {
 			container.appendChild(form)
 			
 		// first search
-		if (options.global_search && options.global_search.length>1) {
+			if (options.global_search && options.global_search.length>1) {
 
-			// global_search string param is received case (via url as ../catalog/my_search_string)
-			const input_global_search = document.getElementById("global_search") // this input is in DOm but hidden by default
-			if (input_global_search) {
-				input_global_search.value = options.global_search
-				// fire change event on input
-				event_manager.fire_event(input_global_search, 'change')
-				// submit form
+				// global_search string param is received case (via url as ../catalog/my_search_string)
+				const input_global_search = document.getElementById("global_search") // this input is in DOm but hidden by default
+				if (input_global_search) {
+					input_global_search.value = options.global_search
+					// fire change event on input
+					event_manager.fire_event(input_global_search, 'change')
+					// submit form
+					self.form_submit(form)
+				}							
+			
+			}else if(options.item_type.length>1){
+
+				console.log(options.item_type);
+				console.log(options.label);
+				console.log(options.value);
+
+				self.add_selected_value(self.form_items[options.item_type],options.label,options.value)
 				self.form_submit(form)
-			}							
-		
-		}else if(options.item_type.length>1){
 
-			console.log(options.item_type);
-			console.log(options.label);
-			console.log(options.value);
-
-			self.add_selected_value(self.form_items[options.item_type],options.label,options.value)
-			self.form_submit(form)
-
-
-
-
-			// exec first default auto search without params
-				// self.search_rows({
-				// 	ar_query : [],
-				// 	limit 	 : 10
-				// }).then(function(response){
-				// 	self.draw_rows({
-				// 		target  : 'rows_list',
-				// 		ar_rows : response.result
-				// 	})
-				// })
-		}
+				// exec first default auto search without params
+					// self.search_rows({
+					// 	ar_query : [],
+					// 	limit 	 : 10
+					// }).then(function(response){
+					// 	self.draw_rows({
+					// 		target  : 'rows_list',
+					// 		ar_rows : response.result
+					// 	})
+					// })
+			}
 
 
 		return true
@@ -244,7 +241,6 @@ var catalog =  {
 			if (options.callback) {
 				options.callback(form_item.node_input)
 			}
-
 		
 		// store current instance
 			self.form_items[options.id] = form_item
@@ -275,24 +271,23 @@ var catalog =  {
 			self.create_form_item({
 				id 			: "global_search",
 				name 		: "global_search",
-				label		: tstring["global_search"] || "global_search",
+				label		: tstring.global_search || "global_search",
 				q_column 	: "global_search",
 				eq 			: "LIKE",
 				eq_in 		: "%",
 				eq_out 		: "%",
 				// q_table 	: "mints",				
-				parent		: form_row,
-				callback	: function(node_input) {
-					// nothing to do here
-				}
+				parent		: form_row
+				// callback	: function(node_input) {
+				// 	// nothing to do here
+				// }
 			})
-
 
 		// mint
 			self.create_form_item({
 				id			: "mint",
 				name		: "mint",
-				label		: tstring["mint"] || "mint",
+				label		: tstring.mint || "mint",
 				q_column	: "p_mint",
 				eq			: "LIKE",
 				eq_in		: "%",
@@ -308,7 +303,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "period",
 				name		: "period",
-				label		: tstring["period"] || "period",
+				label		: tstring.period || "period",
 				q_column	: "p_period",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -323,7 +318,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "culture",
 				name		: "culture",
-				label		: tstring["culture"] || "culture",
+				label		: tstring.culture || "culture",
 				q_column	: "p_culture",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -338,7 +333,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "creator",
 				name		: "creator",
-				label		: tstring["creator"] || "creator",
+				label		: tstring.creator || "creator",
 				q_column	: "p_creator",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -353,7 +348,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "design_obverse",
 				name		: "design_obverse",
-				label		: tstring["design_obverse"] || "design obverse",
+				label		: tstring.design_obverse || "design obverse",
 				q_column	: "ref_type_design_obverse",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -368,7 +363,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "design_reverse",
 				name		: "design_reverse",
-				label		: tstring["design_reverse"] || "design reverse",
+				label		: tstring.design_reverse || "design reverse",
 				q_column	: "ref_type_design_reverse",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -383,7 +378,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "symbol_obverse",
 				name		: "symbol_obverse",
-				label		: tstring["symbol_obverse"] || "symbol obverse",
+				label		: tstring.symbol_obverse || "symbol obverse",
 				q_column	: "ref_type_symbol_obverse",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -398,7 +393,7 @@ var catalog =  {
 			self.create_form_item({
 				id			: "symbol_reverse",
 				name		: "symbol_reverse",
-				label		: tstring["symbol_reverse"] || "symbol reverse",
+				label		: tstring.symbol_reverse || "symbol reverse",
 				q_column	: "ref_type_symbol_reverse",
 				eq_in		: "%",
 				// q_table	: "ts_period",
@@ -413,7 +408,7 @@ var catalog =  {
 			self.create_form_item({
 				id 			: "legend_obverse",
 				name 		: "legend_obverse",
-				label		: tstring["legend_obverse"] || "legend obverse",
+				label		: tstring.legend_obverse || "legend obverse",
 				q_column 	: "ref_type_legend_obverse",
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
@@ -428,7 +423,7 @@ var catalog =  {
 			self.create_form_item({
 				id 			: "legend_reverse",
 				name 		: "legend_reverse",
-				label		: tstring["legend_reverse"] || "legend reverse",
+				label		: tstring.legend_reverse || "legend reverse",
 				q_column 	: "ref_type_legend_reverse",
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
@@ -443,7 +438,7 @@ var catalog =  {
 			self.create_form_item({
 				id 			: "territory",
 				name 		: "territory",
-				label		: tstring["territory"] || "territory",
+				label		: tstring.territory || "territory",
 				q_column 	: "p_territory",
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
@@ -458,7 +453,7 @@ var catalog =  {
 			self.create_form_item({
 				id 			: "group",
 				name 		: "group",
-				label		: tstring["group"] || "group",
+				label		: tstring.group || "group",
 				q_column 	: "p_group",
 				eq_in 		: "%",
 				// q_table 	: "ts_period",
@@ -475,7 +470,7 @@ var catalog =  {
 				name 		: "material",
 				q_column 	: "ref_type_material",
 				q_table 	: "any",
-				label		: tstring["material"] || "material",
+				label		: tstring.material || "material",
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(node_input) {
@@ -489,7 +484,7 @@ var catalog =  {
 				name 		: "collection",
 				q_column 	: "ref_coins_collection",
 				q_table 	: "any",
-				label		: tstring["collection"] || "collection",
+				label		: tstring.collection || "collection",
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(node_input) {
@@ -503,7 +498,7 @@ var catalog =  {
 				name 		: "denomination",
 				q_column 	: "ref_type_denomination",
 				q_table 	: "any",
-				label		: tstring["denomination"] || "denomination",
+				label		: tstring.denomination || "denomination",
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(node_input) {
@@ -511,22 +506,75 @@ var catalog =  {
 				}
 			})
 		
+		// number
+			self.create_form_item({
+				id 			: "number",
+				name 		: "number",
+				q_column 	: "term",
+				q_table 	: "types",
+				label		: tstring.number || "number",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
 
-		
-		// operators
-			form_row.appendChild( forms.build_operators_node() )
+		// company
+			self.create_form_item({
+				id 			: "company",
+				name 		: "company",
+				q_column 	: "ref_coins_auction_company",
+				q_table 	: "types",
+				label		: tstring.company || "company",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// technique
+			self.create_form_item({
+				id 			: "technique",
+				name 		: "technique",
+				q_column 	: "ref_type_technique",
+				q_table 	: "types",
+				label		: tstring.technique || "technique",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})
+
+		// equivalents
+			self.create_form_item({
+				id			: "equivalents",
+				name		: "equivalents",
+				q_column	: "ref_type_equivalents",
+				q_table		: "types",
+				eq_in		: "%",
+				eq_out		: "%",
+				label		: tstring.equivalents || "equivalents",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(node_input) {
+					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+				}
+			})		
 
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
-				class_name 		: "form-group field",
+				class_name 		: "form-group field button_submit",
 				parent 			: fragment
 			})
 			const submit_button = common.create_dom_element({
 				element_type	: "input",
 				type 			: "submit",
 				id 				: "submit",
-				value 			: tstring["buscar"] || "Search",
+				value 			: tstring.search || "Search",
 				class_name 		: "btn btn-light btn-block primary",
 				parent 			: submit_group
 			})
@@ -534,6 +582,10 @@ var catalog =  {
 				e.preventDefault()
 				self.form_submit(form)
 			})
+
+
+		// operators
+			fragment.appendChild( forms.build_operators_node() )
 
 		// form
 			const form = common.create_dom_element({
@@ -735,6 +787,7 @@ var catalog =  {
 		// },//end draw_select
 
 
+
 	/**
 	* ADD_SELECTED_VALUE
 	*/
@@ -918,8 +971,8 @@ var catalog =  {
 						// }
 
 					// cross filter. Add other selected values to the filter to create a interactive filter					
-						const c_op 	 = "OR"
-						const c_filter = {}
+						const c_op		= "OR"
+						const c_filter	= {}
 							  c_filter[c_op] = []
 						for (let [id, form_item] of Object.entries(self.form_items)) {
 							if (form_item.id===current_form_item.id) continue; // skip self
@@ -966,22 +1019,19 @@ var catalog =  {
 						}
 					
 					// search
-						const search = self.search_rows({
+						self.search_rows({
 							filter		: filter,
 							ar_fields	: [q_column + " AS name"],
 							limit		: 30,
-							order		: q_column + " ASC" // "term ASC"
+							order		: "name ASC" // "term ASC"
 						})
-
-					// return results in standard format (label, value)
-						search.then((api_response) => {							
+						.then((api_response) => { // return results in standard format (label, value)			
 								
 							const ar_result = []
 							const len  		= api_response.result.length
 							for (let i = 0; i < len; i++) {
 								
 								const item = api_response.result[i]
-
 
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
@@ -1002,18 +1052,77 @@ var catalog =  {
 								}																
 							}
 
+							// parse result
+								function parse_result(ar_result, term) {
+									
+									return ar_result.map(function(item){
+										item.label = item.label.replace(/<br>/g," ")
+										item.label = page.parse_legend_svg(item.label)
+										return item
+									})
+									// const ar_final = []
+
+									// for (let i = 0; i < ar_result.length; i++) {
+
+									// 	const all_values = []
+										
+									// 	const current = ar_result[i].label
+
+									// 	const ar_br = current.split("<br>");
+									// 	for (let g = 0; g < ar_br.length; g++) {
+									// 		all_values.push(ar_br[g])
+									// 	}
+
+									// 	// const ar_bar = current.split(" | ")
+									// 	// for (let k = 0; k < ar_bar.length; k++) {
+									// 	// 	all_values.push(ar_bar[k])
+									// 	// }
+											
+									// 	for (let j = 0; j < all_values.length; j++) {
+											
+									// 		const value = all_values[j].trim();
+
+									// 		if (ar_final.indexOf(value)===-1) {
+
+									// 			let find = false
+									// 			if (term.length>0) {
+									// 				// remove accents from text
+									// 				const value_normalized	= value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+									// 				// search by regex
+									// 				const regex	= RegExp(term, 'i')
+									// 				const find = regex.test(value_normalized)
+									// 			}else{
+									// 				find = true
+									// 			}
+												
+									// 			if (find) {
+									// 				ar_final.push(value)
+									// 			}
+									// 		}
+									// 	}
+									// }
+
+									// // sort
+									// 	ar_final.sort()
+
+									
+									// return ar_final
+								}
+								const ar_result_final = parse_result(ar_result, term)
+									// console.log("ar_result_final:",ar_result_final);
+
 							// cache . Use only when there are no cross filters
 								if (filter[op].length===1) {
-									cache[ term ] = ar_result
+									cache[ term ] = ar_result_final
 								}
 							
 							// debug
 								if(SHOW_DEBUG===true) {
 									// console.log("--- autocomplete api_response:",api_response);
-									// console.log("autocomplete ar_result:",ar_result);
+									// console.log("autocomplete ar_result_final:",ar_result_final);
 								}
 
-							response(ar_result)
+							response(ar_result_final)
 						})				
 			},
 			// When a option is selected in list
@@ -1076,8 +1185,14 @@ var catalog =  {
 		const self = this
 
 		const form_items = self.form_items
-			console.log("form_items:",form_items);
+
+		const div_result			= document.querySelector(".result")
+		const container_rows_list	= div_result.querySelector("#rows_list")
+
+		// spinner add
+			page.add_spinner(div_result)
 		
+				
 		// ar_is_term
 			const ar_is_term = []
 			for (let [id, form_item] of Object.entries(form_items)) {
@@ -1217,7 +1332,16 @@ var catalog =  {
 		// empty form case
 			if (ar_query_elements.length<1) {
 				// self.form_items.mint.node_input.focus()
+				page.remove_spinner(div_result)
 				return false;
+			}
+
+		// loading set css			
+			container_rows_list.classList.add("loading")			
+
+		// scrool to head result
+			if (div_result) {
+				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 			}
 
 		// operators value
@@ -1245,28 +1369,32 @@ var catalog =  {
 				// data parsed
 					const data = page.parse_catalog_data(response.result)
 	
-				// clean container and add_spinner
-					const container = document.querySelector("#rows_list")
-					while (container.hasChildNodes()) {
-						container.removeChild(container.lastChild);
-					}
-					page.add_spinner(container)
-
 				// draw
 					setTimeout(()=>{
+
+						// clean container_rows_list and add_spinner
+							while (container_rows_list.hasChildNodes()) {
+								container_rows_list.removeChild(container_rows_list.lastChild);
+							}
+							container_rows_list.classList.remove("loading")
+							// page.add_spinner(container_rows_list)
+							page.remove_spinner(div_result)
+
 						self.draw_rows({
 							target  : 'rows_list',
-							ar_rows : response.result
+							ar_rows : data
 						})
-					},  self.draw_delay)
-
-				// scrool to head result
-					if (response.result.length>0) {
-						const div_result = document.querySelector(".result")
-						if (div_result) {
-							div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-						}
-					}
+						.then(function(){
+							// // scrool to head result
+							// 	if (response.result.length>0) {
+							// 		const div_result = document.querySelector(".result")
+							// 		if (div_result) {
+							// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+							// 		}
+							// 	}							
+						})
+					}, self.draw_delay) // self.draw_delay
+				
 			})		
 
 

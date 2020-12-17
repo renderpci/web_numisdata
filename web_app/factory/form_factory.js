@@ -1,6 +1,5 @@
 /*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
 /*eslint no-undef: "error"*/
-
 "use strict";
 
 
@@ -48,6 +47,9 @@ function form_factory() {
 	*/
 	this.build_form_item = function(options) {
 
+			// console.log("options.eq_in:", typeof options.eq_in, options.name);
+			// console.log("options.eq_out:", typeof options.eq_out, options.name);
+
 		const form_item = {
 			id				: options.name,	// Like 'mint'
 			name			: options.name, // Like 'mint'
@@ -63,15 +65,18 @@ function form_factory() {
 			// q_table 		: options.q_table, // like 'mints'
 			// q_table_name : 'term_table', // like 'term_table'
 			// autocomplete options		
-			eq				: "LIKE", // default internal comparator used in autocomplete		
-			eq_in			: options.eq_in || '', // used in autocomplete to define if term begins with .. o in the middle of..
-			eq_out			: options.eq_out || '%', // used in autocomplete to define if term ends with .. o in the middle of..
-			// cathegory. thesurus terms and not terms
+			eq				: options.eq || "LIKE", // default internal comparator used in autocomplete		
+			eq_in			: typeof options.eq_in!=='undefined'  ? options.eq_in  : '', // used in autocomplete to define if term begins with .. o in the middle of..
+			eq_out			: typeof options.eq_out!=='undefined' ? options.eq_out : '%', // used in autocomplete to define if term ends with .. o in the middle of..
+			// category. thesurus terms and not terms
 			is_term			: options.is_term || false, // terms use special json format as '["name"]' instead 'name'
 			callback		: options.callback || false, // callback function
 			// nodes (are set on build_form_node)
 			node_input		: null,
-			node_values		: null
+			node_values		: null,
+			// input type and fixed values (case 'select')
+			input_type		: options.input_type,
+			input_values	: options.input_values
 		}
 
 		// add node
@@ -87,35 +92,67 @@ function form_factory() {
 	* BUILD_FORM_NODE
 	*/
 	this.build_form_node = function(form_item, parent) {
-
+		// console.log("form_item:",form_item);
 		// grouper
 			const group = common.create_dom_element({
 				element_type	: 'div',
-				class_name 		: "form-group field",
+				class_name 		: "form-group field " + form_item.class_name,
 				parent 			: parent
 			})
 
 		// input
-			const node_input = common.create_dom_element({
-				element_type	: 'input',
-				type			: 'text',
-				id				: form_item.id,
-				class_name		: "form-control ui-autocomplete-input" + (form_item.class_name ? (' '+form_item.class_name) : ''),
-				placeholder		: form_item.label,
-				value			: form_item.q || '',
-				parent			: group
-			})
-			node_input.addEventListener("keyup", function(e){
-				form_item.q = e.target.value
-			})
-			form_item.node_input = node_input
+			switch(form_item.input_type) {
+
+				case 'select':
+					const node_select = common.create_dom_element({
+						element_type	: 'select',
+						id				: form_item.id,
+						class_name		: "form-control ui-autocomplete-select" + (form_item.class_name ? (' '+form_item.class_name) : ''),					
+						value			: form_item.q || '',
+						parent			: group
+					})
+					for (let i = 0; i < form_item.input_values.length; i++) {
+						form_item.input_values[i]
+						common.create_dom_element({
+							element_type	: 'option',
+							value			: form_item.input_values[i].value,
+							inner_html		: form_item.input_values[i].label,
+							parent			: node_select
+						})
+					}
+					node_select.addEventListener("change", function(e){
+							console.log("e.target.value:",e.target.value);
+						if (e.target.value) {
+							form_item.q = e.target.value
+							console.log("form_item:",form_item);
+						}
+					})
+					form_item.node_input = node_select
+					break;
+				default:
+					const node_input = common.create_dom_element({
+						element_type	: 'input',
+						type			: 'text',
+						id				: form_item.id,
+						class_name		: "form-control ui-autocomplete-input" + (form_item.class_name ? (' '+form_item.class_name) : ''),
+						placeholder		: form_item.label,
+						value			: form_item.q || '',
+						parent			: group
+					})
+					node_input.addEventListener("keyup", function(e){
+						form_item.q = e.target.value
+					})
+					form_item.node_input = node_input
+					break;
+			}		
+
 
 		// values container (user selections)
 			const node_values = common.create_dom_element({
 				element_type	: 'div',
-				// id				: form_item.name + '_values',
-				class_name 		: "container_values",
-				parent 			: group
+				// id			: form_item.name + '_values',
+				class_name		: "container_values",
+				parent			: group
 			})
 			form_item.node_values = node_values
 
@@ -276,7 +313,7 @@ function form_factory() {
 				  group[group_op] = []
 
 			// q value
-				if (form_item.q.length>0) {				
+				if (form_item.q.length>0 && form_item.q!=='*') {
 
 					const c_group_op = 'AND'
 					const c_group = {}
@@ -285,8 +322,8 @@ function form_factory() {
 					// q element
 						const element = {
 							field	: form_item.q_column,
-							value	: `'%${form_item.q}%'`,
-							op		: form_item.eq // default is 'LIKE'
+							value	: `'${form_item.eq_in}${form_item.q}${form_item.eq_out}'`, // Like '%${form_item.q}%'
+							op		: form_item.eq, // default is 'LIKE'
 						}
 
 						c_group[c_group_op].push(element)
@@ -304,7 +341,7 @@ function form_factory() {
 						// }
 
 					// add basic group
-						group[group_op].push(c_group)											
+						group[group_op].push(c_group)
 				}
 
 			// q_selected values
@@ -372,137 +409,76 @@ function form_factory() {
 
 
 
+	/**
+	* FULL_TEXT_SEARCH_OPERATORS_INFO
+	* @return 
+	*/
+	this.full_text_search_operators_info = function() {
+
+		const grid = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "full_text_search_operators_info"
+		})
+
+		const pairs = [
+			{
+				op		: tstring.operator,
+				info	: tstring.description
+			},
+			{
+				op		: "+",
+				info	: tstring.include_the_word || "Include, the word must be present."
+			},
+			{
+				op		: "-",
+				info	: tstring.exclude_the_word || "Exclude, the word must not be present."
+			},
+			{
+				op		: ">",
+				info	: tstring.increase_ranking || "Include, and increase ranking value."
+			},
+			{
+				op		: "<",
+				info	: tstring.decrease_ranking || "Include, and decrease the ranking value."
+			},
+			{
+				op		: "()",
+				info	: tstring.group_words || "Group words into subexpressions (allowing them to be included, excluded, ranked, and so forth as a group)."
+			},
+			{
+				op		: "~",
+				info	: tstring.negate_word || "Negate a word’s ranking value."
+			},
+			{
+				op		: "*",
+				info	: tstring.wildcard_at_end || "Wildcard at the end of the word."
+			},
+			{
+				op		: "“”",
+				info	: tstring.defines_phrase || "Defines a phrase (as opposed to a list of individual words, the entire phrase is matched for inclusion or exclusion)."
+			}
+		]
+
+		for (let i = 0; i < pairs.length; i++) {			
+
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "op",
+				text_content	: pairs[i].op,
+				parent			: grid
+			})
+
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info",
+				text_content	: pairs[i].info,
+				parent			: grid
+			})
+		}
+
+		return grid
+	}//end full_text_search_operators_info
+
+
+
 }//end form_factory
-
-
-
-
-
-// var forms = {
-
-
-// 	/**
-// 	* BUILD_FORM_ITEM
-// 	* Every form input has a js object representation
-// 	*/
-// 	build_form_item : function(options) {
-
-// 		const form_item = {
-// 			id 				: options.name,	// Like 'mint'
-// 			name 			: options.name, // Like 'mint'
-// 			label 			: options.label, // Used to placeholder too
-// 			// search elements
-// 			q 				: "", // user keyboard enters values
-// 			q_selected 		: [], // user picked values from autocomplete options
-// 			q_column 		: options.q_column, // like 'term'
-// 			// special double filters
-// 			// q_table 		: options.q_table, // like 'mints'
-// 			// q_table_name : 'term_table', // like 'term_table'
-// 			// autocomplete options		
-// 			eq 				: "LIKE", // default internal comparator used in autocomplete
-// 			eq_in 			: options.eq_in || '', // used in autocomplete to define if term begins with .. o in the middle of..
-// 			eq_out 			: options.eq_out || '%', // used in autocomplete to define if term ends with .. o in the middle of..
-// 			// cathegory. thesurus terms and not terms
-// 			is_term 		: options.is_term || false, // terms use special json format as '["name"]' instead 'name'
-// 			// nodes (are set on build_form_node)
-// 			node_input		: null,
-// 			node_values		: null
-// 		}
-
-// 		// add node
-// 			forms.build_form_node(form_item, options.parent)
-
-
-// 		return form_item
-// 	},//end build_form_item
-
-
-
-// 	/**
-// 	* BUILD_FORM_NODE
-// 	*/
-// 	build_form_node : function(form_item, parent) {
-
-// 		// grouper
-// 			const group = common.create_dom_element({
-// 				element_type	: 'div',
-// 				class_name 		: "form-group field",
-// 				parent 			: parent
-// 			})
-
-// 		// input
-// 			const node_input = common.create_dom_element({
-// 				element_type	: 'input',
-// 				type			: 'text',
-// 				id 				: form_item.id,
-// 				class_name		: "form-control ui-autocomplete-input",
-// 				placeholder 	: form_item.label,				
-// 				parent			: group
-// 			})
-// 			node_input.addEventListener("keyup", function(e){				
-// 				form_item.q = e.target.value
-// 			})
-// 			form_item.node_input = node_input
-
-// 		// values container (user selections)
-// 			const node_values = common.create_dom_element({
-// 				element_type	: 'div',
-// 				// id				: form_item.name + '_values',
-// 				class_name 		: "container_values",
-// 				parent 			: group
-// 			})
-// 			form_item.node_values = node_values
-
-
-// 		return true
-// 	},//end build_form_node
-
-
-
-// 	/**
-// 	* BUILD_OPERATORS_NODE
-// 	*/
-// 	build_operators_node : function() {
-
-// 		const group = common.create_dom_element({
-// 			element_type	: "div",
-// 			class_name 		: "form-group field"			
-// 		})
-// 		const operator_label = common.create_dom_element({
-// 			element_type	: "span",
-// 			class_name 		: "operators",
-// 			text_content 	: tstring["operator"] || "Operator",
-// 			parent 			: group
-// 		})
-// 		const radio1 = common.create_dom_element({
-// 			element_type	: "input",
-// 			type 			: "radio",
-// 			id 				: "operator_or",
-// 			parent 			: group
-// 		})
-// 		radio1.setAttribute("name","operators")
-// 		radio1.setAttribute("value","OR")
-// 		const radio1_label = common.create_dom_element({
-// 			element_type	: "label",
-// 			text_content 	: tstring["or"] || "or",
-// 			parent 			: group
-// 		})
-// 		const radio2 = common.create_dom_element({
-// 			element_type	: "input",
-// 			type 			: "radio",
-// 			id 				: "operator_and",
-// 			name 			: "operators",
-// 			parent 			: group
-// 		})
-// 		radio2.setAttribute("name","operators")
-// 		radio2.setAttribute("value","AND")
-// 		radio2.setAttribute("checked","checked")
-// 		const radio2_label = common.create_dom_element({
-// 			element_type	: "label",
-// 			text_content 	: tstring["and"] || "and",
-// 			parent 			: group
-// 		})
-
-// 		return group
-// 	}//end build_operators_node
-// }//end forms

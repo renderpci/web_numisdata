@@ -11,13 +11,16 @@ var catalog =  {
 	selected_term_table : null, // Like 'mints'
 
 	// global filters
-	filters : {},
-	filter_op : "AND",
-	draw_delay : 1, // ms 390
+	filters		: {},
+	filter_op	: "AND",
+	draw_delay	: 1, // ms 390
 
 	// form_items
-	form_items : [],
+	// form_items : [],
  
+	// form
+	form : null,
+
 
 
 	/**
@@ -178,7 +181,7 @@ var catalog =  {
 			// })
 
 		// form
-			const form = self.build_form()		
+			const form = self.render_form()		
 			container.appendChild(form)
 			
 		// first search
@@ -200,7 +203,7 @@ var catalog =  {
 				console.log(options.label);
 				console.log(options.value);
 
-				self.add_selected_value(self.form_items[options.item_type],options.label,options.value)
+				self.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
 				self.form_submit(form)
 
 				// exec first default auto search without params
@@ -222,43 +225,16 @@ var catalog =  {
 
 
 	/**
-	* CREATE_FORM_ITEM
+	* RENDER_FORM
 	*/
-	create_form_item : function(options) {
-
-		const self = this
-
-		// form_item. create new instance of form_item
-			const form_item = forms.build_form_item(options)
-
-		// node
-			forms.build_form_node(form_item, options.parent)
-		
-		// autocomplete activate			
-			// self.activate_autocomplete(form_item.node_input)
-
-		// callback
-			if (options.callback) {
-				options.callback(form_item.node_input)
-			}
-		
-		// store current instance
-			self.form_items[options.id] = form_item
-
-
-		return form_item
-	},//end create_form_item
-
-
-
-	/**
-	* BUILD_FORM
-	*/
-	build_form : function() {
+	render_form : function() {
 
 		const self = this
 
 		const fragment = new DocumentFragment()
+
+		// form_factory instance
+			self.form = self.form || new form_factory()
 		
 		const form_row = common.create_dom_element({
 			element_type	: "div",
@@ -268,23 +244,49 @@ var catalog =  {
 		
 
 		// global_search
-			self.create_form_item({
+			const global_search = self.form.item_factory({
 				id 			: "global_search",
 				name 		: "global_search",
 				label		: tstring.global_search || "global_search",
 				q_column 	: "global_search",
-				eq 			: "LIKE",
-				eq_in 		: "%",
-				eq_out 		: "%",
-				// q_table 	: "mints",				
-				parent		: form_row
-				// callback	: function(node_input) {
-				// 	// nothing to do here
-				// }
-			})
+				eq 			: "MATCH",
+				eq_in 		: "",
+				eq_out 		: "",
+				// q_table 	: "mints",
+				class_name	: 'global_search',
+				parent		: form_row,
+				callback	: function(node_input) {
 
+					const button_info = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "search_operators_info",
+						parent			: node_input.parentNode
+					})
+
+					let operators_info 
+					button_info.addEventListener('click', function(event) {
+						event.stopPropagation()
+						if (operators_info) {
+							operators_info.remove()
+							operators_info = null
+							return
+						}
+						operators_info = self.form.full_text_search_operators_info()
+						node_input.parentNode.appendChild(operators_info)
+					})
+
+					window.addEventListener('click', function(e){
+						if (operators_info && !node_input.contains(e.target)){
+							// Clicked outside the box
+							operators_info.remove()
+							operators_info = null
+						}
+					})
+				}
+			})
+		
 		// mint
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "mint",
 				name		: "mint",
 				label		: tstring.mint || "mint",
@@ -298,9 +300,9 @@ var catalog =  {
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
-
+		
 		// period
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "period",
 				name		: "period",
 				label		: tstring.period || "period",
@@ -315,7 +317,7 @@ var catalog =  {
 			})
 
 		// culture
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "culture",
 				name		: "culture",
 				label		: tstring.culture || "culture",
@@ -330,7 +332,7 @@ var catalog =  {
 			})
 
 		// creator
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "creator",
 				name		: "creator",
 				label		: tstring.creator || "creator",
@@ -345,7 +347,7 @@ var catalog =  {
 			})
 
 		// design_obverse
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "design_obverse",
 				name		: "design_obverse",
 				label		: tstring.design_obverse || "design obverse",
@@ -360,7 +362,7 @@ var catalog =  {
 			})
 
 		// design_reverse
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "design_reverse",
 				name		: "design_reverse",
 				label		: tstring.design_reverse || "design reverse",
@@ -375,7 +377,7 @@ var catalog =  {
 			})
 
 		// symbol_obverse
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "symbol_obverse",
 				name		: "symbol_obverse",
 				label		: tstring.symbol_obverse || "symbol obverse",
@@ -390,7 +392,7 @@ var catalog =  {
 			})
 
 		// symbol_reverse
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "symbol_reverse",
 				name		: "symbol_reverse",
 				label		: tstring.symbol_reverse || "symbol reverse",
@@ -405,7 +407,7 @@ var catalog =  {
 			})
 
 		// legend_obverse
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "legend_obverse",
 				name 		: "legend_obverse",
 				label		: tstring.legend_obverse || "legend obverse",
@@ -420,7 +422,7 @@ var catalog =  {
 			})
 
 		// legend_reverse
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "legend_reverse",
 				name 		: "legend_reverse",
 				label		: tstring.legend_reverse || "legend reverse",
@@ -435,7 +437,7 @@ var catalog =  {
 			})
 
 		// territory
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "territory",
 				name 		: "territory",
 				label		: tstring.territory || "territory",
@@ -450,7 +452,7 @@ var catalog =  {
 			})
 
 		// group
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "group",
 				name 		: "group",
 				label		: tstring.group || "group",
@@ -465,7 +467,7 @@ var catalog =  {
 			})
 
 		// material
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "material",
 				name 		: "material",
 				q_column 	: "ref_type_material",
@@ -479,7 +481,7 @@ var catalog =  {
 			})
 
 		// collection
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "collection",
 				name 		: "collection",
 				q_column 	: "ref_coins_collection",
@@ -493,7 +495,7 @@ var catalog =  {
 			})
 
 		// denomination
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "denomination",
 				name 		: "denomination",
 				q_column 	: "ref_type_denomination",
@@ -507,7 +509,7 @@ var catalog =  {
 			})
 		
 		// number
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "number",
 				name 		: "number",
 				q_column 	: "term",
@@ -521,7 +523,7 @@ var catalog =  {
 			})
 
 		// company
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "company",
 				name 		: "company",
 				q_column 	: "ref_coins_auction_company",
@@ -535,7 +537,7 @@ var catalog =  {
 			})
 
 		// technique
-			self.create_form_item({
+			self.form.item_factory({
 				id 			: "technique",
 				name 		: "technique",
 				q_column 	: "ref_type_technique",
@@ -549,7 +551,7 @@ var catalog =  {
 			})
 
 		// equivalents
-			self.create_form_item({
+			self.form.item_factory({
 				id			: "equivalents",
 				name		: "equivalents",
 				q_column	: "ref_type_equivalents",
@@ -583,10 +585,11 @@ var catalog =  {
 				self.form_submit(form)
 			})
 
-
 		// operators
-			fragment.appendChild( forms.build_operators_node() )
-
+			// fragment.appendChild( forms.build_operators_node() )
+			const operators_node = self.form.build_operators_node()
+			fragment.appendChild( operators_node )
+		
 		// form
 			const form = common.create_dom_element({
 				element_type	: "form",
@@ -598,7 +601,7 @@ var catalog =  {
 
 
 		return form
-	},//end build_form
+	},//end render_form
 
 
 
@@ -940,7 +943,9 @@ var catalog =  {
 				const term = request.term
 				
 				// fix selected form_item (needed to access from select)
-				current_form_item = self.form_items[element.id]
+				// current_form_item = self.form_items[element.id]
+				// (!) fix selected form_item (needed to access from select)
+				current_form_item = self.form.form_items[element.id]
 
 				const field		= current_form_item.q_name // Like 'mint'
 				const q_column	= current_form_item.q_column // Like 'term'
@@ -974,7 +979,7 @@ var catalog =  {
 						const c_op		= "OR"
 						const c_filter	= {}
 							  c_filter[c_op] = []
-						for (let [id, form_item] of Object.entries(self.form_items)) {
+						for (let [id, form_item] of Object.entries(self.form.form_items)) {
 							if (form_item.id===current_form_item.id) continue; // skip self
 
 							// q . Value from input
@@ -1025,10 +1030,10 @@ var catalog =  {
 							limit		: 30,
 							order		: "name ASC" // "term ASC"
 						})
-						.then((api_response) => { // return results in standard format (label, value)			
+						.then((api_response) => { // return results in standard format (label, value)
 								
-							const ar_result = []
-							const len  		= api_response.result.length
+							const ar_result	= []
+							const len		= api_response.result.length
 							for (let i = 0; i < len; i++) {
 								
 								const item = api_response.result[i]
@@ -1036,7 +1041,7 @@ var catalog =  {
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
 									: [item.name]
-																
+								
 								for (let j = 0; j < current_ar_value.length; j++) {
 								
 									const item_name = current_ar_value[j]
@@ -1045,19 +1050,19 @@ var catalog =  {
 									const found = ar_result.find(el => el.value===item_name)
 									if (!found) {
 										ar_result.push({
-											label : item_name, // item_name,
-											value : item_name // item.name
+											label	: item_name, // item_name,
+											value	: item_name // item.name
 										})
 									}
-								}																
+								}
 							}
 
 							// parse result
 								function parse_result(ar_result, term) {
 									
 									return ar_result.map(function(item){
-										item.label = item.label.replace(/<br>/g," ")
-										item.label = page.parse_legend_svg(item.label)
+										item.label	= item.label.replace(/<br>/g," ")
+										item.label	= page.parse_legend_svg(item.label)
 										return item
 									})
 									// const ar_final = []
@@ -1166,9 +1171,9 @@ var catalog =  {
 		.focus(function() {
 		    $(this).autocomplete('search', null)
 		})
-		.blur(function() {
-		    //$(element).autocomplete('close');
-		})
+		// .blur(function() {
+		//     //$(element).autocomplete('close');
+		// })
 
 
 		return true
@@ -1184,7 +1189,7 @@ var catalog =  {
 		
 		const self = this
 
-		const form_items = self.form_items
+		const form_items = self.form.form_items
 
 		const div_result			= document.querySelector(".result")
 		const container_rows_list	= div_result.querySelector("#rows_list")
@@ -1199,7 +1204,7 @@ var catalog =  {
 				if (form_item.is_term===true) ar_is_term.push(form_item)
 			}	
 
-		const ar_query_elements = []	
+		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
 
 			// console.log("form_item:",form_item);
@@ -1211,7 +1216,7 @@ var catalog =  {
 				  group[group_op] = []
 
 			// q value
-				if (form_item.q.length>0) {					
+				if (form_item.q.length>0) {
 
 					const c_group_op = 'AND'
 					const c_group = {}
@@ -1336,8 +1341,8 @@ var catalog =  {
 				return false;
 			}
 
-		// loading set css			
-			container_rows_list.classList.add("loading")			
+		// loading set css
+			container_rows_list.classList.add("loading")
 
 		// scrool to head result
 			if (div_result) {
@@ -1391,7 +1396,7 @@ var catalog =  {
 							// 		if (div_result) {
 							// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 							// 		}
-							// 	}							
+							// 	}
 						})
 					}, self.draw_delay) // self.draw_delay
 				
@@ -1412,14 +1417,14 @@ var catalog =  {
 		const self = this
 
 		// sort vars
-			const filter		= options.filter || null
-			const ar_fields 	= options.ar_fields || ["*"]
-			const order 		= options.order || "norder ASC"
-			const limit 		= options.limit != undefined
+			const filter			= options.filter || null
+			const ar_fields			= options.ar_fields || ["*"]
+			const order				= options.order || "norder ASC"
+			const lang				= page_globals.WEB_CURRENT_LANG_CODE
+			const process_result	= options.process_result || null
+			const limit				= options.limit != undefined
 				? options.limit
-				: 30
-			const lang 			= page_globals.WEB_CURRENT_LANG_CODE
-			const process_result= options.process_result || null
+				: 30			
 
 		// parse_sql_filter
 			const group = []
@@ -1439,17 +1444,23 @@ var catalog =  {
 						const item_op = Object.keys(item)[0]
 						if(item_op==="AND" || item_op==="OR") {
 
-							const current_filter_line = "(" + parse_sql_filter(item) + ")"
+							const current_filter_line = "" + parse_sql_filter(item) + ""
 							ar_filter.push(current_filter_line)
 							continue;
 						}
 						
-						// item_value
-						const item_value = item.value
+						// const filter_line = (item.field.indexOf("AS")!==-1)
+						// 	? "" +item.field+""  +" "+ item.op +" "+ item.value
+						// 	: "`"+item.field+"`" +" "+ item.op +" "+ item.value
 
-						const filter_line = (item.field.indexOf("AS")!==-1)
-							? "" +item.field+""  +" "+ item.op +" "+ item_value
-							: "`"+item.field+"`" +" "+ item.op +" "+ item_value
+						let filter_line
+						if (item.op==='MATCH') {
+							filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
+						}else{
+							filter_line = (item.field.indexOf("AS")!==-1)
+								? "" +item.field+""  +" "+ item.op +" "+ item.value
+								: "`"+item.field+"`" +" "+ item.op +" "+ item.value	
+						}
 
 						ar_filter.push(filter_line)
 
@@ -1536,12 +1547,12 @@ var catalog =  {
 					const parent = JSON.parse(ar_mints[i].parent)[0]
 					const mint_parent 	= ar_rows.find(item => item.section_id===parent)
 					if(!mint_parent){
-							console.error("mint don't have public parent:",ar_mints[i]);
+						console.error("mint don't have public parent:",ar_mints[i]);
 						continue
 					}
 					// check if the parent is inside the ar_aprents, if not push inside else nothing
-					const unique_parent 	= ar_parent.find(item => item.section_id===parent)
-					if(typeof unique_parent === 'undefined'){
+					const unique_parent = ar_parent.find(item => item.section_id===parent)
+					if(typeof unique_parent==='undefined'){
 						ar_parent.push(mint_parent)
 					}
 					
@@ -1587,6 +1598,7 @@ var catalog =  {
 			return true
 		})
 	},//end draw_rows
+
 
 
 	get_children : function(ar_rows, parent, parent_node){
@@ -1657,5 +1669,3 @@ var catalog =  {
 
 
 }//end catalog
-
-

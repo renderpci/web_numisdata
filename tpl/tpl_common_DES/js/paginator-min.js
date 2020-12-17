@@ -1,2 +1,0 @@
-"use strict";var paginator={build_page_nodes:function(e,t,a){var r=[];a>t&&r.push({label:tstring.prev||"Prev",offset_value:0,type:"navigator"});for(var l=ceil(e/t),o=0;o<l;o++)0!==o&&o!==l&&r.push({label:o,offset_value:o*t,type:"page"});return a<e-t&&r.push({label:tstring.next||"Next",offset_value:a+t,type:"navigator"}),!0===SHOW_DEBUG&&console.log("ar_nodes:",r),r}};
-//# sourceMappingURL=paginator-min.js.map

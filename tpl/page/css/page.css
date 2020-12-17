@@ -1,3 +1,72 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
+/**
+* FORM
+* Common forms css across all site.
+* Use the specific template to override or add specific features
+*/
+.form-group {
+  position: relative;
+}
+.search_operators_info {
+  position: absolute;
+  top: 1.5em;
+  right: 0;
+  z-index: 2;
+  background-image: url('../../assets/images/icon_info2.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.search_operators_info:active {
+  opacity: 0.5;
+}
+.search_operators_info:hover {
+  opacity: 1;
+}
+.full_text_search_operators_info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  background-color: white;
+  color: #3f3f3f;
+  outline: 1px solid #eeeeee;
+  background-color: #fafafa;
+  font-size: 0.75em;
+  box-shadow: 4px 3px 7px #d3d3d3;
+  position: absolute;
+  z-index: 9;
+  width: auto;
+}
+.full_text_search_operators_info > * {
+  padding: 0.25em;
+  padding-left: 0.85em;
+  padding-right: 0.85em;
+}
+.full_text_search_operators_info > .op {
+  text-align: center;
+}
+.full_text_search_operators_info > :nth-of-type(1),
+.full_text_search_operators_info > :nth-of-type(2) {
+  background-color: #3f3f3f;
+  color: white;
+}
 .pagination {
   display: flex;
   flex-wrap: wrap;

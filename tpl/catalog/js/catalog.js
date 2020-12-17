@@ -225,37 +225,7 @@ var catalog =  {
 
 
 	/**
-	* CREATE_FORM_ITEM
-	*/
-		// create_form_item : function(options) {
-
-		// 	const self = this
-
-		// 	// form_item. create new instance of form_item
-		// 		const form_item = forms.build_form_item(options)
-
-		// 	// node
-		// 		forms.build_form_node(form_item, options.parent)
-			
-		// 	// autocomplete activate			
-		// 		// self.activate_autocomplete(form_item.node_input)
-
-		// 	// callback
-		// 		if (options.callback) {
-		// 			options.callback(form_item.node_input)
-		// 		}
-			
-		// 	// store current instance
-		// 		self.form_items[options.id] = form_item
-
-
-		// 	return form_item
-		// },//end create_form_item
-
-
-
-	/**
-	* render_FORM
+	* RENDER_FORM
 	*/
 	render_form : function() {
 
@@ -274,7 +244,6 @@ var catalog =  {
 		
 
 		// global_search
-			// self.create_form_item({
 			const global_search = self.form.item_factory({
 				id 			: "global_search",
 				name 		: "global_search",
@@ -1061,10 +1030,10 @@ var catalog =  {
 							limit		: 30,
 							order		: "name ASC" // "term ASC"
 						})
-						.then((api_response) => { // return results in standard format (label, value)			
+						.then((api_response) => { // return results in standard format (label, value)
 								
-							const ar_result = []
-							const len  		= api_response.result.length
+							const ar_result	= []
+							const len		= api_response.result.length
 							for (let i = 0; i < len; i++) {
 								
 								const item = api_response.result[i]
@@ -1072,7 +1041,7 @@ var catalog =  {
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
 									: [item.name]
-																
+								
 								for (let j = 0; j < current_ar_value.length; j++) {
 								
 									const item_name = current_ar_value[j]
@@ -1081,19 +1050,19 @@ var catalog =  {
 									const found = ar_result.find(el => el.value===item_name)
 									if (!found) {
 										ar_result.push({
-											label : item_name, // item_name,
-											value : item_name // item.name
+											label	: item_name, // item_name,
+											value	: item_name // item.name
 										})
 									}
-								}																
+								}
 							}
 
 							// parse result
 								function parse_result(ar_result, term) {
 									
 									return ar_result.map(function(item){
-										item.label = item.label.replace(/<br>/g," ")
-										item.label = page.parse_legend_svg(item.label)
+										item.label	= item.label.replace(/<br>/g," ")
+										item.label	= page.parse_legend_svg(item.label)
 										return item
 									})
 									// const ar_final = []
@@ -1202,9 +1171,9 @@ var catalog =  {
 		.focus(function() {
 		    $(this).autocomplete('search', null)
 		})
-		.blur(function() {
-		    //$(element).autocomplete('close');
-		})
+		// .blur(function() {
+		//     //$(element).autocomplete('close');
+		// })
 
 
 		return true
@@ -1235,7 +1204,7 @@ var catalog =  {
 				if (form_item.is_term===true) ar_is_term.push(form_item)
 			}	
 
-		const ar_query_elements = []	
+		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
 
 			// console.log("form_item:",form_item);
@@ -1247,7 +1216,7 @@ var catalog =  {
 				  group[group_op] = []
 
 			// q value
-				if (form_item.q.length>0) {					
+				if (form_item.q.length>0) {
 
 					const c_group_op = 'AND'
 					const c_group = {}
@@ -1372,8 +1341,8 @@ var catalog =  {
 				return false;
 			}
 
-		// loading set css			
-			container_rows_list.classList.add("loading")			
+		// loading set css
+			container_rows_list.classList.add("loading")
 
 		// scrool to head result
 			if (div_result) {
@@ -1427,7 +1396,7 @@ var catalog =  {
 							// 		if (div_result) {
 							// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 							// 		}
-							// 	}							
+							// 	}
 						})
 					}, self.draw_delay) // self.draw_delay
 				
@@ -1448,14 +1417,14 @@ var catalog =  {
 		const self = this
 
 		// sort vars
-			const filter		= options.filter || null
-			const ar_fields 	= options.ar_fields || ["*"]
-			const order 		= options.order || "norder ASC"
-			const limit 		= options.limit != undefined
+			const filter			= options.filter || null
+			const ar_fields			= options.ar_fields || ["*"]
+			const order				= options.order || "norder ASC"
+			const lang				= page_globals.WEB_CURRENT_LANG_CODE
+			const process_result	= options.process_result || null
+			const limit				= options.limit != undefined
 				? options.limit
-				: 30
-			const lang 			= page_globals.WEB_CURRENT_LANG_CODE
-			const process_result= options.process_result || null
+				: 30			
 
 		// parse_sql_filter
 			const group = []
@@ -1578,12 +1547,12 @@ var catalog =  {
 					const parent = JSON.parse(ar_mints[i].parent)[0]
 					const mint_parent 	= ar_rows.find(item => item.section_id===parent)
 					if(!mint_parent){
-							console.error("mint don't have public parent:",ar_mints[i]);
+						console.error("mint don't have public parent:",ar_mints[i]);
 						continue
 					}
 					// check if the parent is inside the ar_aprents, if not push inside else nothing
-					const unique_parent 	= ar_parent.find(item => item.section_id===parent)
-					if(typeof unique_parent === 'undefined'){
+					const unique_parent = ar_parent.find(item => item.section_id===parent)
+					if(typeof unique_parent==='undefined'){
 						ar_parent.push(mint_parent)
 					}
 					
@@ -1629,6 +1598,7 @@ var catalog =  {
 			return true
 		})
 	},//end draw_rows
+
 
 
 	get_children : function(ar_rows, parent, parent_node){
@@ -1699,5 +1669,3 @@ var catalog =  {
 
 
 }//end catalog
-
-

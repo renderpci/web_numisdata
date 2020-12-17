@@ -28,7 +28,7 @@ var mint =  {
 				section_id : section_id
 			})
 			.then(function(response){
-				console.log("set_up get_row_data response:",response);
+				console.log("--> set_up get_row_data API response:",response.result[1]);
 				
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -48,11 +48,18 @@ var mint =  {
 					})
 
 				// types draw
-					const types = response.result.find( el => el.id==='types')
-					self.draw_types({
-						target	: document.getElementById('types'),
-						ar_rows	: types.result
-					})	
+					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
+					if (mint_catalog.result) {
+						self.get_types_data({
+							section_id : mint_catalog.result[0].section_id
+						})
+						.then(function(result){
+							self.draw_types({
+								target	: document.getElementById('types'),
+								ar_rows	: result
+							})
+						})
+					}
 			})		
 		}
 
@@ -87,7 +94,7 @@ var mint =  {
 		// combined call
 			const ar_calls = []
 			
-		// type call				
+		// mints call				
 			ar_calls.push({
 				id		: "mint",
 				options	: {
@@ -114,25 +121,39 @@ var mint =  {
 				}
 			})
 
-		// catalog call
+		// mint in catalog call
 			ar_calls.push({
-				id		: "types",
+				id		: "mint_catalog",
 				options	: {
 					dedalo_get				: 'records',
-					table					: 'types',
+					table					: 'catalog',
 					db_name					: page_globals.WEB_DB,
 					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['*'],
+					ar_fields				: ['section_id','term'],
 					count					: false,
-					limit					: 2000,
-					sql_filter				: "mint_data LIKE '[\"" + parseInt(section_id) + "\"]'",
-					resolve_portals_custom	: {
-						"parents" : "catalog"
-					}
+					limit					: 0,
+					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"					
 				}
 			})
 
-			
+		// catalog call
+			// ar_calls.push({
+			// 	id		: "types",
+			// 	options	: {
+			// 		dedalo_get				: 'records',
+			// 		table					: 'types',
+			// 		db_name					: page_globals.WEB_DB,
+			// 		lang					: page_globals.WEB_CURRENT_LANG_CODE,
+			// 		ar_fields				: ['*'],
+			// 		count					: false,
+			// 		limit					: 2000,
+			// 		sql_filter				: "mint_data LIKE '[\"" + parseInt(section_id) + "\"]'",
+			// 		resolve_portals_custom	: {
+			// 			"parents" : "catalog"
+			// 		}
+			// 	}
+			// })
+		
 		// request
 			const js_promise = data_manager.request({
 				body : {
@@ -144,6 +165,60 @@ var mint =  {
 
 		return js_promise
 	},//end get_row_data
+
+
+
+	/**
+	* GET_types_DATA
+	* 
+	*/
+	get_types_data : function(options) {
+
+		const self = this
+
+		const section_id = options.section_id
+
+		return new Promise(function(resolve){
+
+			// request
+				const js_promise = data_manager.request({
+					body : {
+						dedalo_get	: 'records',
+						table		: 'catalog',
+						db_name		: page_globals.WEB_DB,
+						lang		: page_globals.WEB_CURRENT_LANG_CODE,
+						ar_fields	: ['term_data','ref_type_denomination','term','parent','parents','children'],
+						count		: false,
+						limit		: 0,
+						order		: 'norder ASC',
+						sql_filter	: "term_table='types' AND parents LIKE '%\"" + parseInt(section_id) + "\"%'"
+					}
+				})
+				.then(function(response){
+					
+					const types_data = []
+					if (response.result && response.result.length>0) {
+						for (let i = 0; i < response.result.length; i++) {
+							
+							const row = {
+								catalog			: 'MIB',
+								section_id		: response.result[i].term_data.replace(/[\["\]]/g, ''),
+								denomination	: response.result[i].ref_type_denomination,
+								number			: response.result[i].term,
+								parent 			: JSON.parse(response.result[i].parent)[0],
+								parents 		: JSON.parse(response.result[i].parents),
+								children 		: JSON.parse(response.result[i].children)
+							}							
+
+							types_data.push(row)
+						}
+					}
+					console.log("--> get_types_data types_data:",types_data);					
+
+					resolve(types_data)
+				})
+		})
+	},//end get_types_data
 
 
 

@@ -1,3 +1,18 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
 /*
 	#wrapper {
 
@@ -160,7 +175,7 @@ section.result .spinner_svg {
     flex: 1 1 50%;
   }
 }
-.form-inline .form-row .field_global_search {
+.form-inline .form-row .form-group.global_search {
   flex: 0 1 100%;
 }
 .form-inline .form-row .form-group.field_operators {

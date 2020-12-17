@@ -1,0 +1,61 @@
+/**
+* FORM
+* Common forms css across all site.
+* Use the specific template to override or add specific features
+*/
+
+// Variables
+	@assets_path: "../../assets";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+
+	.form-group {
+		position: relative;
+	}
+
+
+// search_operators_info
+	.search_operators_info {
+		// width: 1em;
+		// height: 1em;
+		position: absolute;
+		top: 1.5em;
+		right: 0;
+		z-index: 2;			
+		background-image: url('@{assets_path}/images/icon_info2.svg');
+		
+		.button_icon_simple;
+	}
+
+	.full_text_search_operators_info {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		background-color: white;
+		color: #3f3f3f;
+		outline: 1px solid #eeeeee;
+		background-color: #fafafa;
+		font-size: 0.75em;
+		box-shadow: 4px 3px 7px #d3d3d3;
+		position: absolute;
+		z-index: 9;
+		width: auto;
+
+		>* {
+			padding: 0.25em;
+			padding-left: 0.85em;
+			padding-right: 0.85em;
+		}
+
+		>.op {
+			text-align: center;
+		}
+
+		>:nth-of-type(1), >:nth-of-type(2) {
+			background-color: #3f3f3f;
+			color: white;
+		}
+	}

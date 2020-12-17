@@ -1009,6 +1009,9 @@ p img.svg {
   margin-top: 1em;
   border-bottom: solid 1px #a33e1f;
 }
+#main .inner .info_line.separator .big_label {
+  margin-top: 1.5em;
+}
 #main .inner .info_line.hallazgos_monetarios {
   margin-top: 1em;
   border-bottom: solid 1px #a33e1f;
@@ -1026,6 +1029,49 @@ p img.svg {
   #main .inner .sorted_coin {
     width: 100%;
   }
+}
+#main .inner .result .line-tittle-wrap {
+  margin: 1em auto;
+}
+#main .inner .result .value-term {
+  display: inline;
+  font-weight: normal;
+  color: #b7996d;
+  font-size: 150%;
+  margin: 1em auto;
+}
+#main .inner .result .line-tittle {
+  display: inline;
+  font-size: 150%;
+  margin-left: 0.5em;
+}
+#main .inner .result .info_text_block {
+  padding: 1em;
+  overflow: hidden;
+  max-height: 10000px;
+  transition: max-height 1s ease-in-out;
+}
+#main .inner .result .text-block-separator {
+  width: 80%;
+  height: 2em;
+  margin: 0 auto;
+  margin-top: 1em;
+  position: relative;
+  border-top: 1px solid #aaaaaa;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #aaaaaa 25%, #aaaaaa 75%, rgba(255, 255, 255, 0) 100%);
+  cursor: pointer;
+}
+#main .inner .result .separator-arrow {
+  background: url('../../assets/images/arrow.svg') no-repeat bottom center;
+  background-size: contain;
+  transform: rotate(90deg);
+  width: 20%;
+  height: 40px;
+  margin: 0 auto;
+}
+#main .inner .result .contracted-block {
+  max-height: 200px;
 }
 #main .golden-separator {
   width: 100%;

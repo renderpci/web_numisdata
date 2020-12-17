@@ -193,29 +193,43 @@ var mint =  {
 		// name
 			if (row_object.name && row_object.name.length>0) {
 
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.name || "Name",
+				const lineTittleWrap = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "line-tittle-wrap",
 					parent 			: line
 				})
+				
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "value-term",
+					text_content 	: tstring.name || "Name:",
+					parent 			: lineTittleWrap
+				})
+
 
 				const name = row_object.name
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
+					element_type 	: "div",
+					class_name 		: "line-tittle",
 					text_content 	: name,
-					parent 			: line
+					parent 			: lineTittleWrap
 				})
 			}
 
 		// place
 			if (row_object.place && row_object.place.length>0) {
 
-				common.create_dom_element({
-					element_type 	: "label",					
-					text_content 	: tstring.place || "Place",
+				const lineSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_line separator",
 					parent 			: line
+				})
+
+				common.create_dom_element({
+					element_type 	: "label",		
+					class_name 		: "big_label",			
+					text_content 	: tstring.place || "Place",
+					parent 			: lineSeparator
 				})
 
 				const place = row_object.place
@@ -230,46 +244,59 @@ var mint =  {
 		// history
 			if (row_object.history && row_object.history.length>0) {
 
+				const lineSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_line separator",
+					parent 			: line
+				})
+
 				common.create_dom_element({
-					element_type	: "label",					
+					element_type	: "label",	
+					class_name 		: "big_label",		
 					text_content	: tstring.history || "History",
-					parent			: line
+					parent			: lineSeparator
 				})
 
 				const history = row_object.history
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_value",
-					inner_html		: history,
-					parent			: line
-				})
+
+				createTextBlock(history,line);
 			}
 
 		// numismatic_comments
 			if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
+				const lineSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_line separator",
+					parent 			: line
+				})
+
 				common.create_dom_element({
-					element_type	: "label",					
+					element_type	: "label",	
+					class_name 		: "big_label",				
 					text_content	: tstring.numismatic_comments || "Numismatic comments",
-					parent			: line
+					parent			: lineSeparator
 				})
 
 				const numismatic_comments = row_object.numismatic_comments
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_value",
-					inner_html		: numismatic_comments,
-					parent			: line
-				})
+
+				createTextBlock(numismatic_comments,line);
 			}
 
 		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
 
+				const lineSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_line separator",
+					parent 			: line
+				})
+
 				common.create_dom_element({
-					element_type	: "label",					
+					element_type	: "label",
+					class_name 		: "big_label",				
 					text_content	: tstring.bibliographic_references || "Bibliographic references",
-					parent			: line
+					parent			: lineSeparator
 				})
 
 				for (var i = 0; i < row_object.bibliography_data.length; i++) {
@@ -331,6 +358,126 @@ var mint =  {
 								parent 			: line
 							})
 						}
+
+
+					// authors
+						const authors = common.clean_gaps(bibliographic_reference.ref_publications_authors, " | ", ", ")
+						if (authors.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.authors || "Authors",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: authors,
+								parent 			: line
+							})
+						}
+
+					// authors
+						const date = common.clean_gaps(bibliographic_reference.ref_publications_date, " | ", ", ");
+						if (date.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.date || "Date",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: date,
+								parent 			: line
+							})
+						}
+
+					// editor
+						const editor = common.clean_gaps(bibliographic_reference.ref_publications_editor, " | ", ", ");
+						if (editor.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.editor || "Editor",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: editor,
+								parent 			: line
+							})
+						}
+
+					// magazine
+						const magazine = common.clean_gaps(bibliographic_reference.ref_publications_magazine, " | ", ", ");
+						if (editor.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.magazine || "Magazine",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: magazine,
+								parent 			: line
+							})
+						}
+
+					//place
+						const place = common.clean_gaps(bibliographic_reference.ref_publications_place, " | ", ", ");
+						if (place.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.place || "Place",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: place,
+								parent 			: line
+							})
+						}
+
+					//title
+						const title = common.clean_gaps(bibliographic_reference.ref_publications_title, " | ", ", ");
+						if (title.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.title || "Place",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: title,
+								parent 			: line
+							})
+						}
+
+					//url
+						const url = common.clean_gaps(bibliographic_reference.ref_publications_url, " | ", ", ");
+						if (url.length>0) {
+							common.create_dom_element({
+								element_type 	: "label",								
+								text_content 	: tstring.url || "Url",
+								parent 			: line
+							})
+							
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value",
+								text_content	: url,
+								parent 			: line
+							})
+						}
 				}				
 			}
 
@@ -338,11 +485,46 @@ var mint =  {
 		// container final add
 		container.appendChild(fragment)
 
-
 		return container
+
+
+		//Create an expandable block when text length is over 500
+		function createTextBlock (text,nodeParent) {
+			const textBlock = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_text_block",
+				inner_html		: text,
+				parent			: nodeParent
+			})
+
+			if (text.length>500){
+				textBlock.classList.add("contracted-block");
+
+				const textBlockSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "text-block-separator",
+					parent 			: nodeParent
+				})
+
+				const separatorArrow = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "separator-arrow",
+					parent 			: textBlockSeparator
+				})
+
+				textBlockSeparator.addEventListener("click",function(){
+					if (textBlock.classList.contains("contracted-block")){
+						textBlock.classList.remove ("contracted-block");
+						separatorArrow.style.transform = "rotate(-90deg)";
+					} else {
+						textBlock.classList.add("contracted-block");
+						separatorArrow.style.transform = "rotate(90deg)";
+					}
+				})
+			}
+		}	
+
 	},//end draw_row
-
-
 
 	/**
 	* DRAW_TYPES
@@ -415,12 +597,12 @@ var mint =  {
 					parent			: row_line
 				})
 
-			// material
-				const material = common.clean_gaps(row_object.material, " | ", ", ")
-				if (material.length>0) {
-					const material_info = common.create_dom_element({
+			// denomination
+				const denomination = common.clean_gaps(row_object.denomination, " | ", ", ")
+				if (denomination.length>0) {
+					const denomination_info = common.create_dom_element({
 						element_type	: "span",
-						text_content	: " ("+material+")",
+						text_content	: " ("+denomination+")",
 						parent			: row_line
 					})
 				}

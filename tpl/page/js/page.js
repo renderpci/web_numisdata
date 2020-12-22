@@ -527,49 +527,96 @@ var page = {
 		// console.log("------------> parse_catalog_data data:",data);
 		const self = this
 
-		// array case
-			if (Array.isArray(data)) {
-				const new_data = []
-				const data_length = data.length
-				for (let i = 0; i < data_length; i++) {
-					new_data.push( self.parse_catalog_data(data[i]) )
+		if (!Array.isArray(data)) {
+			data = [data]
+		}
+		
+		const new_data = []
+		const data_length = data.length
+		for (let i = 0; i < data_length; i++) {
+			
+			// const row = JSON.parse( JSON.stringify(data[i]) )
+			const row = data[i]
+			
+			// url
+			row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
+			row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)
+			
+			// url thumbs
+			row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
+				? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
+				: null
+			row.ref_coins_image_reverse_thumb = row.ref_coins_image_reverse
+				? row.ref_coins_image_reverse.replace('/1.5MB/', '/thumb/')
+				: null
+
+			// legends
+			row.ref_type_legend_obverse = row.ref_type_legend_obverse
+				? self.parse_legend_svg(row.ref_type_legend_obverse)
+				: null
+			row.ref_type_legend_reverse = row.ref_type_legend_reverse
+				? self.parse_legend_svg(row.ref_type_legend_reverse)
+				: null
+			// symbols
+			row.ref_type_symbol_obverse = row.ref_type_symbol_obverse
+				? self.parse_legend_svg(row.ref_type_symbol_obverse)
+				: null
+			row.ref_type_symbol_reverse = row.ref_type_symbol_reverse
+				? self.parse_legend_svg(row.ref_type_symbol_reverse)
+				: null
+
+			row.term_data		= JSON.parse(row.term_data)
+			row.term_section_id	= row.term_data ? row.term_data[0] : null
+			row.children		= JSON.parse(row.children)
+			row.parent			= JSON.parse(row.parent)
+
+			row.ref_type_averages_diameter = row.ref_type_averages_diameter
+				? parseFloat( row.ref_type_averages_diameter.replace(',', '.') )
+				: null
+
+			row.ref_type_averages_weight = row.ref_type_averages_weight
+				? parseFloat( row.ref_type_averages_weight.replace(',', '.') )
+				: null
+
+			
+			new_data.push(row)
+		}
+
+
+		// add calculated measures values to types parents
+			for (let i = 0; i < data_length; i++) {
+				
+				const row = new_data[i]
+
+				if (row.term_table==='types' && row.children) {
+					const ar_mesures_diameter	= []
+					const ar_mesures_weight		= []
+					for (let i = 0; i < row.children.length; i++) {
+						
+						const current_child	= row.children[i]
+						const child_row		= data.find(el => el.section_id==current_child)
+
+						if(child_row && child_row.ref_type_averages_weight){
+							ar_mesures_weight.push(child_row.ref_type_averages_weight)
+						}
+						if(child_row && child_row.ref_type_averages_diameter){
+							ar_mesures_diameter.push(child_row.ref_type_averages_diameter)
+						}				
+					}
+					const media_weight		= ar_mesures_weight.reduce((a,b) => a + b, 0)  / ar_mesures_weight.length
+					const media_diameter	= ar_mesures_diameter.reduce((a,b) => a + b, 0) / ar_mesures_diameter.length
+			
+					row.ref_type_averages_weight    = media_weight
+					row.ref_type_averages_diameter	= media_diameter
+
+					row.ref_type_total_weight_items		= ar_mesures_weight.length
+					row.ref_type_total_diameter_items	= ar_mesures_diameter.length
 				}
-				return new_data
 			}
 
-		const row = data
+		// console.log("parse_catalog_data new_data:",new_data);
 
-		// url
-		row.ref_coins_image_obverse = common.local_to_remote_path(data.ref_coins_image_obverse)
-		row.ref_coins_image_reverse = common.local_to_remote_path(data.ref_coins_image_reverse)
-		// url thumbs
-		row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
-			? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
-			: null
-		row.ref_coins_image_reverse_thumb = row.ref_coins_image_reverse
-			? row.ref_coins_image_reverse.replace('/1.5MB/', '/thumb/')
-			: null
-
-		// legends
-		row.ref_type_legend_obverse = row.ref_type_legend_obverse
-			? self.parse_legend_svg(row.ref_type_legend_obverse)
-			: null
-		row.ref_type_legend_reverse = row.ref_type_legend_reverse
-			? self.parse_legend_svg(row.ref_type_legend_reverse)
-			: null
-		// symbols
-		row.ref_type_symbol_obverse = row.ref_type_symbol_obverse
-			? self.parse_legend_svg(row.ref_type_symbol_obverse)
-			: null
-		row.ref_type_symbol_reverse = row.ref_type_symbol_reverse
-			? self.parse_legend_svg(row.ref_type_symbol_reverse)
-			: null
-
-		row.term_data		= JSON.parse(row.term_data)
-		row.term_section_id	= row.term_data ? row.term_data[0] : null
-
-
-		return row
+		return new_data
 	},//end parse_catalog_data
 
 

@@ -192,6 +192,13 @@ section.result .spinner_svg {
   text-align: right;
   margin-right: -2.5em;
 }
+.term {
+  font-weight: 500;
+}
+.term .keyword {
+  font-weight: 300;
+  margin: 0;
+}
 span {
   margin-right: 1em;
 }
@@ -207,9 +214,10 @@ span {
 .mint {
   display: inline-block;
   font-size: 1.4em;
-  font-weight: bold;
+  font-weight: 600;
   font-variant-caps: small-caps;
   cursor: pointer;
+  letter-spacing: 0.05em;
 }
 .link_mint {
   margin-left: 1em;

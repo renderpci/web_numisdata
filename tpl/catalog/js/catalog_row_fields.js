@@ -20,10 +20,11 @@ var catalog_row_fields = {
 		const term_table = item.term_table
 		const fragment	 = new DocumentFragment()
 
-		function load_hires(e) {
+		// load_hires. When thumb is loaded, this event is triggered
+		function load_hires() {
 			
 			this.removeEventListener("load", load_hires, false)
-			
+				
 			const image = this
 			const hires = this.hires
 			setTimeout(function(){
@@ -35,20 +36,25 @@ var catalog_row_fields = {
 		switch(term_table){
 
 			case "types":
-				if (item.children) {
+				if (item.children && item.children.length >0) {
 					
-					// term
+					// term_line
+						const term_line = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "term_line",
+							parent			: fragment
+						})
 
-					const term_line = common.create_dom_element({
-							  element_type 	: "div",
-							  class_name 	: "term_line",
-							  parent 		: fragment
-						})		
-
+					// type info
 						self.node_factory(item, "term", term_line, "span", null)
-					
-					self.node_factory(item, "ref_type_material", term_line, null, null)
-					self.node_factory(item, "ref_type_denomination", term_line, null, null)
+						self.node_factory(item, "ref_type_material", term_line, null, null)
+						self.node_factory(item, "ref_type_denomination", term_line, null, null)
+
+					// weight and diameter sizes info
+						self.node_factory(item, "ref_type_averages_weight", term_line, null, null)
+						self.node_factory(item, "ref_type_total_weight_items", term_line, null, null)
+						self.node_factory(item, "ref_type_averages_diameter", term_line, null, null)
+						self.node_factory(item, "ref_type_total_diameter_items", term_line, null, null)
 
 				}else{
 					// i.e.
@@ -97,25 +103,25 @@ var catalog_row_fields = {
 						// term_section_tipo: "["numisdata3"]"
 						// term_table: "types"
 
-						const type_container = common.create_dom_element({
-							  element_type 	: "div",
-							  class_name 	: "type_container",
-							  parent 		: fragment
-						})	
+					const type_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "type_container",
+						parent			: fragment
+					})	
 
-						const type_info = common.create_dom_element({
-							  element_type 	: "div",
-							  class_name 	: "type_info",
-							  parent 		: type_container
-						})	
+					const type_info = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "type_info",
+						parent			: type_container
+					})	
 
 
 					// term						
 						self.node_factory(item, "term", type_info, "span", null)
 
 					// conditionals
-						const my_parent 	 = item.parent ? JSON.parse(item.parent)[0] : null
-						const parent_element = self.ar_rows.find(el => el.section_id===my_parent)
+						const my_parent 	 = item.parent ? item.parent[0] : null
+						const parent_element = self.ar_rows.find(el => el.section_id==my_parent)						
 						if (parent_element && parent_element.term_table!=="types") {							
 							self.node_factory(item, "ref_type_material", type_info, null, null)
 							self.node_factory(item, "ref_type_denomination", type_info, null, null)
@@ -164,8 +170,8 @@ var catalog_row_fields = {
 					
 					// images
 						// convert the diameter to float.
-						const diameter = item['ref_type_averages_diameter'] !==null
-							? parseFloat(item['ref_type_averages_diameter'].replace(',', '.'))
+						const diameter = item.ref_type_averages_diameter
+							? Math.round(item.ref_type_averages_diameter,0)
 							: 15
 
 						const coins_images_container = common.create_dom_element({
@@ -245,22 +251,22 @@ var catalog_row_fields = {
 
 			case "mints":
 				common.create_dom_element({
-						  element_type 	: "div",
-						  class_name 	: "mint",
-						  text_content 	: item.term, // + " [" + term_table + "]",
-						  parent 		: fragment
-					})
+					  element_type 	: "div",
+					  class_name 	: "mint",
+					  text_content 	: item.term, // + " [" + term_table + "]",
+					  parent 		: fragment
+				})
 
-					if (item.term_section_id) {
-						const link = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "link link_mint",
-							href			: page_globals.__WEB_ROOT_WEB__ + '/mint/' + item.term_section_id,
-							target			: '_blank',
-							parent			: fragment
-						})						
-					}
-					break;
+				if (item.term_section_id) {
+					const link = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "link link_mint",
+						href			: page_globals.__WEB_ROOT_WEB__ + '/mint/' + item.term_section_id,
+						target			: '_blank',
+						parent			: fragment
+					})						
+				}
+				break;
 
 			default:
 				common.create_dom_element({
@@ -290,7 +296,8 @@ var catalog_row_fields = {
 	*/
 	node_factory : function(item, name, parent, nodetype, class_name) {
 	// item, "term", type_info, "span", null
-		if (item[name] && item[name].length>0) {
+		
+		if (item[name]) { //  && item[name].length>0
 
 			const current_node_type = nodetype || "span"
 			const current_class_name= class_name || name
@@ -301,54 +308,64 @@ var catalog_row_fields = {
 				case "ref_type_total_weight_items":
 				case "ref_type_total_diameter_items":
 					current_value = '('+item[name]+')'
-
-				break;
+					break;
 
 				case "ref_type_averages_weight":
-					current_value = item[name]+' g'
-
-				break;
+					const weight	= item[name].toFixed(2).replace(/\.?0+$/, "");
+					current_value	= weight.replace('.',',') + ' g'
+					break;
 
 				case "ref_type_averages_diameter":
-					current_value = item[name]+' mm'
-
-				break;
-
+					const diameter	= item[name].toFixed(2).replace(/\.?0+$/, "");
+					current_value	= diameter.replace('.',',') + ' mm'
+					break;
 
 				case "ref_type_equivalents":
-					current_value = item[name].replace(/<br>/g,' - ')
-				break;
+					current_value = item[name].replace(/ \| /g,' ')
+					current_value = current_value.replace(/<br>/g,' | ')
+					break;
 
-			case "term":
-				if (item.term_section_id && !item.children) {
-					const a_term = common.create_dom_element({
-						element_type	: "a",
-						class_name		: "a_term",
-						href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
-						target			: "_blank",
-						inner_html		: "MIB " + item[name]
-					})
-					
-					current_value = a_term.outerHTML
-				}else{
-					current_value = item[name]
+				case "term":
+					if (item.term_section_id && !item.children) {
+
+						const ar		= item[name].split(", ")
+						const c_name	= ar[0]
+						const keyword	= (typeof ar[1]==="undefined")
+							? ''
+							: (function(){
+								const clean = []
+								for (let i = 1; i < ar.length; i++) {
+									clean.push(ar[i])
+								}
+								return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
+							})()
+
+						const a_term = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "a_term",
+							href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
+							target			: "_blank",
+							inner_html		: "MIB " + c_name + keyword
+						})						
+						current_value = a_term.outerHTML
+					}else{
+						current_value = "MIB " + item[name]
 					}
-						break;
-				
+					break;
 
 				default:
-				current_value = item[name]
-
+					current_value = item[name]
 			}
-
 			
 			
 			const node = common.create_dom_element({
-				  element_type 	: current_node_type,
-				  class_name 	: current_class_name,
-				  inner_html 	: current_value,
-				  parent 		: parent
+				element_type	: current_node_type,
+				class_name		: current_class_name,
+				inner_html		: current_value,
+				parent			: parent
 			})
+			node.title = item.section_id
+
 
 			return true
 		}		

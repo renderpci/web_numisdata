@@ -1544,10 +1544,14 @@ var catalog =  {
 
 				const ar_parent = []
 				for (let i = 0; i < ar_mints.length; i++) {
-					const parent = JSON.parse(ar_mints[i].parent)[0]
-					const mint_parent 	= ar_rows.find(item => item.section_id===parent)
+					const parent = typeof ar_mints[i].parent[0]!=="undefined"
+						? ar_mints[i].parent[0]
+						: null
+					const mint_parent = parent
+						? ar_rows.find(item => item.section_id===parent)
+						: null
 					if(!mint_parent){
-						console.error("mint don't have public parent:",ar_mints[i]);
+						console.warn("mint don't have public parent:",ar_mints[i]);
 						continue
 					}
 					// check if the parent is inside the ar_aprents, if not push inside else nothing
@@ -1605,7 +1609,7 @@ var catalog =  {
 
 		const self = this
 
-		const children =  JSON.parse(parent.children)
+		const children = parent.children
 
 		// wrapper
 			const catalog_row_wrapper = common.create_dom_element({
@@ -1627,7 +1631,7 @@ var catalog =  {
 
 		const row_object 	= ar_rows.find(item => item.section_id===section_id)
 		if (row_object) {
-			const row_node 	= self.render_rows(row_object)
+			const row_node 	= self.render_rows(row_object, ar_rows)
 			parent_node.appendChild( row_node )
 
 			if(row_object.children){
@@ -1650,7 +1654,9 @@ var catalog =  {
 
 
 
-	render_rows : function(row_object){
+	render_rows : function(row_object, ar_rows){
+
+		const self = this
 
 		// Build dom row
 		// item row_object
@@ -1660,6 +1666,9 @@ var catalog =  {
 				// console.log("i row_object:", i, row_object);
 			}
 
+		// fix and set rows to catalog_row_fields
+			catalog_row_fields.ar_rows = ar_rows
+		
 		// catalog_row_fields set
 			const node = catalog_row_fields.draw_item(row_object)
 

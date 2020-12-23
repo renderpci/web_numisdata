@@ -518,8 +518,12 @@ var row_fields = {
 			name = "averages"
 			if (item["averages_weight"] && item["averages_weight"].length>0) {
 				
-				const weight_text	= item["averages_weight"] + " g (" + item["total_weight_items"] + ");"				
-				const diameter_text	= item["averages_diameter"] + " mm (" + item["total_diameter_items"] + ")"
+				const weight_text	= item["averages_weight"]
+					? item["averages_weight"] + " g (" + item["total_weight_items"] + ");"
+					: ''			
+				const diameter_text	= item["averages_diameter"]
+					? item["averages_diameter"] + " mm (" + item["total_diameter_items"] + ")"
+					: ''
 
 				const node = common.create_dom_element({
 					element_type 	: "span",

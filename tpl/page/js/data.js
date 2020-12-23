@@ -232,7 +232,9 @@ page.parse_catalog_data = function(data) {
 			? parseFloat( row.ref_type_total_weight_items.replace(',', '.') )
 			: null
 
-		row.ref_type_material = page.trim_char(row.ref_type_material, '|')
+		row.ref_type_material = row.ref_type_material
+			? page.remove_gaps( page.trim_char(row.ref_type_material, '|'), ' | ')
+			: null
 
 
 		new_data.push(row)

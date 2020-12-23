@@ -35,16 +35,16 @@
 
 		
 		// factory libs
-		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/list_factory'.JS_SUFFIX.'.js';
-		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/form_factory'.JS_SUFFIX.'.js';	
-		page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/map_factory'.JS_SUFFIX.'.js';
-		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/tree_factory'.JS_SUFFIX.'.js';
-		// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/timeline_factory'.JS_SUFFIX.'.js';
+			// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/list_factory'.JS_SUFFIX.'.js';
+			// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/form_factory'.JS_SUFFIX.'.js';	
+			page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/map_factory'.JS_SUFFIX.'.js';
+			// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/tree_factory'.JS_SUFFIX.'.js';
+			// page::$js_ar_url[] = __WEB_ROOT_WEB__  . '/' . WEB_APP_DIR . '/factory/timeline_factory'.JS_SUFFIX.'.js';
 		
-		
-		page::$js_ar_url[] = __WEB_ROOT_WEB__  	  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';
-		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app-min.js';
+		// app js
+			// page::$js_ar_url[] = __WEB_ROOT_WEB__  	  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';
+			// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
+			page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app-min.js';
 
 
 	# footer_html

@@ -1,3 +1,6 @@
+/*global tstring, page_globals, SHOW_DEBUG, catalog_row_fields, common, page*/
+/*eslint no-undef: "error"*/
+
 "use strict";
 
 
@@ -15,46 +18,35 @@ var mint_rows = {
 		const row_object = this.row_object
 
 		// line
-		const line = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "info_line name"
-		})
-
-		// section_id
-		if (dedalo_logged===true) {
-
-			const link = common.create_dom_element({
-				element_type 	: "a",
-				class_name 		: "section_id go_to_dedalo",
-				text_content 	: row_object.section_id,
-				href 			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
-				parent 			: line
+			const line = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_line name"
 			})
-			link.setAttribute('target', '_blank');
-		}
+
+		// Dédalo section_id
+			if (dedalo_logged===true) {
+				const link = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "section_id go_to_dedalo",
+					text_content	: row_object.section_id,
+					href			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
+					target			: '_blank',
+					parent			: line
+				})
+			}
 
 		// name
-		if (row_object.name && row_object.name.length>0) {
+			if (row_object.name && row_object.name.length>0) {
 
-			const name		= row_object.name
-			const link_mint	= common.create_dom_element({
-				element_type 	: "a",
-				class_name 		: "info_value",
-				text_content 	: name,
-				href 			: "./mint/" + row_object.section_id,
-				parent 			: line
-			})
-			link_mint.setAttribute('target', '_blank');
-
-		}else{
-
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_value",
-				text_content 	: "Undefined name",
-				parent 			: line
-			})
-		}
+				const name		= row_object.name
+				const link_mint	= common.create_dom_element({
+					element_type	: "a",
+					class_name		: "info_value",
+					text_content	: name,
+					href			: "./mint/" + row_object.section_id,
+					parent			: line
+				})
+			}
 
 
 		return line
@@ -167,14 +159,15 @@ var mint_rows = {
 
 				const pdf_item = ar_pdf_uri[i]
 
-				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "pdf",
-					title 			: pdf_item.title,
-					// text_content : pdf_item.title,
-					// href 			: pdf_item.iri,
-					parent 			: line
-				}).addEventListener("click",(e) => {
+				const pdf = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "pdf",
+					title			: pdf_item.title,
+					// text_content	: pdf_item.title,
+					// href			: pdf_item.iri,
+					parent			: line
+				})
+				pdf.addEventListener("click",(e) => {
 					window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 				})
 			}
@@ -187,14 +180,14 @@ var mint_rows = {
 
 	row_body : function() {
 
-		const row_object = this.row_object
-		const typology 		= this.get_typology()
+		const row_object	= this.row_object
+		const typology		= this.get_typology()
 
 
 		// line
 			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_line row_body" + " " + typology
+				element_type	: "div",
+				class_name		: "info_line row_body" + " " + typology
 			})
 
 

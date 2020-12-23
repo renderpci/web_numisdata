@@ -2,7 +2,7 @@
 
 
 
-var row_fields = {
+var biblio_row_fields = {
 
 
 
@@ -383,4 +383,4 @@ var row_fields = {
 
 
 
-}//end row_fields
+}//end biblio_row_fields

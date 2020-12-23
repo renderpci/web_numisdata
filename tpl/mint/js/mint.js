@@ -21,14 +21,13 @@ var mint =  {
 			const section_id = options.section_id
 
 		if (section_id) {
-			
 
 			// search by section_id
 			self.get_row_data({
 				section_id : section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result[1]);
+				console.log("--> set_up get_row_data API response:",response.result);
 				
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -48,19 +47,28 @@ var mint =  {
 					})
 
 				// types draw
-					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
-					if (mint_catalog.result) {
-						self.get_types_data({
-							section_id : mint_catalog.result[0].section_id
-						})
-						.then(function(result){
-							self.draw_types({
-								target	: document.getElementById('types'),
-								ar_rows	: result
-							})
-						})
+					// const mint_catalog = response.result.find( el => el.id==='mint_catalog')
+					// if (mint_catalog.result) {
+					// 	self.get_types_data({
+					// 		section_id : mint_catalog.result[0].section_id
+					// 	})
+					// 	.then(function(result){
+					// 		// console.log("--> get_types_data API response:",result);
+					// 		self.draw_types({
+					// 			target	: document.getElementById('types'),
+					// 			ar_rows	: result
+					// 		})
+					// 	})
+					// }
+					const catalog_response = response.result.find( el => el.id==='catalog')
+					if (catalog_response && catalog_response.result) {
+
+						const catalog_data = page.parse_catalog_data(catalog_response.result)
+						console.log("catalog_data:",catalog_data);
 					}
-			})		
+						
+
+			})				
 		}
 
 		
@@ -122,37 +130,39 @@ var mint =  {
 			})
 
 		// mint in catalog call
-			ar_calls.push({
-				id		: "mint_catalog",
-				options	: {
-					dedalo_get				: 'records',
-					table					: 'catalog',
-					db_name					: page_globals.WEB_DB,
-					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['section_id','term'],
-					count					: false,
-					limit					: 0,
-					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"					
-				}
-			})
-
-		// catalog call
 			// ar_calls.push({
-			// 	id		: "types",
+			// 	id		: "mint_catalog",
 			// 	options	: {
 			// 		dedalo_get				: 'records',
-			// 		table					: 'types',
+			// 		table					: 'catalog',
 			// 		db_name					: page_globals.WEB_DB,
 			// 		lang					: page_globals.WEB_CURRENT_LANG_CODE,
-			// 		ar_fields				: ['*'],
+			// 		ar_fields				: ['section_id','term'],
 			// 		count					: false,
-			// 		limit					: 2000,
-			// 		sql_filter				: "mint_data LIKE '[\"" + parseInt(section_id) + "\"]'",
-			// 		resolve_portals_custom	: {
-			// 			"parents" : "catalog"
-			// 		}
+			// 		limit					: 0,
+			// 		sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"					
 			// 	}
 			// })
+
+		// catalog call
+			ar_calls.push({
+				id		: "catalog",
+				options	: {
+					dedalo_get	: 'records',
+					table		: 'catalog',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields	: ['*'], //	['term_data','ref_type_denomination','term','parent','parents','children'],
+					count		: false,
+					limit		: 0,
+					order		: 'norder ASC',
+					sql_filter	: "term_data = '[\"" + section_id + "\"]'",
+					process_result	: {
+						fn 		: 'process_result::add_parents_and_children_recursive',
+						columns : [{name : "parents"}]
+					}
+				}
+			})
 		
 		// request
 			const js_promise = data_manager.request({
@@ -169,7 +179,7 @@ var mint =  {
 
 
 	/**
-	* GET_types_DATA
+	* GET_TYPES_DATA
 	* 
 	*/
 	get_types_data : function(options) {
@@ -374,7 +384,7 @@ var mint =  {
 					parent			: lineSeparator
 				})
 
-				for (var i = 0; i < row_object.bibliography_data.length; i++) {
+				for (let i = 0; i < row_object.bibliography_data.length; i++) {
 					
 					const bibliographic_reference = row_object.bibliography_data[i]
 					
@@ -600,6 +610,8 @@ var mint =  {
 		}	
 
 	},//end draw_row
+
+
 
 	/**
 	* DRAW_TYPES

@@ -13,7 +13,7 @@ var page = {
 
 	trigger_url : page_globals.__WEB_ROOT_WEB__ + "/web/trigger.web.php",
 
-	// maps common config 
+	// maps common config
 	maps_config : {
 		// source maps. Used on catalog and item maps
 		source_maps : [
@@ -23,7 +23,7 @@ var page = {
 				url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
 				options	: { maxZoom: 11 },
 				default	: true
-			},			
+			},
 			{
 				name	: "OSM",
 				url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -34,12 +34,12 @@ var page = {
 			{
 				name	: 'Map Tiles',
 				// url	: 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}@2x.png?key=udlBrEEE2SPm1In5dCNb', // 512 ...
-				url		: 'https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}@2x.png?key=udlBrEEE2SPm1In5dCNb', // 256 ok 
+				url		: 'https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}@2x.png?key=udlBrEEE2SPm1In5dCNb', // 256 ok
 				// url	: 'https://api.maptiler.com/maps/9512807c-ffd5-4ee0-9781-c354711d15e5/style.json?key=udlBrEEE2SPm1In5dCNb', // vector grey
 				options	: {
 					maxZoom	: 20,
 				}
-			},			
+			},
 			{
 				name	: "ARCGIS",
 				url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -91,9 +91,9 @@ var page = {
 	* SETUP
 	*/
 	setup : function() {
-		
+
 		var self = this
-		
+
 		// window.ready(function(){
 			// self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
 		// })
@@ -110,10 +110,10 @@ var page = {
 				setTimeout(function(){
 					footer.classList.remove('hidded')
 				},500)
-			}			
+			}
 		})
-		
-		return true	
+
+		return true
 	},//end setup
 
 
@@ -122,7 +122,7 @@ var page = {
 	* HILITE_LANG
 	*/
 	hilite_lang : function(lang) {
-		
+
 		// Lang selected
 			const page_lang_selector = document.getElementById("page_lang_selector")
 			if (page_lang_selector) {
@@ -165,7 +165,7 @@ var page = {
 				}else{
 					var list_rows = document.createElement("div")
 						list_rows.innerHTML = response.html
-					
+
 					var ar_childrens = list_rows.children
 
 					// Add loaded elements to the end of current container
@@ -210,7 +210,7 @@ var page = {
 				if (height>width) {
 					image_obj.classList.add("vertical")
 
-					// Adjust title and body text ?				
+					// Adjust title and body text ?
 				}
 				image_obj.style.opacity = 1;
 			}, false)
@@ -246,11 +246,11 @@ var page = {
 				console.log("top_container not found !");
 				return false
 			}
- 
+
 		// debug
 			if(SHOW_DEBUG===true) {
 				console.log("scrollbar:",scrollbar);
-			}	
+			}
 
 		// footer
 			const footer = document.getElementById("footer")
@@ -278,7 +278,7 @@ var page = {
 			new Tooltip($(this), {
 	    		placement: 'top',
 	    	});
-		});		
+		});
 	},//end activate_tooltips
 
 
@@ -299,7 +299,7 @@ var page = {
 			const ar_nodes 		  = page_nodes_data.ar_nodes
 			const ar_nodes_length = ar_nodes.length
 			for (let i = 0; i < ar_nodes_length; i++) {
-				
+
 				const node 		= ar_nodes[i]
 				let label 		= node.label
 				let class_name 	= "page " + node.type + " " + node.id
@@ -307,12 +307,12 @@ var page = {
 					class_name += " unactive"
 				}
 
-				// label blank cases 
+				// label blank cases
 					if (node.id==="previous" || node.id==="next" || node.id==="last" || node.id==="first" ) {
 						label = ""
 					}
 
-				// switch node.type 
+				// switch node.type
 					//switch(node.type){
 					//	case "navigator":
 					//		class_name = node.type + ""
@@ -322,12 +322,12 @@ var page = {
 					//		break;
 					//}
 
-				// selected 
+				// selected
 					if (node.selected===true) {
 						class_name += " selected"
 					}
 
-				// create_dom_element based on node type 
+				// create_dom_element based on node type
 					if (node.type==="extra") {
 						// extra (span)
 							class_name = node.type
@@ -351,43 +351,43 @@ var page = {
 								parent 			: wrapper_ul
 							})
 
-							// link 
+							// link
 								if (node.active===true) {
 									/*
 									const params = {
 											offset 	: node.offset_value,
 											total 	: page_nodes_data.total
-										}	
-									
+										}
+
 									const method = typeof goto_url!=="undefined" ? goto_url : "paginator.goto_url"
 									a.addEventListener("click",function(e){
-										
+
 										// exec function custom
 											const js_promise = new Promise(function(resolve) {
-												
+
 												let response
 												if (typeof method==="function") {
 													response = method(params)
 												}else{
 													response = common.execute_function_by_name(method, window, params)
 												}
-												
-												resolve(response)																	
+
+												resolve(response)
 											});
 
-											js_promise.then(function(response){												
+											js_promise.then(function(response){
 												// console.log("response typeof:",typeof response, "- response instanceof:",response instanceof Promise);
 											})
 
-									},false) */																	
+									},false) */
 								}
-					}				
+					}
 			}//end for loop
 
 
 		// event delegation
 			wrapper_ul.addEventListener('click', self.paginator_click_event);
-		
+
 
 		return wrapper_ul
 	},//end build_paginator_html
@@ -408,11 +408,11 @@ var page = {
 		if (active!=="true") {
 			return false;
 		}
-		
+
 
 		const total 	= parseInt(element.parentNode.dataset.total)
 		const offset 	= element.dataset.offset
-		
+
 
 		const search_form = document.getElementById("search_form")
 		const js_promise  = main_home.search(search_form, null, offset, total)
@@ -427,7 +427,7 @@ var page = {
 
 		js_promise.then(function(response){
 
-			// scroll window to top	of 	catalogo_rows_list	
+			// scroll window to top	of 	catalogo_rows_list
 				//const catalogo_rows_list = document.querySelector(".result")
 				const catalogo_rows_list = self.result_container
 				//selft.scrollIntoView({behavior: "smooth", block: "start", inline: "start"})
@@ -444,20 +444,20 @@ var page = {
 
 	/**
 	* ADD_SPINNER
-	* @return 
+	* @return
 	*/
 	add_spinner : function(target) {
-					
+
 		if(target) {
 			const image = common.create_dom_element({
 				element_type 	: "img",
 				class_name 		: "spinner_svg",
 				src 			: page_globals.__WEB_ROOT_WEB__ + "/tpl/assets/images/spinner.svg"
-			})	
+			})
 			target.appendChild(image)
 		}else{
 			console.warn("[add_spinner] Error on get target ", target);
-		}		
+		}
 
 		return true
 	},//end add_spinner
@@ -466,7 +466,7 @@ var page = {
 
 	/**
 	* remove_SPINNER
-	* @return 
+	* @return
 	*/
 	remove_spinner : function(target) {
 
@@ -486,19 +486,19 @@ var page = {
 	* @return bool
 	*/
 	remote_image : function(url) {
-		
+
 		if (url) {
-			
+
 			let remote_url = ''
 			if (url.indexOf('v5/media_test')!==-1) {
 				remote_url = url.replace(/\/v5\/media_test\/media_monedaiberica\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/")
 			}else{
 				remote_url = url.replace(/\/dedalo\/media_test\/media_monedaiberica\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/")
-			}	
+			}
 
 			return remote_url
 		}
-		// /dedalo/media_test/media_monedaiberica		
+		// /dedalo/media_test/media_monedaiberica
 
 		return null
 	},//end remote_image
@@ -507,7 +507,7 @@ var page = {
 
 	/**
 	* PARSE_LEGEND_SVG
-	* @return 
+	* @return
 	*/
 	parse_legend_svg : function(value) {
 		if (value.indexOf('http')!==-1) {
@@ -530,18 +530,18 @@ var page = {
 		if (!Array.isArray(data)) {
 			data = [data]
 		}
-		
+
 		const new_data = []
 		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
-			
+
 			// const row = JSON.parse( JSON.stringify(data[i]) )
 			const row = data[i]
-			
+
 			// url
 			row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
 			row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)
-			
+
 			// url thumbs
 			row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
 				? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
@@ -574,38 +574,56 @@ var page = {
 				? parseFloat( row.ref_type_averages_diameter.replace(',', '.') )
 				: null
 
+			row.ref_type_total_diameter_items = row.ref_type_total_diameter_items
+				? parseFloat( row.ref_type_total_diameter_items.replace(',', '.') )
+				: null
+
 			row.ref_type_averages_weight = row.ref_type_averages_weight
 				? parseFloat( row.ref_type_averages_weight.replace(',', '.') )
 				: null
 
-			
+			row.ref_type_total_weight_items = row.ref_type_total_weight_items
+				? parseFloat( row.ref_type_total_weight_items.replace(',', '.') )
+				: null
+
+
 			new_data.push(row)
 		}
 
 
 		// add calculated measures values to types parents
 			for (let i = 0; i < data_length; i++) {
-				
+
 				const row = new_data[i]
 
 				if (row.term_table==='types' && row.children) {
 					const ar_mesures_diameter	= []
 					const ar_mesures_weight		= []
+
 					for (let i = 0; i < row.children.length; i++) {
-						
+
 						const current_child	= row.children[i]
 						const child_row		= data.find(el => el.section_id==current_child)
 
 						if(child_row && child_row.ref_type_averages_weight){
-							ar_mesures_weight.push(child_row.ref_type_averages_weight)
+							// get the total items
+							const weight_items = child_row.ref_type_total_weight_items
+							//create a new array with all items - values
+							const ar_current_mesures_weight = new Array(weight_items).fill(child_row.ref_type_averages_weight)
+							// add the current child values to the total array
+							ar_mesures_weight.push(...ar_current_mesures_weight)
 						}
 						if(child_row && child_row.ref_type_averages_diameter){
-							ar_mesures_diameter.push(child_row.ref_type_averages_diameter)
-						}				
+							const diameter_items = child_row.ref_type_total_diameter_items
+							const ar_current_mesures_diameter = new Array(diameter_items).fill(child_row.ref_type_averages_diameter)
+							ar_mesures_diameter.push(...ar_current_mesures_diameter)
+
+						}
 					}
+
 					const media_weight		= ar_mesures_weight.reduce((a,b) => a + b, 0)  / ar_mesures_weight.length
 					const media_diameter	= ar_mesures_diameter.reduce((a,b) => a + b, 0) / ar_mesures_diameter.length
-			
+
 					row.ref_type_averages_weight    = media_weight
 					row.ref_type_averages_diameter	= media_diameter
 
@@ -628,7 +646,7 @@ var page = {
 	*/
 	parse_type_data : function(data) {
 		// console.log("------------> parse_type_data data:",data);
-		
+
 		const self = this
 
 		// array case
@@ -654,7 +672,7 @@ var page = {
 				}
 				if (row.ref_coins_union[j].image_reverse) {
 					row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
-				}				
+				}
 			}
 		}
 
@@ -671,7 +689,7 @@ var page = {
 		row.legend_obverse = row.legend_obverse
 			? self.parse_legend_svg(row.legend_obverse)
 			: null
-		row.legend_reverse = row.legend_reverse 
+		row.legend_reverse = row.legend_reverse
 			? self.parse_legend_svg(row.legend_reverse)
 			: null
 
@@ -691,7 +709,7 @@ var page = {
 	*/
 	parse_coin_data : function(data) {
 		// console.log("------------> parse_coin_data data:",data);
-		
+
 		const self = this
 
 		// array case
@@ -712,8 +730,8 @@ var page = {
 		// type_data
 		// if (row.type_data) {
 		// 	row.type_data = self.parse_type_data(row.type_data)
-		// }		
-		if (row.type_data && row.type_data.length>0) {			
+		// }
+		if (row.type_data && row.type_data.length>0) {
 			row.type_data = self.parse_type_data(row.type_data)
 		}
 
@@ -721,7 +739,7 @@ var page = {
 		row.legend_obverse = row.legend_obverse
 			? self.parse_legend_svg(row.legend_obverse)
 			: null
-		row.legend_reverse = row.legend_reverse 
+		row.legend_reverse = row.legend_reverse
 			? self.parse_legend_svg(row.legend_reverse)
 			: null
 
@@ -729,7 +747,7 @@ var page = {
 		row.countermark_obverse = row.countermark_obverse
 			? self.parse_legend_svg(row.countermark_obverse)
 			: null
-		row.countermark_reverse = row.countermark_reverse 
+		row.countermark_reverse = row.countermark_reverse
 			? self.parse_legend_svg(row.countermark_reverse)
 			: null
 
@@ -763,19 +781,19 @@ var page = {
 
 	/**
 	* PARSE_IRI_DATA
-	* @return 
+	* @return
 	*/
 	parse_iri_data : function(data) {
-	
+
 		const items = []
 
 		if (!data || data.length<1) {
 			return items
 		}
 
-		const values = data.split(" | ")		
+		const values = data.split(" | ")
 		for (let i = 0; i < values.length; i++) {
-			
+
 			const val	= values[i]
 			const parts	= val.split(", ")
 			if (parts.length>1 && typeof parts[1]==="undefined") {
@@ -805,13 +823,13 @@ var page = {
 
 	/**
 	* REMOVE_GAPS
-	* Removes empty values in multimple values string. 
+	* Removes empty values in multimple values string.
 	* Like 'pepe | lepe' when 'pepe | lepe | '
 	*/
 	remove_gaps : function(value, separator) {
 		const beats		= value.split(separator).filter(Boolean)
 		const result	= beats.join(separator)
-		
+
 		return result
 	},//end remove_gaps
 
@@ -833,7 +851,7 @@ var page = {
 	* Check if value is empty
 	*/
 	is_empty : function(value) {
-		
+
 		return value && value.length>0
 	},//end is_empty
 
@@ -844,10 +862,10 @@ var page = {
 	* Converts date like '2001-00-00 00:00:00' -> '2001'
 	*/
 	parse_date : function(timestamp) {
-	
+
 		if (!timestamp || timestamp.length<4) {
 			return null
-		}		
+		}
 
 		const year 	= timestamp.substring(0, 4) // 2014-06-24
 		const month 	= timestamp.substring(5, 7)
@@ -865,7 +883,7 @@ var page = {
 					ar_parts.push(year)
 				}
 
-		const date = ar_parts.join('-')	
+		const date = ar_parts.join('-')
 
 
 		return date
@@ -884,7 +902,7 @@ var page = {
 		const separator		= " # ";
 		const data_length	= data.length
 		for (let i = 0; i < data_length; i++) {
-			
+
 			const reference = data[i]
 
 			// add publications property to store all resolved references
@@ -901,9 +919,9 @@ var page = {
 				const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
 				const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
 				const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
-				
+
 				for (let j = 0; j < publications_data_length; j++) {
-					
+
 					const section_id = publications_data[j]
 
 					const parsed_item = {
@@ -922,7 +940,7 @@ var page = {
 					parsed_data.push(parsed_item)
 				}
 			}
-			
+
 		}
 		// console.log("parsed_data:",parsed_data);
 
@@ -946,8 +964,8 @@ var page = {
 					}
 				}
 			}
-						
-				
+
+
 		return $(images_gallery_container).poptrox({
 			baseZIndex: 20000,
 			fadeSpeed: 1,
@@ -958,7 +976,7 @@ var page = {
 			popupHeight: 150,
 			popupWidth: 150,
 			popupLoaderText: '',
-			popupSpeed: 1,			
+			popupSpeed: 1,
 			selector: 'a.image_link',
 			usePopupCaption: false,
 			usePopupCloser: true,
@@ -978,7 +996,7 @@ var page = {
 	*/
 	map_popup_builder : function(item) {
 		// console.log("-> map_popup_builder item:",item);
-		
+
 		const self = this
 
 		const popup_wrapper = common.create_dom_element({
@@ -993,20 +1011,20 @@ var page = {
 			group.sort( (a,b) => {return collator.compare(a.title , b.title)});
 
 		const build_pop_item = function(group_data){
-			
+
 			const section_id	= group_data.section_id
 			// const table			= group_data.table
 			const title			= group_data.title || "Undefined title " + section_id
 			const description	= group_data.description
 			// const image_url		= group_data.identifying_images
-			
-			
+
+
 			// popup_item
 				const popup_item = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "popup_item",
 					parent			: popup_wrapper
-				})				
+				})
 
 			// image
 				// const image_wrapper = common.create_dom_element({
@@ -1021,7 +1039,7 @@ var page = {
 				// 		section_id	: section_id,
 				// 		table		: table,
 				// 		title		: title
-				// 	})	
+				// 	})
 				// })
 				// const item_image = common.create_dom_element({
 				// 	element_type	: "img",
@@ -1031,7 +1049,7 @@ var page = {
 				// // calculate bg color and load hi res image
 				// page.build_image_with_background_color(image_url, image_wrapper)
 				// .then(function(response){
-					
+
 				// 	const img			= response.img // dom node
 				// 	const format		= response.format // vertical | horinzontal
 				// 	const bg_color_rgb	= response.bg_color_rgb
@@ -1074,7 +1092,7 @@ var page = {
 		}
 
 		const group_length	= group.length
-		let limit			= 100		
+		let limit			= 100
 
 		function iterate(from, to) {
 			for (let i = from; i < to; i++) {
@@ -1100,11 +1118,11 @@ var page = {
 				more_node.offset = to
 			}
 		}
-		
-		// first elements from zero to limit 
-		const to = limit < group_length ? limit : group_length		
+
+		// first elements from zero to limit
+		const to = limit < group_length ? limit : group_length
 		iterate(0, to)
-		
+
 
 		return popup_wrapper
 	},//end map_popup_builder
@@ -1113,5 +1131,3 @@ var page = {
 
 
 }//end page
-
-

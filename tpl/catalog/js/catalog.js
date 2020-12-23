@@ -1225,7 +1225,7 @@ var catalog =  {
 					// q element
 						const element = {
 							field	: form_item.q_column,
-							value	: `'%${form_item.q}%'`,
+							value	: `'${form_item.eq_in}${form_item.q}${form_item.eq_out}'`,
 							op		: form_item.eq // default is 'LIKE'
 						}
 
@@ -1355,6 +1355,8 @@ var catalog =  {
 			
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
+
+				  	console.log("filter:",filter);
 			
 		// search rows exec against API
 			const js_promise = self.search_rows({

@@ -28,7 +28,7 @@ var biblio_row_fields = {
 		return typology_label
 	},
 
-	
+
 
 	author : function() {
 
@@ -52,9 +52,9 @@ var biblio_row_fields = {
 			})
 			link.setAttribute('target', '_blank');
 		}
-		
 
-		// authors 
+
+		// authors
 		if (biblio_object.authors && biblio_object.authors.length>0) {
 
 			const authors_data 			= biblio_object.authors_data
@@ -75,7 +75,7 @@ var biblio_row_fields = {
 				text_content 	: final_authors,
 				parent 			: line
 			})
-				
+
 		}else{
 
 			common.create_dom_element({
@@ -98,15 +98,15 @@ var biblio_row_fields = {
 
 		const line = common.create_dom_element({
 			element_type 	: "div",
-			class_name 		: "info_line publication_date hide"			
+			class_name 		: "info_line publication_date hide"
 		})
 
-		if (biblio_object.publication_date) {			
+		if (biblio_object.publication_date) {
 
 			const ar_date 	= biblio_object.publication_date.split("-")
 			let final_date 	= parseInt(ar_date[0])
 
-			if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {					
+			if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {
 				final_date = final_date + "-" + parseInt(ar_date[1])
 			}
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
@@ -155,11 +155,11 @@ var biblio_row_fields = {
 				parent 			: line
 			})
 
-		// pdf_uri				
+		// pdf_uri
 			for (let i = 0; i < ar_pdf_uri_length; i++) {
-				
+
 				const pdf_item = ar_pdf_uri[i]
-			
+
 				common.create_dom_element({
 					element_type 	: "div",
 					class_name 		: "pdf",
@@ -171,7 +171,7 @@ var biblio_row_fields = {
 					window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 				})
 			}
-			
+
 
 		return line
 	},//end row_title
@@ -182,20 +182,20 @@ var biblio_row_fields = {
 
 		const biblio_object = this.biblio_object
 		const typology 		= this.get_typology()
-				
+
 
 		// line
 			const line = common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "info_line row_body" + " " + typology
-			})	
-		
-		
+			})
+
+
 		switch(typology){
 
 			case 'book': // book
-				
-				// place 
+
+				// place
 					if (biblio_object.place) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -205,7 +205,7 @@ var biblio_row_fields = {
 						})
 					}
 
-				// editor 
+				// editor
 					if (biblio_object.editor) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -218,7 +218,7 @@ var biblio_row_fields = {
 
 			default: // article, etc.
 
-				// magazine 
+				// magazine
 					if (biblio_object.magazine) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -228,7 +228,7 @@ var biblio_row_fields = {
 						})
 					}
 
-				// serie 
+				// serie
 					if (biblio_object.serie) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -238,10 +238,10 @@ var biblio_row_fields = {
 						})
 					}
 
-				// volume 
+				// volume
 					if (biblio_object.volume) {
-						
-						const text_content = (biblio_object.serie.length>0) 
+
+						const text_content = (biblio_object.serie.length>0)
 							? ", "+biblio_object.volume
 							: biblio_object.volume
 
@@ -252,20 +252,20 @@ var biblio_row_fields = {
 							parent 			: line
 						})
 					}
-	
+
 				// other_people_info : name and role other_people_name
 					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-						
+
 						const other_people_name = biblio_object.other_people_name.split(" | ");
 						const other_people_role = biblio_object.other_people_role.split(" | ")
 						for (let g = 0; g < other_people_name.length; g++) {
-							
+
 							const name = other_people_name[g]
 							const role = typeof other_people_role[g]!=='undefined'
-								? ' ('+other_people_role[g]+')' 
+								? ' ('+other_people_role[g]+')'
 								: ''
-							
-							const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0)) 
+
+							const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0))
 								? ", "+name + role
 								: name + role
 
@@ -278,10 +278,10 @@ var biblio_row_fields = {
 						}
 					}
 
-				// physical_description 
+				// physical_description
 					if (biblio_object.physical_description) {
-						
-						const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0)) 
+
+						const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0))
 							? ", "+biblio_object.physical_description
 							: biblio_object.physical_description
 
@@ -295,7 +295,7 @@ var biblio_row_fields = {
 
 				break;
 		}//end switch(typology_parsed)
-		
+
 
 		return line
 	},//end row_body
@@ -310,18 +310,18 @@ var biblio_row_fields = {
 			const line = common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "info_line row_url"
-			})		
+			})
 
 		// url_data
 			const url_data = biblio_object.url_data
 			if (url_data && url_data.length>0) {
 
 				const ar_url_data 		 = JSON.parse(url_data)
-				const ar_url_data_length = ar_url_data.length		
+				const ar_url_data_length = ar_url_data.length
 				for (let i = 0; i < ar_url_data_length; i++) {
-					
+
 					const url_item = ar_url_data[i]
-				
+
 					common.create_dom_element({
 						element_type 	: "a",
 						class_name 		: "url_data",
@@ -332,7 +332,7 @@ var biblio_row_fields = {
 					})
 
 					if ( !(i%2) && i<ar_url_data_length && ar_url_data_length>1 ) {
-						common.create_dom_element({	
+						common.create_dom_element({
 							element_type 	: "span",
 							class_name 		: "separator",
 							text_content 	: " | ",
@@ -352,7 +352,7 @@ var biblio_row_fields = {
 		const self = this
 
 		const biblio_object = this.biblio_object
-		
+
 		// line
 			const line = common.create_dom_element({
 				element_type 	: "div",
@@ -361,13 +361,13 @@ var biblio_row_fields = {
 
 			const descriptors_list = value.split(' - ')
 			for (let i = 0; i < descriptors_list.length; i++) {
-				
+
 				const name = descriptors_list[i]
 				// const url = page_globals.__WEB_ROOT_WEB__ + '/biblio/' + '?descriptors=' + name
 
 				const link = common.create_dom_element({
 					element_type 	: "a",
-					class_name 		: "descriptors_link",				
+					class_name 		: "descriptors_link",
 					text_content 	: name,
 					// href 			: url,
 					parent 			: line
@@ -376,11 +376,129 @@ var biblio_row_fields = {
 					self.caller.search_item('descriptors', name)
 				})
 			}
-		
+
 
 		return line
 	},//end descriptors
 
 
+	row_bibliography : function(){
+
+		const biblio_object = this.biblio_object
+
+		// pages: "59"
+		// publications_data: "[\"16022\"]"
+		// ref_publications_authors: "Martínez Chico David"
+		// ref_publications_date: "2016"
+		// ref_publications_editor: null
+		// ref_publications_magazine: "Gaceta Numismática"
+		// ref_publications_place: null
+		// ref_publications_title: "Sextante inédito para la ceca sevillana de Lastigi"
+		// ref_publications_url: null
+		// reference: "1"
+		// section_id: "25604"
+		// sheet: ""
+
+		// line
+			const line = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "info_line row_title"
+			})
+
+		// authors
+			const authors = (biblio_object.ref_publications_authors)
+				? biblio_object.ref_publications_authors + ". "
+				: ""
+
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: authors,
+				parent			: line
+			})
+
+		// date
+			const date = (biblio_object.ref_publications_date)
+				? "("+biblio_object.ref_publications_date + ") "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: date,
+				parent			: line
+			})
+
+		// title
+			const title = (biblio_object.ref_publications_title)
+				? "<em>"+biblio_object.ref_publications_title + ". </em>"
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: title,
+				parent			: line
+			})
+
+		// magazine
+			const magazine = (biblio_object.ref_publications_magazine)
+				? biblio_object.ref_publications_magazine + ". "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: magazine,
+				parent			: line
+			})
+
+
+
+		// pages
+			const pages = (biblio_object.pages)
+				? " p." +biblio_object.pages + ". "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: pages,
+				parent			: line
+			})
+
+		// reference
+			const reference = (biblio_object.reference)
+				? " ref." +biblio_object.reference + ". "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: reference,
+				parent			: line
+			})
+
+		// sheet
+			const sheet = (biblio_object.sheet)
+				? " s." +biblio_object.sheet + ". "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: sheet,
+				parent			: line
+			})
+
+		// place
+			const place = (biblio_object.ref_publications_place)
+				? " s." +biblio_object.ref_publications_place + ". "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: place,
+				parent			: line
+			})
+
+		// URI
+			const url = (biblio_object.ref_publications_url)
+				? "<a href=\"" + biblio_object.ref_publications_url +"\">"+biblio_object.ref_publications_url+" </a> "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: url,
+				parent			: line
+			})
+
+		return line
+	},//end bibliography
 
 }//end biblio_row_fields

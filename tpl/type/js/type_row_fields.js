@@ -17,7 +17,7 @@ var row_fields = {
 		const self = this
 
 		const fragment = new DocumentFragment()
-		
+
 
 		// dedalo_link
 			if (dedalo_logged===true) {
@@ -69,8 +69,8 @@ var row_fields = {
 		// legend_obverse
 			fragment.appendChild(
 				self.default(item, "legend_obverse", page.local_to_remote_path)
-			)	
-		
+			)
+
 		// design_reverse
 			fragment.appendChild(
 				self.default(item, "design_reverse")
@@ -86,6 +86,11 @@ var row_fields = {
 				self.default(item, "legend_reverse", page.local_to_remote_path)
 			)
 
+		// public_info
+			fragment.appendChild(
+				self.default(item, "public_info", page.local_to_remote_path)
+			)
+
 		// equivalents : "ACIP | 1567<br>CNH | 237/1"
 			fragment.appendChild(
 				self.default(item, "equivalents", function(value){
@@ -97,12 +102,17 @@ var row_fields = {
 					return ar_final.join(" | ")
 				})
 			)
+		// bibliography
+			const ar_references = item.bibliography_data
+				fragment.appendChild(
+					self.draw_bibliographic_reference(ar_references)
+				)
 
 		// permanent uri
 			fragment.appendChild(
 				self.default(item, "section_id", function(value){
 					const label		= tstring.permanent_uri || "Permanent URI"
-					const url		= page_globals.__WEB_ROOT_WEB__ + "/type/" + value 
+					const url		= page_globals.__WEB_ROOT_WEB__ + "/type/" + value
 					const full_url	= page_globals.__WEB_BASE_URL__ + url
 					// return label + ": <a href=\"" + url + "\">" +  full_url + "</a>"
 					return label + ": <span class=\"uri\">" +  full_url + "</span>"
@@ -110,9 +120,9 @@ var row_fields = {
 			)
 
 		// other permanent uri
-			if (item.uri && item.uri.length>0) {				
+			if (item.uri && item.uri.length>0) {
 				for (let i = 0; i < item.uri.length; i++) {
-					
+
 					const el = item.uri[i]
 
 					fragment.appendChild(
@@ -126,30 +136,27 @@ var row_fields = {
 
 		// // catalog hierarchy
 		// 	fragment.appendChild(
-		// 		self.default(item, "section_id", function(value){					
+		// 		self.default(item, "section_id", function(value){
 		// 			return "<em>Info about current type catalog hierarchy. Catalog section_id: " + item["catalogue_data"] + "</em>"
 		// 		})
 		// 	)
 
-		// public_info
-			fragment.appendChild(
-				self.default(item, "public_info", page.local_to_remote_path)
-			)
-		
-		// items (ejemplares) list			
+
+
+		// items (ejemplares) list
 			if (item._coins_group && item._coins_group.length>0) {
 				// exclude already showed items (identify images)
-				const data = item._coins_group.filter(el => el.typology_id!="1")				
+				const data = item._coins_group.filter(el => el.typology_id!="1")
 				if (data.length>0) {
 					fragment.appendChild( self.label(item, "items") )
 					fragment.appendChild(
 						self.items_list(item, "items_list", data)
 					)
 				}
-			}				
+			}
 
 		// findspots - hoards_and_findspots - (hallazgos) list
-			if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {				
+			if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {
 				fragment.appendChild( self.label(item, tstring.findspots) )
 				fragment.appendChild(
 					self.hoards_and_findspots(item, "findspots")
@@ -172,12 +179,12 @@ var row_fields = {
 	dedalo_link : function(item, section_tipo) {
 
 		const self = this
-		
+
 		const dedalo_link = common.create_dom_element({
 			element_type	: "a",
 			class_name		: "section_id go_to_dedalo",
 			inner_html		: item.section_id + " <small>(" + section_tipo +")</small>",
-			href			: '/dedalo/lib/dedalo/main/?t=' + section_tipo + '&id=' + item.section_id			
+			href			: '/dedalo/lib/dedalo/main/?t=' + section_tipo + '&id=' + item.section_id
 		})
 		dedalo_link.setAttribute('target', '_blank');
 
@@ -185,7 +192,7 @@ var row_fields = {
 	},//end dedalo_link
 
 
-	
+
 	default : function(item, name, fn) {
 
 		const self = this
@@ -197,7 +204,7 @@ var row_fields = {
 			})
 
 		if (item[name] && item[name].length>0) {
-	
+
 			// common.create_dom_element({
 				// 	element_type 	: "label",
 				// 	class_name 		: "",
@@ -205,7 +212,7 @@ var row_fields = {
 				// 	parent 			: line
 				// })
 
-			const searchTerms = ["design_obverse","design_reverse","symbol_reverse","symbol_obverse"];	
+			const searchTerms = ["design_obverse","design_reverse","symbol_reverse","symbol_obverse"];
 
 			const item_text = (typeof fn==="function")
 				? fn(item[name])
@@ -218,7 +225,7 @@ var row_fields = {
 				// 	class_name		: "info_value",
 				// 	inner_html		: item_text.trim(),
 				// 	parent			: line
-				// })	
+				// })
 
 				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
 
@@ -236,9 +243,9 @@ var row_fields = {
 					class_name		: "info_value",
 					inner_html		: item_text.trim(),
 					parent			: line
-				})	
+				})
 			}
-		}		
+		}
 
 
 		return line
@@ -254,14 +261,14 @@ var row_fields = {
 			const line = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "info_line separator " + name
-			})		
-	
+			})
+
 			common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "big_label",
 				text_content 	: tstring[name]|| name,
 				parent 			: line
-			})		
+			})
 
 
 		return line
@@ -313,7 +320,7 @@ var row_fields = {
 				text_content	: "MIB " + catalog.term,
 				parent 			: line
 			})
-		}		
+		}
 
 
 		return line
@@ -340,7 +347,7 @@ var row_fields = {
 				href			: url,
 				parent			: line
 			})
-	
+
 			common.create_dom_element({
 				element_type 	: "img",
 				class_name 		: "image",
@@ -386,7 +393,7 @@ var row_fields = {
 					inner_html		: uri_text,
 					parent			: line
 				})
-	
+
 			common.create_dom_element({
 				element_type 	: "span",
 				class_name 		: name,
@@ -421,16 +428,16 @@ var row_fields = {
 					})
 				}
 
-			// size_text. weight / dies / diameter				
+			// size_text. weight / dies / diameter
 				const ar_beats = []
 				if (identify_coin.weight && identify_coin.weight.length>0) {
-					ar_beats.push( identify_coin.weight + " g" )
+					ar_beats.push( identify_coin.weight.replace('.', ',') + " g" )
 				}
 				if (identify_coin.dies && identify_coin.dies.length>0) {
 					ar_beats.push( identify_coin.dies + " h" )
 				}
 				if (identify_coin.diameter && identify_coin.diameter.length>0) {
-					ar_beats.push( identify_coin.diameter + " mm" )
+					ar_beats.push( identify_coin.diameter.replace('.', ',') + " mm" )
 				}
 				const size_text = ar_beats.join("; ")
 
@@ -440,7 +447,7 @@ var row_fields = {
 				text_content 	: " ("+size_text+")",
 				parent 			: line
 			})
-		}		
+		}
 
 
 		return line
@@ -467,28 +474,28 @@ var row_fields = {
 
 				// const catalogue_number = JSON.parse(item["catalogue_data"])[0]
 				const type_section_id = item["section_id"]
-		
+
 				const item_text = item[name] + " " + type_section_id + "/" + item["number"]
 
 				const node = common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value " + name,
 					text_content 	: item_text
-				})	
+				})
 				ar_nodes.push(node)
 			}
 
 		// denomination
 			name = "denomination"
 			if (item[name] && item[name].length>0) {
-				
+
 				const item_text = item[name]
 
 				const node = common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value " + name,
 					text_content 	: item_text
-				})	
+				})
 				ar_nodes.push(node)
 
 				// denomination_description
@@ -498,15 +505,15 @@ var row_fields = {
 		// material
 			name = "material"
 			if (item[name] && item[name].length>0) {
-		
+
 				const beats		= page.split_data(item[name], ' | ')
 				const item_text	= beats.filter(Boolean).join(", ")
-				
+
 				var material_node = common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value " + name,
 					text_content 	: item_text
-				})	
+				})
 				ar_nodes.push(material_node)
 			}
 
@@ -517,21 +524,21 @@ var row_fields = {
 		// averages
 			name = "averages"
 			if (item["averages_weight"] && item["averages_weight"].length>0) {
-				
+
 				const weight_text	= item["averages_weight"]
-					? item["averages_weight"] + " g (" + item["total_weight_items"] + ");"
-					: ''			
+					? item["averages_weight"].replace('.', ',') + " g (" + item["total_weight_items"] + ")"
+					: ''
 				const diameter_text	= item["averages_diameter"]
-					? item["averages_diameter"] + " mm (" + item["total_diameter_items"] + ")"
+					? '; '+item["averages_diameter"].replace('.', ',') + " mm (" + item["total_diameter_items"] + ")"
 					: ''
 
 				const node = common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value " + name,
-					text_content 	: weight_text + " " + diameter_text
-				})	
+					text_content 	: weight_text + diameter_text
+				})
 				ar_nodes.push(node)
-			}		
+			}
 
 		// nodes append
 			const ar_nodes_length = ar_nodes.length
@@ -546,7 +553,7 @@ var row_fields = {
 					})
 				}
 				// node
-				line.appendChild(ar_nodes[i])			
+				line.appendChild(ar_nodes[i])
 			}
 
 
@@ -564,7 +571,7 @@ var row_fields = {
 				element_type	: "div",
 				class_name		: "info_line " + name
 			})
-			
+
 
 		function draw_coin(data, container) {
 
@@ -573,7 +580,7 @@ var row_fields = {
 				class_name		: "sorted_coin",
 				parent			: container
 			})
-		
+
 			// images
 				const images = common.create_dom_element({
 					element_type	: "div",
@@ -604,7 +611,7 @@ var row_fields = {
 					parent			: image_link_reverse
 				})
 				image_reverse.loading="lazy"
-			
+
 			// collection
 				common.create_dom_element({
 					element_type	: "div",
@@ -613,16 +620,18 @@ var row_fields = {
 					parent			: wrapper
 				})
 
-			// size_text. weight / dies / diameter				
+			// size_text. weight / dies / diameter
 				const ar_beats = []
+
 				if (data.weight && data.weight.length>0) {
-					ar_beats.push( data.weight + " g" )
+					ar_beats.push( data.weight.replace('.', ',') + " g" )
+
 				}
 				if (data.dies && data.dies.length>0) {
 					ar_beats.push( data.dies + " h" )
 				}
 				if (data.diameter && data.diameter.length>0) {
-					ar_beats.push( data.diameter + " mm" )
+					ar_beats.push( data.diameter.replace('.', ',') + " mm" )
 				}
 				const size_text = ar_beats.join("; ")
 				common.create_dom_element({
@@ -631,6 +640,7 @@ var row_fields = {
 					inner_html		: size_text,
 					parent			: wrapper
 				})
+
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
@@ -645,16 +655,16 @@ var row_fields = {
 			// findspots + hoard
 				const ar_find = []
 				if(data.hoard){
-					const hoard = (data.hoard_place) 
-						? data.hoard + " ("+data.hoard_place+")" 
+					const hoard = (data.hoard_place)
+						? data.hoard + " ("+data.hoard_place+")"
 						: data.hoard
 
-					ar_find.push( hoard )					
+					ar_find.push( hoard )
 				}
 				if(data.findspot){
 
-					const findspot = (data.findspot_place) 
-						? data.findspot + " ("+data.findspot_place+")" 
+					const findspot = (data.findspot_place)
+						? data.findspot + " ("+data.findspot_place+")"
 						: data.findspot
 
 					ar_find.push( findspot )
@@ -672,13 +682,13 @@ var row_fields = {
 			// biblio
 				const references_container = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "references",					
+					class_name		: "references",
 					parent			: wrapper
 				})
-				const references = data.bibliography_data
-				for (let r = 0; r < references.length; r++) {
-					self.draw_bibliographic_reference(references[r], references_container)	
-				}				
+				const ar_references = data.bibliography_data
+					references_container.appendChild(
+							self.draw_bibliographic_reference(ar_references)
+					)
 
 		}//end draw_coin
 
@@ -686,9 +696,9 @@ var row_fields = {
 		// coins group iterate
 			const coins_group_length = data.length
 			for (let i = 0; i < coins_group_length; i++) {
-				
+
 				const el = data[i]
-				
+
 				if (el.typology_id==1) continue; // ignore identify images typology
 
 				// typology label
@@ -713,7 +723,7 @@ var row_fields = {
 					const coin_data			= item.ref_coins_union.find(element => element.section_id==coin_section_id)
 					if (coin_data) {
 						draw_coin(coin_data, typology_coins)
-					}					
+					}
 				}
 			}
 
@@ -723,48 +733,33 @@ var row_fields = {
 
 
 
-	draw_bibliographic_reference : function(data, container) {
+	draw_bibliographic_reference : function(data) {
 
-		const publication_data			= data._publications
-		const publication_data_length	= publication_data.length
-		for (let i = 0; i < publication_data_length; i++) {
-			
-			const item = publication_data[i]
-		
-			const wrapper = common.create_dom_element({
+		const ref_biblio		= data
+		const ref_biblio_length	= ref_biblio.length
+
+		// row_field set
+		const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
+		const bib_fragment = new DocumentFragment;
+
+		for (let i = 0; i < ref_biblio_length; i++) {
+
+			const current_biblio_object = ref_biblio[i]
+
+			const biblio_row_wrapper = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "bibliographic_reference",
-				parent			: container
+				parent			: bib_fragment
 			})
 
-			// title
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: " " + (item.title || "") + " ",
-					parent			: wrapper
-				})
-			// authors
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: " " + (item.authors || "") + " ",
-					parent			: wrapper
-				})
-			// date
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: " " + (item.date || "") + " ",
-					parent			: wrapper
-				})
-			// palce
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: " " + (item.place || "") + " ",
-					parent			: wrapper
-				})
-		}
-		
+			// config
+				row_field.biblio_object	= current_biblio_object
 
-		return wrapper
+			// row_bibliography
+				biblio_row_wrapper.appendChild( row_field.row_bibliography() )
+		}
+
+		return bib_fragment
 	},//end draw_bibliographic_reference
 
 
@@ -774,7 +769,7 @@ var row_fields = {
 			// console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
 		}
 
-		const self = this		
+		const self = this
 
 		// line
 			const line = common.create_dom_element({
@@ -819,7 +814,7 @@ var row_fields = {
 				class_name		: "find_coin",
 				parent			: container
 			})
-		
+
 			// images
 				const images = common.create_dom_element({
 					element_type	: "div",
@@ -833,12 +828,12 @@ var row_fields = {
 					parent			: images
 				})
 				const image_obverse = common.create_dom_element({
-					element_type	: "img",					
+					element_type	: "img",
 					src				: data.image_obverse,
 					parent			: image_link_obverse
 				})
 				image_obverse.loading="lazy"
-				
+
 				const image_link_reverse = common.create_dom_element({
 					element_type	: "a",
 					class_name		: "image_link",
@@ -868,13 +863,13 @@ var row_fields = {
 				// size_text. weight / dies / diameter
 					const ar_beats = []
 					if (data.weight && data.weight.length>0) {
-						ar_beats.push( data.weight + " g" )
+						ar_beats.push( data.weight.replace('.', ',') + " g" )
 					}
 					if (data.dies && data.dies.length>0) {
 						ar_beats.push( data.dies + " h" )
 					}
 					if (data.diameter && data.diameter.length>0) {
-						ar_beats.push( data.diameter + " mm" )
+						ar_beats.push( data.diameter.replace('.', ',') + " mm" )
 					}
 					const size_text = ar_beats.join("; ")
 					common.create_dom_element({
@@ -903,15 +898,16 @@ var row_fields = {
 				// biblio
 					const references_container = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "references",					
+						class_name		: "references",
 						parent			: info
 					})
-					const references = data.bibliography_data
-					for (let r = 0; r < references.length; r++) {
-						self.draw_bibliographic_reference(references[r], references_container)	
-					}
+					const ar_references = data.bibliography_data
+						references_container.appendChild(
+							self.draw_bibliographic_reference(ar_references)
+						)
+
 		}//end draw_coin
-			
+
 
 		// map, global array with all map data and cache for resolve section_id
 			const map_data				= []
@@ -923,7 +919,7 @@ var row_fields = {
 			const hoards_data_length	= hoards_data.length
 
 			for (let i = 0; i < hoards_data_length; i++) {
-				
+
 				const hoard			= hoards_data[i]
 				const coins			= JSON.parse(hoard.coins) || []
 				const coins_length	= coins.length
@@ -936,7 +932,7 @@ var row_fields = {
 				if (hoards_solved.find(section_id => section_id===hoard.section_id)) {
 					continue;
 				}
-				
+
 				const wrapper = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "find_wrapper hoard",
@@ -991,19 +987,19 @@ var row_fields = {
 							type		: 'hoard',
 							marker_icon	: page.maps_config.markers.hoard
 						})
-					}			
+					}
 
 
 				// store already solved
 					hoards_solved.push(hoard.section_id)
-			}		
-		
+			}
+
 		// findspots
 			const findspots_data		= item.ref_coins_findspots_data
 			const findspots_data_length	= findspots_data.length
 
 			for (let i = 0; i < findspots_data_length; i++) {
-				
+
 				const findspot		= findspots_data[i]
 				const coins			= JSON.parse(findspot.coins) || []
 				const coins_length	= coins.length
@@ -1016,8 +1012,8 @@ var row_fields = {
 				if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
 					continue;
 				}
-				
-				
+
+
 				const wrapper = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "find_wrapper findspot",
@@ -1069,7 +1065,7 @@ var row_fields = {
 							type 		: 'findspot',
 							marker_icon	: page.maps_config.markers.findspot
 						})
-					}		
+					}
 
 				// replace text into the items
 					items.innerHTML = items.innerHTML + '('+ar_coins.length+')'
@@ -1092,7 +1088,7 @@ var row_fields = {
 			}else{
 				map_container.remove()
 			}
-			
+
 
 
 		return line
@@ -1111,7 +1107,7 @@ var row_fields = {
 		})
 
 		if (item.mint && item.mint.length>0) {
-	
+
 			common.create_dom_element({
 				element_type 	: "label",
 				class_name 		: "",
@@ -1125,8 +1121,8 @@ var row_fields = {
 				class_name 		: "info_value",
 				text_content 	: mint_text,
 				parent 			: line
-			})	
-		}		
+			})
+		}
 
 
 		return line
@@ -1145,10 +1141,10 @@ var row_fields = {
 		})
 
 		if (item.authors_alt && item.authors_alt.length>0) {
-	
+
 			const authors_alt		= item.authors_alt || ""
 			const final_authors_alt = " (" + authors_alt + "). "
-			
+
 			// DOM node
 				common.create_dom_element({
 					element_type 	: "div",
@@ -1156,7 +1152,7 @@ var row_fields = {
 					text_content 	: final_authors_alt,
 					parent 			: line
 				})
-		}		
+		}
 
 
 		return line
@@ -1168,15 +1164,15 @@ var row_fields = {
 
 		const line = common.create_dom_element({
 			element_type 	: "div",
-			class_name 		: "info_line publication_date"			
+			class_name 		: "info_line publication_date"
 		})
 
-		if (item.publication_date) {			
+		if (item.publication_date) {
 
 			const ar_date 	= item.publication_date.split("-")
 			let final_date 	= parseInt(ar_date[0])
 
-			if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {					
+			if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {
 				final_date = final_date + "-" + parseInt(ar_date[1])
 			}
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
@@ -1203,8 +1199,8 @@ var row_fields = {
 	title : function(item) {
 
 		const typology = this.get_typology(item)
-		
-		// title 
+
+		// title
 			const title			= item.title || ""
 			const title_style	= (typology=='1' || typology=='20' || typology=='28' || typology=='30'|| typology=='32')
 				? " italic"
@@ -1232,9 +1228,9 @@ var row_fields = {
 
 		// pdf_uri
 			// for (let i = 0; i < ar_pdf_uri_length; i++) {
-				
+
 			// 	const pdf_item = ar_pdf_uri[i]
-			
+
 			// 	common.create_dom_element({
 			// 		element_type	: "div",
 			// 		class_name		: "pdf",
@@ -1246,7 +1242,7 @@ var row_fields = {
 			// 		window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 			// 	})
 			// }
-			
+
 
 		return line
 	},//end title
@@ -1261,10 +1257,10 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line editor"
-		})		
+		})
 
-		// editor 
-		if (item.editor && item.editor.length>0) {	
+		// editor
+		if (item.editor && item.editor.length>0) {
 
 			const en = tstring.en || "En"
 			const editor = " " + en + " " + item.editor + ", "
@@ -1286,10 +1282,10 @@ var row_fields = {
 	title_secondary : function(item) {
 
 		const typology = this.get_typology(item)
-		
-		// title_secondary 
+
+		// title_secondary
 			const title_secondary = item.title_secondary || ""
-		
+
 		// line
 			const line = common.create_dom_element({
 				element_type	: "div",
@@ -1305,7 +1301,7 @@ var row_fields = {
 					text_content	: title_secondary_final,
 					parent			: line
 				})
-			}			
+			}
 
 
 		return line
@@ -1321,10 +1317,10 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line magazine"
-		})		
+		})
 
-		// magazine 
-		if (item.magazine && item.magazine.length>0) {		
+		// magazine
+		if (item.magazine && item.magazine.length>0) {
 
 			const magazine_final = " " + item.magazine + ", "
 			common.create_dom_element({
@@ -1349,15 +1345,15 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line serie"
-		})		
+		})
 
-		// serie 
+		// serie
 		if (item.serie && item.serie.length>0) {
 
 			const serie_text = (!item.copy || item.copy.length<1)
 				? " " + item.serie + ", "
 				: " " + item.serie + ""
-	
+
 			common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "info_value italic",
@@ -1380,9 +1376,9 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line copy"
-		})		
+		})
 
-		// copy 
+		// copy
 		if (item.copy && item.copy.length>0) {
 
 			const copy = " (" + item.copy + "), "
@@ -1409,9 +1405,9 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line physical_description"
-		})		
+		})
 
-		// physical_description 
+		// physical_description
 		if (item.physical_description && item.physical_description.length>0) {
 
 			const physical_description = " " + item.physical_description + ". "
@@ -1438,9 +1434,9 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line editorial"
-		})		
+		})
 
-		// editorial 
+		// editorial
 		if (item.editorial && item.editorial.length>0) {
 
 			const editorial = " " + item.editorial + ". "
@@ -1472,27 +1468,27 @@ var row_fields = {
 			if (url_data && url_data.length>0) {
 
 				const ar_url_data 		 = JSON.parse(url_data)
-				const ar_url_data_length = ar_url_data.length		
+				const ar_url_data_length = ar_url_data.length
 				for (let i = 0; i < ar_url_data_length; i++) {
-					
+
 					const url_item = ar_url_data[i]
 
 					const title = (url_item.title && url_item.title.length>1)
 						? url_item.title
 						: url_item.iri
-				
+
 					const link = common.create_dom_element({
 						element_type	: "a",
 						class_name		: "url_data",
 						title			: title,
 						text_content	: title,
-						href			: url_item.iri,						
+						href			: url_item.iri,
 						parent			: line
 					})
 					link.setAttribute('target', '_blank');
 
 					if ( !(i%2) && i<ar_url_data_length && ar_url_data_length>1 ) {
-						common.create_dom_element({	
+						common.create_dom_element({
 							element_type	: "span",
 							class_name		: "separator",
 							text_content	: " | ",
@@ -1516,10 +1512,10 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line place"
-		})		
+		})
 
-		// place 
-		if (item.place && item.place.length>0) {		
+		// place
+		if (item.place && item.place.length>0) {
 
 			common.create_dom_element({
 				element_type 	: "div",
@@ -1543,9 +1539,9 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line descriptors"
-		})		
+		})
 
-		// descriptors 
+		// descriptors
 		if (item.descriptors && item.descriptors.length>0) {
 
 			common.create_dom_element({
@@ -1570,9 +1566,9 @@ var row_fields = {
 		const line = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line typology_name"
-		})		
+		})
 
-		// typology_name 
+		// typology_name
 		if (item.typology_name && item.typology_name.length>0) {
 
 			common.create_dom_element({
@@ -1594,7 +1590,7 @@ var row_fields = {
 	// 	parentNode: HTML node that will have the onclick event
 	// 	data_ref: STRING type of the item in DB ex: material_data
 	create_float_prompt : function (item, parentNode, data_ref){
-		
+
 		const self = this
 
 		if (item[data_ref] && item[data_ref].length>0) {
@@ -1657,7 +1653,7 @@ var row_fields = {
 			}
 
 			parentNode.addEventListener("click",function(e){
-				
+
 				const float_prompts_list = document.getElementsByClassName("float-prompt");
 				for (let i=0;i<float_prompts_list.length;i++){
 					if (!float_prompts_list[i].classList.contains("hide")){
@@ -1665,7 +1661,7 @@ var row_fields = {
 					}
 				}
 
-				float_prompt.style.left = e.clientX+'px'; 
+				float_prompt.style.left = e.clientX+'px';
 				float_prompt.style.top = e.clientY+'px';
 				float_prompt.classList.remove("hide");
 			})
@@ -1691,13 +1687,13 @@ var row_fields = {
 
 	// /**
 	// * REMOVE_GAPS
-	// * Removes empty values in multimple values string. 
+	// * Removes empty values in multimple values string.
 	// * Like 'pepe | lepe' when 'pepe | lepe | '
 	// */
 	// remove_gaps : function(value, separator) {
 	// 	const beats		= value.split(separator).filter(Boolean)
 	// 	const result	= beats.join(separator)
-		
+
 	// 	return result
 	// },//end remove_gaps
 

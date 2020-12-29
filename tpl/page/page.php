@@ -44,7 +44,8 @@
 		
 		page::$js_ar_url[] = __WEB_ROOT_WEB__  	  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';
 		#page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/enviroment.js.php';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
+		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app-min.js';
 
 
 	# footer_html

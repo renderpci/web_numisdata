@@ -472,7 +472,7 @@ var biblio =  {
 					})
 
 				// row_fields set
-					const row_field = row_fields
+					const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
 					// config
 					row_field.biblio_object	= biblio_object
 					row_field.caller		= self
@@ -481,20 +481,20 @@ var biblio =  {
 					biblio_row_wrapper.appendChild( row_field.author() )					
 					
 				// publication_date 
-					biblio_row_wrapper.appendChild( row_fields.publication_date() )
+					biblio_row_wrapper.appendChild( row_field.publication_date() )
 				
 				// row_title
-					biblio_row_wrapper.appendChild( row_fields.row_title() )
+					biblio_row_wrapper.appendChild( row_field.row_title() )
 
 				// row_body
-					biblio_row_wrapper.appendChild( row_fields.row_body() )
+					biblio_row_wrapper.appendChild( row_field.row_body() )
 
 				// row_url
-					biblio_row_wrapper.appendChild( row_fields.row_url() )
+					biblio_row_wrapper.appendChild( row_field.row_url() )
 
 				// descriptors
 				if (biblio_object.descriptors && biblio_object.descriptors.length>1) {
-					biblio_row_wrapper.appendChild( row_fields.descriptors(biblio_object.descriptors) )
+					biblio_row_wrapper.appendChild( row_field.descriptors(biblio_object.descriptors) )
 				}					
 				
 			}//end for (var i = 0; i < len; i++)

@@ -1,5 +1,5 @@
 // web_app common files
-	// @codekit-append "../../../../web_app/common/js/common.js";
+	// @codekit-append "../../../web_app/common/js/common.js";
 
 // page files
 	// @codekit-append "page.js";

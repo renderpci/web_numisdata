@@ -3,8 +3,6 @@
 * (!) You need to maintain opened Codekit to work
 */
 
-
-
 // web_app common files
 	// @codekit-append "../../../../web_app/common/js/common.js";
 

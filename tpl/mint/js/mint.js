@@ -30,6 +30,8 @@ var mint =  {
 			.then(function(response){
 				console.log("--> set_up get_row_data API response:",response.result[1]);
 				
+				console.log("bibliography_data: ",response.result[0].result[0].bibliography_data[0].publications_data);
+
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
 					self.draw_row({
@@ -570,6 +572,51 @@ var mint =  {
 						}
 				}				
 			}
+
+
+		// container final add
+		container.appendChild(fragment)
+
+		return container
+
+
+		//Create an expandable block when text length is over 500
+		function createTextBlock (text,nodeParent) {
+			const textBlock = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_text_block",
+				inner_html		: text,
+				parent			: nodeParent
+			})
+
+			if (text.length>500){
+				textBlock.classList.add("contracted-block");
+
+				const textBlockSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "text-block-separator",
+					parent 			: nodeParent
+				})
+
+				const separatorArrow = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "separator-arrow",
+					parent 			: textBlockSeparator
+				})
+
+				textBlockSeparator.addEventListener("click",function(){
+					if (textBlock.classList.contains("contracted-block")){
+						textBlock.classList.remove ("contracted-block");
+						separatorArrow.style.transform = "rotate(-90deg)";
+					} else {
+						textBlock.classList.add("contracted-block");
+						separatorArrow.style.transform = "rotate(90deg)";
+					}
+				})
+			}
+		}	
+
+	},//end draw_row
 
 	/**
 	* DRAW_TYPES

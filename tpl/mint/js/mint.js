@@ -29,8 +29,6 @@ var mint =  {
 			})
 			.then(function(response){
 				console.log("--> set_up get_row_data API response:",response.result[1]);
-				
-				console.log("bibliography_data: ",response.result[0].result[0].bibliography_data[0].publications_data);
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -63,19 +61,26 @@ var mint =  {
 						})
 					}
 
+					// const catalog_response = response.result.find( el => el.id==='catalog')
+					// if (catalog_response && catalog_response.result) {
+					// 	const catalog_data = page.parse_catalog_data(catalog_response.result)
+					// 	console.log("catalog_data:",catalog_data);
+					// }
+
 					var bibliography_data= response.result[0].result[0].bibliography_data;
+					console.log(bibliography_data);
 					if (bibliography_data.length>0){
 
 						var bibliographics_references = [];
 
-						for (let i=0; i>bibliography_data.length;i++){
-							bibliographics_references.push(bibliography_data.publications_data[0])
+						for (let i=0; i<bibliography_data.length;i++){
+							bibliographics_references.push(bibliography_data[i].publications_data);
 						}
 						console.log("BB",bibliographics_references)
 						
-						self.get_publications_data({
+						// self.get_publications_data({
 
-						})
+						// })
 					}
 			})		
 		}
@@ -451,7 +456,6 @@ var mint =  {
 							})
 						}
 
-
 					// authors
 						const authors = common.clean_gaps(bibliographic_reference.ref_publications_authors, " | ", ", ")
 						if (authors.length>0) {
@@ -469,7 +473,7 @@ var mint =  {
 							})
 						}
 
-					// authors
+					// date
 						const date = common.clean_gaps(bibliographic_reference.ref_publications_date, " | ", ", ");
 						if (date.length>0) {
 							common.create_dom_element({

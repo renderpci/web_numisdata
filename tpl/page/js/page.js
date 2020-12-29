@@ -840,6 +840,30 @@ var page = {
 
 
 	/**
+	* TRIM_CHAR
+	* Removes custom char at begining or end of string
+	* Like '|pepe | lepe' when 'pepe|' to 'pepe | lepe' when 'pepe' for ('|')
+	*/
+	trim_char : function(string, charToRemove) {
+
+		if (!string) {
+			return string
+		}
+
+	    while(string.charAt(0)==charToRemove) {
+	        string = string.substring(1);
+	    }
+
+	    while(string.charAt(string.length-1)==charToRemove) {
+	        string = string.substring(0,string.length-1);
+	    }
+
+	    return string;
+	},//end trim_char
+
+
+
+	/**
 	* PARSE_DATE
 	* Converts date like '2001-00-00 00:00:00' -> '2001'
 	*/

@@ -99,7 +99,6 @@ var biblio_row_fields = {
 
 			const ar_date 	= biblio_object.publication_date.split("-")
 			let final_date 	= parseInt(ar_date[0])
-
 				final_date = final_date + "-" + parseInt(ar_date[1])
 
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
@@ -114,6 +113,7 @@ var biblio_row_fields = {
 			})
 
 			line.classList.remove("hide")
+
 
 		return line
 	},//end publication_date
@@ -176,6 +176,7 @@ var biblio_row_fields = {
 				element_type 	: "div",
 				class_name 		: "info_line row_body" + " " + typology
 			})
+
 		switch(typology){
 
 			case 'book': // book

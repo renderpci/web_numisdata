@@ -96,23 +96,29 @@ var biblio_row_fields = {
 			element_type 	: "div",
 		})
 
+		let final_date = ''
+		if (biblio_object.publication_date && biblio_object.publication_date.length>0) {	
 
-			const ar_date 	= biblio_object.publication_date.split("-")
-			let final_date 	= parseInt(ar_date[0])
+			const ar_date = biblio_object.publication_date.split("-")
+			
+			final_date = typeof(ar_date[0])!=="undefined"
+				? parseInt(ar_date[0])
+				: ''
 				final_date = final_date + "-" + parseInt(ar_date[1])
 
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
 				final_date = final_date + "-" + parseInt(ar_date[2])
 			}
+		}
 
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_value",
-				text_content 	: final_date,
-				parent 			: line
-			})
+		common.create_dom_element({
+			element_type 	: "div",
+			class_name 		: "info_value",
+			text_content 	: final_date,
+			parent 			: line
+		})
 
-			line.classList.remove("hide")
+		line.classList.remove("hide")
 
 
 		return line

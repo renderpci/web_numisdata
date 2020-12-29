@@ -61,26 +61,18 @@ var mint =  {
 						})
 					}
 
-					// const catalog_response = response.result.find( el => el.id==='catalog')
-					// if (catalog_response && catalog_response.result) {
-					// 	const catalog_data = page.parse_catalog_data(catalog_response.result)
-					// 	console.log("catalog_data:",catalog_data);
-					// }
-
 					var bibliography_data= response.result[0].result[0].bibliography_data;
-					console.log(bibliography_data);
 					if (bibliography_data.length>0){
 
 						var bibliographics_references = [];
 
-						for (let i=0; i<bibliography_data.length;i++){
-							bibliographics_references.push(bibliography_data[i].publications_data);
+						for (let i=0; i>bibliography_data.length;i++){
+							bibliographics_references.push(bibliography_data.publications_data[0])
 						}
 						console.log("BB",bibliographics_references)
 						
-						self.get_bibliography_data(bibliographics_references)
-						.then(function(result){
-							console.log("HECHO")
+						self.get_publications_data({
+
 						})
 					}
 			})		
@@ -381,103 +373,7 @@ var mint =  {
 				createTextBlock(numismatic_comments,line);
 			}
 
-		// container final add
-		container.appendChild(fragment)
-
-		return container
-
-
-		//Create an expandable block when text length is over 500
-		function createTextBlock (text,nodeParent) {
-			const textBlock = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "info_text_block",
-				inner_html		: text,
-				parent			: nodeParent
-			})
-
-			if (text.length>500){
-				textBlock.classList.add("contracted-block");
-
-				const textBlockSeparator = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "text-block-separator",
-					parent 			: nodeParent
-				})
-
-				const separatorArrow = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "separator-arrow",
-					parent 			: textBlockSeparator
-				})
-
-				textBlockSeparator.addEventListener("click",function(){
-					if (textBlock.classList.contains("contracted-block")){
-						textBlock.classList.remove ("contracted-block");
-						separatorArrow.style.transform = "rotate(-90deg)";
-					} else {
-						textBlock.classList.add("contracted-block");
-						separatorArrow.style.transform = "rotate(90deg)";
-					}
-				})
-			}
-		}	
-
-	},//end draw_row
-
-	get_bibliography_data : function(options){
-
-		const self = this
-
-		//const section_id = options.section_id
-
-		return new Promise(function(resolve){
-
-			// request
-				const js_promise = data_manager.request({
-					body : {
-						dedalo_get	: 'records',
-						table		: 'publications',
-						db_name		: page_globals.WEB_DB,
-						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						//ar_fields	: ['section_id','ref_publications_title','ref_publications_authors','ref_publications_url','ref_publications_place','children'],
-						count		: false,
-						limit		: 0,
-						order		: 'norder ASC',
-						//sql_filter	: "term_table='types' AND parents LIKE '%\"" + parseInt(section_id) + "\"%'"
-					}
-				})
-				.then(function(response){
-					
-					const types_data = []
-					if (response.result && response.result.length>0) {
-						for (let i = 0; i < response.result.length; i++) {
-							
-							const row = {
-								catalog			: 'MIB',
-								section_id		: response.result[i].term_data.replace(/[\["\]]/g, ''),
-								denomination	: response.result[i].ref_type_denomination,
-								number			: response.result[i].term,
-								parent 			: JSON.parse(response.result[i].parent)[0],
-								parents 		: JSON.parse(response.result[i].parents),
-								children 		: JSON.parse(response.result[i].children)
-							}							
-
-							types_data.push(row)
-						}
-					}
-					console.log("--> get_types_data types_data:",types_data);					
-
-					resolve(types_data)
-				})
-		})
-	},
-
-	/**
-	* DRAW_BIBLIOGRAPHY
-	*/
-	draw_bibliography : function(options){
-		
+		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
 
 				const lineSeparator = common.create_dom_element({
@@ -553,6 +449,7 @@ var mint =  {
 							})
 						}
 
+
 					// authors
 						const authors = common.clean_gaps(bibliographic_reference.ref_publications_authors, " | ", ", ")
 						if (authors.length>0) {
@@ -570,7 +467,7 @@ var mint =  {
 							})
 						}
 
-					// date
+					// authors
 						const date = common.clean_gaps(bibliographic_reference.ref_publications_date, " | ", ", ");
 						if (date.length>0) {
 							common.create_dom_element({
@@ -673,7 +570,6 @@ var mint =  {
 						}
 				}				
 			}
-	},//end draw_bibliography
 
 	/**
 	* DRAW_TYPES

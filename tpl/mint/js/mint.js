@@ -71,16 +71,17 @@ var mint =  {
 					console.log(bibliography_data);
 					if (bibliography_data.length>0){
 
-						var bibliographics_references = [];
+						// var bibliographics_references = [];
 
-						for (let i=0; i<bibliography_data.length;i++){
-							bibliographics_references.push(bibliography_data[i].publications_data);
-						}
-						console.log("BB",bibliographics_references)
+						// for (let i=0; i<bibliography_data.length;i++){
+						// 	bibliographics_references.push(bibliography_data[i].publications_data);
+						// }
+						// console.log("BB",bibliographics_references)
+						biblio_row_fields.biblio_object = bibliography_data[0]
+						biblio_row_fields.caller = self
 						
-						// self.get_publications_data({
-
-						// })
+						const line = biblio_row_fields.row_bibliography();
+						console.log("LINE ",line)
 					}
 			})		
 		}
@@ -382,13 +383,13 @@ var mint =  {
 
 		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
-
+				//create the graphical red line that divide blocks 
 				const lineSeparator = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_line separator",
 					parent 			: line
 				})
-
+				//create the tittle block inside a red background
 				common.create_dom_element({
 					element_type	: "label",
 					class_name 		: "big_label",				
@@ -396,184 +397,27 @@ var mint =  {
 					parent			: lineSeparator
 				})
 
-				for (var i = 0; i < row_object.bibliography_data.length; i++) {
+				const ref_biblio		= row_object.bibliography_data
+				const ref_biblio_length	= ref_biblio.length
+
+				// row_field set
+				const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
+
+				for (var i = 0; i < ref_biblio_length; i++) {
 					
-					const bibliographic_reference = row_object.bibliography_data[i]
+					const biblio_row_wrapper = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "bibliographic_reference",
+						parent			: line
+					})
 					
-					// debug
-						if(SHOW_DEBUG===true) {
-							console.log("bibliographic_reference:",bibliographic_reference);
-						}
+					const current_biblio_object = ref_biblio[i]	
+					row_field.biblio_object = current_biblio_object
 					
-					// description
-						const description = bibliographic_reference.description
-						if (description.length>0) {
-							common.create_dom_element({
-								element_type	: "label",								
-								text_content	: tstring.description || "Description",
-								parent			: line
-							})
-							
-							common.create_dom_element({
-								element_type	: "div",
-								class_name		: "info_value",
-								inner_html		: description,
-								parent			: line
-							})
-						}
-
-					// info
-						const items = common.clean_gaps(bibliographic_reference.items, " | ", ", ")
-						if (items.length>0) {
-							common.create_dom_element({
-								element_type	: "label",								
-								text_content	: tstring.info || "Info",
-								parent			: line
-							})
-												
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								inner_html 		: items,
-								parent 			: line
-							})
-						}
-
-					// pages
-						const pages = bibliographic_reference.pages
-						if (pages.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.pages || "Pages",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: pages,
-								parent 			: line
-							})
-						}
-
-					// authors
-						const authors = common.clean_gaps(bibliographic_reference.ref_publications_authors, " | ", ", ")
-						if (authors.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.authors || "Authors",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: authors,
-								parent 			: line
-							})
-						}
-
-					// date
-						const date = common.clean_gaps(bibliographic_reference.ref_publications_date, " | ", ", ");
-						if (date.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.date || "Date",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: date,
-								parent 			: line
-							})
-						}
-
-					// editor
-						const editor = common.clean_gaps(bibliographic_reference.ref_publications_editor, " | ", ", ");
-						if (editor.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.editor || "Editor",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: editor,
-								parent 			: line
-							})
-						}
-
-					// magazine
-						const magazine = common.clean_gaps(bibliographic_reference.ref_publications_magazine, " | ", ", ");
-						if (editor.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.magazine || "Magazine",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: magazine,
-								parent 			: line
-							})
-						}
-
-					//place
-						const place = common.clean_gaps(bibliographic_reference.ref_publications_place, " | ", ", ");
-						if (place.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.place || "Place",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: place,
-								parent 			: line
-							})
-						}
-
-					//title
-						const title = common.clean_gaps(bibliographic_reference.ref_publications_title, " | ", ", ");
-						if (title.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.title || "Place",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: title,
-								parent 			: line
-							})
-						}
-
-					//url
-						const url = common.clean_gaps(bibliographic_reference.ref_publications_url, " | ", ", ");
-						if (url.length>0) {
-							common.create_dom_element({
-								element_type 	: "label",								
-								text_content 	: tstring.url || "Url",
-								parent 			: line
-							})
-							
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value",
-								text_content	: url,
-								parent 			: line
-							})
-						}
+					const biblio_row = row_field.row_bibliography()
+					biblio_row_wrapper.appendChild(biblio_row)
+					
+					
 				}				
 			}
 

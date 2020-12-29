@@ -3,6 +3,7 @@
 
 
 var row_fields = {
+var biblio_row_fields = {
 
 
 
@@ -28,7 +29,6 @@ var row_fields = {
 		return typology_label
 	},
 
-	
 
 	author : function() {
 
@@ -52,9 +52,7 @@ var row_fields = {
 			})
 			link.setAttribute('target', '_blank');
 		}
-		
 
-		// authors 
 		if (biblio_object.authors && biblio_object.authors.length>0) {
 
 			const authors_data 			= biblio_object.authors_data
@@ -75,7 +73,6 @@ var row_fields = {
 				text_content 	: final_authors,
 				parent 			: line
 			})
-				
 		}else{
 
 			common.create_dom_element({
@@ -98,15 +95,12 @@ var row_fields = {
 
 		const line = common.create_dom_element({
 			element_type 	: "div",
-			class_name 		: "info_line publication_date hide"			
 		})
 
-		if (biblio_object.publication_date) {			
 
 			const ar_date 	= biblio_object.publication_date.split("-")
 			let final_date 	= parseInt(ar_date[0])
 
-			if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {					
 				final_date = final_date + "-" + parseInt(ar_date[1])
 			}
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
@@ -155,11 +149,8 @@ var row_fields = {
 				parent 			: line
 			})
 
-		// pdf_uri				
 			for (let i = 0; i < ar_pdf_uri_length; i++) {
-				
 				const pdf_item = ar_pdf_uri[i]
-			
 				common.create_dom_element({
 					element_type 	: "div",
 					class_name 		: "pdf",
@@ -171,7 +162,6 @@ var row_fields = {
 					window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 				})
 			}
-			
 
 		return line
 	},//end row_title
@@ -182,20 +172,14 @@ var row_fields = {
 
 		const biblio_object = this.biblio_object
 		const typology 		= this.get_typology()
-				
 
 		// line
 			const line = common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "info_line row_body" + " " + typology
-			})	
-		
-		
 		switch(typology){
 
 			case 'book': // book
-				
-				// place 
 					if (biblio_object.place) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -205,7 +189,6 @@ var row_fields = {
 						})
 					}
 
-				// editor 
 					if (biblio_object.editor) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -218,7 +201,6 @@ var row_fields = {
 
 			default: // article, etc.
 
-				// magazine 
 					if (biblio_object.magazine) {
 						common.create_dom_element({
 							element_type 	: "div",
@@ -255,7 +237,6 @@ var row_fields = {
 	
 				// other_people_info : name and role other_people_name
 					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-						
 						const other_people_name = biblio_object.other_people_name.split(" | ");
 						const other_people_role = biblio_object.other_people_role.split(" | ")
 						for (let g = 0; g < other_people_name.length; g++) {
@@ -383,4 +364,4 @@ var row_fields = {
 
 
 
-}//end row_fields
+}//end biblio_row_fields

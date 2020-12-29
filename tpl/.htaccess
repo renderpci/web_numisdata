@@ -1,0 +1,6 @@
+# Reset folder rewrite (!) important
+RewriteEngine On
+
+<filesMatch ".(ico)$">
+	Header set Cache-Control "max-age=84600, public"
+</filesMatch>

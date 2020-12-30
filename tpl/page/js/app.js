@@ -1,3 +1,10 @@
+/**
+* This file only collect another files and generate a new one called app-min.js
+* (!) You need to maintain opened Codekit to work
+*/
+
+
+
 // web_app common files
 	// @codekit-append "../../../web_app/common/js/common.js";
 

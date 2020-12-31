@@ -371,7 +371,7 @@ var biblio_row_fields = {
 
 	row_bibliography : function(){
 
-			const biblio_object = this.biblio_object
+			var biblio_object = this.biblio_object
 
 			// pages: "59"
 			// publications_data: "[\"16022\"]"
@@ -385,6 +385,14 @@ var biblio_row_fields = {
 			// reference: "1"
 			// section_id: "25604"
 			// sheet: ""
+
+			const publication_url = biblio_object.ref_publications_url
+
+
+			//check in url if has a Zenon reference for parsing
+			if (publication_url != null && publication_url.includes("Zenon")){
+				biblio_object = parse_zenon_bibliography(biblio_object);
+			}
 
 			// line
 				const line = common.create_dom_element({
@@ -485,7 +493,29 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
+			//parse bibliography data with Zenon references for extract only the first one
+			function parse_zenon_bibliography(data){
+				const biblio_data = data
+				const biblio_data_length = biblio_data.length;
+
+				for (const property in biblio_data){
+					if (biblio_data[property] != null && biblio_data[property].includes(" # ")){
+
+						biblio_data[property] = biblio_data[property].split(" # ")[0]
+
+						//erase Zenon word of url string
+						if (property === "ref_publications_url") {
+							biblio_data[property] = biblio_data[property].split(", ")[1]
+						}
+					}
+				}
+
+				return biblio_data;
+			} 
+
 			return line
 		},//end bibliography
+
+
 
 }//end biblio_row_fields

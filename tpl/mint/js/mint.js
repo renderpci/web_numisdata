@@ -60,29 +60,6 @@ var mint =  {
 							})
 						})
 					}
-
-					// const catalog_response = response.result.find( el => el.id==='catalog')
-					// if (catalog_response && catalog_response.result) {
-					// 	const catalog_data = page.parse_catalog_data(catalog_response.result)
-					// 	console.log("catalog_data:",catalog_data);
-					// }
-
-					var bibliography_data= response.result[0].result[0].bibliography_data;
-					console.log(bibliography_data);
-					if (bibliography_data.length>0){
-
-						// var bibliographics_references = [];
-
-						// for (let i=0; i<bibliography_data.length;i++){
-						// 	bibliographics_references.push(bibliography_data[i].publications_data);
-						// }
-						// console.log("BB",bibliographics_references)
-						biblio_row_fields.biblio_object = bibliography_data[0]
-						biblio_row_fields.caller = self
-						
-						const line = biblio_row_fields.row_bibliography();
-						console.log("LINE ",line)
-					}
 			})		
 		}
 
@@ -357,7 +334,14 @@ var mint =  {
 
 				const history = row_object.history
 
-				createTextBlock(history,line);
+				const history_block = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_text_block",
+					inner_html		: history,
+					parent			: line
+				})
+
+				if (history.length>500) createExpandableBlock(history_block,line);
 			}
 
 		// numismatic_comments
@@ -378,8 +362,14 @@ var mint =  {
 
 				const numismatic_comments = row_object.numismatic_comments
 
-				createTextBlock(numismatic_comments,line);
-			}
+				const numismatic_comments_block = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_text_block",
+					inner_html		: numismatic_comments,
+					parent			: line
+				})
+
+				if (numismatic_comments.length>500) createExpandableBlock(numismatic_comments_block,line);			}
 
 		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
@@ -403,22 +393,32 @@ var mint =  {
 				// row_field set
 				const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
 
+				const bibliography_block = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_text_block",
+					parent			: line
+				})
+				
+
 				for (var i = 0; i < ref_biblio_length; i++) {
 					
 					const biblio_row_wrapper = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "bibliographic_reference",
-						parent			: line
+						parent			: bibliography_block
 					})
 					
 					const current_biblio_object = ref_biblio[i]	
 					row_field.biblio_object = current_biblio_object
 					
 					const biblio_row = row_field.row_bibliography()
+
+
 					biblio_row_wrapper.appendChild(biblio_row)
 					
-					
-				}				
+				}	
+
+				createExpandableBlock(bibliography_block,line);		
 			}
 
 
@@ -429,39 +429,31 @@ var mint =  {
 
 
 		//Create an expandable block when text length is over 500
-		function createTextBlock (text,nodeParent) {
-			const textBlock = common.create_dom_element({
+		function createExpandableBlock (textBlock,nodeParent) {
+			
+			textBlock.classList.add("contracted-block");
+
+			const textBlockSeparator = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "info_text_block",
-				inner_html		: text,
-				parent			: nodeParent
+				class_name		: "text-block-separator",
+				parent 			: nodeParent
 			})
 
-			if (text.length>500){
-				textBlock.classList.add("contracted-block");
+			const separatorArrow = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "separator-arrow",
+				parent 			: textBlockSeparator
+			})
 
-				const textBlockSeparator = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "text-block-separator",
-					parent 			: nodeParent
-				})
-
-				const separatorArrow = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "separator-arrow",
-					parent 			: textBlockSeparator
-				})
-
-				textBlockSeparator.addEventListener("click",function(){
-					if (textBlock.classList.contains("contracted-block")){
-						textBlock.classList.remove ("contracted-block");
-						separatorArrow.style.transform = "rotate(-90deg)";
-					} else {
-						textBlock.classList.add("contracted-block");
-						separatorArrow.style.transform = "rotate(90deg)";
-					}
-				})
-			}
+			textBlockSeparator.addEventListener("click",function(){
+				if (textBlock.classList.contains("contracted-block")){
+					textBlock.classList.remove ("contracted-block");
+					separatorArrow.style.transform = "rotate(-90deg)";
+				} else {
+					textBlock.classList.add("contracted-block");
+					separatorArrow.style.transform = "rotate(90deg)";
+				}
+			})
 		}	
 
 	},//end draw_row

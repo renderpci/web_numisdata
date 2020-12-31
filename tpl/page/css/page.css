@@ -1061,6 +1061,9 @@ p img.svg {
     width: 95%;
   }
 }
+#main .inner .bibliographic_reference {
+  margin-top: 1em;
+}
 #main .inner .identify_coin_wrapper {
   margin-top: 1em;
   float: inherit;

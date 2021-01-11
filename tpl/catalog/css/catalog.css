@@ -269,6 +269,9 @@ span {
   height: 1.2em;
   vertical-align: middle;
 }
+.legend_obverse span {
+  margin-right: 0;
+}
 .ref_type_design_reverse {
   grid-column-start: 2;
   grid-row-start: 1;
@@ -293,6 +296,9 @@ span {
 .legend_reverse img {
   height: 1.2em;
   vertical-align: middle;
+}
+.legend_reverse span {
+  margin-right: 0;
 }
 .coins_images {
   display: inline-grid;

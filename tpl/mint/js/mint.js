@@ -180,6 +180,8 @@ var mint =  {
 
 		return new Promise(function(resolve){
 
+			console.log("SECTION_ID: "+ section_id)
+
 			// request
 				const js_promise = data_manager.request({
 					body : {
@@ -191,11 +193,15 @@ var mint =  {
 						count		: false,
 						limit		: 0,
 						order		: 'norder ASC',
-						sql_filter	: "term_table='types' AND parents LIKE '%\"" + parseInt(section_id) + "\"%'"
+						sql_filter	: "term_table='types' AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
+						resolve_portals_custom	: {
+							"parent" : "catalog",
+							"children"	: "catalog" 
+						}
 					}
 				})
 				.then(function(response){
-					
+
 					const types_data = []
 					if (response.result && response.result.length>0) {
 						for (let i = 0; i < response.result.length; i++) {
@@ -205,21 +211,96 @@ var mint =  {
 								section_id		: response.result[i].term_data.replace(/[\["\]]/g, ''),
 								denomination	: response.result[i].ref_type_denomination,
 								number			: response.result[i].term,
-								parent 			: JSON.parse(response.result[i].parent)[0],
-								parents 		: JSON.parse(response.result[i].parents),
-								children 		: JSON.parse(response.result[i].children)
+								parent 			: response.result[i].parent,
+								parents 		: response.result[i].parents,
+								children 		: response.result[i].children
 							}							
 
 							types_data.push(row)
 						}
 					}
-					console.log("--> get_types_data types_data:",types_data);					
+					console.log("--> get_types_data types_data:",types_data);
+
+					const parsed_types_data = self.parse_types_data(types_data)				
 
 					resolve(types_data)
 				})
 		})
 	},//end get_types_data
 
+	parse_types_data : function (options){
+		const period = []
+		const group = []
+		const data = options;
+
+		const rows_length = options.length
+
+		for (let i=0;i<rows_length;i++){
+			var currentObject = data[i]
+			var currentParent = data[i].parent[0]
+
+
+			if (currentParent.term_table == "ts_numismatic_group") {
+
+			}
+
+			//analice if the parent is a period or a group
+			if (currentParent.term_table == "ts_period") {
+
+				var currentNodeExist = false;
+				var currentNodeIndex = null;
+				var currentNode = null;
+
+				//analice if current period already exists in period array
+				period.forEach(node_exist);
+				function node_exist(item,index){
+					if (item.id == currentParent.section_id){
+						currentNodeExist = true;
+						currentNode = item;
+					} 
+				}
+
+				if (currentNodeExist){
+					currentNode.children.push(currentObject)
+
+					//period[currentNodeIndex].push(currentObject)
+				} else {
+
+					var element = {}
+					element.id = currentParent.section_id
+					element.term = currentParent.term
+					element.children = [currentObject]
+					period.push(element)
+				}
+
+				console.log(period[period.length-1].children[0].number)
+
+			}
+		}
+
+
+
+		//walk period array showing all periods and his types and subtypes
+		for (let i=0;i<period.length;i++){
+			console.log("PARENT TERM: "+period[i].term)
+
+			const children_length = period[i].children.length
+			for (let z=0;z<children_length;z++){
+				console.log("PARENT: " + period[i].term + " CHILD: " + period[i].children[z].number)
+
+				if (period[i].children[z].children.length>0){
+					for (let y=0;y<period[i].children[z].children.length;y++){
+						console.log(period[i].children[z].children[y].term)
+					}
+				}
+			}
+
+		}
+
+		//SACAR TYPES PARA VER QUE ESTAN CORRECTOS
+
+		return ("enra");
+	},
 
 
 	/**

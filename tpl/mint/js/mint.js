@@ -189,28 +189,34 @@ var mint =  {
 						table		: 'catalog',
 						db_name		: page_globals.WEB_DB,
 						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						ar_fields	: ['term_data','ref_type_denomination','term','parent','parents','children'],
+						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children'],
 						count		: false,
 						limit		: 0,
 						order		: 'norder ASC',
-						sql_filter	: "term_table='types' AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
+						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						resolve_portals_custom	: {
 							"parent" : "catalog",
 							"children"	: "catalog" 
 						}
+						// process_result	: {
+						// 	fn 		: 'process_result::add_parents_and_children_recursive',
+						// 	columns : [{name : "parents"}]
+						// }
 					}
 				})
 				.then(function(response){
-
+					console.log(response.result)
 					const types_data = []
 					if (response.result && response.result.length>0) {
 						for (let i = 0; i < response.result.length; i++) {
 							
 							const row = {
 								catalog			: 'MIB',
-								section_id		: response.result[i].term_data.replace(/[\["\]]/g, ''),
+								section_id		: response.result[i].section_id,
+								original_table_id : response.result[i].term_data.replace(/[\["\]]/g, ''),
 								denomination	: response.result[i].ref_type_denomination,
-								number			: response.result[i].term,
+								term_table		: response.result[i].term_table,
+								term			: response.result[i].term,
 								parent 			: response.result[i].parent,
 								parents 		: response.result[i].parents,
 								children 		: response.result[i].children
@@ -229,75 +235,72 @@ var mint =  {
 	},//end get_types_data
 
 	parse_types_data : function (options){
-		const period = []
-		const group = []
+		var parsedData = []
 		const data = options;
 
 		const rows_length = options.length
 
 		for (let i=0;i<rows_length;i++){
 			var currentObject = data[i]
-			var currentParent = data[i].parent[0]
-
-
-			if (currentParent.term_table == "ts_numismatic_group") {
-
-			}
-
-			//analice if the parent is a period or a group
-			if (currentParent.term_table == "ts_period") {
-
-				var currentNodeExist = false;
-				var currentNodeIndex = null;
-				var currentNode = null;
-
-				//analice if current period already exists in period array
-				period.forEach(node_exist);
-				function node_exist(item,index){
-					if (item.id == currentParent.section_id){
-						currentNodeExist = true;
-						currentNode = item;
-					} 
-				}
-
-				if (currentNodeExist){
-					currentNode.children.push(currentObject)
-
-					//period[currentNodeIndex].push(currentObject)
-				} else {
-
-					var element = {}
-					element.id = currentParent.section_id
-					element.term = currentParent.term
-					element.children = [currentObject]
-					period.push(element)
-				}
-
-				console.log(period[period.length-1].children[0].number)
-
-			}
+		 	
+		 	if (currentObject.term_table === 'ts_period'){
+		 		if (parsedData.period == null){
+		 			parsedData.period = []
+		 			parsedData.period.push(currentObject)
+		 		} else {
+		 			parsedData.period.push(currentObject)
+		 		}
+		 	}
 		}
 
+		for (let i=0;i<rows_length;i++){
+			var currentObject = data[i]
+		 	var currentParent = data[i].parent[0]
 
+		 	if (currentObject.term_table === 'ts_numismatic_group'){
+		 		const periodData = parsedData.period.find(obj => obj.section_id === currentParent.section_id)
+		 		if (periodData.groups == null) {
+			 		periodData.groups = []
+			 		periodData.groups.push(currentObject)
+			 	} else {
+			 		periodData.groups.push(currentObject)
+			 	}
+		 	}
+		}
 
-		//walk period array showing all periods and his types and subtypes
-		for (let i=0;i<period.length;i++){
-			console.log("PARENT TERM: "+period[i].term)
+		for (let i=0;i<rows_length;i++){
+			var currentObject = data[i]
+		 	var currentParent = data[i].parent[0]
 
-			const children_length = period[i].children.length
-			for (let z=0;z<children_length;z++){
-				console.log("PARENT: " + period[i].term + " CHILD: " + period[i].children[z].number)
-
-				if (period[i].children[z].children.length>0){
-					for (let y=0;y<period[i].children[z].children.length;y++){
-						console.log(period[i].children[z].children[y].term)
+			if (currentObject.term_table === 'types'){
+				if (currentParent.term_table === 'ts_period') {
+					const periodData = parsedData.period.find(obj => obj.section_id === currentParent.section_id)
+			 		if (periodData.types == null) {
+				 		periodData.types = []
+				 		periodData.types.push(currentObject)
+				 	} else {
+				 		periodData.types.push(currentObject)
+				 	}	
+				} else if (currentParent.term_table === 'ts_numismatic_group'){
+					const period_length = parsedData.period.length
+					for (let z=0;z<period_length;z++){
+						const groupData = parsedData.period[z].groups.find(obj => obj.section_id === currentParent.section_id)
+		
+						if (groupData.types == null) {
+					 		groupData.types = []
+					 		groupData.types.push(currentObject)
+				 		} else {
+				 			groupData.types.push(currentObject)
+				 		}	
 					}
+			 		
 				}
-			}
+		 	}
+
 
 		}
 
-		//SACAR TYPES PARA VER QUE ESTAN CORRECTOS
+		console.log(parsedData)
 
 		return ("enra");
 	},

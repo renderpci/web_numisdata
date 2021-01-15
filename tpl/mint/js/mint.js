@@ -28,7 +28,7 @@ var mint =  {
 				section_id : section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result[1]);
+				//console.log("--> set_up get_row_data API response:",response.result[1]);
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -186,7 +186,7 @@ var mint =  {
 						table		: 'catalog',
 						db_name		: page_globals.WEB_DB,
 						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse'],
+						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight'],
 						count		: false,
 						limit		: 0,
 						order		: 'norder ASC',
@@ -217,13 +217,15 @@ var mint =  {
 								parents 		: response.result[i].parents,
 								children 		: response.result[i].children,
 								ref_coins_image_obverse 	: response.result[i].ref_coins_image_obverse,
-								ref_coins_image_reverse 	: response.result[i].ref_coins_image_reverse
+								ref_coins_image_reverse 	: response.result[i].ref_coins_image_reverse,
+								ref_type_averages_diameter 		: response.result[i].ref_type_averages_diameter,
+								ref_type_averages_weight 			: response.result[i].ref_type_averages_weight
 							}							
 
 							types_data.push(row)
 						}
 					}
-					console.log("--> get_types_data types_data:",types_data);
+					//console.log("--> get_types_data types_data:",types_data);
 
 					const parsed_types_data = self.parse_types_data(types_data)				
 
@@ -572,11 +574,6 @@ var mint =  {
 
 			const row_object = ar_rows[i]
 
-			// debug
-			if(SHOW_DEBUG===true) {
-				console.log("type row_object:",row_object);;
-			}
-
 			// row_line
 			const row_line = common.create_dom_element({
 				element_type 	: "div",
@@ -768,27 +765,66 @@ var mint =  {
 	draw_types_block : function(options) {
 		const self = this
 		const types_ar = options
-		console.log(types_ar)
 		const types_ar_length = types_ar.length
-
-
 
 		const children_container = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "types_container",
 		})
 
+		let previowsTypeNumber = ""
+
 		for (let i=0;i<types_ar_length;i++){
 			const type_row = types_ar[i]
-			const type_number = type_row.term.slice(0,type_row.term.indexOf(",")) 
+			//if has subtypes
+			if (type_row.children.length > 0){
+				const subTypes = type_row.children
+				const subTypes_length = subTypes.length
+
+				for (let z=0;z<subTypes_length;z++){
+					const subType = subTypes[z]
+					
+					let isFirstElemenet = false
+					
+					z===0 ? isFirstElemenet = true : isFirstElemenet = false
+					create_type_element(subType,true,isFirstElemenet,type_row.term);
+				}
+			} else {
+				create_type_element(type_row,false,true);
+			}
+		}
+
+		function create_type_element(data,isSubtype,isFirstElemenet,parentSubType){
+
+			const type_row = data;
+
+			let type_row_term = ""
+			type_row.term.indexOf(",") == -1 ? type_row_term = type_row.term : type_row_term = type_row.term.slice(0,type_row.term.indexOf(","))
+
+			var type_number = ""
+			var subType_number = ""
+			var SubTypeClass = ""
+
+			if (!isSubtype) {
+				type_number = "MIB "+type_row_term
+			} else {
+				subType_number = "MIB "+type_row_term 
+				SubTypeClass = "subType_number"
+				if (isFirstElemenet){
+					let parent_term = ""
+					parentSubType.indexOf(",") == -1 ? parent_term = parentSubType : parent_term = parentSubType.slice(0,parentSubType.indexOf(","))
+					type_number =  "MIB "+parent_term
+				}
+			}
 
 			//Type wrap
 			const row_type = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "type_warp",
+				class_name		: "type_wrap",
 				parent 			: children_container
 			})
 
+			//IF IS A TYPE
 			const number_wrap = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "type_number",
@@ -797,9 +833,18 @@ var mint =  {
 
 			common.create_dom_element({
 				element_type	: "p",
-				text_content 	: "MIB "+type_number,
+				text_content 	: type_number,
+				class_name		: "type_label",
 				parent 			: number_wrap
-			}).loading="lazy"
+			})
+
+			//IF IS A SUBTYPE
+			common.create_dom_element({
+				element_type	: "p",
+				text_content 	: subType_number,
+				class_name		: "subType_label "+SubTypeClass,
+				parent 			: number_wrap
+			})
 
 			const img_wrap = common.create_dom_element({
 				element_type 	: "div",
@@ -829,30 +874,30 @@ var mint =  {
 				element_type	: "img",
 				src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
 				parent 			: img_link_re
-			}).loading="lazy"				
+			}).loading="lazy"
 
-			//if has subtypes
-			if (type_row.children !=null){
-				const subTypes = type_row.children
-				const subTypes_length = subTypes.length
+			const info_wrap = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "info_wrap",
+				parent 			: row_type
+			})			
 
-				for (let z=0;z<subTypes_length;z++){
-					const subType = subTypes[z]
+			const type_measures = type_row.ref_type_averages_weight+" g; "+type_row.ref_type_averages_diameter+"mm"
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "type_info",
+				text_content 	: type_measures,
+				parent 			: info_wrap
+			})
 
-					const row_period = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "type_warp",
-						parent 			: children_container
-					})
-
-					common.create_dom_element({
-						element_type	: "div",
-						class_name		: "ts_period",
-						text_content 	: subType.term,
-						parent 			: row_period
-					})
-				}
-			}
+			const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
+			common.create_dom_element ({
+				element_type 	: "a",
+				class_name 		: "type_info",
+				text_content 	: "URI: "+permanent_uri,
+				href 			: permanent_uri,
+				parent 			: info_wrap
+			})
 		}
 
 		return children_container;

@@ -600,49 +600,64 @@ var mint =  {
 				parent 			: fragment
 			})
 
-			//Period wrap
-			const row_period = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "row_node ts_period",
-				parent 			: children_container
-			})
-
-			common.create_dom_element({
+			const period_label = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "ts_period",
 				text_content 	: row_object.term,
-				parent 			: row_period
+				parent 			: children_container
 			})
 
-			
+			common.create_dom_element ({
+				element_type 	: "div",
+				class_name		: "arrow",
+				parent 			: period_label
+			})
+
+			//PERIOD wrap
+			const row_period = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "row_node ts_period hide",
+				parent 			: children_container
+			})
+
 			if (row_object.groups != null){
 				//if has numismatics groups
 				const group_length = row_object.groups.length
 				for (let z = 0; z < group_length; z++) {
 
-					//Group wrap
+					//GROUP wrap
 					const children_container = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "children_container",
 						parent 			: row_period
 					})
 
-					const row_group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "row_node ts_numismatic_group",
-						parent 			: children_container
-					})
-
-					common.create_dom_element({
+					const children_label = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "ts_numismatic_group",
 						text_content 	: row_object.groups[z].term,
-						parent 			: row_group
+						parent 			: children_container
 					})
+
+					common.create_dom_element ({
+						element_type 	: "div",
+						class_name		: "arrow",
+						parent 			: children_label
+					})
+
+					const row_group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "row_node ts_numismatic_group hide",
+						parent 			: children_container
+					})
+
 
 					const types_block = self.draw_types_block (row_object.groups[z].types)
 
 					row_group.appendChild(types_block)
+
+
+					createFolderedGroup(children_label,row_group)
 
 				}
 			} else {
@@ -653,112 +668,29 @@ var mint =  {
 
 				row_period.appendChild(types_block)
 
-
 			}
-
-
-		}	
+			createFolderedGroup(period_label,row_period)		
+		}
 
 		// container final add
 		container.appendChild(fragment)
 
-		//////////////////////////////////////////////OLD TYPES DRAW ////////////////////////////////////////////// 
+		function createFolderedGroup(label,row_group) {
 
-		// const container 	 = options.target
-		// const ar_rows		 = options.ar_rows
-		// const ar_rows_length = ar_rows.length
+			const label_arrow = label.firstElementChild;
 
-		// // sort rows
-		// 	let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
-		// 	ar_rows.sort( (a,b) => {
-		// 			let order_a = a.catalogue +" "+ a.number
-		// 			let order_b = b.catalogue +" "+ b.number
-		// 			//console.log("order_a",order_a, order_b);
-		// 			//console.log(collator.compare(order_a , order_b));
-		// 		return collator.compare(order_a , order_b)
-		// 	});
-
-		// // container select and clean container div
-		// 	while (container.hasChildNodes()) {
-		// 		container.removeChild(container.lastChild);
-		// 	}
-
-		// const fragment = new DocumentFragment();
-
-		// // label types
-		// 	common.create_dom_element({
-		// 		element_type 	: "label",
-		// 		text_content 	: tstring.tipos || "Types",
-		// 		parent 			: fragment
-		// 	})
-
-		// console.groupCollapsed("Types info");
-		// for (let i = 0; i < ar_rows_length; i++) {
+			label.addEventListener("click",function(){
+				if (row_group.classList.contains("hide")){
+					row_group.classList.remove ("hide");
+					label_arrow.style.transform = "rotate(90deg)";
+				} else {
+					row_group.classList.add("hide");
+					label_arrow.style.transform = "rotate(0deg)";
+				}
+			})
 			
-		// 	const row_object = ar_rows[i]
+		}
 
-		// 	// debug
-		// 		if(SHOW_DEBUG===true) {
-		// 			console.log("type row_object:",row_object);;
-		// 		}
-
-		// 	// row_line
-		// 	const row_line = common.create_dom_element({
-		// 		element_type 	: "div",
-		// 		class_name 		: "type_row",
-		// 		parent 			: fragment
-		// 	})
-
-		// 	// section_id
-		// 		if (dedalo_logged===true) {
-
-		// 			const link = common.create_dom_element({
-		// 				element_type	: "a",
-		// 				class_name		: "section_id go_to_dedalo",
-		// 				text_content	: row_object.section_id,
-		// 				href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-		// 				parent			: row_line
-		// 			})
-		// 			link.setAttribute('target', '_blank');
-		// 		}
-			
-
-		// 	// name
-		// 		const name = common.create_dom_element({
-		// 			element_type	: "span",
-		// 			text_content	: row_object.catalogue + " " +row_object.number,
-		// 			parent			: row_line
-		// 		})
-
-		// 	// denomination
-		// 		const denomination = common.clean_gaps(row_object.denomination, " | ", ", ")
-		// 		if (denomination.length>0) {
-		// 			const denomination_info = common.create_dom_element({
-		// 				element_type	: "span",
-		// 				text_content	: " ("+denomination+")",
-		// 				parent			: row_line
-		// 			})
-		// 		}
-			
-		// 	// equivalents
-		// 		// const equivalents = common.clean_gaps(row_object.equivalents, "<br>", ", ")
-		// 		// if (equivalents.length>0) {
-		// 		// 	const equivalents_info = common.create_dom_element({
-		// 		// 		element_type 	: "div",
-		// 		// 		class_name 		: "equivalents",
-		// 		// 		text_content 	: equivalents,
-		// 		// 		parent 			: row_line
-		// 		// 	})
-		// 		// }
-
-		// }
-		// console.groupEnd();
-
-		// // container final add
-		// container.appendChild(fragment)
-
-
-		// return container
 	},//end draw_types
 
 

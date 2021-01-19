@@ -159,63 +159,75 @@ var coin_row = {
 						parent			: group
 					})
 				}
-			// ref_auction
-				if (row.ref_auction && row.ref_auction.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group ref_auction",
-						parent			: first_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.auction || "ref_auction",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.ref_auction,
-						parent			: group
-					})
-				}
-			// ref_auction_number
-				if (row.ref_auction_number && row.ref_auction_number.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group ref_auction_number",
-						parent			: first_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.auction_number || "ref_auction_number",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.ref_auction_number,
-						parent			: group
-					})
-				}
-			// ref_auction_date
-				if (row.ref_auction_date && row.ref_auction_date.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group ref_auction_date",
-						parent			: first_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.auction_date || "ref_auction_date",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.ref_auction_date,
-						parent			: group
-					})
-				}	
+
+			function draw_auction(data, parent) {			
+				// name
+					if (data.name) {		
+						const group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "group ref_auction",
+							parent			: parent
+						})
+						common.create_dom_element({
+							element_type	: "label",
+							text_content	: tstring.auction || "ref_auction",
+							parent			: group
+						})
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "value",
+							inner_html		: data.name,
+							parent			: group
+						})
+					}					
+				// number
+					if (data.number) {
+						const group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "group ref_auction_number",
+							parent			: parent
+						})
+						common.create_dom_element({
+							element_type	: "label",
+							text_content	: tstring.auction_number || "ref_auction_number",
+							parent			: group
+						})
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "value",
+							inner_html		: data.number,
+							parent			: group
+						})
+					}
+				// ref_auction_date
+					if (data.date) {
+						const group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "group ref_auction_date",
+							parent			: parent
+						})
+						common.create_dom_element({
+							element_type	: "label",
+							text_content	: tstring.auction_date || "ref_auction_date",
+							parent			: group
+						})
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "value",
+							inner_html		: data.date,
+							parent			: group
+						})
+					}
+
+				return true
+			}
+			// ref_auction_group
+				if (row.ref_auction_group) {
+					for (let k = 0; k < row.ref_auction_group.length; k++) {
+						draw_auction(row.ref_auction_group[k], first_block)
+					}
+				}//end if (row.ref_auction_group)
+
 
 		// second_block (type)
 			const second_block = common.create_dom_element({

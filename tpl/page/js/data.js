@@ -388,3 +388,47 @@ page.parse_publication = function(data) {
 
 	return parsed_data
 }//end parse_publication
+
+
+
+/**
+* PARSE_IRI_DATA
+* @return
+*/
+page.parse_iri_data = function(data) {
+
+	const items = []
+
+	if (!data || data.length<1) {
+		return items
+	}
+
+	const values = data.split(" | ")
+	for (let i = 0; i < values.length; i++) {
+
+		const val	= values[i]
+		const parts	= val.split(", ")
+		if (parts.length>1 && typeof parts[1]==="undefined") {
+			continue;
+		}
+
+		const url	= (parts.length===1) ? parts[0] : parts[1]
+		let source	= (parts.length===1) ? '' : parts[0]
+		if (source.length<1) {
+			try {
+				const _url = new URL(url)
+				source = _url.hostname
+			}catch (error) {
+				console.error(error);
+			}
+		}
+		items.push({
+			label : source,
+			value : url
+		})
+	}
+
+	return items
+}//end parse_iri_data
+
+

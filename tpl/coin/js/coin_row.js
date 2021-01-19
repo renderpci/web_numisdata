@@ -160,17 +160,24 @@ var coin_row = {
 					})
 				}
 
-			function draw_auction(data, parent) {			
+			function draw_auction(data, parent, prepend) {	
+				// line
+					const line = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "line_full",
+						parent			: parent
+					})	
 				// name
 					if (data.name) {		
 						const group = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "group ref_auction",
-							parent			: parent
+							parent			: line
 						})
+						const label = prepend + (tstring.auction || "ref_auction")
 						common.create_dom_element({
 							element_type	: "label",
-							text_content	: tstring.auction || "ref_auction",
+							text_content	: label,
 							parent			: group
 						})
 						common.create_dom_element({
@@ -185,11 +192,11 @@ var coin_row = {
 						const group = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "group ref_auction_number",
-							parent			: parent
+							parent			: line
 						})
 						common.create_dom_element({
 							element_type	: "label",
-							text_content	: tstring.auction_number || "ref_auction_number",
+							text_content	: tstring.number || "number", // auction_number
 							parent			: group
 						})
 						common.create_dom_element({
@@ -204,11 +211,11 @@ var coin_row = {
 						const group = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "group ref_auction_date",
-							parent			: parent
+							parent			: line
 						})
 						common.create_dom_element({
 							element_type	: "label",
-							text_content	: tstring.auction_date || "ref_auction_date",
+							text_content	: tstring.date || "date", // auction_date
 							parent			: group
 						})
 						common.create_dom_element({
@@ -224,9 +231,15 @@ var coin_row = {
 			// ref_auction_group
 				if (row.ref_auction_group) {
 					for (let k = 0; k < row.ref_auction_group.length; k++) {
-						draw_auction(row.ref_auction_group[k], first_block)
+						draw_auction(row.ref_auction_group[k], first_block, '')
 					}
-				}//end if (row.ref_auction_group)
+				}
+			// ref_related_coin_auction_group
+				if (row.ref_related_coin_auction_group) {
+					for (let k = 0; k < row.ref_related_coin_auction_group.length; k++) {
+						draw_auction(row.ref_related_coin_auction_group[k], first_block, '= ')
+					}
+				}
 
 
 		// second_block (type)

@@ -1264,6 +1264,11 @@ a.image_link {
 a.image_link img {
   border-radius: initial;
 }
+.line_full {
+  width: 100%;
+  flex-basis: 100%;
+  display: inherit;
+}
 .map_container.leaflet-container {
   position: relative;
   height: 60vh;

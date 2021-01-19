@@ -159,6 +159,30 @@ page.parse_coin_data = function(data) {
 			}
 		}
 
+	// related_auction
+		row.ref_related_coin_auction = row.ref_related_coin_auction
+			? JSON.parse(row.ref_related_coin_auction)
+			: null
+		row.ref_related_coin_auction_date = row.ref_related_coin_auction_date
+			? JSON.parse(row.ref_related_coin_auction_date)
+			: null
+		row.ref_related_coin_auction_number = row.ref_related_coin_auction_number
+			? JSON.parse(row.ref_related_coin_auction_number)
+			: null
+
+		row.ref_related_coin_auction_group = null
+
+		if (row.ref_related_coin_auction && row.ref_related_coin_auction.length>0) {
+			row.ref_related_coin_auction_group = []
+			for (let g = 0; g < row.ref_related_coin_auction.length; g++) {
+				row.ref_related_coin_auction_group.push({
+					name	: row.ref_related_coin_auction[g],
+					date	: typeof row.ref_related_coin_auction_date[g]!=="undefined" ? self.parse_date(row.ref_related_coin_auction_date[g]) : '',
+					number	: typeof row.ref_related_coin_auction_number[g]!=="undefined" ? row.ref_related_coin_auction_number[g] : ''
+				})
+			}
+		}
+
 
 	// find
 	row.find_date = self.parse_date(row.find_date)

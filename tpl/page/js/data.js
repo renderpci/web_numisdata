@@ -10,7 +10,7 @@
 * @return object row | array rows
 */
 page.parse_type_data = function(data) {
-	// console.log("------------> parse_type_data data:",data);
+	console.log("------------> parse_type_data data:",data);
 
 	const self = this
 
@@ -25,21 +25,38 @@ page.parse_type_data = function(data) {
 
 	const row = data
 
-	// url
-	row.ref_coins_image_obverse = common.local_to_remote_path(data.ref_coins_image_obverse)
-	row.ref_coins_image_reverse = common.local_to_remote_path(data.ref_coins_image_reverse)
-
-	// ref_coins_union
-	if (row.ref_coins_union) {
-		for (let j = 0; j < row.ref_coins_union.length; j++) {
-			if (row.ref_coins_union[j].image_obverse) {
-				row.ref_coins_union[j].image_obverse = common.local_to_remote_path(row.ref_coins_union[j].image_obverse)
-			}
-			if (row.ref_coins_union[j].image_reverse) {
-				row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
-			}
-		}
+	if (typeof row !== 'object') {
+		console.log("parse_type_data row:",row);
+		console.trace()
 	}
+
+	if (row.parsed) {
+		return row
+	}
+
+	// images url
+		row.ref_coins_image_obverse = typeof data.ref_coins_image_obverse!=="undefined"
+			? common.local_to_remote_path(data.ref_coins_image_obverse)
+			: null
+		row.ref_coins_image_reverse = typeof data.ref_coins_image_reverse!=="undefined"
+			? common.local_to_remote_path(data.ref_coins_image_reverse)
+			: null
+
+	// ref_coins_union (resolved portal)
+		if (row.ref_coins_union && Array.isArray(row.ref_coins_union) && row.ref_coins_union.length>0) {
+
+			row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)
+			
+			// for (let j = 0; j < row.ref_coins_union.length; j++) {
+
+			// 	if (row.ref_coins_union[j].image_obverse) {
+			// 		row.ref_coins_union[j].image_obverse = common.local_to_remote_path(row.ref_coins_union[j].image_obverse)
+			// 	}
+			// 	if (row.ref_coins_union[j].image_reverse) {
+			// 		row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
+			// 	}
+			// }
+		}
 
 	row.uri = self.parse_iri_data(row.uri)
 
@@ -51,31 +68,32 @@ page.parse_type_data = function(data) {
 	// row.type_data			= JSON.parse(row.type_data)
 
 	// legend text includes svg url
-	row.legend_obverse = row.legend_obverse
-		? self.parse_legend_svg(row.legend_obverse)
-		: null
-	row.legend_reverse = row.legend_reverse
-		? self.parse_legend_svg(row.legend_reverse)
-		: null
+		row.legend_obverse = row.legend_obverse
+			? self.parse_legend_svg(row.legend_obverse)
+			: null
+		row.legend_reverse = row.legend_reverse
+			? self.parse_legend_svg(row.legend_reverse)
+			: null
 
-	row.material = row.material
-		? page.trim_char( page.remove_gaps(row.material, ' | '), '|')
-		: null
+		row.material = row.material
+			? page.trim_char( page.remove_gaps(row.material, ' | '), '|')
+			: null
 
-	row.symbol_obverse = row.symbol_obverse
-		? page.trim_char( page.remove_gaps(row.symbol_obverse, ' | '), '|')
-		: null
+		row.symbol_obverse = row.symbol_obverse
+			? page.trim_char( page.remove_gaps(row.symbol_obverse, ' | '), '|')
+			: null
 
-	row.symbol_reverse = row.symbol_reverse
-		? page.trim_char( page.remove_gaps(row.symbol_reverse, ' | '), '|')
-		: null
+		row.symbol_reverse = row.symbol_reverse
+			? page.trim_char( page.remove_gaps(row.symbol_reverse, ' | '), '|')
+			: null
 
-	row.symbol_obverse_data = JSON.parse(row.symbol_obverse_data)
-	row.symbol_reverse_data = JSON.parse(row.symbol_reverse_data)
+		row.symbol_obverse_data = JSON.parse(row.symbol_obverse_data)
+		row.symbol_reverse_data = JSON.parse(row.symbol_reverse_data)
 
 	// permanent uri
-	// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+		// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
 
+	row.parsed = true
 
 	return row
 }//end parse_type_data
@@ -103,6 +121,15 @@ page.parse_coin_data = function(data) {
 
 	const row = data
 
+	if (typeof row !== 'object') {
+		console.log("parse_coin_data row:",row);
+		console.trace()
+	}
+
+	if (row.parsed) {
+		return row
+	}
+
 	// url
 	row.image_obverse = common.local_to_remote_path(data.image_obverse)
 	row.image_reverse = common.local_to_remote_path(data.image_reverse)
@@ -111,8 +138,8 @@ page.parse_coin_data = function(data) {
 	// if (row.type_data) {
 	// 	row.type_data = self.parse_type_data(row.type_data)
 	// }
-	if (row.type_data && row.type_data.length>0) {
-		row.type_data = self.parse_type_data(row.type_data)
+	if (row.type_data && Array.isArray(row.type_data) && row.type_data.length>0) {		
+		row.type_data = self.parse_type_data(row.type_data)		
 	}
 
 	row.type = row.type
@@ -196,13 +223,15 @@ page.parse_coin_data = function(data) {
 
 
 	// add
-	row.mint	= typeof row.type_data[0]!=="undefined"
+	row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
 		? row.type_data[0].mint
 		: null
-	row.type_number	= typeof row.type_data[0]!=="undefined"
+	row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
 		? row.type_data[0].number
 		: null
 	// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
+
+	row.parsed = true
 
 
 	return row
@@ -229,6 +258,10 @@ page.parse_catalog_data = function(data) {
 
 		// const row = JSON.parse( JSON.stringify(data[i]) )
 		const row = data[i]
+
+		if (row.parsed) {
+			continue;
+		}
 
 		// url
 		row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
@@ -290,7 +323,7 @@ page.parse_catalog_data = function(data) {
 
 			const row = new_data[i]
 
-			if (row.term_table==='types' && row.children) {
+			if (!row.parsed && row.term_table==='types' && row.children) {
 				const ar_mesures_diameter	= []
 				const ar_mesures_weight		= []
 
@@ -324,6 +357,8 @@ page.parse_catalog_data = function(data) {
 				row.ref_type_total_weight_items		= ar_mesures_weight.length
 				row.ref_type_total_diameter_items	= ar_mesures_diameter.length
 			}
+
+			row.parsed = true
 		}
 
 	// console.log("parse_catalog_data new_data:",new_data);
@@ -346,6 +381,10 @@ page.parse_publication = function(data) {
 	for (let i = 0; i < data_length; i++) {
 
 		const reference = data[i]
+
+		if (reference.parsed) {
+			continue;
+		}
 
 		// add publications property to store all resolved references
 			reference._publications = []
@@ -383,6 +422,7 @@ page.parse_publication = function(data) {
 			}
 		}
 
+		reference.parsed = true
 	}
 	// console.log("parsed_data:",parsed_data);
 

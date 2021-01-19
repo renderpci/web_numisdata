@@ -52,10 +52,14 @@ var type =  {
 						
 						if (typeof type.result[0]!=="undefined") {
 
-							type.result[0].catalog = catalog.result[0]
+							const row			= type.result[0]
+							const catalog_rows	= catalog.result[0] || null
+
+							// app property catalog with all catalog rows result
+								row.catalog = catalog_rows
 							 
 							// parse data
-							const row = page.parse_type_data(type.result[0])
+								page.parse_type_data(row)
 							
 							// render row nodes
 							self.list_row_builder(row)

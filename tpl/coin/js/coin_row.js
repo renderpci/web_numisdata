@@ -160,7 +160,8 @@ var coin_row = {
 					})
 				}
 
-			function draw_auction(data, parent, prepend) {	
+			function draw_auction(data, parent, prepend) {
+				if (data.name.length<1) return	
 				// line
 					const line = common.create_dom_element({
 						element_type	: "div",

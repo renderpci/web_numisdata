@@ -386,6 +386,8 @@ var row_fields = {
 
 		if (identify_coin) {
 
+			console.log("identify_coin:",identify_coin);
+
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
@@ -397,39 +399,91 @@ var row_fields = {
 					parent			: line
 				})
 
-			common.create_dom_element({
-				element_type 	: "span",
-				class_name 		: name,
-				text_content 	: identify_coin.ref_auction,
-				parent 			: line
-			})
+			// auction
+				function draw_auction(data, parent, class_name, prepend) {
+					if (data.name.length<1) return
+					// line
+						const line = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "line_full",
+							parent			: parent
+						})	
+					// name
+						if (data.name) {							
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name,
+								inner_html		: prepend + data.name,
+								parent			: line
+							})
+						}
+					// ref_auction_date
+						if (data.date) {
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name,
+								inner_html		: " | " + data.date,
+								parent			: line
+							})
+						}				
+					// number
+						if (data.number) {							
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name,
+								inner_html		: ", "+(tstring.n || "nº") +" "+ data.number,
+								parent			: line
+							})
+						}					
 
-			// final_date
-				const split_time 	= (identify_coin.ref_auction_date)
-					? identify_coin.ref_auction_date.split(' ')
-					: [""]
-				const split_date 	= split_time[0].split('-')
-				const correct_date 	= split_date.reverse()
-				const final_date 	= correct_date.join("-")
-
-				if (final_date) {
-					common.create_dom_element({
-						element_type 	: "span",
-						class_name 		: name,
-						text_content 	: " | "+final_date,
-						parent 			: line
-					})
+					return true
 				}
-
-			// ref_auction_number
-				if(identify_coin.ref_auction_number){
-					common.create_dom_element({
-						element_type 	: "span",
-						class_name 		: name,
-						text_content 	: ", "+(tstring.n || "nº") +" "+ identify_coin.ref_auction_number,
-						parent 			: line
-					})
+				
+				if (identify_coin.ref_auction_group) {
+					for (let i = 0; i < identify_coin.ref_auction_group.length; i++) {
+						draw_auction(identify_coin.ref_auction_group[i], line, name, '')
+					}
 				}
+				if (identify_coin.ref_related_coin_auction_group) {
+					for (let i = 0; i < identify_coin.ref_related_coin_auction_group.length; i++) {
+
+						draw_auction(identify_coin.ref_related_coin_auction_group[i], line, name, '= ')
+					}
+				}
+				// // auction name
+				// 	common.create_dom_element({
+				// 		element_type 	: "span",
+				// 		class_name 		: name,
+				// 		text_content 	: identify_coin.ref_auction,
+				// 		parent 			: line
+				// 	})
+
+				// // auction final_date
+				// 	const split_time 	= (identify_coin.ref_auction_date)
+				// 		? identify_coin.ref_auction_date.split(' ')
+				// 		: [""]
+				// 	const split_date 	= split_time[0].split('-')
+				// 	const correct_date 	= split_date.reverse()
+				// 	const final_date 	= correct_date.join("-")
+
+				// 	if (final_date) {
+				// 		common.create_dom_element({
+				// 			element_type 	: "span",
+				// 			class_name 		: name,
+				// 			text_content 	: " | "+final_date,
+				// 			parent 			: line
+				// 		})
+				// 	}
+
+				// // auction ref_auction_number
+				// 	if(identify_coin.ref_auction_number){
+				// 		common.create_dom_element({
+				// 			element_type 	: "span",
+				// 			class_name 		: name,
+				// 			text_content 	: ", "+(tstring.n || "nº") +" "+ identify_coin.ref_auction_number,
+				// 			parent 			: line
+				// 		})
+				// 	}
 
 			// size_text. weight / dies / diameter
 				const ar_beats = []

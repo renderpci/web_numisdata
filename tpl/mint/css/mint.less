@@ -53,7 +53,6 @@
 		margin-top: 1em;
 		border-radius: 0.25em;
 		border: 1px solid #cccccc;
-		width: 90vw;
 
 		>.type_row {
 			display: table;
@@ -128,19 +127,21 @@
 				}
 
 				.info_wrap{
+
+					a {
+						@media screen and (max-width: 1600px){
+							font-size: 1vw !important ;
+						}
+
+						@media screen and (max-width: 736px){
+							font-size: 60% !important ;
+						}
+					
+					}
 					
 				}
 
-				a {
-					@media screen and (max-width: 1600px){
-						font-size: 1vw !important ;
-					}
-
-					@media screen and (max-width: 736px){
-						font-size: 60% !important ;
-					}
-					
-				}
+				
 
 				img {
 					object-fit: contain;
@@ -155,7 +156,11 @@
 					}
 
 					.type_label{
+						border: none;
 						font-weight: bold;
+						display: inline-block;
+						text-decoration: none;
+						
 
 						@media screen and (max-width: 980px){
 							font-size: 90%;
@@ -168,7 +173,10 @@
 					}
 
 					.subType_label{
+						border: none;
 						border-top: 1px solid #e3e3e3;
+						display: block;
+						height: 2em;
 
 						@media screen and (max-width: 980px){
 							font-size: 90%;

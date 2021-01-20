@@ -209,7 +209,7 @@ var mint =  {
 							const row = {
 								catalog			: 'MIB',
 								section_id		: response.result[i].section_id,
-								original_table_id : response.result[i].term_data.replace(/[\["\]]/g, ''),
+								term_data 		: response.result[i].term_data,
 								denomination	: response.result[i].ref_type_denomination,
 								term_table		: response.result[i].term_table,
 								term			: response.result[i].term,
@@ -647,7 +647,7 @@ var mint =  {
 
 					const row_group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "row_node ts_numismatic_group hide",
+						class_name		: "row_node hide",
 						parent 			: children_container
 					})
 
@@ -693,7 +693,9 @@ var mint =  {
 
 	},//end draw_types
 
-
+	//Draw a entyre block of types 
+	// param options: array with type objects
+	// return: HTML Object with a types block
 	draw_types_block : function(options) {
 		const self = this
 		const types_ar = options
@@ -726,7 +728,7 @@ var mint =  {
 			}
 		}
 
-		function create_type_element(data,isSubtype,isFirstElemenet,parentSubType){
+		function create_type_element(data,isSubtype,isFirstElement,parentSubType){
 
 			const type_row = data;
 
@@ -736,13 +738,17 @@ var mint =  {
 			var type_number = ""
 			var subType_number = ""
 			var SubTypeClass = ""
+			const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
+			var type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
+			var subType_href = type_href
 
 			if (!isSubtype) {
-				type_number = "MIB "+type_row_term
+				type_number = "MIB "+type_row_term 
 			} else {
 				subType_number = "MIB "+type_row_term 
 				SubTypeClass = "subType_number"
-				if (isFirstElemenet){
+				if (isFirstElement){
+					type_href = ""
 					let parent_term = ""
 					parentSubType.indexOf(",") == -1 ? parent_term = parentSubType : parent_term = parentSubType.slice(0,parentSubType.indexOf(","))
 					type_number =  "MIB "+parent_term
@@ -755,8 +761,7 @@ var mint =  {
 				class_name		: "type_wrap",
 				parent 			: children_container
 			})
-
-			//IF IS A TYPE
+	
 			const number_wrap = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "type_number",
@@ -764,17 +769,18 @@ var mint =  {
 			})
 
 			common.create_dom_element({
-				element_type	: "p",
-				text_content 	: type_number,
+				element_type	: "a",
+				inner_html  	: type_number,
 				class_name		: "type_label",
+				href 			: type_href,
 				parent 			: number_wrap
 			})
 
-			//IF IS A SUBTYPE
 			common.create_dom_element({
-				element_type	: "p",
-				text_content 	: subType_number,
+				element_type	: "a",
+				inner_html 	    : subType_number,
 				class_name		: "subType_label "+SubTypeClass,
+				href 			: subType_href,
 				parent 			: number_wrap
 			})
 

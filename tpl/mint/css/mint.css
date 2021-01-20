@@ -27,7 +27,6 @@
   margin-top: 1em;
   border-radius: 0.25em;
   border: 1px solid #cccccc;
-  width: 90vw;
 }
 .result #types > .type_row {
   display: table;
@@ -95,12 +94,12 @@
   }
 }
 @media screen and (max-width: 1600px) {
-  .result #types .types_container .type_wrap a {
+  .result #types .types_container .type_wrap .info_wrap a {
     font-size: 1vw !important ;
   }
 }
 @media screen and (max-width: 736px) {
-  .result #types .types_container .type_wrap a {
+  .result #types .types_container .type_wrap .info_wrap a {
     font-size: 60% !important ;
   }
 }
@@ -113,7 +112,10 @@
   height: 2em;
 }
 .result #types .types_container .type_wrap .type_number .type_label {
+  border: none;
   font-weight: bold;
+  display: inline-block;
+  text-decoration: none;
 }
 @media screen and (max-width: 980px) {
   .result #types .types_container .type_wrap .type_number .type_label {
@@ -126,7 +128,10 @@
   }
 }
 .result #types .types_container .type_wrap .type_number .subType_label {
+  border: none;
   border-top: 1px solid #e3e3e3;
+  display: block;
+  height: 2em;
 }
 @media screen and (max-width: 980px) {
   .result #types .types_container .type_wrap .type_number .subType_label {

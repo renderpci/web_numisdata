@@ -656,6 +656,13 @@ var mint =  {
 
 					row_group.appendChild(types_block)
 
+					const image_gallery_containers = types_block.querySelectorAll('.gallery')
+				
+					if (image_gallery_containers){
+						for (let i=0;i<image_gallery_containers.length;i++){
+							page.activate_images_gallery(image_gallery_containers[i])
+						}
+					}
 
 					createFolderedGroup(children_label,row_group)
 
@@ -667,6 +674,13 @@ var mint =  {
 				const types_block = self.draw_types_block (row_object.types)
 
 				row_period.appendChild(types_block)
+
+				const image_gallery_containers = types_block.querySelectorAll('.gallery')
+				if (image_gallery_containers){
+						for (let i=0;i<image_gallery_containers.length;i++){
+							page.activate_images_gallery(image_gallery_containers[i])
+						}
+					}
 
 			}
 			createFolderedGroup(period_label,row_period)		
@@ -786,13 +800,14 @@ var mint =  {
 
 			const img_wrap = common.create_dom_element({
 				element_type 	: "div",
-				class_name 		: "types_img",
+				class_name 		: "types_img gallery",
 				parent 			: row_type
 			})
 
 			const img_link_ob = common.create_dom_element({
 				element_type 	: "a",
 				class_name		: "image_link",
+				href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
 				parent 			: img_wrap, 
 			})
 
@@ -805,6 +820,7 @@ var mint =  {
 			const img_link_re = common.create_dom_element({
 				element_type 	: "a",
 				class_name		: "image_link",
+				href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
 				parent 			: img_wrap, 
 			})
 

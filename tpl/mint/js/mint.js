@@ -829,11 +829,12 @@ var mint =  {
 			})
 
 			const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
+			const relative_uri = page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section_id
 			common.create_dom_element ({
 				element_type 	: "a",
 				class_name 		: "type_info",
 				text_content 	: "URI: "+permanent_uri,
-				href 			: permanent_uri,
+				href 			: relative_uri,
 				parent 			: info_wrap
 			})
 		}

@@ -97,10 +97,10 @@ var biblio_row_fields = {
 		})
 
 		let final_date = ''
-		if (biblio_object.publication_date && biblio_object.publication_date.length>0) {	
+		if (biblio_object.publication_date && biblio_object.publication_date.length>0) {
 
 			const ar_date = biblio_object.publication_date.split("-")
-			
+
 			final_date = typeof(ar_date[0])!=="undefined"
 				? parseInt(ar_date[0])
 				: ''
@@ -388,7 +388,6 @@ var biblio_row_fields = {
 
 			const publication_url = biblio_object.ref_publications_url
 
-
 			//check in url if has a Zenon reference for parsing
 			if (publication_url != null && publication_url.includes("Zenon")){
 				biblio_object = parse_zenon_bibliography(biblio_object);
@@ -499,8 +498,9 @@ var biblio_row_fields = {
 				const biblio_data_length = biblio_data.length;
 
 				for (const property in biblio_data){
-					if (biblio_data[property] != null && biblio_data[property].includes(" # ")){
+					if (typeof biblio_data[property] !== 'string') continue
 
+					if (biblio_data[property] != null && biblio_data[property].includes(" # ")){
 						biblio_data[property] = biblio_data[property].split(" # ")[0]
 
 						//erase Zenon word of url string
@@ -511,7 +511,7 @@ var biblio_row_fields = {
 				}
 
 				return biblio_data;
-			} 
+			}
 
 			return line
 		},//end bibliography

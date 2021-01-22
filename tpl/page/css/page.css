@@ -973,6 +973,9 @@ p img.svg {
 .pic {
   width: 100%;
 }
+.golden-color {
+  color: #be875a;
+}
 #header > .head_inner > div.logo_big {
   text-align: center;
   margin-bottom: 1.8em;

@@ -401,6 +401,7 @@ var row_fields = {
 
 			// auction
 				function draw_auction(data, parent, class_name, prepend) {
+
 					if (data.name.length<1) return
 					// line
 						const line = common.create_dom_element({
@@ -412,7 +413,7 @@ var row_fields = {
 						if (data.name) {							
 							common.create_dom_element({
 								element_type	: "span",
-								class_name		: class_name,
+								class_name		: class_name+ " golden-color",
 								inner_html		: prepend + data.name,
 								parent			: line
 							})
@@ -421,7 +422,7 @@ var row_fields = {
 						if (data.date) {
 							common.create_dom_element({
 								element_type	: "span",
-								class_name		: class_name,
+								class_name		: class_name+" golden-color",
 								inner_html		: " | " + data.date,
 								parent			: line
 							})
@@ -430,7 +431,7 @@ var row_fields = {
 						if (data.number) {							
 							common.create_dom_element({
 								element_type	: "span",
-								class_name		: class_name,
+								class_name		: class_name+" golden-color",
 								inner_html		: ", "+(tstring.n || "nº") +" "+ data.number,
 								parent			: line
 							})
@@ -669,13 +670,38 @@ var row_fields = {
 				})
 				image_reverse.loading="lazy"
 
-			// collection
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "",
-					inner_html		: data.collection,
-					parent			: wrapper
-				})
+				
+				if (data.collection.length>0){
+
+					let ar_label = data.collection
+
+					if (data.number && data.number.length>0){
+						ar_label += " ("+data.number+")"
+					}
+					
+				// collection
+					common.create_dom_element({
+						element_type	: "div",
+						class_name		: "golden-color",
+						inner_html		: ar_label,
+						parent			: wrapper
+					})
+
+					if (data.former_collection.length>0){
+						console.log(data.former_collection)
+
+						common.create_dom_element({
+							element_type	: "div",
+							class_name		: "",
+							inner_html		: "("+data.former_collection+")",
+							parent			: wrapper
+						})
+					}
+					
+
+				}
+
+				
 
 			// size_text. weight / dies / diameter
 				const ar_beats = []
@@ -697,6 +723,95 @@ var row_fields = {
 					inner_html		: size_text,
 					parent			: wrapper
 				})
+
+				//Auction data and related auctions
+				if (data.ref_auction && data.ref_auction.length>0){
+
+					const ar_auction = []
+					//label
+					const label = tstring.auction || "Auction: "
+					ar_auction.push("<b>"+label+"</b>"+": "+data.ref_auction)
+					//auction number
+					if (data.ref_auction_number && data.ref_auction_number.length>0){
+						const label = tstring.number || "Number: "
+						ar_auction.push("<b>"+label+"</b>"+": "+data.ref_auction_number)
+					}
+					//auction data
+					if (data.ref_auction_date && data.ref_auction_date.length>0){
+
+						// final_date
+						const current_date = data.ref_auction_date[0]
+
+						const split_time 	= (current_date)
+							? current_date.split(' ')
+							: [""]
+						const split_date 	= split_time[0].split('-')
+						const correct_date 	= split_date.reverse()
+						const final_date 	= correct_date.join("-")
+
+						const label = tstring.date || "Date: "
+						ar_auction.push("<b>"+label+"</b>"+": "+final_date)
+					}
+
+					let auction_text = ar_auction.join(" ")
+					auction_text += " ("+data.number+")"
+					common.create_dom_element({
+						element_type 	: "div",
+						class_name		: "identify_coin golden-color",
+						inner_html		: auction_text,
+						parent			: wrapper
+					})
+
+					if (data.former_collection.length>0){
+						console.log(data.former_collection)
+
+						common.create_dom_element({
+							element_type	: "div",
+							class_name		: "",
+							inner_html		: "("+data.former_collection+")",
+							parent			: wrapper
+						})
+					}
+
+					//if coin has auction equivalences
+					if (data.ref_related_coin_auction && data.ref_related_coin_auction.length>0 && data.ref_related_coin_auction != ""){
+
+						const ar_relAuction = []
+						//label
+						const label = tstring.auction || "Auction: "
+						ar_relAuction.push("<b>="+label+"</b>"+": "+data.ref_related_coin_auction)
+						//auction number
+						if (data.ref_related_coin_auction_number && data.ref_related_coin_auction_number.length>0){
+							const label = tstring.number || "Number: "
+							ar_relAuction.push("<b>"+label+"</b>"+": "+data.ref_related_coin_auction_number)
+						}
+						//auction data
+						if (data.ref_related_coin_auction_date && data.ref_related_coin_auction_date.length>0){
+
+							// final_date
+							const current_date = data.ref_related_coin_auction_date[0]
+
+							const split_time 	= (current_date)
+								? current_date.split(' ')
+								: [""]
+							const split_date 	= split_time[0].split('-')
+							const correct_date 	= split_date.reverse()
+							const final_date 	= correct_date.join("-")
+
+							const label = tstring.date || "Date: "
+							ar_relAuction.push("<b>"+label+"</b>"+": "+final_date)
+						}
+
+						const auction_text = ar_relAuction.join(" ")
+						common.create_dom_element({
+							element_type 	: "div",
+							class_name		: "identify_coin golden-color",
+							inner_html		: auction_text,
+							parent			: wrapper
+						})
+						
+					}
+				}
 
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id

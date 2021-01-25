@@ -102,8 +102,10 @@
   padding: 0.5em;
   border-radius: 4px;
 }
-.result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {
-  font-size: 1vw;
+@media screen and (min-width: 1680px) {
+  .result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {
+    font-size: 90%;
+  }
 }
 @media screen and (max-width: 976px) {
   .result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {

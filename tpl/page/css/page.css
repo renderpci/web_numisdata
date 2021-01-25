@@ -1393,7 +1393,7 @@ a.image_link img {
   margin-bottom: 0.2em;
 }
 .poptrox-popup .pic > img {
-  min-width: 350px;
-  min-height: 350px;
+  min-width: 150px;
+  min-height: 150px;
 }
 /*# sourceMappingURL=page.css.map */

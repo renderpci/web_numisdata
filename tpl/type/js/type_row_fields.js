@@ -451,6 +451,18 @@ var row_fields = {
 						draw_auction(identify_coin.ref_related_coin_auction_group[i], line, name, '= ')
 					}
 				}
+
+				// public_info
+					if (identify_coin.public_info && identify_coin.public_info.length>0){
+						const label = (tstring.public_info || "Public_info")+": ";
+
+						common.create_dom_element({
+						element_type	: "div",
+						class_name		: "",
+						inner_html		: label+identify_coin.public_info,
+						parent			: line
+					})
+				}
 				// // auction name
 				// 	common.create_dom_element({
 				// 		element_type 	: "span",
@@ -688,8 +700,6 @@ var row_fields = {
 					})
 
 					if (data.former_collection.length>0){
-						console.log(data.former_collection)
-
 						common.create_dom_element({
 							element_type	: "div",
 							class_name		: "",
@@ -724,113 +734,14 @@ var row_fields = {
 					parent			: wrapper
 				})
 
-				//Auction data and related auctions
-				if (data.ref_auction && data.ref_auction.length>0){
-
-					const ar_auction = []
-					//label
-					const label = tstring.auction || "Auction: "
-					ar_auction.push("<b>"+label+"</b>"+": "+data.ref_auction)
-					//auction number
-					if (data.ref_auction_number && data.ref_auction_number.length>0){
-						const label = tstring.number || "Number: "
-						ar_auction.push("<b>"+label+"</b>"+": "+data.ref_auction_number)
-					}
-					//auction data
-					if (data.ref_auction_date && data.ref_auction_date.length>0){
-
-						// final_date
-						const current_date = data.ref_auction_date[0]
-
-						const split_time 	= (current_date)
-							? current_date.split(' ')
-							: [""]
-						const split_date 	= split_time[0].split('-')
-						const correct_date 	= split_date.reverse()
-						const final_date 	= correct_date.join("-")
-
-						const label = tstring.date || "Date: "
-						ar_auction.push("<b>"+label+"</b>"+": "+final_date)
-					}
-
-					let auction_text = ar_auction.join(" ")
-					auction_text += " ("+data.number+")"
-					common.create_dom_element({
-						element_type 	: "div",
-						class_name		: "identify_coin golden-color",
-						inner_html		: auction_text,
-						parent			: wrapper
-					})
-
-					if (data.former_collection.length>0){
-						console.log(data.former_collection)
-
-						common.create_dom_element({
-							element_type	: "div",
-							class_name		: "",
-							inner_html		: "("+data.former_collection+")",
-							parent			: wrapper
-						})
-					}
-
-					//if coin has auction equivalences
-					if (data.ref_related_coin_auction && data.ref_related_coin_auction.length>0 && data.ref_related_coin_auction != ""){
-
-						const ar_relAuction = []
-						//label
-						const label = tstring.auction || "Auction: "
-						ar_relAuction.push("<b>="+label+"</b>"+": "+data.ref_related_coin_auction)
-						//auction number
-						if (data.ref_related_coin_auction_number && data.ref_related_coin_auction_number.length>0){
-							const label = tstring.number || "Number: "
-							ar_relAuction.push("<b>"+label+"</b>"+": "+data.ref_related_coin_auction_number)
-						}
-						//auction data
-						if (data.ref_related_coin_auction_date && data.ref_related_coin_auction_date.length>0){
-
-							// final_date
-							const current_date = data.ref_related_coin_auction_date[0]
-
-							const split_time 	= (current_date)
-								? current_date.split(' ')
-								: [""]
-							const split_date 	= split_time[0].split('-')
-							const correct_date 	= split_date.reverse()
-							const final_date 	= correct_date.join("-")
-
-							const label = tstring.date || "Date: "
-							ar_relAuction.push("<b>"+label+"</b>"+": "+final_date)
-						}
-
-						const auction_text = ar_relAuction.join(" ")
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name		: "identify_coin golden-color",
-							inner_html		: auction_text,
-							parent			: wrapper
-						})
-						
-					}
-				}
-
-			// uri
-				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
-				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				const uri_text	= "URI: <a href=\""+uri+"\">" + full_url + "</a>"
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "",
-					inner_html		: uri_text,
-					parent			: wrapper
-				})
-
-			// findspots + hoard
+				// findspots + hoard
 				const ar_find = []
+				let label = ""
 				if(data.hoard){
 					const hoard = (data.hoard_place)
 						? data.hoard + " ("+data.hoard_place+")"
 						: data.hoard
-
+					label = (tstring.hoard || "Hoard")+": "
 					ar_find.push( hoard )
 				}
 				if(data.findspot){
@@ -838,7 +749,7 @@ var row_fields = {
 					const findspot = (data.findspot_place)
 						? data.findspot + " ("+data.findspot_place+")"
 						: data.findspot
-
+					label = (tstring.fiindspot || "Findspot")+": "
 					ar_find.push( findspot )
 				}
 
@@ -847,9 +758,78 @@ var row_fields = {
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "",
-					inner_html		: find_text,
+					inner_html		: label+find_text,
 					parent			: wrapper
 				})
+
+				// auction
+				function draw_auction(data, parent, class_name, prepend) {
+
+					//label
+					const auctionLabel = "<b>"+(tstring.auction || "Auction")+ "</b>: "
+					const numberLabel = " <b>"+(tstring.number || "Number")+ "</b>: "
+					const dateLabel = " <b>"+(tstring.date || "Date")+ "</b>: "
+
+					if (data.name.length<1) return
+					// line
+						const line = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "line_full",
+							parent			: parent
+						})	
+					// name
+						if (data.name) {							
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name+" golden-color",
+								inner_html		: prepend + auctionLabel + data.name,
+								parent			: line
+							})
+						}
+					// ref_auction_date
+						if (data.date) {
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name+" golden-color",
+								inner_html		: dateLabel + data.date,
+								parent			: line
+							})
+						}				
+					// number
+						if (data.number) {							
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name+" golden-color",
+								inner_html		: numberLabel+(tstring.n || "nº") +" "+ data.number,
+								parent			: line
+							})
+						}					
+
+					return true
+				}
+				
+				if (data.ref_auction_group) {
+					for (let i = 0; i < data.ref_auction_group.length; i++) {
+						draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
+					}
+				}
+				if (data.ref_related_coin_auction_group) {
+					for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
+						draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
+					}
+				}
+
+			// public_info
+					if (data.public_info && data.public_info.length>0){
+						const label = (tstring.public_info || "Public_info")+": ";
+
+						common.create_dom_element({
+						element_type	: "div",
+						class_name		: "",
+						inner_html		: label+data.public_info,
+						parent			: wrapper
+					})
+				}
 
 			// biblio
 				const references_container = common.create_dom_element({
@@ -862,15 +842,27 @@ var row_fields = {
 							self.draw_bibliographic_reference(ar_references)
 					)
 
+			// uri
+				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
+				const full_url	= page_globals.__WEB_BASE_URL__ + uri
+				const uri_text	= "<a href=\""+uri+"\">URI:" + full_url + "</a>"
+				common.create_dom_element({
+					element_type	: "div",
+					class_name		: "uri-text",
+					inner_html		: uri_text,
+					parent			: wrapper
+				})
+
 		}//end draw_coin
 
 
 		// coins group iterate
 			const coins_group_length = data.length
+			
 			for (let i = 0; i < coins_group_length; i++) {
 
 				const el = data[i]
-
+				const coinsLenght = el.coins.length;
 				if (el.typology_id==1) continue; // ignore identify images typology
 
 				// typology label
@@ -878,7 +870,7 @@ var row_fields = {
 				common.create_dom_element({
 					element_type 	: "div",
 					class_name 		: "medium_label",
-					text_content 	: typology_name,
+					text_content 	: typology_name+" ("+coinsLenght+")",
 					parent 			: line
 				})
 

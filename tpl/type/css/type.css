@@ -1,3 +1,18 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
 #main {
   height: 100vh;
   min-height: 100vh;
@@ -18,6 +33,9 @@
 }
 .result .row_wrapper .identify_coin {
   font-size: 0.8em;
+}
+.result .row_wrapper .find_wrapper div:first-child {
+  font-weight: bold;
 }
 .result .row_wrapper img {
   vertical-align: middle;
@@ -76,13 +94,31 @@
   border-right: none;
 }
 .result .row_wrapper .items_list .typology_coins .sorted_coin {
-  flex: 0 0 32.6%;
+  width: 32%;
   margin-bottom: 0.5em;
   margin-right: 0.5em;
   font-size: 80%;
   border-right: 1px solid #e3e3e3;
   padding: 0.5em;
   border-radius: 4px;
+}
+.result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {
+  font-size: 1vw;
+}
+@media screen and (max-width: 976px) {
+  .result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {
+    font-size: 1.4vw;
+  }
+}
+@media screen and (max-width: 710px) {
+  .result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {
+    font-size: 1.8vw;
+  }
+}
+@media screen and (max-width: 590px) {
+  .result .row_wrapper .items_list .typology_coins .sorted_coin .uri-text a {
+    font-size: 3vw;
+  }
 }
 .result .row_wrapper .items_list .typology_coins .sorted_coin .images_wrapper {
   margin-bottom: 0.5em;
@@ -94,6 +130,11 @@
   object-fit: contain;
   object-position: center;
   background-color: white;
+}
+@media screen and (max-width: 976px) {
+  .result .row_wrapper .items_list .typology_coins .sorted_coin {
+    width: 48% !important;
+  }
 }
 @media screen and (max-width: 590px) {
   .result .row_wrapper .items_list .typology_coins .sorted_coin {
@@ -111,8 +152,7 @@
   border-bottom: none;
 }
 .result .row_wrapper .find_coins .find_coin {
-  flex: 0 0 100%;
-  display: grid;
+  flex: 0 0 32%;
   grid-template-columns: 36% auto;
   margin-bottom: 0.5em;
   margin-right: 0.5em;
@@ -146,9 +186,6 @@
     width: 95%;
     flex: inherit;
   }
-}
-.result .row_wrapper .find_coins .find_coin div {
-  font-size: 110%;
 }
 .result .row_wrapper .bibliographic_reference {
   margin-top: 1px;

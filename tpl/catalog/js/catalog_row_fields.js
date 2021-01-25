@@ -22,14 +22,14 @@ var catalog_row_fields = {
 
 		// load_hires. When thumb is loaded, this event is triggered
 		function load_hires() {
-			
+
 			this.removeEventListener("load", load_hires, false)
-				
+
 			const image = this
 			const hires = this.hires
 			setTimeout(function(){
 				image.src = hires
-			}, 1600)			
+			}, 1600)
 		}
 
 
@@ -37,7 +37,7 @@ var catalog_row_fields = {
 
 			case "types":
 				if (item.children && item.children.length >0) {
-					
+
 					// term_line
 						const term_line = common.create_dom_element({
 							element_type	: "div",
@@ -107,22 +107,22 @@ var catalog_row_fields = {
 						element_type	: "div",
 						class_name		: "type_container",
 						parent			: fragment
-					})	
+					})
 
 					const type_info = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "type_info",
 						parent			: type_container
-					})	
+					})
 
 
-					// term						
+					// term
 						self.node_factory(item, "term", type_info, "span", null)
 
 					// conditionals
 						const my_parent 	 = item.parent ? item.parent[0] : null
-						const parent_element = self.ar_rows.find(el => el.section_id==my_parent)						
-						if (parent_element && parent_element.term_table!=="types") {							
+						const parent_element = self.ar_rows.find(el => el.section_id==my_parent)
+						if (parent_element && parent_element.term_table!=="types") {
 							self.node_factory(item, "ref_type_material", type_info, null, null)
 							self.node_factory(item, "ref_type_denomination", type_info, null, null)
 						}
@@ -133,41 +133,41 @@ var catalog_row_fields = {
 						self.node_factory(item, "ref_type_averages_diameter", type_info, null, null)
 						self.node_factory(item, "ref_type_total_diameter_items", type_info, null, null)
 
-					
+
 					// obverse
 						const descriptions = common.create_dom_element({
 							  element_type 	: "div",
 							  class_name 	: "descriptions",
 							  parent 		: type_info
-						})	
-		
+						})
+
 						self.node_factory(item, "ref_type_design_obverse", descriptions, null, null)
 						self.node_factory(item, "ref_type_symbol_obverse", descriptions, null, null)
-						
+
 						const legend_obverse = common.create_dom_element({
 							  element_type 	: "div",
 							  class_name 	: "legend_obverse",
 							  parent 		: descriptions
-						})			
+						})
 						self.node_factory(item, "ref_type_legend_obverse", legend_obverse, null, null)
 						self.node_factory(item, "ref_type_legend_transcription_obverse", legend_obverse, null, null)
-							
+
 					// reverse
-								
-						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)						
+
+						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)
 						self.node_factory(item, "ref_type_symbol_reverse", descriptions, null, null)
-						
+
 						const legend_reverse = common.create_dom_element({
 							  element_type 	: "div",
 							  class_name 	: "legend_reverse",
 							  parent 		: descriptions
 						})
-						
+
 						self.node_factory(item, "ref_type_legend_reverse", legend_reverse, null, null)
 						self.node_factory(item, "ref_type_legend_transcription_reverse", legend_reverse, null, null)
-					
+
 					self.node_factory(item, "ref_type_equivalents", type_container, null, null)
-					
+
 					// images
 						// convert the diameter to float.
 						const diameter = item.ref_type_averages_diameter
@@ -184,7 +184,7 @@ var catalog_row_fields = {
 							  element_type 	: "div",
 							  class_name 	: "coins_images",
 							  parent 		: coins_images_container,
-						})			
+						})
 						coins_images.style.width = (diameter * 4 ) + 'mm'
 
 						// img_obverse
@@ -203,8 +203,8 @@ var catalog_row_fields = {
 							img_obverse.style.width = (diameter * 2 ) + 'mm'
 							img_obverse.hires = item.ref_coins_image_obverse
 							img_obverse.loading="lazy"
-							img_obverse.addEventListener("load", load_hires, false)							
-						
+							img_obverse.addEventListener("load", load_hires, false)
+
 						// img_reverse
 							const image_link_reverse = common.create_dom_element({
 								element_type	: "a",
@@ -242,11 +242,11 @@ var catalog_row_fields = {
 							  element_type 	: "div",
 							  class_name 	: "collection_auction",
 							  parent 		: type_container
-						})		
+						})
 					self.node_factory(item, "ref_coins_collection", collection_auction, null, null)
-					self.node_factory(item, "ref_coins_auction", collection_auction, null, null)					
-				}				
-				break;		
+					self.node_factory(item, "ref_coins_auction", collection_auction, null, null)
+				}
+				break;
 
 
 			case "mints":
@@ -264,14 +264,14 @@ var catalog_row_fields = {
 						href			: page_globals.__WEB_ROOT_WEB__ + '/mint/' + item.term_section_id,
 						target			: '_blank',
 						parent			: fragment
-					})						
+					})
 				}
 				break;
 
 			default:
 				common.create_dom_element({
 					  element_type 	: "div",
-					  class_name 	: term_table,
+					  class_name 	: term_table+'_value',
 					  text_content 	: item.term, // + " [" + term_table + "]",
 					  parent 		: fragment
 				})
@@ -296,7 +296,7 @@ var catalog_row_fields = {
 	*/
 	node_factory : function(item, name, parent, nodetype, class_name) {
 	// item, "term", type_info, "span", null
-		
+
 		if (item[name]) { //  && item[name].length>0
 
 			const current_node_type = nodetype || "span"
@@ -346,7 +346,7 @@ var catalog_row_fields = {
 							href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
 							target			: "_blank",
 							inner_html		: "MIB " + c_name + keyword
-						})						
+						})
 						current_value = a_term.outerHTML
 					}else{
 						current_value = "MIB " + item[name]
@@ -356,8 +356,8 @@ var catalog_row_fields = {
 				default:
 					current_value = item[name]
 			}
-			
-			
+
+
 			const node = common.create_dom_element({
 				element_type	: current_node_type,
 				class_name		: current_class_name,
@@ -368,7 +368,7 @@ var catalog_row_fields = {
 
 
 			return true
-		}		
+		}
 
 		return false
 	},//end node_factory

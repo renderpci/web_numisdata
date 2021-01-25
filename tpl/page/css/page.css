@@ -1087,7 +1087,7 @@ p img.svg {
 }
 #main .inner .info_line.separator {
   margin-top: 1em;
-  border-bottom: solid 1px #a33e1f;
+  border-bottom: solid 1px #b7996d;
 }
 #main .inner .info_line.separator .big_label {
   margin-top: 1.5em;
@@ -1338,7 +1338,7 @@ a.image_link img {
   text-transform: uppercase;
   font-weight: 400;
   display: inline-block;
-  background-color: #a33e1f;
+  background-color: #b7996d;
   border-top-left-radius: 0.25em;
   border-top-right-radius: 0.25em;
   color: #fff;
@@ -1348,7 +1348,7 @@ a.image_link img {
   padding: 1em;
   padding-top: 0.25em;
   padding-bottom: 0.25em;
-  margin-bottom: -0.1em;
+  margin-bottom: -0.01em;
 }
 .float-prompt {
   position: fixed;

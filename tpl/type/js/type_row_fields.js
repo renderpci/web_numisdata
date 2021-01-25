@@ -151,7 +151,7 @@ var row_fields = {
 				// exclude already showed items (identify images)
 				const data = item._coins_group.filter(el => el.typology_id!="1")
 				if (data.length>0) {
-					fragment.appendChild( self.label(item, "items") )
+					fragment.appendChild( self.label(item, "coins") )
 					fragment.appendChild(
 						self.items_list(item, "items_list", data)
 					)
@@ -391,13 +391,31 @@ var row_fields = {
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				const uri_text	= "URI: <a href=\""+uri+"\">" + full_url + "</a>"
+				// const uri_text	= "URI: <a href=\""+uri+"\">" + full_url + "</a>"
+				const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\">  URI </a> "
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "",
 					inner_html		: uri_text,
 					parent			: line
 				})
+			// collection
+
+				// common.create_dom_element({
+				// 	element_type	: "div",
+				// 	class_name		: "golden-color",
+				// 	inner_html		: ar_label,
+				// 	parent			: wrapper
+				// })
+
+				if (identify_coin.collection.length>0){
+					common.create_dom_element({
+						element_type	: "div",
+						class_name		: "",
+						inner_html		: identify_coin.collection,
+						parent			: line
+					})
+				}
 
 			// auction
 				function draw_auction(data, parent, class_name, prepend) {
@@ -408,9 +426,9 @@ var row_fields = {
 							element_type	: "div",
 							class_name		: "line_full",
 							parent			: parent
-						})	
+						})
 					// name
-						if (data.name) {							
+						if (data.name) {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+ " golden-color",
@@ -426,20 +444,20 @@ var row_fields = {
 								inner_html		: " | " + data.date,
 								parent			: line
 							})
-						}				
+						}
 					// number
-						if (data.number) {							
+						if (data.number) {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
 								inner_html		: ", "+(tstring.n || "nº") +" "+ data.number,
 								parent			: line
 							})
-						}					
+						}
 
 					return true
 				}
-				
+
 				if (identify_coin.ref_auction_group) {
 					for (let i = 0; i < identify_coin.ref_auction_group.length; i++) {
 						draw_auction(identify_coin.ref_auction_group[i], line, name, '')
@@ -454,12 +472,12 @@ var row_fields = {
 
 				// public_info
 					if (identify_coin.public_info && identify_coin.public_info.length>0){
-						const label = (tstring.public_info || "Public_info")+": ";
+						// const label = (tstring.public_info || "Public_info")+": ";
 
 						common.create_dom_element({
 						element_type	: "div",
 						class_name		: "",
-						inner_html		: label+identify_coin.public_info,
+						inner_html		: identify_coin.public_info,
 						parent			: line
 					})
 				}
@@ -503,11 +521,12 @@ var row_fields = {
 				if (identify_coin.weight && identify_coin.weight.length>0) {
 					ar_beats.push( identify_coin.weight.replace('.', ',') + " g" )
 				}
-				if (identify_coin.dies && identify_coin.dies.length>0) {
-					ar_beats.push( identify_coin.dies + " h" )
-				}
+
 				if (identify_coin.diameter && identify_coin.diameter.length>0) {
 					ar_beats.push( identify_coin.diameter.replace('.', ',') + " mm" )
+				}
+				if (identify_coin.dies && identify_coin.dies.length>0) {
+					ar_beats.push( identify_coin.dies + " h" )
 				}
 				const size_text = ar_beats.join("; ")
 
@@ -682,7 +701,7 @@ var row_fields = {
 				})
 				image_reverse.loading="lazy"
 
-				
+
 				if (data.collection.length>0){
 
 					let ar_label = data.collection
@@ -690,7 +709,7 @@ var row_fields = {
 					if (data.number && data.number.length>0){
 						ar_label += " ("+data.number+")"
 					}
-					
+
 				// collection
 					common.create_dom_element({
 						element_type	: "div",
@@ -707,11 +726,11 @@ var row_fields = {
 							parent			: wrapper
 						})
 					}
-					
+
 
 				}
 
-				
+
 
 			// size_text. weight / dies / diameter
 				const ar_beats = []
@@ -720,11 +739,12 @@ var row_fields = {
 					ar_beats.push( data.weight.replace('.', ',') + " g" )
 
 				}
-				if (data.dies && data.dies.length>0) {
-					ar_beats.push( data.dies + " h" )
-				}
+
 				if (data.diameter && data.diameter.length>0) {
 					ar_beats.push( data.diameter.replace('.', ',') + " mm" )
+				}
+				if (data.dies && data.dies.length>0) {
+					ar_beats.push( data.dies + " h" )
 				}
 				const size_text = ar_beats.join("; ")
 				common.create_dom_element({
@@ -776,9 +796,9 @@ var row_fields = {
 							element_type	: "div",
 							class_name		: "line_full",
 							parent			: parent
-						})	
+						})
 					// name
-						if (data.name) {							
+						if (data.name) {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
@@ -794,20 +814,20 @@ var row_fields = {
 								inner_html		: dateLabel + data.date,
 								parent			: line
 							})
-						}				
+						}
 					// number
-						if (data.number) {							
+						if (data.number) {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
 								inner_html		: numberLabel+(tstring.n || "nº") +" "+ data.number,
 								parent			: line
 							})
-						}					
+						}
 
 					return true
 				}
-				
+
 				if (data.ref_auction_group) {
 					for (let i = 0; i < data.ref_auction_group.length; i++) {
 						draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
@@ -845,7 +865,8 @@ var row_fields = {
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				const uri_text	= "<a href=\""+uri+"\">URI:" + full_url + "</a>"
+				// const uri_text	= "<a href=\""+uri+"\">URI:" + full_url + "</a>"
+				const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "uri-text",
@@ -858,7 +879,7 @@ var row_fields = {
 
 		// coins group iterate
 			const coins_group_length = data.length
-			
+
 			for (let i = 0; i < coins_group_length; i++) {
 
 				const el = data[i]
@@ -1028,11 +1049,12 @@ var row_fields = {
 					if (data.weight && data.weight.length>0) {
 						ar_beats.push( data.weight.replace('.', ',') + " g" )
 					}
-					if (data.dies && data.dies.length>0) {
-						ar_beats.push( data.dies + " h" )
-					}
+
 					if (data.diameter && data.diameter.length>0) {
 						ar_beats.push( data.diameter.replace('.', ',') + " mm" )
+					}
+					if (data.dies && data.dies.length>0) {
+						ar_beats.push( data.dies + " h" )
 					}
 					const size_text = ar_beats.join("; ")
 					common.create_dom_element({
@@ -1044,7 +1066,8 @@ var row_fields = {
 				// uri
 					const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 					const full_uri	= page_globals.__WEB_BASE_URL__ + uri
-					const uri_text	= "URI: <a href=\""+uri+"\">" + full_uri + "</a>"
+					// const uri_text	= "URI: <a href=\""+uri+"\">" + full_uri + "</a>"
+					const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
 					common.create_dom_element({
 						element_type	: "div",
 						class_name		: "",

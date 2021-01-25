@@ -192,7 +192,7 @@
 
 // header
 	#header {
-		// padding-top: 2em;		
+		// padding-top: 2em;
 
 		>.head_inner {
 
@@ -221,7 +221,7 @@
 					max-width: 1280px;
 					margin: 0 auto;
 					// border-radius: 5px;
-					
+
 
 					>img {
 						height: 5em;
@@ -247,7 +247,7 @@
 					}
 
 					@media screen and (max-width: 736px){
-						width: 95%;	
+						width: 95%;
 					}
 				}
 			}//end a.logo
@@ -258,7 +258,7 @@
 			display: inline-block;
 			//transform: translateX(-50%);
 
-			
+
 			@media screen and (min-width: 1280px){
 				right: 12vw;
 			}
@@ -272,9 +272,9 @@
 			}
 		}
 
-		.symbol{ 
+		.symbol{
 
-			
+
 
 			img {
 				height: 6em !important;
@@ -283,7 +283,7 @@
 			.title {
 				font-size: 3em !important;
 				text-shadow:
-				   -2px -2px 0 #333333,  
+				   -2px -2px 0 #333333,
 				    2px -2px 0 #333333,
 				    -2px 2px 0 #333333,
 				     2px 2px 0 #333333;
@@ -292,9 +292,9 @@
 
 
 		@media screen and (max-width: 736px){
-			padding-top:0;		
+			padding-top:0;
 		}
-		
+
 	}
 
 
@@ -306,7 +306,7 @@
 		margin: 0 auto;
 
 		@media screen and (max-width: 736px){
-			width: 95%;		
+			width: 95%;
 		}
 
 		.inner {
@@ -332,11 +332,11 @@
 
 			.info_line.separator { // .items
 				margin-top: 1em;
-				border-bottom: solid 1px #a33e1f;
+				border-bottom: solid 1px @color_gold_logo;
 
 				.big_label{
 					 margin-top: 1.5em;
-				}	
+				}
 			}
 
 			.info_line.hallazgos_monetarios{
@@ -417,7 +417,7 @@
 				}
 
 			}
-			
+
 		}
 
 		.golden-separator{
@@ -428,7 +428,7 @@
 		}
 
 		@media screen and (max-width: 736px){
-			width: 95%;	
+			width: 95%;
 		}
 	}
 
@@ -455,7 +455,7 @@
 
 		>section {
 			width: 100%;
-			text-align: center;			
+			text-align: center;
 
 			h2 {
 				font-family: 'Raleway', sans-serif;
@@ -475,7 +475,7 @@
 				color: #ffffff !important;
 			}
 
-			ul.page_lang_selector {				
+			ul.page_lang_selector {
 				width: 100%;
 				text-align: center;
 				margin-bottom: 4em;
@@ -497,7 +497,7 @@
 				}
 			}
 
-			ul.logos {				
+			ul.logos {
 
 				>li {
 					// filter: sepia(100%) saturate(0%) brightness(80%) hue-rotate(0deg);
@@ -518,7 +518,7 @@
 			}
 		}
 
-		
+
 
 	}//end #footer
 
@@ -529,7 +529,7 @@
 		display: none !important;
 	}
 	.hide_opacity {
-		opacity: 0 !important;		
+		opacity: 0 !important;
 	}
 
 
@@ -628,7 +628,7 @@
 			z-index: 999;
 			display: block;
 			position: absolute;
-			left: 0;			
+			left: 0;
 			bottom: 0;
 			background-color: rgb(255 255 255 / 72%);
 			padding: 0.25em;
@@ -641,7 +641,7 @@
 				img {
 					height: 1em;
 				}
-			}			
+			}
 		}
 
 		// leaflet overwrite
@@ -680,20 +680,20 @@
 
 // big label
 	.big_label {
-		// font		
+		// font
 		font-size: 1em;
 		letter-spacing: 0.15em;
 		text-transform: uppercase;
 		font-weight: 400;
-		// font-family: 'Raleway', sans-serif;		
+		// font-family: 'Raleway', sans-serif;
 		// font-variant: small-caps;
 
 		display: inline-block;
-		background-color: @color_red_dark;
+		background-color: @color_gold_logo;
 		border-top-left-radius: 0.25em;
 		border-top-right-radius: 0.25em;
 		color: #fff;
-		
+
 		margin: 1em;
 		margin-top: 1.5em;
 		margin-left: 0;
@@ -701,7 +701,7 @@
 		padding-top: 0.25em;
 		padding-bottom: 0.25em;
 
-		margin-bottom: -0.1em;
+		margin-bottom: -0.01em;
 	}
 
 	.float-prompt{
@@ -718,7 +718,7 @@
 
 		@media screen and (max-width: 736px){
 			width: 90%;
-			left:5% !important;	
+			left:5% !important;
 		}
 
 		.close-buttom {
@@ -727,7 +727,7 @@
 			background-repeat:no-repeat;
 			background-position: top right;
 			background-size: contain;
-			height: 2.3em; 
+			height: 2.3em;
 			cursor: pointer;
 			width: 10%;
 			position: absolute;
@@ -776,5 +776,3 @@
 			}
 		}
 	}
-
-

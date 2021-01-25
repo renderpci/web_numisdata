@@ -401,8 +401,9 @@ var biblio_row_fields = {
 
 			// authors
 				const authors = (biblio_object.ref_publications_authors)
-					? biblio_object.ref_publications_authors + ". "
+					? biblio_object.ref_publications_authors + " "
 					: ""
+					console.log("biblio_object", biblio_object);
 
 				common.create_dom_element({
 					element_type	: "span",
@@ -422,7 +423,7 @@ var biblio_row_fields = {
 
 			// title
 				const title = (biblio_object.ref_publications_title)
-					? "<em>"+biblio_object.ref_publications_title + ". </em>"
+					? biblio_object.ref_publications_title + ". "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -432,7 +433,7 @@ var biblio_row_fields = {
 
 			// magazine
 				const magazine = (biblio_object.ref_publications_magazine)
-					? biblio_object.ref_publications_magazine + ". "
+					? "<em>"+biblio_object.ref_publications_magazine + ". </em>"
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -444,7 +445,7 @@ var biblio_row_fields = {
 
 			// pages
 				const pages = (biblio_object.pages)
-					? " p." +biblio_object.pages + ". "
+					? " p. " +biblio_object.pages + ", "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -454,7 +455,7 @@ var biblio_row_fields = {
 
 			// reference
 				const reference = (biblio_object.reference)
-					? " ref." +biblio_object.reference + ". "
+					? " " +biblio_object.reference + ". "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",

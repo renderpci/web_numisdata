@@ -107,5 +107,6 @@
     "typology": "Tipología",
     "uri": "URI",
     "volume": "Volumen",
-    "weight": "Peso"
+    "weight": "Peso",
+    "related_types" : "Tipos relacionados"
 }

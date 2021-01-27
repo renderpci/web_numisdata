@@ -102,6 +102,18 @@ var row_fields = {
 					return ar_final.join(" | ")
 				})
 			)
+		// related_types : "MIB | 03a<br>MIB | 15b"
+			fragment.appendChild(
+				self.default(item, "related_types", function(value){
+					const label		= tstring.related_types || "Related types"
+					const beats 	= page.split_data(value, "<br>")
+					const ar_final 	= []
+					for (let i = 0; i < beats.length; i++) {
+						ar_final.push( beats[i].replace(/ \| /g, ' ') )
+					}
+					return label +": "+ ar_final.join(" | ")
+				})
+			)
 		// bibliography
 			const ar_references = item.bibliography_data
 				fragment.appendChild(
@@ -302,12 +314,30 @@ var row_fields = {
 			}
 
 			for (let i = parents_ordered.length - 1; i >= 0; i--) {
-				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "breadcrumb " + parents_ordered[i].term_table,
-					text_content	: parents_ordered[i].term,
-					parent 			: line
-				})
+
+				if (parents_ordered[i].term_table === 'mints') {
+					console.log("parents_ordered[i]", parents_ordered[i]);
+					const mint_section_id = (parents_ordered[i].term_data)
+						? JSON.parse(parents_ordered[i].term_data)[0]
+						: ''
+
+					const link = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "breadcrumb link link_mint",
+						href			: page_globals.__WEB_ROOT_WEB__ + '/mint/' + mint_section_id,
+						target			: '_blank',
+						text_content	: parents_ordered[i].term,
+						parent			: line
+					})
+				}else{
+					common.create_dom_element({
+						element_type 	: "span",
+						class_name 		: "breadcrumb " + parents_ordered[i].term_table,
+						text_content	: parents_ordered[i].term,
+						parent 			: line
+					})
+				}
+
 
 				common.create_dom_element({
 					element_type 	: "span",
@@ -317,10 +347,14 @@ var row_fields = {
 				})
 			}
 
+			const mint_number = (catalog.ref_mint_number)
+				? catalog.ref_mint_number+'/'
+				: ''
+
 			common.create_dom_element({
 				element_type 	: "span",
 				class_name 		: "breadcrumb",
-				text_content	: "MIB " + catalog.term,
+				text_content	: "MIB " + mint_number + catalog.term,
 				parent 			: line
 			})
 		}
@@ -400,22 +434,33 @@ var row_fields = {
 					parent			: line
 				})
 			// collection
-
-				// common.create_dom_element({
-				// 	element_type	: "div",
-				// 	class_name		: "golden-color",
-				// 	inner_html		: ar_label,
-				// 	parent			: wrapper
-				// })
-
 				if (identify_coin.collection.length>0){
-					common.create_dom_element({
-						element_type	: "div",
-						class_name		: "",
-						inner_html		: identify_coin.collection,
-						parent			: line
-					})
+
+					// line
+						const line_collection = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "line_full",
+							parent			: line
+						})
+
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: name + " golden-color",
+							inner_html		: identify_coin.collection,
+							parent			: line_collection
+						})
+					// number
+						if (identify_coin.number.length>0){
+
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: name + " golden-color",
+								inner_html		: ", "+(tstring.n || "nº") +" "+ identify_coin.number,
+								parent			: line_collection
+							})
+						}
 				}
+
 
 			// auction
 				function draw_auction(data, parent, class_name, prepend) {
@@ -564,7 +609,11 @@ var row_fields = {
 				// const catalogue_number = JSON.parse(item["catalogue_data"])[0]
 				const type_section_id = item["section_id"]
 
-				const item_text = item[name] + " " + type_section_id + "/" + item["number"]
+				const mint_number = (item.mint_number)
+					? item.mint_number+'/'
+					: ''
+
+				const item_text = item[name] + " " + type_section_id +' | '+  mint_number + item["number"]
 
 				const node = common.create_dom_element({
 					element_type 	: "span",

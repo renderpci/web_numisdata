@@ -32,13 +32,13 @@
   font-size: 1.2em;
 }
 .result .row_wrapper .identify_coin {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 .result .row_wrapper .find_wrapper div:first-child {
   font-weight: bold;
 }
 .result .row_wrapper img {
-  vertical-align: middle;
+  vertical-align: bottom;
 }
 .result .row_wrapper div.ref_coins_image_obverse,
 .result .row_wrapper div.ref_coins_image_reverse {
@@ -75,7 +75,15 @@
 .result .row_wrapper .legend_reverse {
   text-indent: 2em;
 }
+.result .row_wrapper .legend_reverse .info_value {
+  font-size: 34px !important;
+  font-weight: 400;
+  color: black;
+  vertical-align: bottom;
+  line-height: 36px;
+}
 .result .row_wrapper .public_info {
+  font-size: 2em;
   margin-top: 1em;
   margin-bottom: 1em;
 }

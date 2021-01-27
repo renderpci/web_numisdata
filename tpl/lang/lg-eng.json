@@ -107,5 +107,6 @@
   "weight": "Weight",
   "creator": "Creator",
   "peculiarity_production": "Peculiarity production",
-  "secondary_treatment": "Secondary treatment"
+  "secondary_treatment": "Secondary treatment",
+  "related_types" : "Related types"
 }

@@ -21,7 +21,7 @@ var mint =  {
 			const section_id = options.section_id
 
 		if (section_id) {
-			
+
 
 			// search by section_id
 			self.get_row_data({
@@ -60,10 +60,10 @@ var mint =  {
 							})
 						})
 					}
-			})		
+			})
 		}
 
-		
+
 		// navigate records group
 			// document.onkeyup = function(e) {
 			// 	if (e.which == 37) { // arrow left <-
@@ -83,7 +83,7 @@ var mint =  {
 
 	/**
 	* GET_ROW_DATA
-	* 
+	*
 	*/
 	get_row_data : function(options) {
 
@@ -93,8 +93,8 @@ var mint =  {
 
 		// combined call
 			const ar_calls = []
-			
-		// mints call				
+
+		// mints call
 			ar_calls.push({
 				id		: "mint",
 				options	: {
@@ -132,7 +132,7 @@ var mint =  {
 					ar_fields				: ['section_id','term'],
 					count					: false,
 					limit					: 0,
-					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"					
+					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"
 				}
 			})
 
@@ -153,7 +153,7 @@ var mint =  {
 			// 		}
 			// 	}
 			// })
-		
+
 		// request
 			const js_promise = data_manager.request({
 				body : {
@@ -170,7 +170,7 @@ var mint =  {
 
 	/**
 	* GET_types_DATA
-	* 
+	*
 	*/
 	get_types_data : function(options) {
 
@@ -186,14 +186,14 @@ var mint =  {
 						table		: 'catalog',
 						db_name		: page_globals.WEB_DB,
 						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight'],
+						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
 						count		: false,
 						limit		: 0,
 						order		: 'norder ASC',
 						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						resolve_portals_custom	: {
 							"parent" : "catalog",
-							"children"	: "catalog" 
+							"children"	: "catalog"
 						}
 						// process_result	: {
 						// 	fn 		: 'process_result::add_parents_and_children_recursive',
@@ -205,7 +205,7 @@ var mint =  {
 					const types_data = []
 					if (response.result && response.result.length>0) {
 						for (let i = 0; i < response.result.length; i++) {
-							
+
 							const row = {
 								catalog			: 'MIB',
 								section_id		: response.result[i].section_id,
@@ -218,16 +218,17 @@ var mint =  {
 								children 		: response.result[i].children,
 								ref_coins_image_obverse 	: response.result[i].ref_coins_image_obverse,
 								ref_coins_image_reverse 	: response.result[i].ref_coins_image_reverse,
-								ref_type_averages_diameter 		: response.result[i].ref_type_averages_diameter,
-								ref_type_averages_weight 			: response.result[i].ref_type_averages_weight
-							}							
+								ref_type_averages_diameter 	: response.result[i].ref_type_averages_diameter,
+								ref_type_averages_weight 	: response.result[i].ref_type_averages_weight,
+								ref_mint_number 			: response.result[i].ref_mint_number,
+							}
 
 							types_data.push(row)
 						}
 					}
 					//console.log("--> get_types_data types_data:",types_data);
 
-					const parsed_types_data = self.parse_types_data(types_data)				
+					const parsed_types_data = self.parse_types_data(types_data)
 
 					resolve(parsed_types_data)
 				})
@@ -243,7 +244,7 @@ var mint =  {
 		const rows_length = options.length
 
 		for (let i=0;i<rows_length;i++){
-			var currentObject = data[i] 	
+			var currentObject = data[i]
 
 		 	if (currentObject.term_table === 'ts_period'){
 		 		currentObject.children = {}
@@ -259,7 +260,7 @@ var mint =  {
 		for (let i=0;i<rows_length;i++){
 			var currentObject = data[i]
 		 	var currentParent = data[i].parent[0]
-		 	
+
 		 	if (currentObject.term_table === 'ts_numismatic_group'){
 		 		currentObject.children = {}
 		 		const periodData = parsedData.period.find(obj => obj.section_id === currentParent.section_id)
@@ -284,20 +285,20 @@ var mint =  {
 				 		periodData.types.push(currentObject)
 				 	} else {
 				 		periodData.types.push(currentObject)
-				 	}	
+				 	}
 				} else if (currentParent.term_table === 'ts_numismatic_group'){
 					const period_length = parsedData.period.length
 					for (let z=0;z<period_length;z++){
 						const groupData = parsedData.period[z].groups.find(obj => obj.section_id === currentParent.section_id)
-		
+
 						if (groupData.types == null) {
 					 		groupData.types = []
 					 		groupData.types.push(currentObject)
 				 		} else {
 				 			groupData.types.push(currentObject)
-				 		}	
+				 		}
 					}
-			 		
+
 				}
 		 	}
 
@@ -324,7 +325,7 @@ var mint =  {
 		// debug
 			if(SHOW_DEBUG===true) {
 				console.log("Mint row_object:",row_object);
-			}		
+			}
 
 		// container select and clean container div
 			while (container.hasChildNodes()) {
@@ -361,7 +362,7 @@ var mint =  {
 					class_name		: "line-tittle-wrap",
 					parent 			: line
 				})
-				
+
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "value-term",
@@ -389,8 +390,8 @@ var mint =  {
 				})
 
 				common.create_dom_element({
-					element_type 	: "label",		
-					class_name 		: "big_label",			
+					element_type 	: "label",
+					class_name 		: "big_label",
 					text_content 	: tstring.place || "Place",
 					parent 			: lineSeparator
 				})
@@ -414,8 +415,8 @@ var mint =  {
 				})
 
 				common.create_dom_element({
-					element_type	: "label",	
-					class_name 		: "big_label",		
+					element_type	: "label",
+					class_name 		: "big_label",
 					text_content	: tstring.history || "History",
 					parent			: lineSeparator
 				})
@@ -442,8 +443,8 @@ var mint =  {
 				})
 
 				common.create_dom_element({
-					element_type	: "label",	
-					class_name 		: "big_label",				
+					element_type	: "label",
+					class_name 		: "big_label",
 					text_content	: tstring.numismatic_comments || "Numismatic comments",
 					parent			: lineSeparator
 				})
@@ -461,7 +462,7 @@ var mint =  {
 
 		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
-				//create the graphical red line that divide blocks 
+				//create the graphical red line that divide blocks
 				const lineSeparator = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_line separator",
@@ -470,7 +471,7 @@ var mint =  {
 				//create the tittle block inside a red background
 				common.create_dom_element({
 					element_type	: "label",
-					class_name 		: "big_label",				
+					class_name 		: "big_label",
 					text_content	: tstring.bibliographic_references || "Bibliographic references",
 					parent			: lineSeparator
 				})
@@ -486,27 +487,27 @@ var mint =  {
 					class_name		: "info_text_block",
 					parent			: line
 				})
-				
+
 
 				for (var i = 0; i < ref_biblio_length; i++) {
-					
+
 					const biblio_row_wrapper = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "bibliographic_reference",
 						parent			: bibliography_block
 					})
-					
-					const current_biblio_object = ref_biblio[i]	
+
+					const current_biblio_object = ref_biblio[i]
 					row_field.biblio_object = current_biblio_object
-					
+
 					const biblio_row = row_field.row_bibliography()
 
 
 					biblio_row_wrapper.appendChild(biblio_row)
-					
-				}	
 
-				createExpandableBlock(bibliography_block,line);		
+				}
+
+				createExpandableBlock(bibliography_block,line);
 			}
 
 
@@ -518,7 +519,7 @@ var mint =  {
 
 		//Create an expandable block when text length is over 500
 		function createExpandableBlock (textBlock,nodeParent) {
-			
+
 			textBlock.classList.add("contracted-block");
 
 			const textBlockSeparator = common.create_dom_element({
@@ -542,7 +543,7 @@ var mint =  {
 					separatorArrow.style.transform = "rotate(90deg)";
 				}
 			})
-		}	
+		}
 
 	},//end draw_row
 
@@ -657,7 +658,7 @@ var mint =  {
 					row_group.appendChild(types_block)
 
 					const image_gallery_containers = types_block.querySelectorAll('.gallery')
-				
+
 					if (image_gallery_containers){
 						for (let i=0;i<image_gallery_containers.length;i++){
 							page.activate_images_gallery(image_gallery_containers[i])
@@ -683,7 +684,7 @@ var mint =  {
 					}
 
 			}
-			createFolderedGroup(period_label,row_period)		
+			createFolderedGroup(period_label,row_period)
 		}
 
 		// container final add
@@ -702,12 +703,12 @@ var mint =  {
 					label_arrow.style.transform = "rotate(0deg)";
 				}
 			})
-			
+
 		}
 
 	},//end draw_types
 
-	//Draw a entyre block of types 
+	//Draw a entyre block of types
 	// param options: array with type objects
 	// return: HTML Object with a types block
 	draw_types_block : function(options) {
@@ -731,9 +732,9 @@ var mint =  {
 
 				for (let z=0;z<subTypes_length;z++){
 					const subType = subTypes[z]
-					
+
 					let isFirstElemenet = false
-					
+
 					z===0 ? isFirstElemenet = true : isFirstElemenet = false
 					create_type_element(subType,true,isFirstElemenet,type_row.term);
 				}
@@ -746,20 +747,26 @@ var mint =  {
 
 			const type_row = data;
 
-			let type_row_term = ""
-			type_row.term.indexOf(",") == -1 ? type_row_term = type_row.term : type_row_term = type_row.term.slice(0,type_row.term.indexOf(","))
+			// let type_row_term = ""
+			const type_row_term = (type_row.term.indexOf(",") == -1)
+				? type_row.term
+				: type_row.term.slice(0,type_row.term.indexOf(","))
 
-			var type_number = ""
-			var subType_number = ""
-			var SubTypeClass = ""
+			const mint_number = (type_row.ref_mint_number)
+				? type_row.ref_mint_number+'/'
+				: ''
+
+			let type_number = ""
+			let subType_number = ""
+			let SubTypeClass = ""
 			const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
-			var type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
-			var subType_href = type_href
+			let type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
+			let subType_href = type_href
 
 			if (!isSubtype) {
-				type_number = "MIB "+type_row_term 
+				type_number = "MIB "+mint_number+type_row_term
 			} else {
-				subType_number = "MIB "+type_row_term 
+				subType_number = "MIB "+mint_number+type_row_term
 				SubTypeClass = "subType_number"
 				if (isFirstElement){
 					type_href = ""
@@ -775,7 +782,7 @@ var mint =  {
 				class_name		: "type_wrap",
 				parent 			: children_container
 			})
-	
+
 			const number_wrap = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "type_number",
@@ -808,7 +815,7 @@ var mint =  {
 				element_type 	: "a",
 				class_name		: "image_link",
 				href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-				parent 			: img_wrap, 
+				parent 			: img_wrap,
 			})
 
 			common.create_dom_element({
@@ -821,7 +828,7 @@ var mint =  {
 				element_type 	: "a",
 				class_name		: "image_link",
 				href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-				parent 			: img_wrap, 
+				parent 			: img_wrap,
 			})
 
 			common.create_dom_element({
@@ -834,7 +841,7 @@ var mint =  {
 				element_type 	: "div",
 				class_name 		: "info_wrap",
 				parent 			: row_type
-			})			
+			})
 
 			const type_measures = type_row.ref_type_averages_weight+" g; "+type_row.ref_type_averages_diameter+"mm"
 			common.create_dom_element ({
@@ -849,7 +856,7 @@ var mint =  {
 			common.create_dom_element ({
 				element_type 	: "a",
 				class_name 		: "type_info",
-				text_content 	: "URI: "+permanent_uri,
+				text_content 	: "URI",
 				href 			: relative_uri,
 				parent 			: info_wrap
 			})
@@ -883,12 +890,12 @@ var mint =  {
 			source_maps		: page.maps_config.source_maps
 		})
 		// draw points
-		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map		
+		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map
 		self.map.parse_data_to_map(map_data_clean, null)
 		.then(function(){
 			container.classList.remove("hide_opacity")
 		})
-		
+
 
 		return true
 	},//end draw_map
@@ -899,7 +906,7 @@ var mint =  {
 	* @return array data
 	*/
 	map_data : function(data, popup_data) {
-		
+
 		const self = this
 
 		// console.log("--map_data data:",data);
@@ -910,7 +917,7 @@ var mint =  {
 
 		const data_clean = []
 		for (let i = 0; i < ar_data.length; i++) {
-			
+
 			const item = {
 				lat			: ar_data[i].lat,
 				lon			: ar_data[i].lon,
@@ -924,8 +931,8 @@ var mint =  {
 
 		return data_clean
 	},//end map_data
-	
 
 
-	
+
+
 }//end mints

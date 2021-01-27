@@ -7,7 +7,7 @@
 var type =  {
 
 
-		
+
 	// search_options
 	search_options : {},
 
@@ -27,18 +27,18 @@ var type =  {
 		// debug
 			if(SHOW_DEBUG===true) {
 				console.log("type set_up options:",options);
-			}			
+			}
 
-		// trigger render type with current options.section_id 
+		// trigger render type with current options.section_id
 			if (typeof options.section_id!=="undefined") {
-				
-				// search by section_id	and draw on receive data		
-					self.get_row_data({						
-						section_id : options.section_id					
+
+				// search by section_id	and draw on receive data
+					self.get_row_data({
+						section_id : options.section_id
 					})
 					.then(function(response){
 						console.log("/// response:", response);
-						// console.log("/// row:", response.result[0]);							
+						// console.log("/// row:", response.result[0]);
 
 						// container. clean container div
 							const container	= document.getElementById('row_detail')
@@ -49,7 +49,7 @@ var type =  {
 						// combi request split results
 							const type		= response.result.find(item => item.id==='type')
 							const catalog	= response.result.find(item => item.id==='catalog')
-						
+
 						if (typeof type.result[0]!=="undefined") {
 
 							const row			= type.result[0]
@@ -57,10 +57,10 @@ var type =  {
 
 							// app property catalog with all catalog rows result
 								row.catalog = catalog_rows
-							 
+
 							// parse data
 								page.parse_type_data(row)
-							
+
 							// render row nodes
 							self.list_row_builder(row)
 							.then(function(row_wrapper){
@@ -75,12 +75,12 @@ var type =  {
 										for (let i = 0; i < images_gallery_containers.length; i++) {
 											page.activate_images_gallery(images_gallery_containers[i])
 										}
-									}									
+									}
 							})
 						}
 					})
 			}
-	
+
 		// navigate across records group
 			// document.onkeyup = function(e) {
 			// 	if (e.which == 37) { // arrow left <-
@@ -89,9 +89,9 @@ var type =  {
 			// 	}else if (e.which == 39) { // arrow right ->
 			// 		let button = document.getElementById("go_next")
 			// 		if (button) button.click()
-			// 	}		
+			// 	}
 			// }
-		
+
 
 		return true
 	},//end set_up
@@ -113,8 +113,8 @@ var type =  {
 
 		// combined call
 			const ar_calls = []
-			
-		// type call				
+
+		// type call
 			ar_calls.push({
 				id		: "type",
 				options	: {
@@ -138,7 +138,7 @@ var type =  {
 						"hoards.bibliography_data"		: "bibliographic_references",
 						"denomination_data"				: "denomination",
 						"material_data"					: "material"
-					}					
+					}
 				}
 			})
 
@@ -148,7 +148,7 @@ var type =  {
 				options	: {
 					dedalo_get				: 'records',
 					table					: "catalog",
-					ar_fields				: ["section_id","term","term_data","term_table","term_section_tipo","parents"],
+					ar_fields				: ["section_id","term","term_data","term_table","term_section_tipo","parents",'ref_mint_number'],
 					lang					: lang,
 					count					: false,
 					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]' AND term_table='types'",
@@ -158,7 +158,7 @@ var type =  {
 				}
 			})
 
-			
+
 		// request
 			const js_promise = data_manager.request({
 				body : {
@@ -167,7 +167,7 @@ var type =  {
 				}
 			})
 
-		
+
 		return js_promise
 	},//end get_row_data
 
@@ -178,10 +178,10 @@ var type =  {
 	* Build DOM nodes to insert into list pop-up
 	*/
 	list_row_builder : function(row) {
-		
+
 		const self = this
 
-		return new Promise(function(resolve){		
+		return new Promise(function(resolve){
 
 			// parse type bibliography_data
 				self.parse_publication(row.bibliography_data)
@@ -192,8 +192,8 @@ var type =  {
 					const item = row.ref_coins_union[i]
 					self.parse_publication(item.bibliography_data)
 				}
-			
-			// parse type findspots.bibliography_data			
+
+			// parse type findspots.bibliography_data
 				const findspots_length = row.ref_coins_findspots_data.length;
 				for (let i = 0; i < findspots_length; i++) {
 					const item = row.ref_coins_findspots_data[i]
@@ -207,9 +207,9 @@ var type =  {
 					self.parse_publication(item.bibliography_data)
 				}
 
-			// parse parse_ordered_coins creating _coins_group	
+			// parse parse_ordered_coins creating _coins_group
 				self.parse_ordered_coins(row)
-				
+
 
 			// render row
 				row_fields.caller	= self
@@ -236,7 +236,7 @@ var type =  {
 		// const separator		= " # ";
 		// const data_length	= data.length
 		// for (let i = 0; i < data_length; i++) {
-			
+
 		// 	const reference = data[i]
 
 		// 	// add publications property to store all resolved references
@@ -253,9 +253,9 @@ var type =  {
 		// 		const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
 		// 		const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
 		// 		const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
-				
+
 		// 		for (let j = 0; j < publications_data_length; j++) {
-					
+
 		// 			const section_id = publications_data[j]
 
 		// 			const parsed_item = {
@@ -274,7 +274,7 @@ var type =  {
 		// 			parsed_data.push(parsed_item)
 		// 		}
 		// 	}
-			
+
 		// }
 		// // console.log("parsed_data:",parsed_data);
 
@@ -302,14 +302,14 @@ var type =  {
 		const ref_coins	=  page.split_data(row.ref_coins, separator)
 
 		for (let i = 0; i < typology_data_length; i++) {
-			
+
 			const typology_id = JSON.parse(typology_data[i])[0] // format is ["1"]
-			
+
 			const parsed_item = {
 				typology_id	: typology_id,
 				typology	: typology[i] || null,
 				coins		: JSON.parse(ref_coins[i]) || null,
-				
+
 			}
 
 			parsed_data.push(parsed_item)
@@ -317,8 +317,8 @@ var type =  {
 
 		// assign to new property '_coins_group'
 			row._coins_group = parsed_data
-		
-		
+
+
 		return parsed_data
 	},//end parse_ordered_coins
 
@@ -330,7 +330,7 @@ var type =  {
 	* render command is not necessary
 	*/
 	// render_map : function(options) {
-		
+
 	// 	const self = this
 
 	// 	const target		= options.target
@@ -343,12 +343,12 @@ var type =  {
 	// 	if (map_data.length<1) {
 	// 		return null;
 	// 	}
-		
+
 	// 	self.map = self.map || new map_factory() // creates / get existing instance of map
 	// 	self.map.init({
 	// 		target				: target,
 	// 		map_position		: map_position,
-	// 		// data				: map_data,			
+	// 		// data				: map_data,
 	// 		// popup_builder	: self.map_popup_builder,
 	// 		source_maps			: [
 	// 			{
@@ -384,9 +384,9 @@ var type =  {
 	// 		map_data : map_data_clean
 	// 	})
 
-		
+
 	// 	return true
-	// },//end render_map	
+	// },//end render_map
 
 
 
@@ -419,7 +419,7 @@ var type =  {
 		.then(function(){
 			container.classList.remove("hide_opacity")
 		})
-		
+
 
 		return true
 	},//end draw_map
@@ -431,12 +431,12 @@ var type =  {
 	* @return array data
 	*/
 	map_data : function(data) {
-		
+
 		const self = this
 
 		const data_clean = []
 		for (let i = 0; i < data.length; i++) {
-			
+
 			const item = {
 				lat			: parseFloat(data[i].data.lat),
 				lon			: parseFloat(data[i].data.lon),
@@ -447,7 +447,7 @@ var type =  {
 					place		: data[i].place,
 					type 		: data[i].type,
 					items 		: data[i].items,
-					total_items	: data[i].total_items					
+					total_items	: data[i].total_items
 				}
 			}
 			data_clean.push(item)
@@ -492,18 +492,18 @@ var type =  {
 			})
 
 		// descriptions
-			const description = tstring.total +" "+ tstring.items + ": " + total_items		
+			const description = tstring.total +" "+ tstring.items + ": " + total_items
 			const text_description = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "text_description",
 				inner_html		: description,
 				parent			: popup_item
 			})
-			
+
 
 		return popup_wrapper
 	},//end map_popup_builder
 
 
-	
+
 }//end type

@@ -339,13 +339,16 @@ var catalog_row_fields = {
 								}
 								return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
 							})()
+						const mint_number = (item.ref_mint_number)
+							? item.ref_mint_number+'/'
+							: ''
 
 						const a_term = common.create_dom_element({
 							element_type	: "a",
 							class_name		: "a_term",
 							href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
 							target			: "_blank",
-							inner_html		: "MIB " + c_name + keyword
+							inner_html		: "MIB " + mint_number + c_name + keyword
 						})
 						current_value = a_term.outerHTML
 					}else{

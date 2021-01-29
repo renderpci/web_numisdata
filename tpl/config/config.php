@@ -164,7 +164,7 @@
 		'term'			=> 'term',
 		'web_path'		=> 'web_path',
 		'parent' 		=> 'parent',
-		'childrens' 	=> 'childrens',
+		'children' 		=> 'children',
 
 		'template_name' => 'template_name',
 		'title'			=> 'titulo', // before standard (compatibility)

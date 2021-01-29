@@ -8,7 +8,7 @@ class page {
 
 
 	# Version. Important!
-	static $version = "1.0.11"; // 06-01-2021
+	static $version = "1.0.8"; // 28-11-2020
 
 	# css_ar_url : css files to include on render page
 	static $css_ar_url = array();
@@ -124,17 +124,15 @@ class page {
 
 			$ar_calls[] = $call;
 
-		// menu all
-			if (defined('MENU_ALL_OPTIONS')) {
-				$options = (object)MENU_ALL_OPTIONS;
-			}else{
-				$options = new stdClass();
-					$options->dedalo_get	= 'records';
-					$options->table			= WEB_MENU_TABLE;
-					$options->ar_fields		= array_values(get_object_vars(self::$web_fields_map));
-					$options->lang			= WEB_CURRENT_LANG_CODE;
-					$options->order			= 'norder ASC';
-			}
+		// menu all			
+			$ar_fields = array_values(get_object_vars(self::$web_fields_map));
+
+			$options = new stdClass();
+				$options->dedalo_get 	= 'records';
+				$options->table 		= WEB_MENU_TABLE;					
+				$options->ar_fields 	= $ar_fields;
+				$options->lang 			= WEB_CURRENT_LANG_CODE;
+				$options->order 		= 'norder ASC';
 
 			$call = new stdClass();
 				$call->id 		= 'menu_all';
@@ -191,18 +189,24 @@ class page {
 
 		// fix global_page info
 			// menu_items
-			$menu_items = $this->data_combi[1]->result;		
-			$global_page = array_find($menu_items, function($item){
-				return ($item->term_id===WEB_MENU_PARENT);
+			$menu_items = $this->data_combi[1]->result;
+			$global_page = array_reduce($menu_items, function($carry, $item){
+				if ($item->term_id===WEB_MENU_PARENT) {
+					return $item;
+				}
+				return $carry;
 			});
 			// template_items
 			$template_items = $this->data_combi[0]->result;
-			$global_template = array_find($template_items, function($item) use($global_page) {
-				return ($item->name===$global_page->template_name);
+			$global_template = array_reduce($template_items, function($carry, $item) use($global_page) {
+				if ($item->name===$global_page->template_name) {
+					return $item;
+				}
+				return $carry;
 			});
 			// set
-			$global_page->template	= json_decode($global_template->data);
-			$this->global_page		= $global_page;
+			$global_page->template 	= json_decode($global_template->data);
+			$this->global_page 		= $global_page;
 
 
 		return $this->data_combi;
@@ -647,7 +651,7 @@ class page {
 	/**
 	* RENDER_MENU_TREE_PLAIN
 	*/
-	public static function render_menu_tree_plain($term_id, $menu_tree, $li_drawer, $ul_drawer, $children_column_name='childrens') {
+	public static function render_menu_tree_plain($term_id, $menu_tree, $li_drawer, $ul_drawer) {
 		#dump($menu_tree, ' menu_tree ++ '.to_string()); 
 
 		$html = '';
@@ -673,14 +677,14 @@ class page {
 					// menu active check
 						if (property_exists($menu_element, 'menu') && $menu_element->menu==='no') {
 							continue;
-						}					
+						}
 					
-					if (  !empty($menu_element->{$children_column_name}) 
-						&& $current_term_id!==WEB_MENU_PARENT
-						&& (true===page::have_menu_children($menu_element->{$children_column_name}, $menu_tree))
-					) {
+					
+					if (!empty($menu_element->childrens) && $current_term_id!==WEB_MENU_PARENT) {
+						
 						// recursion
-						$embed_html = self::render_menu_tree_plain($current_term_id, $menu_tree, $li_drawer, $ul_drawer, $children_column_name);
+							$embed_html = self::render_menu_tree_plain($current_term_id, $menu_tree, $li_drawer, $ul_drawer);						
+						
 					}else{
 						$embed_html = '';
 					}
@@ -693,41 +697,6 @@ class page {
 
 		return $html;
 	}//end render_menu_tree_plain
-
-
-
-	/**
-	* HAVE_MENU_CHILDREN
-	* @return bool
-	*/
-	public static function have_menu_children($children_data, $menu_tree_rows) {
-		
-		$found_child_with_active_menu = false;
-
-		$ar_term_id = json_decode($children_data);
-		foreach ($ar_term_id as $term_id) {
-
-			if (is_object($term_id)) {
-				// as locator (legacy)
-				$section_id	= $term_id->section_id;
-
-			}else{
-				// as term_id
-				$ar			= explode('_', $term_id);
-				$section_id	= $ar[1];
-			}
-
-			$item = array_find($menu_tree_rows, function($el) use($section_id){
-				return $el->section_id===$section_id;
-			});
-			if ($item && $item->menu==='yes') {
-				$found_child_with_active_menu = true;
-				break;
-			}			
-		}
-
-		return $found_child_with_active_menu;
-	}//end have_menu_children
 
 
 
@@ -1685,7 +1654,7 @@ class page {
 	/**
 	* GET_CHILDREN
 	*/
-	public static function get_children($term_id, $menu_elements, $recursive=false, $children_column_name='childrens') {
+	public static function get_children($term_id, $menu_elements, $recursive=false) {
 	
 		// filter menu tree for parent $term_id (and include root parent when is $term_id)
 			$items = array_filter($menu_elements,function($item) use($term_id) {
@@ -1694,10 +1663,7 @@ class page {
 
 		// sort by norder asc
 			usort($items, function($a, $b){
-				if ((int)$a->norder > (int)$b->norder) {
-					return 1;
-				}
-				return 0;
+				return (int)$a->norder > (int)$b->norder;
 			});
 
 		// iterate items from filter 
@@ -1705,12 +1671,12 @@ class page {
 				
 				foreach ($items as $menu_element) {
 					
-					if (!empty($menu_element->{$children_column_name})) {
+					if (!empty($menu_element->childrens)) {
 
 						// recursion
-							$children = self::get_children($menu_element->term_id, $menu_elements, $recursive);
-							
-							$items = array_merge($items, $children);
+							$childrens = self::get_children($menu_element->term_id, $menu_elements, $recursive);
+
+							$items = array_merge($items, $childrens);
 					}
 				}
 			}

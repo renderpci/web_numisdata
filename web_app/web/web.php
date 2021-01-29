@@ -126,7 +126,9 @@
 					$mode 				= 'detail';	
 					$term_id 		 	= $term_data->term_id;
 					$page->term_id 		= $term_id;
-					$page->menu_parent 	= $term_data->childrens==='[]' ? $term_data->parent : $term_id;
+					$page->menu_parent 	= (empty($term_data->children) || $term_data->children==='[]')
+						? $term_data->parent 
+						: $term_id;
 				
 				// set page row
 					if (isset($area_section_id) && isset($area_table) && !isset($lang_from_path)) {

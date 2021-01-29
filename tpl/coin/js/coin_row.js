@@ -8,6 +8,7 @@
 var coin_row = {
 
 
+
 	caller  : null,
 
 
@@ -971,8 +972,6 @@ var coin_row = {
 
 		return line
 	},//end image
-
-
 
 
 

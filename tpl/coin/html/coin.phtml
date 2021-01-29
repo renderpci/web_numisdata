@@ -40,7 +40,7 @@
 <script>
 dom_ready(function(){
 	coin.set_up({
-		section_id : '<?php echo $section_id ?>'
+		section_id : <?php echo json_encode($section_id) ?>
 	})
 })
 </script>

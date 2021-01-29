@@ -60,7 +60,6 @@
 
 	// menu tree
 		$menu_tree = $this->get_menu_tree_plain();
-	
 		// ul drawer
 			$ul_drawer = function($term_id, $html) {
 				if($term_id===WEB_MENU_PARENT) {
@@ -85,7 +84,8 @@
 			};
 
 		// menu_tree_html
-			$this->menu_tree_html = page::render_menu_tree_plain(WEB_MENU_PARENT, $menu_tree, $li_drawer, $ul_drawer);
+			$this->menu_tree_html = page::render_menu_tree_plain(WEB_MENU_PARENT, $menu_tree, $li_drawer, $ul_drawer, 'children');
+
 		
 
 	# content_html	

@@ -159,13 +159,13 @@
 
 // fields map 
 	define('WEB_FIELDS_MAP', json_encode([
-		'section_id' 	=> 'section_id',
-		'term_id' 		=> 'term_id',
+		'section_id'	=> 'section_id',
+		'term_id'		=> 'term_id',
 		'term'			=> 'term',
 		'web_path'		=> 'web_path',
-		'parent' 		=> 'parent',
-		'children' 		=> 'children',
-
+		'menu'			=> 'menu',
+		'parent'		=> 'parent',
+		'children'		=> 'children',
 		'template_name' => 'template_name',
 		'title'			=> 'titulo', // before standard (compatibility)
 		'abstract' 		=> 'entradilla',

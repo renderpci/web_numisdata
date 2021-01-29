@@ -29,7 +29,7 @@ function form_factory() {
 		
 		// callback
 			if (typeof options.callback==="function") {
-				options.callback(form_item.node_input)
+				options.callback(form_item)
 			}
 		
 		// store current instance
@@ -61,16 +61,19 @@ function form_factory() {
 			q_selected_eq	: options.q_selected_eq || "=", // default internal comparator used in autocomplete	with user picked values
 			q_column		: options.q_column, // like 'term'
 			q_splittable	: options.q_splittable || false, // depending on its value the item content will be splitted or not on loading it
+			sql_filter		: options.sql_filter || null,
 			// special double filters
 			// q_table 		: options.q_table, // like 'mints'
 			// q_table_name : 'term_table', // like 'term_table'
-			// autocomplete options		
+			// autocomplete options
 			eq				: options.eq || "LIKE", // default internal comparator used in autocomplete		
 			eq_in			: typeof options.eq_in!=='undefined'  ? options.eq_in  : '', // used in autocomplete to define if term begins with .. o in the middle of..
 			eq_out			: typeof options.eq_out!=='undefined' ? options.eq_out : '%', // used in autocomplete to define if term ends with .. o in the middle of..
 			// category. thesurus terms and not terms
 			is_term			: options.is_term || false, // terms use special json format as '["name"]' instead 'name'
 			callback		: options.callback || false, // callback function
+			list_format		: options.list_format || null,
+			wrapper			: options.wrapper || null, // like YEAR to obtain YEAR(name)
 			// nodes (are set on build_form_node)
 			node_input		: null,
 			node_values		: null,
@@ -103,6 +106,49 @@ function form_factory() {
 		// input
 			switch(form_item.input_type) {
 
+				case 'range_slider':
+					const range_slider_labels = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: "range_slider_labels",
+						parent			: group
+					})
+					const range_slider_value_in = common.create_dom_element({
+						element_type	: 'input',
+						type			: 'text',
+						id				: form_item.id + "_in",
+						class_name		: "form-control range_slider_value value_in",
+						parent			: range_slider_labels
+					})
+					const node_label = common.create_dom_element({
+						element_type	: 'span',
+						class_name		: "form-control range_slider_label node_label",
+						inner_html		: form_item.label,
+						parent			: range_slider_labels
+					})
+					const range_slider_value_out = common.create_dom_element({
+						element_type	: 'input',
+						type			: 'text',
+						id				: form_item.id + "_out",
+						class_name		: "form-control range_slider_value value_out",
+						parent			: range_slider_labels
+					})
+					const node_slider = common.create_dom_element({
+						element_type	: 'div',
+						id				: form_item.id,
+						class_name		: "form-control " + (form_item.class_name ? (' '+form_item.class_name) : ''),					
+						// value			: form_item.q || '',
+						parent			: group
+					})					
+					// node_select.addEventListener("change", function(e){
+					// 		console.log("e.target.value:",e.target.value);
+					// 	if (e.target.value) {
+					// 		form_item.q = e.target.value
+					// 		console.log("form_item:",form_item);
+					// 	}
+					// })
+					form_item.node_input = node_slider
+					break;
+
 				case 'select':
 					const node_select = common.create_dom_element({
 						element_type	: 'select',
@@ -129,6 +175,7 @@ function form_factory() {
 					})
 					form_item.node_input = node_select
 					break;
+				
 				default:
 					const node_input = common.create_dom_element({
 						element_type	: 'input',
@@ -302,6 +349,7 @@ function form_factory() {
 		const self = this
 
 		const form_items = self.form_items
+			// console.log("form_items:",form_items);
 	
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
@@ -312,8 +360,8 @@ function form_factory() {
 			const group = {}
 				  group[group_op] = []
 
-			// q value
-				if (form_item.q.length>0 && form_item.q!=='*') {
+			// q value or sql_filter
+				if ( (form_item.q.length>0 && form_item.q!=='*') || form_item.sql_filter ) {
 
 					const c_group_op = 'AND'
 					const c_group = {}
@@ -321,9 +369,11 @@ function form_factory() {
 
 					// q element
 						const element = {
-							field	: form_item.q_column,
-							value	: `'${form_item.eq_in}${form_item.q}${form_item.eq_out}'`, // Like '%${form_item.q}%'
-							op		: form_item.eq, // default is 'LIKE'
+							field		: form_item.q_column,
+							value		: `'${form_item.eq_in}${form_item.q}${form_item.eq_out}'`, // Like '%${form_item.q}%'
+							op			: form_item.eq, // default is 'LIKE'
+							sql_filter	: form_item.sql_filter,
+							wrapper		: form_item.wrapper
 						}
 
 						c_group[c_group_op].push(element)
@@ -343,7 +393,7 @@ function form_factory() {
 					// add basic group
 						group[group_op].push(c_group)
 				}
-
+			
 			// q_selected values
 				if (form_item.q_selected.length>0) {
 
@@ -357,9 +407,11 @@ function form_factory() {
 
 						// elemet
 						const element = {
-							field	: form_item.q_column,
-							value	: (form_item.q_selected_eq === "LIKE") ? `'%${value}%'` : `'${value}'`,
-							op		: form_item.q_selected_eq
+							field		: form_item.q_column,
+							value		: (form_item.q_selected_eq==="LIKE") ? `'%${value}%'` : `'${value}'`,
+							op			: form_item.q_selected_eq,
+							sql_filter	: form_item.sql_filter,
+							wrapper		: form_item.wrapper
 						}
 						c_group[c_group_op].push(element)
 

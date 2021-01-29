@@ -255,7 +255,8 @@ var catalog =  {
 				// q_table 	: "mints",
 				class_name	: 'global_search',
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 
 					const button_info = common.create_dom_element({
 						element_type	: "div",
@@ -296,7 +297,8 @@ var catalog =  {
 				// q_table	: "mints",
 				is_term		: true,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -311,7 +313,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: true,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -326,7 +329,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: true,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -341,7 +345,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: true,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -356,7 +361,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -371,7 +377,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -386,7 +393,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -401,7 +409,8 @@ var catalog =  {
 				// q_table	: "ts_period",
 				is_term		: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -416,7 +425,8 @@ var catalog =  {
 				// q_table 	: "ts_period",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -431,7 +441,8 @@ var catalog =  {
 				// q_table 	: "ts_period",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -446,7 +457,8 @@ var catalog =  {
 				// q_table 	: "ts_period",
 				is_term 	: true,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -461,7 +473,8 @@ var catalog =  {
 				// q_table 	: "ts_period",
 				is_term 	: true,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -475,7 +488,8 @@ var catalog =  {
 				label		: tstring.material || "material",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -489,7 +503,8 @@ var catalog =  {
 				label		: tstring.collection || "collection",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -503,7 +518,8 @@ var catalog =  {
 				label		: tstring.denomination || "denomination",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -517,7 +533,8 @@ var catalog =  {
 				label		: tstring.number || "number",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -531,7 +548,8 @@ var catalog =  {
 				label		: tstring.company || "company",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -545,7 +563,8 @@ var catalog =  {
 				label		: tstring.technique || "technique",
 				is_term 	: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})
@@ -561,7 +580,8 @@ var catalog =  {
 				label		: tstring.equivalents || "equivalents",
 				is_term		: false,
 				parent		: form_row,
-				callback	: function(node_input) {
+				callback	: function(form_item) {
+					const node_input = form_item.node_input
 					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
 				}
 			})		

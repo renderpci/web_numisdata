@@ -1,13 +1,24 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
 #wrapper {
   background-color: #333333;
 }
 #error_content {
   padding: 40px;
   border-radius: 4px;
-  background-color: #b7996d;
-  background-image: url('../../assets/images/logo_mib_marron.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
   min-height: 500px;
   height: 100vh;
   color: #ffffff;

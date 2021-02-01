@@ -469,6 +469,8 @@ function form_factory() {
 	*/
 	this.parse_sql_filter = function(filter, group){
 
+		const self = this
+
 		const sql_filter = (filter) 
 			? (function() {
 
@@ -484,7 +486,7 @@ function form_factory() {
 					const item_op = Object.keys(item)[0]
 					if(item_op==="AND" || item_op==="OR") {
 
-						const current_filter_line = "" + parse_sql_filter(item) + ""
+						const current_filter_line = "" + self.parse_sql_filter(item, group) + ""
 						ar_filter.push(current_filter_line)
 						continue;
 					}
@@ -507,7 +509,7 @@ function form_factory() {
 				}
 
 				return ar_filter.join(" "+op+" ")
-			})()
+			  })()
 			: null
 
 		return sql_filter

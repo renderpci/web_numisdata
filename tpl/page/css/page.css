@@ -935,7 +935,7 @@ body.touch .poptrox-popup .nav-next {
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/raleway/v18/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVuEooCP.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/raleway/v19/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVuEooCP.ttf) format('truetype');
 }
 .font_logo {
   font-family: 'Raleway', sans-serif;
@@ -1124,6 +1124,11 @@ p img.svg {
   display: inline;
   font-size: 150%;
   margin-left: 0.5em;
+}
+#main .inner .result .block-expandable {
+  overflow: hidden;
+  max-height: 10000px;
+  transition: max-height 1s ease-in-out;
 }
 #main .inner .result .info_text_block {
   padding: 1em;

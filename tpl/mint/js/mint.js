@@ -39,12 +39,13 @@ var mint =  {
 
 				// map draw. Init default map
 					self.draw_map({
-						map_data : JSON.parse(mint.result[0].map),
-						popup_data : {
+						mint_map_data : JSON.parse(mint.result[0].map),
+						mint_popup_data : {
 							section_id	: mint.result[0].section_id,
 							title		: mint.result[0].name,
 							description	: mint.result[0].history.trim()
-						}
+						},
+						place_data : mint.result[0].place_data 
 					})
 
 				// types draw
@@ -354,8 +355,10 @@ var mint =  {
 				link.setAttribute('target', '_blank');
 			}
 
-		// name
+		// name & place
 			if (row_object.name && row_object.name.length>0) {
+
+
 
 				const lineTittleWrap = common.create_dom_element({
 					element_type	: "div",
@@ -363,102 +366,70 @@ var mint =  {
 					parent 			: line
 				})
 
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "value-term",
-					text_content 	: tstring.name || "Name:",
-					parent 			: lineTittleWrap
-				})
-
-
-				const name = row_object.name
+		
+				let name = row_object.name
+				
 				common.create_dom_element({
 					element_type 	: "div",
-					class_name 		: "line-tittle",
+					class_name 		: "line-tittle golden-color",
 					text_content 	: name,
 					parent 			: lineTittleWrap
 				})
+			
+
+			// place
+				if (row_object.place && row_object.place.length>0) {
+
+					const place = "| "+row_object.place;
+					common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "info_value",
+						text_content 	: place,
+						parent 			: lineTittleWrap
+					})
+				}
+
 			}
 
-		// place
-			if (row_object.place && row_object.place.length>0) {
+			const comments_wrap = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "block-expandable",
+				parent			: line
+			})
 
-				const lineSeparator = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_line separator",
-					parent 			: line
-				})
-
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "big_label",
-					text_content 	: tstring.place || "Place",
-					parent 			: lineSeparator
-				})
-
-				const place = row_object.place
-				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "info_value",
-					text_content 	: place,
-					parent 			: line
-				})
-			}
+			let block_text_length = 0; //save block text length to create expandable block if necessary
 
 		// history
 			if (row_object.history && row_object.history.length>0) {
 
-				const lineSeparator = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_line separator",
-					parent 			: line
-				})
-
-				common.create_dom_element({
-					element_type	: "label",
-					class_name 		: "big_label",
-					text_content	: tstring.history || "History",
-					parent			: lineSeparator
-				})
-
 				const history = row_object.history
+				block_text_length += history.length;
 
 				const history_block = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_text_block",
 					inner_html		: history,
-					parent			: line
+					parent			: comments_wrap
 				})
-
-				if (history.length>500) createExpandableBlock(history_block,line);
 			}
 
 		// numismatic_comments
 			if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
-				const lineSeparator = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_line separator",
-					parent 			: line
-				})
-
-				common.create_dom_element({
-					element_type	: "label",
-					class_name 		: "big_label",
-					text_content	: tstring.numismatic_comments || "Numismatic comments",
-					parent			: lineSeparator
-				})
-
 				const numismatic_comments = row_object.numismatic_comments
+				block_text_length += numismatic_comments.length;
 
 				const numismatic_comments_block = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_text_block",
 					inner_html		: numismatic_comments,
-					parent			: line
+					parent			: comments_wrap
 				})
 
-				if (numismatic_comments.length>500) createExpandableBlock(numismatic_comments_block,line);			}
+				
+			}
+
+			if (block_text_length > 220) {createExpandableBlock(comments_wrap,line);}
 
 		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
@@ -874,31 +845,99 @@ var mint =  {
 		const self = this
 
 		// options
-			const map_data		= options.map_data
-			const popup_data	= options.popup_data
+		const mint_map_data		= options.mint_map_data
+		const mint_popup_data	= options.mint_popup_data
+		const place_data = options.place_data
 
 
-		const map_position	= map_data
-		const container		= document.getElementById("map_container")
+		self.get_place_data({
+			place_data : place_data
+		}).then(function(response){
 
-		self.map = self.map || new map_factory() // creates / get existing instance of map
-		self.map.init({
-			map_container	: container,
-			map_position	: map_position,
-			popup_builder	: page.map_popup_builder,
-			popup_options	: page.maps_config.popup_options,
-			source_maps		: page.maps_config.source_maps
+			console.log (response);
+
+			const map_position	= mint_map_data
+			const container		= document.getElementById("map_container")
+
+			self.map = self.map || new map_factory() // creates / get existing instance of map
+			self.map.init({
+				map_container	: container,
+				map_position	: map_position,
+				popup_builder	: page.map_popup_builder,
+				popup_options	: page.maps_config.popup_options,
+				source_maps		: page.maps_config.source_maps
+			})
+			// draw points
+
+			console.log("MAP_DATA:"+ JSON.stringify(mint_map_data));
+
+			const map_data_clean = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
+		
+			self.map.parse_data_to_map(map_data_clean, null)
+			.then(function(){
+				container.classList.remove("hide_opacity")
+			})
+
+
 		})
-		// draw points
-		const map_data_clean = self.map_data(map_data, popup_data) // prepares data to used in map
-		self.map.parse_data_to_map(map_data_clean, null)
-		.then(function(){
-			container.classList.remove("hide_opacity")
-		})
+
+			
 
 
-		return true
+
+
+
+
+		
+
+
+		
 	},//end draw_map
+
+	get_place_data : function(data){
+
+		const place_data = data.place_data
+
+		const sql_filter = "place_data='" + place_data + "'";
+		console.log (sql_filter)
+			const ar_calls = []
+
+			ar_calls.push ({
+				id		: "findspots",
+				options	: {
+					dedalo_get				: 'records',
+					table					: 'findspots',
+					db_name					: page_globals.WEB_DB,
+					lang					: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields				: ["*"],
+					count					: false,
+					sql_filter				: sql_filter
+				}
+			})
+
+			ar_calls.push ({
+				id		: "hoards",
+				options	: {
+					dedalo_get				: 'records',
+					table					: 'hoards',
+					db_name					: page_globals.WEB_DB,
+					lang					: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields				: ['section_id','place_data','name','map'],
+					count					: false,
+					sql_filter				: sql_filter
+				}
+			})
+
+			const js_promise = data_manager.request({
+				body : {
+					dedalo_get 	: 'combi',
+					ar_calls 	: ar_calls
+				}
+			})
+			console.log (js_promise)
+			
+			return js_promise
+	},
 
 
 	/**

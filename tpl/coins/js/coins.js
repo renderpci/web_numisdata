@@ -24,8 +24,9 @@ var coins =  {
 
 
 		// form
-			const form = self.render_form()
-			form_container.appendChild(form)
+			self.form		= new form_factory()
+			const form_node	= self.render_form()
+			form_container.appendChild(form_node)
 
 		
 

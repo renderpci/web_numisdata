@@ -203,7 +203,8 @@ var catalog =  {
 				console.log(options.label);
 				console.log(options.value);
 
-				self.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
+				// self.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
+				self.form.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
 				self.form_submit(form)
 
 				// exec first default auto search without params
@@ -298,8 +299,7 @@ var catalog =  {
 				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 		
@@ -314,8 +314,7 @@ var catalog =  {
 				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -330,8 +329,7 @@ var catalog =  {
 				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -346,8 +344,7 @@ var catalog =  {
 				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -362,8 +359,7 @@ var catalog =  {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -378,8 +374,7 @@ var catalog =  {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -394,8 +389,7 @@ var catalog =  {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -410,8 +404,7 @@ var catalog =  {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -426,8 +419,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -442,8 +434,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -458,8 +449,7 @@ var catalog =  {
 				is_term 	: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -474,8 +464,7 @@ var catalog =  {
 				is_term 	: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -489,8 +478,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -504,8 +492,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -519,8 +506,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 		
@@ -534,8 +520,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -549,8 +534,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -564,8 +548,7 @@ var catalog =  {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})
 
@@ -581,8 +564,7 @@ var catalog =  {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					const node_input = form_item.node_input
-					self.activate_autocomplete(node_input) // node_input is the form_item.node_input
+					self.activate_autocomplete(form_item);
 				}
 			})		
 
@@ -813,390 +795,398 @@ var catalog =  {
 
 	/**
 	* ADD_SELECTED_VALUE
+	* (!) moved to form_factory
 	*/
-	add_selected_value : function(form_item, label, value) {
-		const container = form_item.node_values
+		// add_selected_value : function(form_item, label, value) {
+		// 	const container = form_item.node_values
 
-		// Check if already exists
-			const inputs 		= container.querySelectorAll(".input_values")
-			const inputs_length = inputs.length
-			for (let i = inputs_length - 1; i >= 0; i--) {
-				if (value===inputs[i].value) return false;
-			}
+		// 	// Check if already exists
+		// 		const inputs 		= container.querySelectorAll(".input_values")
+		// 		const inputs_length = inputs.length
+		// 		for (let i = inputs_length - 1; i >= 0; i--) {
+		// 			if (value===inputs[i].value) return false;
+		// 		}
 
-		// Create new line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name   	: "line_value",
-				parent 			: container
-			})
+		// 	// Create new line
+		// 		const line = common.create_dom_element({
+		// 			element_type 	: "div",
+		// 			class_name   	: "line_value",
+		// 			parent 			: container
+		// 		})
 
-		// trash. <i class="fal fa-trash-alt"></i>
-			const trash = common.create_dom_element({
-				element_type 	: "i",
-				class_name   	: "icon fa-trash", //awesome font 4
-				parent 			: line
-			})
-			trash.addEventListener("click",function(){
+		// 	// trash. <i class="fal fa-trash-alt"></i>
+		// 		const trash = common.create_dom_element({
+		// 			element_type 	: "i",
+		// 			class_name   	: "icon fa-trash", //awesome font 4
+		// 			parent 			: line
+		// 		})
+		// 		trash.addEventListener("click",function(){
 
-				// remove from form_item q_selected
-				const index = form_item.q_selected.indexOf(value);
-				if (index > -1) {
-					// remove array element
-					form_item.q_selected.splice(index, 1);
-					
-					// remove dom node
-					this.parentNode.remove()
+		// 			// remove from form_item q_selected
+		// 			const index = form_item.q_selected.indexOf(value);
+		// 			if (index > -1) {
+		// 				// remove array element
+		// 				form_item.q_selected.splice(index, 1);
+						
+		// 				// remove dom node
+		// 				this.parentNode.remove()
 
-					// debug
-					if(SHOW_DEBUG===true) {
-						console.log("form_item.q_selected removed value:",value,form_item.q_selected);
-					}
-				}			
-			})
+		// 				// debug
+		// 				if(SHOW_DEBUG===true) {
+		// 					console.log("form_item.q_selected removed value:",value,form_item.q_selected);
+		// 				}
+		// 			}			
+		// 		})
 
-		// label 
-			const value_label = common.create_dom_element({
-				element_type	: "span",
-				class_name		: "value_label",
-				inner_html		: label,
-				parent			: line
-			})
+		// 	// label 
+		// 		const value_label = common.create_dom_element({
+		// 			element_type	: "span",
+		// 			class_name		: "value_label",
+		// 			inner_html		: label,
+		// 			parent			: line
+		// 		})
 
-		// input 
-			const input = common.create_dom_element({
-				element_type	: "input",
-				class_name		: "input_values",
-				parent			: line
-			})
-			input.value = value
+		// 	// input 
+		// 		const input = common.create_dom_element({
+		// 			element_type	: "input",
+		// 			class_name		: "input_values",
+		// 			parent			: line
+		// 		})
+		// 		input.value = value
 
-		// add to form_item
-			form_item.q_selected.push(value)
+		// 	// add to form_item
+		// 		form_item.q_selected.push(value)
 
-		// clean values
-			form_item.node_input.value 	= ""
-			form_item.q 				= ""
+		// 	// clean values
+		// 		form_item.node_input.value 	= ""
+		// 		form_item.q 				= ""
 
 
-		return true
-	},//end add_selected_value
+		// 	return true
+		// },//end add_selected_value
 
 	
 
 	/**
 	* ACTIVATE_AUTOCOMPLETE
 	*/
-	activate_autocomplete : function(element) {
+	activate_autocomplete : function(form_item) {		
 
 		const self = this
 
-		// define current_form_item in this scope 
-		// to allow acces from different places
-		let current_form_item
+		return self.form.activate_autocomplete({
+			form_item	: form_item,
+			table		: 'catalog'
+		})
+
+		// moved to common form_factory
+			// // define current_form_item in this scope 
+			// // to allow acces from different places
+			// let current_form_item
 
 
-		/*
-		 * jQuery UI Autocomplete HTML Extension
-		 *
-		 * Copyright 2010, Scott González (http://scottgonzalez.com)
-		 * Dual licensed under the MIT or GPL Version 2 licenses.
-		 *
-		 * http://github.com/scottgonzalez/jquery-ui-extensions
-		 */
-		(function( $ ) {
+			// /*
+			//  * jQuery UI Autocomplete HTML Extension
+			//  *
+			//  * Copyright 2010, Scott González (http://scottgonzalez.com)
+			//  * Dual licensed under the MIT or GPL Version 2 licenses.
+			//  *
+			//  * http://github.com/scottgonzalez/jquery-ui-extensions
+			//  */
+			// (function( $ ) {
 
-			var proto = $.ui.autocomplete.prototype,
-				initSource = proto._initSource;
+			// 	var proto = $.ui.autocomplete.prototype,
+			// 		initSource = proto._initSource;
 
-			function filter( array, term ) {
-				var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );
-				return $.grep( array, function(value) {
-					return matcher.test( $( "<div>" ).html( value.label || value.value || value ).text() );
-				});
-			}
+			// 	function filter( array, term ) {
+			// 		var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );
+			// 		return $.grep( array, function(value) {
+			// 			return matcher.test( $( "<div>" ).html( value.label || value.value || value ).text() );
+			// 		});
+			// 	}
 
-			$.extend( proto, {
-				_initSource: function() {
-					if ( this.options.html && $.isArray(this.options.source) ) {
-						this.source = function( request, response ) {
-							response( filter( this.options.source, request.term ) );
-						};
-					} else {
-						initSource.call( this );
-					}
-				},
+			// 	$.extend( proto, {
+			// 		_initSource: function() {
+			// 			if ( this.options.html && $.isArray(this.options.source) ) {
+			// 				this.source = function( request, response ) {
+			// 					response( filter( this.options.source, request.term ) );
+			// 				};
+			// 			} else {
+			// 				initSource.call( this );
+			// 			}
+			// 		},
 
-				_renderItem: function( ul, item) {					
+			// 		_renderItem: function( ul, item) {					
 
-					var final_label = item.label
+			// 			var final_label = item.label
 
-					// remove empty values when separator is present						
-						var ar_parts 	= final_label.split(' | ')
-						var ar_clean 	= []
-						for (var i = 0; i < ar_parts.length; i++) {
-							var current = ar_parts[i]
-							if (current.length>1 && current!=='<i>.</i>') {
-								ar_clean.push(current)
-							}
-						}
-						final_label = ar_clean.join(' | ') // overwrite
+			// 			// remove empty values when separator is present						
+			// 				var ar_parts 	= final_label.split(' | ')
+			// 				var ar_clean 	= []
+			// 				for (var i = 0; i < ar_parts.length; i++) {
+			// 					var current = ar_parts[i]
+			// 					if (current.length>1 && current!=='<i>.</i>') {
+			// 						ar_clean.push(current)
+			// 					}
+			// 				}
+			// 				final_label = ar_clean.join(' | ') // overwrite
 
-					return $( "<li></li>" )
-						.data( "item.autocomplete", item )
-						//.append( $( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.label ) )
-						.append( $( "<div></div>" )[ this.options.html ? "html" : "text" ]( final_label ) )
-						.appendTo( ul );
-				}
-			});
+			// 			return $( "<li></li>" )
+			// 				.data( "item.autocomplete", item )
+			// 				//.append( $( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.label ) )
+			// 				.append( $( "<div></div>" )[ this.options.html ? "html" : "text" ]( final_label ) )
+			// 				.appendTo( ul );
+			// 		}
+			// 	});
 
-		})( jQuery );
+			// })( jQuery );
 
 
-		const cache = {}
-		$(element).autocomplete({
-			delay		: 150,
-			minLength	: 0,
-			html		: true,
-			source		: function( request, response ) {
-				
-				const term = request.term
-				
-				// fix selected form_item (needed to access from select)
-				// current_form_item = self.form_items[element.id]
-				// (!) fix selected form_item (needed to access from select)
-				current_form_item = self.form.form_items[element.id]
-
-				const field		= current_form_item.q_name // Like 'mint'
-				const q_column	= current_form_item.q_column // Like 'term'
-
-				// filter build 
-					const op 	 = "AND"
-					const filter = {}
-						  filter[op] = []
-
-					const value_parsed = (current_form_item.eq_in || '') + term + (current_form_item.eq_out || '%')
-
-					// main column search item
-						filter[op].push({
-							field	: q_column,
-							value	: `'${value_parsed}'`,
-							op		: current_form_item.eq, // 'LIKE',
-							group	: q_column
-						})
-
-					// optional second column 'term_table' search item. Add column name filter
-						// const q_table	= current_form_item.q_table
-						// if (q_table!=="any") {
-						// 	filter[op].push({
-						// 		field	: "term_table",
-						// 		value	: `'${q_table}'`,
-						// 		op		: '='
-						// 	})
-						// }
-
-					// cross filter. Add other selected values to the filter to create a interactive filter					
-						const c_op		= "OR"
-						const c_filter	= {}
-							  c_filter[c_op] = []
-						for (let [id, form_item] of Object.entries(self.form.form_items)) {
-							if (form_item.id===current_form_item.id) continue; // skip self
-
-							// q . Value from input
-								if (form_item.q.length>0) {
-
-									const value = form_item.q
-
-									c_filter[c_op].push({
-										field	: form_item.q_column,
-										value	: `'%${value}%'`,
-										op		: "LIKE"
-									})
-								}
-
-							// q_selected. Values from user already selected values
-								if (form_item.q_selected.length>0) {
-									for (let k = 0; k < form_item.q_selected.length; k++) {
-										
-										const value = form_item.q_selected[k]
-										
-										c_filter[c_op].push({
-											field	: form_item.q_column,
-											value	: (form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
-											op		: (form_item.is_term===true) ? "LIKE" : "="
-										})
-									}
-								}
-						}
-						if (c_filter[c_op].length>0) {
-							filter[op].push(c_filter)
-						}
-
-					// cache . Use only when there are no cross filters
-						if (filter[op].length===1) {
-							if ( term in cache ) {
-								if(SHOW_DEBUG===true) {
-									console.warn("Returning values from cache:", cache[term])
-								}
-								response( cache[ term ] );
-								return;
-							}
-						}
+			// const cache = {}
+			// $(element).autocomplete({
+			// 	delay		: 150,
+			// 	minLength	: 0,
+			// 	html		: true,
+			// 	source		: function( request, response ) {
 					
-					// search
-						self.search_rows({
-							filter		: filter,
-							ar_fields	: [q_column + " AS name"],
-							limit		: 30,
-							order		: "name ASC" // "term ASC"
-						})
-						.then((api_response) => { // return results in standard format (label, value)
-								
-							const ar_result	= []
-							const len		= api_response.result.length
-							for (let i = 0; i < len; i++) {
-								
-								const item = api_response.result[i]
+			// 		const term = request.term
+					
+			// 		// fix selected form_item (needed to access from select)
+			// 		// current_form_item = self.form_items[element.id]
+			// 		// (!) fix selected form_item (needed to access from select)
+			// 		current_form_item = self.form.form_items[element.id]
 
-								const current_ar_value = (item.name.indexOf("[\"")===0)
-									? JSON.parse(item.name)
-									: [item.name]
-								
-								for (let j = 0; j < current_ar_value.length; j++) {
-								
-									const item_name = current_ar_value[j]
-									// const item_name = item.name.replace(/[\["|"\]]/g, '')
+			// 		const field		= current_form_item.q_name // Like 'mint'
+			// 		const q_column	= current_form_item.q_column // Like 'term'
 
-									const found = ar_result.find(el => el.value===item_name)
-									if (!found) {
-										ar_result.push({
-											label	: item_name, // item_name,
-											value	: item_name // item.name
-										})
-									}
-								}
-							}
+			// 		// filter build 
+			// 			const op 	 = "AND"
+			// 			const filter = {}
+			// 				  filter[op] = []
 
-							// parse result
-								function parse_result(ar_result, term) {
+			// 			const value_parsed = (current_form_item.eq_in || '') + term + (current_form_item.eq_out || '%')
+
+			// 			// main column search item
+			// 				filter[op].push({
+			// 					field	: q_column,
+			// 					value	: `'${value_parsed}'`,
+			// 					op		: current_form_item.eq, // 'LIKE',
+			// 					group	: q_column
+			// 				})
+
+			// 			// optional second column 'term_table' search item. Add column name filter
+			// 				// const q_table	= current_form_item.q_table
+			// 				// if (q_table!=="any") {
+			// 				// 	filter[op].push({
+			// 				// 		field	: "term_table",
+			// 				// 		value	: `'${q_table}'`,
+			// 				// 		op		: '='
+			// 				// 	})
+			// 				// }
+
+			// 			// cross filter. Add other selected values to the filter to create a interactive filter					
+			// 				const c_op		= "OR"
+			// 				const c_filter	= {}
+			// 					  c_filter[c_op] = []
+			// 				for (let [id, form_item] of Object.entries(self.form.form_items)) {
+			// 					if (form_item.id===current_form_item.id) continue; // skip self
+
+			// 					// q . Value from input
+			// 						if (form_item.q.length>0) {
+
+			// 							const value = form_item.q
+
+			// 							c_filter[c_op].push({
+			// 								field	: form_item.q_column,
+			// 								value	: `'%${value}%'`,
+			// 								op		: "LIKE"
+			// 							})
+			// 						}
+
+			// 					// q_selected. Values from user already selected values
+			// 						if (form_item.q_selected.length>0) {
+			// 							for (let k = 0; k < form_item.q_selected.length; k++) {
+											
+			// 								const value = form_item.q_selected[k]
+											
+			// 								c_filter[c_op].push({
+			// 									field	: form_item.q_column,
+			// 									value	: (form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
+			// 									op		: (form_item.is_term===true) ? "LIKE" : "="
+			// 								})
+			// 							}
+			// 						}
+			// 				}
+			// 				if (c_filter[c_op].length>0) {
+			// 					filter[op].push(c_filter)
+			// 				}
+
+			// 			// cache . Use only when there are no cross filters
+			// 				if (filter[op].length===1) {
+			// 					if ( term in cache ) {
+			// 						if(SHOW_DEBUG===true) {
+			// 							console.warn("Returning values from cache:", cache[term])
+			// 						}
+			// 						response( cache[ term ] );
+			// 						return;
+			// 					}
+			// 				}
+						
+			// 			// search
+			// 				self.search_rows({
+			// 					filter		: filter,
+			// 					ar_fields	: [q_column + " AS name"],
+			// 					limit		: 30,
+			// 					order		: "name ASC" // "term ASC"
+			// 				})
+			// 				.then((api_response) => { // return results in standard format (label, value)
 									
-									return ar_result.map(function(item){
-										item.label	= item.label.replace(/<br>/g," ")
-										item.label	= page.parse_legend_svg(item.label)
-										return item
-									})
-									// const ar_final = []
+			// 					const ar_result	= []
+			// 					const len		= api_response.result.length
+			// 					for (let i = 0; i < len; i++) {
+									
+			// 						const item = api_response.result[i]
 
-									// for (let i = 0; i < ar_result.length; i++) {
+			// 						const current_ar_value = (item.name.indexOf("[\"")===0)
+			// 							? JSON.parse(item.name)
+			// 							: [item.name]
+									
+			// 						for (let j = 0; j < current_ar_value.length; j++) {
+									
+			// 							const item_name = current_ar_value[j]
+			// 							// const item_name = item.name.replace(/[\["|"\]]/g, '')
 
-									// 	const all_values = []
+			// 							const found = ar_result.find(el => el.value===item_name)
+			// 							if (!found) {
+			// 								ar_result.push({
+			// 									label	: item_name, // item_name,
+			// 									value	: item_name // item.name
+			// 								})
+			// 							}
+			// 						}
+			// 					}
+
+			// 					// parse result
+			// 						function parse_result(ar_result, term) {
 										
-									// 	const current = ar_result[i].label
+			// 							return ar_result.map(function(item){
+			// 								item.label	= item.label.replace(/<br>/g," ")
+			// 								item.label	= page.parse_legend_svg(item.label)
+			// 								return item
+			// 							})
+			// 							// const ar_final = []
 
-									// 	const ar_br = current.split("<br>");
-									// 	for (let g = 0; g < ar_br.length; g++) {
-									// 		all_values.push(ar_br[g])
-									// 	}
+			// 							// for (let i = 0; i < ar_result.length; i++) {
 
-									// 	// const ar_bar = current.split(" | ")
-									// 	// for (let k = 0; k < ar_bar.length; k++) {
-									// 	// 	all_values.push(ar_bar[k])
-									// 	// }
+			// 							// 	const all_values = []
 											
-									// 	for (let j = 0; j < all_values.length; j++) {
-											
-									// 		const value = all_values[j].trim();
+			// 							// 	const current = ar_result[i].label
 
-									// 		if (ar_final.indexOf(value)===-1) {
+			// 							// 	const ar_br = current.split("<br>");
+			// 							// 	for (let g = 0; g < ar_br.length; g++) {
+			// 							// 		all_values.push(ar_br[g])
+			// 							// 	}
 
-									// 			let find = false
-									// 			if (term.length>0) {
-									// 				// remove accents from text
-									// 				const value_normalized	= value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-									// 				// search by regex
-									// 				const regex	= RegExp(term, 'i')
-									// 				const find = regex.test(value_normalized)
-									// 			}else{
-									// 				find = true
-									// 			}
+			// 							// 	// const ar_bar = current.split(" | ")
+			// 							// 	// for (let k = 0; k < ar_bar.length; k++) {
+			// 							// 	// 	all_values.push(ar_bar[k])
+			// 							// 	// }
 												
-									// 			if (find) {
-									// 				ar_final.push(value)
-									// 			}
-									// 		}
-									// 	}
-									// }
+			// 							// 	for (let j = 0; j < all_values.length; j++) {
+												
+			// 							// 		const value = all_values[j].trim();
 
-									// // sort
-									// 	ar_final.sort()
+			// 							// 		if (ar_final.indexOf(value)===-1) {
 
-									
-									// return ar_final
-								}
-								const ar_result_final = parse_result(ar_result, term)
-									// console.log("ar_result_final:",ar_result_final);
+			// 							// 			let find = false
+			// 							// 			if (term.length>0) {
+			// 							// 				// remove accents from text
+			// 							// 				const value_normalized	= value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+			// 							// 				// search by regex
+			// 							// 				const regex	= RegExp(term, 'i')
+			// 							// 				const find = regex.test(value_normalized)
+			// 							// 			}else{
+			// 							// 				find = true
+			// 							// 			}
+													
+			// 							// 			if (find) {
+			// 							// 				ar_final.push(value)
+			// 							// 			}
+			// 							// 		}
+			// 							// 	}
+			// 							// }
 
-							// cache . Use only when there are no cross filters
-								if (filter[op].length===1) {
-									cache[ term ] = ar_result_final
-								}
-							
-							// debug
-								if(SHOW_DEBUG===true) {
-									// console.log("--- autocomplete api_response:",api_response);
-									// console.log("autocomplete ar_result_final:",ar_result_final);
-								}
+			// 							// // sort
+			// 							// 	ar_final.sort()
 
-							response(ar_result_final)
-						})				
-			},
-			// When a option is selected in list
-			select: function( event, ui ) {
-				// prevent set selected value to autocomplete input
-				event.preventDefault();		
+										
+			// 							// return ar_final
+			// 						}
+			// 						const ar_result_final = parse_result(ar_result, term)
+			// 							// console.log("ar_result_final:",ar_result_final);
 
-				// self.set_value(this, ui.item.label, ui.item.value)
-				self.add_selected_value(current_form_item, ui.item.label, ui.item.value)				
-				
-				// reset input value
-				this.value = ''
+			// 					// cache . Use only when there are no cross filters
+			// 						if (filter[op].length===1) {
+			// 							cache[ term ] = ar_result_final
+			// 						}
+								
+			// 					// debug
+			// 						if(SHOW_DEBUG===true) {
+			// 							// console.log("--- autocomplete api_response:",api_response);
+			// 							// console.log("autocomplete ar_result_final:",ar_result_final);
+			// 						}
 
-				return false;
-			},
-			// When a option is focus in list
-			focus: function() {
-				// prevent value inserted on focus
-				return false;
-			},
-			close: function( event, ui ) {
+			// 					response(ar_result_final)
+			// 				})				
+			// 	},
+			// 	// When a option is selected in list
+			// 	select: function( event, ui ) {
+			// 		// prevent set selected value to autocomplete input
+			// 		event.preventDefault();		
 
-			},
-			change: function( event, ui ) {
+			// 		// self.set_value(this, ui.item.label, ui.item.value)
+			// 		// self.add_selected_value(current_form_item, ui.item.label, ui.item.value)
+			// 		self.form.add_selected_value(current_form_item, ui.item.label, ui.item.value)				
+					
+			// 		// reset input value
+			// 		this.value = ''
 
-			},
-			response: function( event, ui ) {
-				//console.log(ui);
-			}
-		})
-		.on("keydown", function( event ) {
-			//return false
-			//console.log(event)
-			if ( event.keyCode===$.ui.keyCode.ENTER  ) {
-				// prevent set selected value to autocomplete input
-				//event.preventDefault();
-				//var term = $(this).val();
-				$(this).autocomplete('close')
-			}//end if ( event.keyCode===$.ui.keyCode.ENTER  )
-		})// bind
-		.focus(function() {
-		    $(this).autocomplete('search', null)
-		})
-		// .blur(function() {
-		//     //$(element).autocomplete('close');
-		// })
+			// 		return false;
+			// 	},
+			// 	// When a option is focus in list
+			// 	focus: function() {
+			// 		// prevent value inserted on focus
+			// 		return false;
+			// 	},
+			// 	close: function( event, ui ) {
+
+			// 	},
+			// 	change: function( event, ui ) {
+
+			// 	},
+			// 	response: function( event, ui ) {
+			// 		//console.log(ui);
+			// 	}
+			// })
+			// .on("keydown", function( event ) {
+			// 	//return false
+			// 	//console.log(event)
+			// 	if ( event.keyCode===$.ui.keyCode.ENTER  ) {
+			// 		// prevent set selected value to autocomplete input
+			// 		//event.preventDefault();
+			// 		//var term = $(this).val();
+			// 		$(this).autocomplete('close')
+			// 	}//end if ( event.keyCode===$.ui.keyCode.ENTER  )
+			// })// bind
+			// .focus(function() {
+			//     $(this).autocomplete('search', null)
+			// })
+			// // .blur(function() {
+			// //     //$(element).autocomplete('close');
+			// // })
 
 
-		return true
+			// return true
 	},//end activate_autocomplete
 	
 

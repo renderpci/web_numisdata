@@ -44,59 +44,6 @@
 
 
 
-// line_value (user selections on autocomplete)
-	.line_value {
-		display: flex;
-		line-height: 1em;
-		padding-top: 5px;
-		padding-left: 10px;
-
-		i {
-			color: #BFBFBF;
-			cursor: pointer;
-			align-self: center;
-
-			&:hover {
-				color: #E31A0A;
-			}
-		}
-
-		.value_label {
-			pointer-events:none;
-			border:none;
-			margin-left: 5px;
-			width: 100%;
-			align-self: center;
-			text-overflow: ellipsis;
-			background-color: transparent;
-			font-size: 0.85em;
-			img {
-				vertical-align: middle;
-				height: 1em;
-			}
-
-		}
-
-		input.input_values {
-			pointer-events:none;
-			border:none;
-			margin-left: 5px;
-			width: 100%;
-			align-self: center;
-			text-overflow: ellipsis;
-			background-color: transparent;
-			display: none;
-
-			// display: block;
-			// background-color: #cdf736;
-			// text-overflow: unset;
-			// pointer-events: unset;
-		}
-	}
-
-
-
-
 
 .randomColor(){
   @randomColor: `Math.floor(Math.random()*16777215).toString(16)`;

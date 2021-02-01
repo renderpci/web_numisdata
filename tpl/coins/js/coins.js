@@ -63,6 +63,25 @@ var coins =  {
 				parent		: form_row
 			})
 
+		// collection
+			self.form.item_factory({
+				id			: "collection",
+				name		: "collection",
+				label		: tstring.collection || "collection",
+				table		: 'coins',
+				q_column	: "collection",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
 		// public_info
 			self.form.item_factory({
 				id			: "public_info",

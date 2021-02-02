@@ -131,8 +131,14 @@ page.parse_coin_data = function(data) {
 	}
 
 	// url
-	row.image_obverse = common.local_to_remote_path(data.image_obverse)
-	row.image_reverse = common.local_to_remote_path(data.image_reverse)
+		row.image_obverse		= common.local_to_remote_path(data.image_obverse)
+		row.image_obverse_thumb	= row.image_obverse
+			? row.image_obverse.replace('/1.5MB/','/thumb/')
+			: null
+		row.image_reverse		= common.local_to_remote_path(data.image_reverse)
+		row.image_reverse_thumb	= row.image_reverse
+			? row.image_reverse.replace('/1.5MB/','/thumb/')
+			: null
 
 	// type_data
 	// if (row.type_data) {

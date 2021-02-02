@@ -306,8 +306,6 @@ var mint =  {
 
 		}
 
-		console.log(parsedData)
-
 		return (parsedData);
 	},
 
@@ -867,30 +865,60 @@ var mint =  {
 				popup_options	: page.maps_config.popup_options,
 				source_maps		: page.maps_config.source_maps
 			})
+
+			var map_data_clean = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
+			
+			//findspots to map
+			const findspots_map_data = response.result[0].result;
+			if (findspots_map_data && findspots_map_data.length>0){
+			
+				for (let i=0;i<findspots_map_data.length;i++){
+					const findspot_map_data = JSON.parse(findspots_map_data[i].map)
+					const findspot_popup_data = parse_popup_data(findspots_map_data[i])
+
+					const findspot_map_data_clean = self.map_data(findspot_map_data,findspot_popup_data)
+					
+					console.log(findspot_popup_data)
+
+					map_data_clean.push(findspot_map_data_clean[0])
+				}
+			}
+
+			//hoards to map
+			const hoards_map_data = response.result[1].result;
+			if (hoards_map_data && hoards_map_data.length>0){
+			
+				for (let i=0;i<hoards_map_data.length;i++){
+					const hoard_map_data = JSON.parse(hoards_map_data[i].map)
+					const hoard_popup_data = parse_popup_data(hoard_map_data[i])
+
+					const hoard_map_data_clean = self.map_data(hoard_map_data,hoard_popup_data)
+					
+					console.log(hoard_map_data_clean)
+
+					map_data_clean.push(hoard_map_data_clean[0])
+				}
+			}
+
+			console.log(map_data_clean)
 			// draw points
-
-			console.log("MAP_DATA:"+ JSON.stringify(mint_map_data));
-
-			const map_data_clean = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
-		
 			self.map.parse_data_to_map(map_data_clean, null)
 			.then(function(){
 				container.classList.remove("hide_opacity")
 			})
-
-
+	
 		})
 
+		function parse_popup_data(data){
 			
+			const popup_data = ({
+				section_id : data.section_id,
+				title 		: data.name,
+				description : ""
+			})
 
-
-
-
-
-
-		
-
-
+			return popup_data;
+		}
 		
 	},//end draw_map
 
@@ -934,7 +962,6 @@ var mint =  {
 					ar_calls 	: ar_calls
 				}
 			})
-			console.log (js_promise)
 			
 			return js_promise
 	},

@@ -22,6 +22,10 @@
 .result #row_detail label {
   margin: 0;
 }
+.result #row_detail .line-tittle-wrap .info_value {
+  display: inline-block;
+  margin-left: 0.5em;
+}
 .result #types {
   padding: 1em;
   margin-top: 1em;

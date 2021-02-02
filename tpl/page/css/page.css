@@ -1163,6 +1163,11 @@ p img.svg {
   font-size: 150%;
   margin-left: 0.5em;
 }
+#main .inner .result .block-expandable {
+  overflow: hidden;
+  max-height: 10000px;
+  transition: max-height 1s ease-in-out;
+}
 #main .inner .result .info_text_block {
   padding: 1em;
   overflow: hidden;

@@ -13,4 +13,12 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
+form span {
+  margin-right: 1em;
+}
+form .form-group.field_operators {
+  float: right;
+  text-align: right;
+  margin-right: -2.5em;
+}
 /*# sourceMappingURL=coins.css.map */

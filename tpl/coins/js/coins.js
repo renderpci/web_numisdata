@@ -114,7 +114,26 @@ var coins =  {
 						table		: 'coins'
 					})
 				}
-			})		
+			})
+
+		// mint
+			self.form.item_factory({
+				id			: "mint",
+				name		: "mint",
+				label		: tstring.mint || "mint",
+				table		: 'coins',
+				q_column	: "mint",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
 			
 
 		// submit button

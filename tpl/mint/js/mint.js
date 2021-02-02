@@ -19,16 +19,13 @@ var mint =  {
 
 		// options
 			const section_id = options.section_id
-
 		if (section_id) {
-
-
 			// search by section_id
 			self.get_row_data({
 				section_id : section_id
 			})
 			.then(function(response){
-				//console.log("--> set_up get_row_data API response:",response.result[1]);
+				console.log("--> set_up get_row_data API response:",response.result[1]);
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -51,8 +48,10 @@ var mint =  {
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
 					if (mint_catalog.result) {
+						const catMint = mint_catalog.result.find(el => el.term_table==='mints')
+						console.log(catMint.section_id)
 						self.get_types_data({
-							section_id : mint_catalog.result[0].section_id
+							section_id : catMint.section_id
 						})
 						.then(function(result){
 							self.draw_types({
@@ -130,7 +129,7 @@ var mint =  {
 					table					: 'catalog',
 					db_name					: page_globals.WEB_DB,
 					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['section_id','term'],
+					ar_fields				: ['section_id','term','term_table'],
 					count					: false,
 					limit					: 0,
 					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"
@@ -178,7 +177,7 @@ var mint =  {
 		const self = this
 
 		const section_id = options.section_id
-
+		
 		return new Promise(function(resolve){
 			// request
 				const js_promise = data_manager.request({
@@ -204,6 +203,7 @@ var mint =  {
 				})
 				.then(function(response){
 					const types_data = []
+					console.log(response)
 					if (response.result && response.result.length>0) {
 						for (let i = 0; i < response.result.length; i++) {
 
@@ -246,6 +246,8 @@ var mint =  {
 
 		for (let i=0;i<rows_length;i++){
 			var currentObject = data[i]
+
+			console.log (currentObject.term_table)
 
 		 	if (currentObject.term_table === 'ts_period'){
 		 		currentObject.children = {}
@@ -521,158 +523,164 @@ var mint =  {
 	*/
 	draw_types : function(options) {
 		const self = this
+		console.log(options.ar_rows)
+		if (options.ar_rows.period && options.ar_rows.period.length>0){
 
-		const container 	 = options.target
-		const ar_rows		 = options.ar_rows.period
-		const ar_rows_length = ar_rows.length
-		// container select and clean container div
-		while (container.hasChildNodes()) {
-			container.removeChild(container.lastChild);
-		}
-
-		const fragment = new DocumentFragment();
-
-		// label types
-		common.create_dom_element({
-			element_type 	: "label",
-			text_content 	: tstring.tipos || "Types",
-			parent 			: fragment
-		})
-
-		//console.groupCollapsed("Types info");
-		for (let i = 0; i < ar_rows_length; i++) {
-
-			const row_object = ar_rows[i]
-
-			// row_line
-			const row_line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "type_row",
-				parent 			: fragment
-			})
-
-			// section_id
-			if (dedalo_logged===true) {
-
-				const link = common.create_dom_element({
-					element_type	: "a",
-					class_name		: "section_id go_to_dedalo",
-					text_content	: row_object.section_id,
-					href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-					parent			: row_line
-				})
-				link.setAttribute('target', '_blank');
+			const container 	 = options.target
+			const ar_rows		 = options.ar_rows.period
+			const ar_rows_length = ar_rows.length
+			// container select and clean container div
+			while (container.hasChildNodes()) {
+				container.removeChild(container.lastChild);
 			}
 
-			const children_container = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "children_container",
+			const fragment = new DocumentFragment();
+
+			// label types
+			common.create_dom_element({
+				element_type 	: "label",
+				text_content 	: tstring.tipos || "Types",
 				parent 			: fragment
 			})
 
-			const period_label = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "ts_period",
-				text_content 	: row_object.term,
-				parent 			: children_container
-			})
+			//console.groupCollapsed("Types info");
+			for (let i = 0; i < ar_rows_length; i++) {
 
-			common.create_dom_element ({
-				element_type 	: "div",
-				class_name		: "arrow",
-				parent 			: period_label
-			})
+				const row_object = ar_rows[i]
 
-			//PERIOD wrap
-			const row_period = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "row_node ts_period hide",
-				parent 			: children_container
-			})
+				// row_line
+				const row_line = common.create_dom_element({
+					element_type 	: "div",
+					class_name 		: "type_row",
+					parent 			: fragment
+				})
 
-			if (row_object.groups != null){
-				//if has numismatics groups
-				const group_length = row_object.groups.length
-				for (let z = 0; z < group_length; z++) {
+				// section_id
+				if (dedalo_logged===true) {
 
-					//GROUP wrap
-					const children_container = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "children_container",
-						parent 			: row_period
+					const link = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "section_id go_to_dedalo",
+						text_content	: row_object.section_id,
+						href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
+						parent			: row_line
 					})
+					link.setAttribute('target', '_blank');
+				}
 
-					const children_label = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "ts_numismatic_group",
-						text_content 	: row_object.groups[z].term,
-						parent 			: children_container
-					})
+				const children_container = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "children_container",
+					parent 			: fragment
+				})
 
-					common.create_dom_element ({
-						element_type 	: "div",
-						class_name		: "arrow",
-						parent 			: children_label
-					})
+				const period_label = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "ts_period",
+					text_content 	: row_object.term,
+					parent 			: children_container
+				})
 
-					const row_group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "row_node hide",
-						parent 			: children_container
-					})
+				common.create_dom_element ({
+					element_type 	: "div",
+					class_name		: "arrow",
+					parent 			: period_label
+				})
+
+				//PERIOD wrap
+				const row_period = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "row_node ts_period hide",
+					parent 			: children_container
+				})
+
+				if (row_object.groups != null){
+					//if has numismatics groups
+					const group_length = row_object.groups.length
+					for (let z = 0; z < group_length; z++) {
+
+						//GROUP wrap
+						const children_container = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "children_container",
+							parent 			: row_period
+						})
+
+						const children_label = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "ts_numismatic_group",
+							text_content 	: row_object.groups[z].term,
+							parent 			: children_container
+						})
+
+						common.create_dom_element ({
+							element_type 	: "div",
+							class_name		: "arrow",
+							parent 			: children_label
+						})
+
+						const row_group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "row_node hide",
+							parent 			: children_container
+						})
 
 
-					const types_block = self.draw_types_block (row_object.groups[z].types)
+						const types_block = self.draw_types_block (row_object.groups[z].types)
 
-					row_group.appendChild(types_block)
+						row_group.appendChild(types_block)
+
+						const image_gallery_containers = types_block.querySelectorAll('.gallery')
+
+						if (image_gallery_containers){
+							for (let i=0;i<image_gallery_containers.length;i++){
+								page.activate_images_gallery(image_gallery_containers[i])
+							}
+						}
+
+						createFolderedGroup(children_label,row_group)
+
+					}
+				} else {
+					//if doesn't has numismatics groups
+
+
+					const types_block = self.draw_types_block (row_object.types)
+
+					row_period.appendChild(types_block)
 
 					const image_gallery_containers = types_block.querySelectorAll('.gallery')
-
 					if (image_gallery_containers){
-						for (let i=0;i<image_gallery_containers.length;i++){
-							page.activate_images_gallery(image_gallery_containers[i])
+							for (let i=0;i<image_gallery_containers.length;i++){
+								page.activate_images_gallery(image_gallery_containers[i])
+							}
 						}
-					}
-
-					createFolderedGroup(children_label,row_group)
 
 				}
-			} else {
-				//if doesn't has numismatics groups
+				createFolderedGroup(period_label,row_period)
+			}
 
+			// container final add
+			container.appendChild(fragment)
 
-				const types_block = self.draw_types_block (row_object.types)
+			function createFolderedGroup(label,row_group) {
 
-				row_period.appendChild(types_block)
+				const label_arrow = label.firstElementChild;
 
-				const image_gallery_containers = types_block.querySelectorAll('.gallery')
-				if (image_gallery_containers){
-						for (let i=0;i<image_gallery_containers.length;i++){
-							page.activate_images_gallery(image_gallery_containers[i])
-						}
+				label.addEventListener("click",function(){
+					if (row_group.classList.contains("hide")){
+						row_group.classList.remove ("hide");
+						label_arrow.style.transform = "rotate(90deg)";
+					} else {
+						row_group.classList.add("hide");
+						label_arrow.style.transform = "rotate(0deg)";
 					}
+				})
 
 			}
-			createFolderedGroup(period_label,row_period)
-		}
 
-		// container final add
-		container.appendChild(fragment)
-
-		function createFolderedGroup(label,row_group) {
-
-			const label_arrow = label.firstElementChild;
-
-			label.addEventListener("click",function(){
-				if (row_group.classList.contains("hide")){
-					row_group.classList.remove ("hide");
-					label_arrow.style.transform = "rotate(90deg)";
-				} else {
-					row_group.classList.add("hide");
-					label_arrow.style.transform = "rotate(0deg)";
-				}
-			})
-
+		} else {
+			document.getElementById('types').remove()
 		}
 
 	},//end draw_types

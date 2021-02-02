@@ -403,7 +403,6 @@ var biblio_row_fields = {
 				const authors = (biblio_object.ref_publications_authors)
 					? biblio_object.ref_publications_authors + " "
 					: ""
-					console.log("biblio_object", biblio_object);
 
 				common.create_dom_element({
 					element_type	: "span",

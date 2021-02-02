@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, common, page, coins*/
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -6,6 +6,15 @@
 
 
 var coins =  {
+
+
+
+	/**
+	* VARS
+	*/
+		form		: null,
+		pagination	: null,
+		list		: null,
 
 
 
@@ -28,7 +37,13 @@ var coins =  {
 			const form_node	= self.render_form()
 			form_container.appendChild(form_node)
 
-		
+		// pagination
+			self.pagination = {
+				total	: null,
+				limit	: 10,
+				offset	: 0
+			}
+
 
 		return true
 	},//end set_up
@@ -154,40 +169,80 @@ var coins =  {
 			page.add_spinner(div_result)
 			div_result.classList.add("loading")
 
+		return new Promise(function(resolve){
 
-		self.form.form_submit({
-			form_node			: form_node,			
-			table				: 'coins',
-			ar_fields			: ['*'],
-			limit				: 10,
-			count				: true,
-			offset				: 0,
-			order				: "section_id ASC",
-			data_parser			: page.parse_coin_data
-		})
-		.then(function(data){
-			console.log("----------------------------- data:",data);
+			self.form.form_submit({
+				form_node			: form_node,
+				table				: 'coins',
+				ar_fields			: ['*'],
+				limit				: 10,
+				count				: true,
+				offset				: 0,
+				order				: "section_id ASC",
+				data_parser			: page.parse_coin_data
+			})
+			.then(function(data){
+				// console.log("----------------------------- data:",data);
 
-			// loading end
-				page.remove_spinner(div_result)
-				while (div_result.hasChildNodes()) {
-					div_result.removeChild(div_result.lastChild);
-				}
-				div_result.classList.remove("loading")
+				// loading end
+					(function(){
+						page.remove_spinner(div_result)
+						while (div_result.hasChildNodes()) {
+							div_result.removeChild(div_result.lastChild);
+						}
+						div_result.classList.remove("loading")
+					})()					
 				
-
-			// render
-			div_result.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>'
-
-
+				// render
+					self.list = self.list || new list_factory() // creates / get existing instance of list
+					self.list.init({
+						data			: data,
+						fn_row_builder	: self.list_row_builder,
+						pagination		: self.pagination,
+						caller			: self
+					})
+					self.list.render_list()
+					.then(function(list_node){
+						if (list_node) {
+							div_result.appendChild(list_node)
+						}
+						resolve(list_node)
+					})
+			})
 		})
 	},//end form_submit
 
 
 
-	render_list : function(){
+	list_row_builder : function(data, caller){
+			console.log("///////////// data:",data);
 
-	}
+		const fragment = new DocumentFragment()
+
+		// wrapper
+			const wrapper = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "wrapper",
+				parent			: fragment
+			})
+
+		// image_obverse
+			const image_obverse = common.create_dom_element({
+				element_type	: "img",
+				class_name		: "image",
+				src				: data.image_obverse,
+				parent			: wrapper
+			})
+			const image_reverse = common.create_dom_element({
+				element_type	: "img",
+				class_name		: "image",
+				src				: data.image_reverse,
+				parent			: wrapper
+			})
+
+
+		return fragment
+	}//end list_row_builder
 
 
 

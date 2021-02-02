@@ -105,6 +105,41 @@
   background-color: transparent;
   display: none;
 }
+.form-inline .form-row.fields {
+  margin-bottom: 1.25em;
+  margin-top: 0.25em;
+}
+.form-inline .form-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.form-inline .form-row .form-group {
+  flex: 0 1 25%;
+  align-self: baseline;
+  padding-top: 0.5em;
+}
+@media screen and (max-width: 736px) {
+  .form-inline .form-row .form-group {
+    flex: 1 1 50%;
+  }
+}
+.form-inline .form-row .form-group.global_search {
+  flex: 0 1 100%;
+}
+.form-inline .form-row .form-group.field_operators {
+  padding: 0;
+}
+.form-inline .form-row .operators {
+  padding-right: 2em;
+}
+.form-inline .button_submit {
+  display: inline-block;
+}
+.form-inline .form-group.field_operators {
+  float: right;
+  text-align: right;
+  margin-right: -2.5em;
+}
 .pagination {
   display: flex;
   flex-wrap: wrap;

@@ -114,4 +114,58 @@
 
 
 
+// form
+	.form-inline {
+
+		.form-row.fields {
+			margin-bottom: 1.25em;
+			margin-top: 0.25em;
+		}
+
+		.form-row {
+			display: flex;
+			flex-wrap: wrap;
+
+			.form-group {
+				flex: 0 1 25%;
+				align-self: baseline;
+				padding-top: 0.5em;
+
+				@media screen and (max-width: 736px){
+					flex: 1 1 50%;
+				}
+
+				// global_search
+				&.global_search  {
+					flex: 0 1 100%;
+				}
+			}
+
+			.form-group.field_operators {
+				// flex: 0 1 33%;
+				padding: 0;
+			}
+
+			.operators {
+				padding-right: 2em;
+			}
+
+		}
+
+		.button_submit {
+			display: inline-block;
+			// background-color: #9de49e;
+		}
+
+		.form-group.field_operators {
+			float: right;
+			// background-color: #e1c96e;
+			text-align: right;
+			margin-right: -2.5em;
+		}
+	}//end .form-inline
+
+
+
+
 	

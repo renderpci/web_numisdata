@@ -13,6 +13,9 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
+form {
+  overflow-x: initial;
+}
 form span {
   margin-right: 1em;
 }

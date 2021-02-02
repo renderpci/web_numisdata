@@ -47,8 +47,8 @@ function form_factory() {
 	*/
 	this.build_form_item = function(options) {
 
-			// console.log("options.eq_in:", typeof options.eq_in, options.name);
-			// console.log("options.eq_out:", typeof options.eq_out, options.name);
+		// console.log("options.eq_in:", typeof options.eq_in, options.name);
+		// console.log("options.eq_out:", typeof options.eq_out, options.name);
 
 		const form_item = {
 			id				: options.name,	// Like 'mint'
@@ -942,24 +942,15 @@ function form_factory() {
 
 
 	/**
-	* FORM_SUBMIT
-	* Form submit launch search
+	* FORM_TO_SQL_FILTER
+	* Builds a plain sql filter from the form nodes values
 	*/
-	this.form_submit = function(options) {
+	this.form_to_sql_filter = function(options) {
 		
 		const self = this
 
 		// options
-			const form_node				= options.form_node
-			const table					= options.table
-			const ar_fields				= options.ar_fields || ['*']
-			const limit					= options.limit || 10
-			const count					= options.count || false
-			const offset				= options.offset || 0
-			const order					= options.order || null
-			const process_result		= options.process_result || null
-			const data_parser			= options.data_parser || null
-
+			const form_node = options.form_node
 
 		// short vars
 			const form_items = self.form_items
@@ -1051,37 +1042,8 @@ function form_factory() {
 		// sql_filter
 			const sql_filter = self.parse_sql_filter(filter)
 
-		// api search request
-			return new Promise(function(resolve){
-
-				data_manager.request({
-					body : {
-						dedalo_get		: 'records',
-						table			: table,
-						ar_fields		: ar_fields,
-						sql_filter		: sql_filter,
-						limit			: limit,
-						count			: count,
-						offset			: offset,
-						order			: order,
-						process_result	: process_result
-					}
-				})
-				.then((response)=>{
-					// if(SHOW_DEBUG===true) {
-						console.log("--- form_submit response:",response)
-					// }
-
-					// data_parser
-						const data = (typeof data_parser==="function")
-							? data_parser(response.result)
-							: response.result
-		
-					
-					resolve(data)				
-				})
-			})
-	}//end form_submit
+		return sql_filter
+	}//end form_to_sql_filter
 
 
 

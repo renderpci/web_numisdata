@@ -12,9 +12,13 @@ var coins =  {
 	/**
 	* VARS
 	*/
-		form		: null,
-		pagination	: null,
-		list		: null,
+		form			: null,
+		pagination		: null,
+		list			: null,
+		form_node		: null,
+		// DOM items ready from page html
+		form_container	: null,
+		rows_container	: null,
 
 
 
@@ -28,20 +32,30 @@ var coins =  {
 		const self = this
 
 		// options
-			const form_container	= options.form_container
-			const row_detail		= options.row_detail
+			self.form_container	= options.form_container
+			self.rows_container	= options.rows_container
 
 
 		// form
 			self.form		= new form_factory()
-			const form_node	= self.render_form()
-			form_container.appendChild(form_node)
+			self.form_node	= self.render_form()
+			self.form_container.appendChild(self.form_node)
 
 		// pagination
 			self.pagination = {
 				total	: null,
 				limit	: 10,
-				offset	: 0
+				offset	: 0,
+				n_nodes	: 8
+			}
+
+		// events
+			event_manager.subscribe('paginate', paginate)
+			function paginate(offset) {
+				// updates pagination.offset
+				self.pagination.offset = offset
+				// submit again
+				self.form_submit()
 			}
 
 
@@ -70,7 +84,6 @@ var coins =  {
 				id			: "section_id",
 				name		: "section_id",
 				label		: tstring.is || "ID",
-				table		: 'coins',
 				q_column	: "section_id",
 				eq			: "=",
 				eq_in		: "",
@@ -83,7 +96,6 @@ var coins =  {
 				id			: "collection",
 				name		: "collection",
 				label		: tstring.collection || "collection",
-				table		: 'coins',
 				q_column	: "collection",
 				eq			: "LIKE",
 				eq_in		: "%",
@@ -102,7 +114,6 @@ var coins =  {
 				id			: "public_info",
 				name		: "public_info",
 				label		: tstring.public_info || "public_info",
-				table		: 'coins',
 				q_column	: "public_info",
 				eq			: "LIKE",
 				eq_in		: "%",
@@ -121,7 +132,6 @@ var coins =  {
 				id			: "mint",
 				name		: "mint",
 				label		: tstring.mint || "mint",
-				table		: 'coins',
 				q_column	: "mint",
 				eq			: "LIKE",
 				eq_in		: "%",
@@ -152,7 +162,7 @@ var coins =  {
 			})
 			submit_button.addEventListener("click",function(e){
 				e.preventDefault()
-				self.form_submit(form_node)
+				self.form_submit()
 			})
 
 		// operators
@@ -177,40 +187,75 @@ var coins =  {
 	/**
 	* FORM_SUBMIT
 	*/
-	form_submit : function(form_node) {
+	form_submit : function() {
 
 		const self = this
+		
+		const form_node = self.form_node
+		if (!form_node) {
+			return new Promise(function(resolve){
+				console.error("Error on submit. Invalid form_node.", form_node);
+				resolve(false)
+			})
+		}
 
-		const div_result			= document.querySelector(".result")
-		const container_rows_list	= div_result.querySelector("#rows_list")
+		const rows_container = self.rows_container
 
 		// loading start
-			page.add_spinner(div_result)
-			div_result.classList.add("loading")
+			if (!self.pagination.total) {
+				page.add_spinner(rows_container)
+			}else{
+				rows_container.classList.add("loading")
+			}
 
 		return new Promise(function(resolve){
 
-			self.form.form_submit({
-				form_node			: form_node,
-				table				: 'coins',
-				ar_fields			: ['*'],
-				limit				: 10,
-				count				: true,
-				offset				: 0,
-				order				: "section_id ASC",
-				data_parser			: page.parse_coin_data
-			})
-			.then(function(data){
-				// console.log("----------------------------- data:",data);
+			const table		= 'coins'
+			const ar_fields	= ['*']
+			const limit		= self.pagination.limit
+			const offset	= self.pagination.offset
+			const count		= true			
+			const order		= "section_id ASC"
 
+			const sql_filter = self.form.form_to_sql_filter({
+				form_node : form_node
+			})
+
+			data_manager.request({
+				body : {
+					dedalo_get		: 'records',
+					table			: table,
+					ar_fields		: ar_fields,
+					sql_filter		: sql_filter,
+					limit			: limit,
+					count			: count,
+					offset			: offset,
+					order			: order,
+					process_result	: null
+				}
+			})
+			.then(function(api_response){
+				console.log("--------------- api_response:",api_response);
+				
+				// parse data
+					const data	= page.parse_coin_data(api_response.result)
+					const total	= api_response.total
+
+					self.pagination.total	= total
+					self.pagination.offset	= offset
+
+					if (!data) {
+						rows_container.classList.remove("loading")
+						resolve(null)
+					}
+				
 				// loading end
 					(function(){
-						page.remove_spinner(div_result)
-						while (div_result.hasChildNodes()) {
-							div_result.removeChild(div_result.lastChild);
+						while (rows_container.hasChildNodes()) {
+							rows_container.removeChild(rows_container.lastChild);
 						}
-						div_result.classList.remove("loading")
-					})()					
+						rows_container.classList.remove("loading")
+					})()
 				
 				// render
 					self.list = self.list || new list_factory() // creates / get existing instance of list
@@ -223,7 +268,7 @@ var coins =  {
 					self.list.render_list()
 					.then(function(list_node){
 						if (list_node) {
-							div_result.appendChild(list_node)
+							rows_container.appendChild(list_node)
 						}
 						resolve(list_node)
 					})
@@ -233,6 +278,13 @@ var coins =  {
 
 
 
+	/**
+	* LIST_ROW_BUILDER
+	* @param object data (db row parsed)
+	* @param object caller (instance of class caller like coin)
+	* This function is a callback defined when list_factory is initiated (!)
+	* @return DocumentFragment node 
+	*/
 	list_row_builder : function(data, caller){
 			// console.log("///////////// data:",data);
 

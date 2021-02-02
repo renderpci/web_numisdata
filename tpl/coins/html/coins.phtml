@@ -26,9 +26,7 @@
 						<div id="form_container"></div>
 
 					<!-- Result -->
-						<section class="result">
-							<div id="row_detail"></div>
-						</section>
+						<section id="rows_container" class="result"></section>
 
 				</div>
 			</div>
@@ -44,7 +42,7 @@
 dom_ready(function(){
 	coins.set_up({
 		form_container	: document.getElementById('form_container'),
-		row_detail		: document.getElementById('row_detail')
+		rows_container	: document.getElementById('rows_container')
 	})
 })
 </script>

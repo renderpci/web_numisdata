@@ -234,9 +234,10 @@ var coins =  {
 
 
 	list_row_builder : function(data, caller){
-			console.log("///////////// data:",data);
+			// console.log("///////////// data:",data);
 
 		const fragment = new DocumentFragment()
+		
 
 		// wrapper
 			const wrapper = common.create_dom_element({
@@ -249,15 +250,21 @@ var coins =  {
 			const image_obverse = common.create_dom_element({
 				element_type	: "img",
 				class_name		: "image",
-				src				: data.image_obverse,
+				src				: data.image_obverse_thumb,
 				parent			: wrapper
 			})
+			image_obverse.hires = data.image_obverse
+			image_obverse.addEventListener("load", page.load_hires)
+		
+		// image_reverse
 			const image_reverse = common.create_dom_element({
 				element_type	: "img",
 				class_name		: "image",
-				src				: data.image_reverse,
+				src				: data.image_reverse_thumb,
 				parent			: wrapper
 			})
+			image_reverse.hires = data.image_reverse
+			image_reverse.addEventListener("load", page.load_hires)
 
 
 		return fragment

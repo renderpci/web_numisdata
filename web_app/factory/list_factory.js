@@ -15,8 +15,8 @@ function list_factory() {
 
 	// vars
 		// target. DOM element where timeline section is placed
-			this.target	= null
-		
+			// this.target	= null
+
 		// data. Database parsed rows data to create the map
 			this.data = null
 
@@ -25,32 +25,34 @@ function list_factory() {
 
 		// pagination. object containing pagination info: total, limit, offset
 			this.pagination = null
-			
+
 		// caller (for example 'catalog' instance)
 			this.caller
-	
-	
-	
+
+
+
 	/**
 	* INIT
 	* @return bool true
 	*/
 	this.init = function(options) {
-		
+
 		const self = this
-		
-		self.target			= options.target
+
+		// self.target		= options.target
 		self.data			= options.data || []
 		self.fn_row_builder	= options.fn_row_builder
-		self.pagination		= options.pagination || {
-			total	: null,
-			limit	: 10,
-			offset	: 0,
-			n_nodes : 10
-		}
+		self.pagination		= (typeof options.pagination==="undefined" ||  options.pagination===null) // false to disable, null to defaults
+			? {
+				total	: null,
+				limit	: 10,
+				offset	: 0,
+				n_nodes : 10
+			}
+			: options.pagination // can be 'false'
 		self.caller			= options.caller
 		// console.log("///////////////////////////////// self.pagination:",self.pagination);
-		
+
 		// status
 			self.status = "initied"
 
@@ -58,7 +60,7 @@ function list_factory() {
 		return true
 	};//end init
 
-	
+
 
 	/**
 	* RENDER_LIST
@@ -66,22 +68,30 @@ function list_factory() {
 	*/
 	this.render_list = function() {
 
-		const self = this		
-		
+		const self = this
+
 		// build row nodes
 		return new Promise(function(resolve) {
 
 			const fragment = new DocumentFragment();
-			
+
 			const ar_rows_length = self.data.length
 
-			// pagination 
-				const paginator_options			= self.pagination
-					  paginator_options.count	= ar_rows_length
 
-			// paginator top
-				paginator_options.class_name = 'top'
-				fragment.appendChild( self.render_pagination(paginator_options) )
+			// pagination
+				let paginator_options
+				if (self.pagination) {
+					// pagination options
+						paginator_options		= self.pagination
+						paginator_options.count	= ar_rows_length
+
+					// paginator top
+						paginator_options.class_name = 'top'
+						const paginator_node = self.render_pagination(paginator_options)
+						if (paginator_node) {
+							fragment.appendChild(paginator_node)
+						}
+				}
 
 			// rows_list
 				const rows_list = common.create_dom_element({
@@ -89,6 +99,7 @@ function list_factory() {
 					class_name		: 'rows_container',
 					parent			: fragment
 				})
+
 
 			// masonry grid case add grid-sizer
 				if (self.caller && self.caller.view_mode && self.caller.view_mode==='list_images') {
@@ -100,19 +111,20 @@ function list_factory() {
 				}
 
 			// iterate all rows
-			for (let i = 0; i < ar_rows_length; i++) {
+				for (let i = 0; i < ar_rows_length; i++) {
 
-				// row_builder. node is rendered in caller class function defined when init
-				const row_node = self.fn_row_builder(self.data[i], self.caller)
-				if (row_node) {
-					rows_list.appendChild(row_node)
+					// row_builder. node is rendered in caller class function defined when init
+						const row_node = self.fn_row_builder(self.data[i], self.caller.view_mode)
+						if (row_node) {
+							rows_list.appendChild(row_node)
+						}
 				}
-			}
-			
-			// paginator bottom	
-				paginator_options.class_name = 'bottom'		
-				fragment.appendChild( self.render_pagination(paginator_options) )
 
+			// paginator bottom
+				if (self.pagination) {
+					paginator_options.class_name = 'bottom'
+					fragment.appendChild( self.render_pagination(paginator_options) )
+				}
 
 			resolve(fragment)
 		})
@@ -120,7 +132,7 @@ function list_factory() {
 
 		// 	// container select and clean container div
 		// 	const container = self.target
-				
+
 		// 	// add node
 		// 	container.appendChild(end_fragment)
 
@@ -140,7 +152,7 @@ function list_factory() {
 
 		// const paginator = new self.paginator()
 			// console.log("paginator:",paginator);
-		
+
 		const class_name = options.class_name
 
 		const pagination = common.create_dom_element({
@@ -149,7 +161,10 @@ function list_factory() {
 		})
 
 		// navigator
-			pagination.appendChild( self.paginator.get_full_paginator(options) )	
+			const full_paginator_node = self.paginator.get_full_paginator(options)
+			if (full_paginator_node) {
+				pagination.appendChild(full_paginator_node)
+			}
 
 		// spacer
 			const spacer = common.create_dom_element({
@@ -189,13 +204,13 @@ function list_factory() {
 		* Builds and return complete paginator dom node
 		*/
 		get_full_paginator : function(options) {
-			
+
 			const self = this
 
-			const total		= options.total;
-			const limit		= options.limit;
-			const offset	= options.offset;
-			const n_nodes	= options.n_nodes;
+			const total		= parseInt(options.total);
+			const limit		= parseInt(options.limit);
+			const offset	= parseInt(options.offset);
+			const n_nodes	= options.n_nodes ? parseInt(options.n_nodes) : 0;
 
 			// page nodes data
 			const page_nodes_data = self.build_page_nodes(total, limit, offset, n_nodes)
@@ -205,7 +220,7 @@ function list_factory() {
 
 			return paginator_node
 		},//end get_full_paginator
-		
+
 
 
 		/**
@@ -214,27 +229,20 @@ function list_factory() {
 		*/
 		build_page_nodes : function(total, limit, offset, n_nodes) {
 			if(SHOW_DEBUG===true) {
-				// console.log("[paginator.build_page_nodes] : total",total,"limit:",limit,"offset",offset,"n_nodes:",n_nodes);
+				console.log("[paginator.build_page_nodes] : total",total,"limit:",limit,"offset",offset,"n_nodes:",n_nodes);
 			}
 
 			const self = this
 
-			// safe types
-				total	= parseInt(total)
-				limit	= parseInt(limit)
-				offset	= parseInt(offset)
-				n_nodes	= parseInt(n_nodes)
-
-
 			const ar_nodes = []
 
 			// check total
-				if (total<1) {
+				if (total<limit) { // total<1 ||
 					return ar_nodes
 				}
 
 			// n_nodes default
-				if (typeof n_nodes==="undefined") {
+				if (!n_nodes || n_nodes===0) {
 					n_nodes = 6
 				}
 
@@ -247,54 +255,60 @@ function list_factory() {
 					id				: 'first'
 				})
 
-			// prev			
+			// prev
 				ar_nodes.push({
 					label			: self._string.prev,
 					offset_value	: (offset - limit)>0 ? (offset - limit) : 0,
 					type			: "navigator",
 					active			: (offset>=limit) ? true : false,
 					id				: 'previous'
-				})			
+				})
 
 			// intermediate
-				const n_pages		= Math.ceil(total / limit)
-				const current_page	= Math.ceil(offset/limit)+1
+				const n_pages		= limit>0
+					? Math.ceil(total / limit)
+					: 0
+				const current_page	= limit>0
+					? Math.ceil(offset / limit)+1
+					: 1
 				let n_pages_group	= Math.ceil(n_nodes / 2)
-				
+
 				if (current_page<=n_pages_group) {
 					n_pages_group = (n_pages_group*2) -current_page+1
 				}
-		
-				for (let i = 1; i <= n_pages; i++) {
 
-					const selected	= ((i-1)===(offset/limit)) ? true : false; // offset===((i+1) * limit) ? true : false
-					const active	= !selected
-				
-					// middle extra ...
-						//if (i===(current_page+1)) {
-						//	ar_nodes.push({
-						//		label 		 : "...",
-						//		offset_value : null,
-						//		type 		 : "extra",
-						//		active 		 : false,
-						//		selected 	 : false
-						//	})
-						//}
+				if (n_pages>0) {
+					for (let i = 1; i <= n_pages; i++) {
 
-					const offset_value = ((i-1) * limit) 
+						const selected	= ((i-1)===(offset/limit)) ? true : false; // offset===((i+1) * limit) ? true : false
+						const active	= !selected
 
-					if( 	(i>=(current_page-n_pages_group) && i<=current_page)
-						|| 	(i>=(current_page-n_pages_group) && i<=(current_page+n_pages_group)) 
-						) {
+						// middle extra ...
+							//if (i===(current_page+1)) {
+							//	ar_nodes.push({
+							//		label 		 : "...",
+							//		offset_value : null,
+							//		type 		 : "extra",
+							//		active 		 : false,
+							//		selected 	 : false
+							//	})
+							//}
 
-						ar_nodes.push({
-							label			: i,
-							offset_value	: offset_value,
-							type			: "page",
-							selected		: selected,
-							active			: active,
-							id				: i
-						})
+						const offset_value = ((i-1) * limit)
+
+						if( 	(i>=(current_page-n_pages_group) && i<=current_page)
+							|| 	(i>=(current_page-n_pages_group) && i<=(current_page+n_pages_group))
+							) {
+
+							ar_nodes.push({
+								label			: i,
+								offset_value	: offset_value,
+								type			: "page",
+								selected		: selected,
+								active			: active,
+								id				: i
+							})
+						}
 					}
 				}
 
@@ -314,7 +328,7 @@ function list_factory() {
 					type			: "navigator",
 					active			: (offset < (total-limit)) ? true : false,
 					id				: 'last'
-				})	
+				})
 
 			// response object
 				const response = {
@@ -325,7 +339,7 @@ function list_factory() {
 					n_pages			: n_pages,
 					n_pages_group	: n_pages_group,
 					current_page	: current_page,
-					ar_nodes		: ar_nodes			
+					ar_nodes		: ar_nodes
 				}
 
 			// debug
@@ -343,18 +357,18 @@ function list_factory() {
 		* Builds html of paginator from page_nodes
 		*/
 		build_paginator_html : function(page_nodes_data) {
-			
+
 			const self = this
 
 			const fragment = new DocumentFragment();
-			
+
 			// iterate nodes (li)
 				const ar_nodes			= page_nodes_data.ar_nodes || []
 				const ar_nodes_length	= ar_nodes.length
 				for (let i = 0; i < ar_nodes_length; i++) {
-					
+
 					const node = ar_nodes[i]
-					
+
 					// class_name
 						let class_name = (node.type==='navigator')
 							? node.type + " " + node.id
@@ -406,13 +420,13 @@ function list_factory() {
 			const offset	= options.offset
 			const count		= options.count
 
-			const from = total==0 
+			const from = total==0
 				? 0
 				: Math.ceil(1 * offset) || 1
-			
+
 			const to = offset + count
 
-			const info = (total===0) 
+			const info = (total===0)
 				? self._string.showed + " " + total
 				: self._string.showed + " " + from + " " + self._string.to + " " + to + " " + self._string.of + " " + total
 
@@ -420,16 +434,13 @@ function list_factory() {
 				element_type	: "div",
 				class_name		: "totals",
 				text_content	: info
-			})		
+			})
 
 
 			return totals_node
 		},//end get_totals_node
-
-
-
 	};//end paginator
-	
+
 
 
 

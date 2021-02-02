@@ -793,4 +793,18 @@ var page = {
 
 
 
+	// load_hires. When thumb is loaded, this event is triggered
+	load_hires : function load_hires() {
+
+		this.removeEventListener("load", load_hires, false)
+
+		const image = this
+		const hires = this.hires
+		setTimeout(function(){
+			image.src = hires
+		}, 100)
+	}//end load_hires
+
+
+
 }//end page

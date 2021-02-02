@@ -469,6 +469,8 @@ function form_factory() {
 	*/
 	this.parse_sql_filter = function(filter, group){
 
+		const self = this
+
 		const sql_filter = (filter) 
 			? (function() {
 
@@ -484,7 +486,7 @@ function form_factory() {
 					const item_op = Object.keys(item)[0]
 					if(item_op==="AND" || item_op==="OR") {
 
-						const current_filter_line = "" + parse_sql_filter(item) + ""
+						const current_filter_line = "" + self.parse_sql_filter(item, group) + ""
 						ar_filter.push(current_filter_line)
 						continue;
 					}
@@ -507,7 +509,7 @@ function form_factory() {
 				}
 
 				return ar_filter.join(" "+op+" ")
-			})()
+			  })()
 			: null
 
 		return sql_filter
@@ -936,6 +938,150 @@ function form_factory() {
 
 		return true
 	}//end activate_autocomplete
+
+
+
+	/**
+	* FORM_SUBMIT
+	* Form submit launch search
+	*/
+	this.form_submit = function(options) {
+		
+		const self = this
+
+		// options
+			const form_node				= options.form_node
+			const table					= options.table
+			const ar_fields				= options.ar_fields || ['*']
+			const limit					= options.limit || 10
+			const count					= options.count || false
+			const offset				= options.offset || 0
+			const order					= options.order || null
+			const process_result		= options.process_result || null
+			const data_parser			= options.data_parser || null
+
+
+		// short vars
+			const form_items = self.form_items
+			
+
+		const ar_query_elements = []
+		for (let [id, form_item] of Object.entries(form_items)) {
+			
+			const current_group = []
+
+			const group_op = "AND"
+			const group = {}
+				  group[group_op] = []
+
+			// q value
+				if (form_item.q.length>0) {
+
+					const c_group_op = 'AND'
+					const c_group = {}
+						  c_group[c_group_op] = []
+
+					const value_parsed = (form_item.eq_in) + form_item.q + (form_item.eq_out)
+
+					// q element
+						const element = {
+							field	: form_item.q_column,
+							value	: `'${form_item.q}'`,
+							op		: form_item.eq // default is 'LIKE'
+						}
+
+						c_group[c_group_op].push(element)				
+
+					// add basic group
+						group[group_op].push(c_group)
+				}
+
+			// q_selected values
+				if (form_item.q_selected.length>0) {
+
+					for (let j = 0; j < form_item.q_selected.length; j++) {
+						
+						// value
+							const value = form_item.q_selected[j]
+
+							// escape html strings containing single quotes inside.
+							// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
+							const safe_value = value.replace(/(')/g, "''")
+
+						const c_group_op = "AND"
+						const c_group = {}
+							  c_group[c_group_op] = []
+
+						// elemet
+						const element = {
+							field	: form_item.q_column,
+							value	: (form_item.is_term===true) ? `'%"${safe_value}"%'` : `'${safe_value}'`,
+							op		: (form_item.is_term===true) ? "LIKE" : "="
+						}
+						c_group[c_group_op].push(element)
+							
+						group[group_op].push(c_group)
+					}
+				}
+
+			if (group[group_op].length>0) {
+				ar_query_elements.push(group)
+			}			
+		}
+
+		// debug
+			if(SHOW_DEBUG===true) {
+				// console.log("self.form_items:",self.form_items);
+				// console.log("ar_query_elements:",ar_query_elements);
+			}
+
+		// empty form case
+			if (ar_query_elements.length<1) {				
+				return new Promise(function(resolve){
+					resolve(false)
+				})
+			}
+
+		// operators value
+			const operators_value = form_node.querySelector('input[name="operators"]:checked').value;
+			
+			const filter = {}
+				  filter[operators_value] = ar_query_elements
+
+		// sql_filter
+			const sql_filter = self.parse_sql_filter(filter)
+
+		// api search request
+			return new Promise(function(resolve){
+
+				data_manager.request({
+					body : {
+						dedalo_get		: 'records',
+						table			: table,
+						ar_fields		: ar_fields,
+						sql_filter		: sql_filter,
+						limit			: limit,
+						count			: count,
+						offset			: offset,
+						order			: order,
+						process_result	: process_result
+					}
+				})
+				.then((response)=>{
+					// if(SHOW_DEBUG===true) {
+						console.log("--- form_submit response:",response)
+					// }
+
+					// data_parser
+						const data = (typeof data_parser==="function")
+							? data_parser(response.result)
+							: response.result
+		
+					
+					resolve(data)				
+				})
+			})
+	}//end form_submit
 
 
 

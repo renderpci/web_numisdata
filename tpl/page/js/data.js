@@ -106,7 +106,7 @@ page.parse_type_data = function(data) {
 * @return object row | array rows
 */
 page.parse_coin_data = function(data) {
-	// console.log("------------> parse_coin_data data:",data);
+	console.log("------------> parse_coin_data data:",data);
 
 	const self = this
 
@@ -114,7 +114,7 @@ page.parse_coin_data = function(data) {
 		if (Array.isArray(data)) {
 			const new_data = []
 			for (let i = 0; i < data.length; i++) {
-				new_data.push( self.parse_coin_data(data[i]) )
+				new_data.push( page.parse_coin_data(data[i]) )
 			}
 			return new_data
 		}
@@ -218,18 +218,19 @@ page.parse_coin_data = function(data) {
 
 	row.uri = self.parse_iri_data(row.uri)
 
-	// bibliography
-	row.bibliography = page.parse_publication(row.bibliography_data)
-
+	// bibliography (portal resolved case)
+		if (row.bibliography_data && Array.isArray(row.bibliography_data) ) {
+			row.bibliography = page.parse_publication(row.bibliography_data)
+		}
 
 	// add
-	row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
-		? row.type_data[0].mint
-		: null
-	row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
-		? row.type_data[0].number
-		: null
-	// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
+		row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
+			? row.type_data[0].mint
+			: null
+		row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
+			? row.type_data[0].number
+			: null
+		// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
 
 	row.parsed = true
 

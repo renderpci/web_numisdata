@@ -11,6 +11,7 @@
 // factory
 	// @codekit-append "../../../web_app/factory/form_factory.js";
 	// @codekit-append "../../../web_app/factory/map_factory.js";
+	// @codekit-append "../../../web_app/factory/list_factory.js";
 
 // page files
 	// @codekit-append "page.js";

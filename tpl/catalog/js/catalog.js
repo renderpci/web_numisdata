@@ -1508,9 +1508,9 @@ var catalog =  {
 				process_result	: process_result
 			}
 		})
-		// js_promise.then((response)=>{
-		// 	// console.log("--- search_rows API response:",response);
-		// })
+		js_promise.then((response)=>{
+			 console.log("--- search_rows API response:",response);
+		})
 		
 
 		return js_promise

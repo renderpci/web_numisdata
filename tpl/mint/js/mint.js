@@ -189,12 +189,25 @@ var mint =  {
 						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
 						count		: false,
 						limit		: 0,
-						order		: 'norder ASC',
+						order		: 'term_table DESC, term ASC',
 						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						resolve_portals_custom	: {
-							"parent" : "catalog",
-							"children"	: "catalog"
+							"parent" : "catalog" 
+							//"children"	: "catalog"
 						}
+
+
+
+
+						// dedalo_get	: 'records',
+						// table		: 'catalog',
+						// db_name		: page_globals.WEB_DB,
+						// lang		: page_globals.WEB_CURRENT_LANG_CODE,
+						// ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
+						// count		: false,
+						// limit		: 0,
+						// order		: 'norder ASC',
+						// sql_filter	: "(term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						// process_result	: {
 						// 	fn 		: 'process_result::add_parents_and_children_recursive',
 						// 	columns : [{name : "parents"}]
@@ -241,72 +254,103 @@ var mint =  {
 	parse_types_data : function (options){
 		var parsedData = []
 		const data = options;
+		//console.log(data)
+		const rows_length = data.length
 
-		const rows_length = options.length
+		// var all_tables_no_types = data.filter(obj => obj.term_table !=  'types')
+		// for (let i=0;i<all_tables_no_types.length;i++){
+		// 	all_tables_no_types[i].children = {}
+		// }
 
-		for (let i=0;i<rows_length;i++){
-			var currentObject = data[i]
+		var mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
 
-			console.log (currentObject.term_table)
-
-		 	if (currentObject.term_table === 'ts_period'){
-		 		currentObject.children = {}
-		 		if (parsedData.period == null){
-		 			parsedData.period = []
-		 			parsedData.period.push(currentObject)
-		 		} else {
-		 			parsedData.period.push(currentObject)
-		 		}
-		 	}
+		for (let i=0;i<mint_parent_group.length;i++){
+			var currentObject = mint_parent_group[i]
+	 		currentObject.children = {}
+	 		currentObject.groups = []
+	 		if (parsedData.children == null){
+	 			parsedData.children = []
+	 			parsedData.children.push(currentObject)
+	 		} else {
+	 			parsedData.children.push(currentObject)
+	 		}
+		 	
 		}
-
-		for (let i=0;i<rows_length;i++){
-			var currentObject = data[i]
-		 	var currentParent = data[i].parent[0]
-
-		 	if (currentObject.term_table === 'ts_numismatic_group'){
-		 		currentObject.children = {}
-		 		const periodData = parsedData.period.find(obj => obj.section_id === currentParent.section_id)
-		 		if (periodData.groups == null) {
-			 		periodData.groups = []
-			 		periodData.groups.push(currentObject)
-			 	} else {
-			 		periodData.groups.push(currentObject)
-			 	}
-		 	}
-		}
-
-		for (let i=0;i<rows_length;i++){
-			var currentObject = data[i]
-		 	var currentParent = data[i].parent[0]
-
-			if (currentObject.term_table === 'types'){
-				if (currentParent.term_table === 'ts_period') {
-					const periodData = parsedData.period.find(obj => obj.section_id === currentParent.section_id)
-			 		if (periodData.types == null) {
-				 		periodData.types = []
-				 		periodData.types.push(currentObject)
-				 	} else {
-				 		periodData.types.push(currentObject)
-				 	}
-				} else if (currentParent.term_table === 'ts_numismatic_group'){
-					const period_length = parsedData.period.length
-					for (let z=0;z<period_length;z++){
-						const groupData = parsedData.period[z].groups.find(obj => obj.section_id === currentParent.section_id)
-
-						if (groupData.types == null) {
-					 		groupData.types = []
-					 		groupData.types.push(currentObject)
-				 		} else {
-				 			groupData.types.push(currentObject)
-				 		}
-					}
-
+		
+		var period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
+		
+		for (let i=0;i<period_parent_group.length;i++){
+			const currentObj = period_parent_group[i]
+			const currentObjParentId = currentObj.parent[0].section_id
+		
+			const parsedDataIndex = parsedData.children.findIndex(obj => obj.section_id == currentObjParentId)
+			
+			if (parsedDataIndex>-1){
+				var children = parsedData.children[parsedDataIndex].children 
+				if (children != null && children.length>0){
+					parsedData.children[parsedDataIndex].children.push(currentObj)
+				} else {
+					parsedData.children[parsedDataIndex].children = []
+					parsedData.children[parsedDataIndex].children .push(currentObj)
 				}
-		 	}
+			}
+		}
 
+		console.log(parsedData)
+
+		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_numismatic_group')
+		var finded = false;
+
+		while (numismatic_parent_group.length>0){
+			for (let i=0;i<numismatic_parent_group.length;i++){
+				const currentNumisGroup = numismatic_parent_group[i]
+				finded = false;
+				putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
+				if(finded){
+					numismatic_parent_group.splice(i,1)
+				}
+			}
+		}
+
+		var types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
+		console.log(types_parent_group)
+
+		finded = false;
+
+		while (types_parent_group.length>0){
+			for (let i=0;i<types_parent_group.length;i++){
+				const currentType = types_parent_group[i]
+				finded = false;
+				putObjectinArray(parsedData.children,currentType,parsedData)
+				if(finded){
+					types_parent_group.splice(i,1)
+				}
+			}
+		}	
+
+		function putObjectinArray (arr,obj,item){
+			if (item.section_id == obj.parent[0].section_id){
+				finded = true;
+				if (Array.isArray(item.children)){
+					item.children.push(obj)
+				} else {
+					item.children = []
+					item.children.push(obj)
+				}
+			}
+
+			if (!Array.isArray(arr)){
+			
+				return 
+			}
+
+			arr.forEach( function(item,index){
+			 	putObjectinArray(item.children,obj,item)
+			})
 
 		}
+
+		console.log("parsedData:",parsedData);
 
 		return (parsedData);
 	},
@@ -523,11 +567,11 @@ var mint =  {
 	*/
 	draw_types : function(options) {
 		const self = this
-		console.log(options.ar_rows)
+		
 		if (options.ar_rows.period && options.ar_rows.period.length>0){
 
 			const container 	 = options.target
-			const ar_rows		 = options.ar_rows.period
+			const ar_rows		 = options.ar_rows.children
 			const ar_rows_length = ar_rows.length
 			// container select and clean container div
 			while (container.hasChildNodes()) {
@@ -594,9 +638,9 @@ var mint =  {
 					parent 			: children_container
 				})
 
-				if (row_object.groups != null){
+				if (row_object.children != null){
 					//if has numismatics groups
-					const group_length = row_object.groups.length
+					const group_length = row_object.children.length
 					for (let z = 0; z < group_length; z++) {
 
 						//GROUP wrap
@@ -609,7 +653,7 @@ var mint =  {
 						const children_label = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "ts_numismatic_group",
-							text_content 	: row_object.groups[z].term,
+							text_content 	: row_object.children[z].term,
 							parent 			: children_container
 						})
 
@@ -626,7 +670,7 @@ var mint =  {
 						})
 
 
-						const types_block = self.draw_types_block (row_object.groups[z].types)
+						const types_block = self.draw_types_block (row_object.children[z].types)
 
 						row_group.appendChild(types_block)
 
@@ -645,7 +689,7 @@ var mint =  {
 					//if doesn't has numismatics groups
 
 
-					const types_block = self.draw_types_block (row_object.types)
+					const types_block = self.draw_types_block (row_object.children)
 
 					row_period.appendChild(types_block)
 

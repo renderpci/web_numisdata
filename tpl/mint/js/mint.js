@@ -189,7 +189,7 @@ var mint =  {
 						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
 						count		: false,
 						limit		: 0,
-						order		: 'term_table DESC, term ASC',
+						order		: 'term_table DESC, norder ASC',
 						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						resolve_portals_custom	: {
 							"parent" : "catalog" 
@@ -299,7 +299,8 @@ var mint =  {
 		console.log(parsedData)
 
 		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_numismatic_group')
-		var finded = false;
+		
+		var finded = false; //set true if recursive function found seeked object
 
 		while (numismatic_parent_group.length>0){
 			for (let i=0;i<numismatic_parent_group.length;i++){
@@ -313,7 +314,6 @@ var mint =  {
 		}
 
 		var types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
-		console.log(types_parent_group)
 
 		finded = false;
 
@@ -568,10 +568,13 @@ var mint =  {
 	draw_types : function(options) {
 		const self = this
 		
-		if (options.ar_rows.period && options.ar_rows.period.length>0){
+		if (options.ar_rows.children && options.ar_rows.children.length>0){
 
 			const container 	 = options.target
 			const ar_rows		 = options.ar_rows.children
+			
+			console.log("Types parsed rows: ",ar_rows)
+
 			const ar_rows_length = ar_rows.length
 			// container select and clean container div
 			while (container.hasChildNodes()) {
@@ -638,11 +641,42 @@ var mint =  {
 					parent 			: children_container
 				})
 
+				createFolderedGroup(period_label,row_period)
+
 				if (row_object.children != null){
 					//if has numismatics groups
-					const group_length = row_object.children.length
-					for (let z = 0; z < group_length; z++) {
+					console.log("row_object_children:",row_object.children);
+					recursiveChildrenSearch(row_object.children,null,row_period)
 
+				}
+			}
+
+				function recursiveChildrenSearch (arr,item,container){
+					
+					if (item != null){
+						//console.log("group: "+item.term)
+						createNewItem(item,container);
+					}
+
+					if (!Array.isArray(arr)){
+						//console.log(item.section_id)
+						return 
+					} else{
+
+					}
+
+					arr.forEach( function(item,index){
+						const currentItem = item;
+					 	recursiveChildrenSearch(item.children,item,container)
+					})
+				}
+
+				function createNewItem (item,container){
+					//if has numismatics groups
+					const row_period = container
+
+					if (item.term_table === 'ts_numismatic_group'){
+						console.log(item.term)
 						//GROUP wrap
 						const children_container = common.create_dom_element({
 							element_type	: "div",
@@ -653,7 +687,7 @@ var mint =  {
 						const children_label = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "ts_numismatic_group",
-							text_content 	: row_object.children[z].term,
+							text_content 	: item.term,
 							parent 			: children_container
 						})
 
@@ -669,40 +703,78 @@ var mint =  {
 							parent 			: children_container
 						})
 
+						//createFolderedGroup(children_label,row_group)
 
-						const types_block = self.draw_types_block (row_object.children[z].types)
-
-						row_group.appendChild(types_block)
-
-						const image_gallery_containers = types_block.querySelectorAll('.gallery')
-
-						if (image_gallery_containers){
-							for (let i=0;i<image_gallery_containers.length;i++){
-								page.activate_images_gallery(image_gallery_containers[i])
-							}
-						}
-
-						createFolderedGroup(children_label,row_group)
+					} else if (item.term_table === 'types') {
 
 					}
-				} else {
-					//if doesn't has numismatics groups
+
+				// 	for (let z = 0; z < group_length; z++) {
+
+				// 		//GROUP wrap
+				// 		const children_container = common.create_dom_element({
+				// 			element_type	: "div",
+				// 			class_name		: "children_container",
+				// 			parent 			: row_period
+				// 		})
+
+				// 		const children_label = common.create_dom_element({
+				// 			element_type	: "div",
+				// 			class_name		: "ts_numismatic_group",
+				// 			text_content 	: row_object.children[z].term,
+				// 			parent 			: children_container
+				// 		})
+
+				// 		common.create_dom_element ({
+				// 			element_type 	: "div",
+				// 			class_name		: "arrow",
+				// 			parent 			: children_label
+				// 		})
+
+				// 		const row_group = common.create_dom_element({
+				// 			element_type	: "div",
+				// 			class_name		: "row_node hide",
+				// 			parent 			: children_container
+				// 		})
 
 
-					const types_block = self.draw_types_block (row_object.children)
+				// 		const types_block = self.draw_types_block (row_object.children[z].types)
 
-					row_period.appendChild(types_block)
+				// 		row_group.appendChild(types_block)
 
-					const image_gallery_containers = types_block.querySelectorAll('.gallery')
-					if (image_gallery_containers){
-							for (let i=0;i<image_gallery_containers.length;i++){
-								page.activate_images_gallery(image_gallery_containers[i])
-							}
-						}
+				// 		const image_gallery_containers = types_block.querySelectorAll('.gallery')
+
+				// 		if (image_gallery_containers){
+				// 			for (let i=0;i<image_gallery_containers.length;i++){
+				// 				page.activate_images_gallery(image_gallery_containers[i])
+				// 			}
+				// 		}
+
+				// 		createFolderedGroup(children_label,row_group)
+
+				// 	}
+				// } else {
+				// 	//if doesn't has numismatics groups
+
+
+				// 	const types_block = self.draw_types_block (row_object.children)
+
+				// 	row_period.appendChild(types_block)
+
+				// 	const image_gallery_containers = types_block.querySelectorAll('.gallery')
+				// 	if (image_gallery_containers){
+				// 			for (let i=0;i<image_gallery_containers.length;i++){
+				// 				page.activate_images_gallery(image_gallery_containers[i])
+				// 			}
+				// 		}
+
+				// }
+				// createFolderedGroup(period_label,row_period)
+
 
 				}
-				createFolderedGroup(period_label,row_period)
-			}
+			
+		
 
 			// container final add
 			container.appendChild(fragment)

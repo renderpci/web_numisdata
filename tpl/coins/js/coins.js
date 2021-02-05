@@ -303,16 +303,18 @@ var coins =  {
 				element_type	: "img",
 				class_name		: "image",
 				src				: data.image_obverse_thumb,
+				loading			: 'lazy',
 				parent			: wrapper
 			})
 			image_obverse.hires = data.image_obverse
-			image_obverse.addEventListener("load", page.load_hires)
+			image_obverse.addEventListener("load", page.load_hires)			
 		
 		// image_reverse
 			const image_reverse = common.create_dom_element({
 				element_type	: "img",
 				class_name		: "image",
 				src				: data.image_reverse_thumb,
+				loading			: 'lazy',
 				parent			: wrapper
 			})
 			image_reverse.hires = data.image_reverse

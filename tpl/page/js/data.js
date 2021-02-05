@@ -106,7 +106,7 @@ page.parse_type_data = function(data) {
 * @return object row | array rows
 */
 page.parse_coin_data = function(data) {
-	console.log("------------> parse_coin_data data:",data);
+	// console.log("------------> parse_coin_data data:",data);
 
 	const self = this
 

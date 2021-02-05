@@ -88,8 +88,9 @@ var common = {
 		const download					= element_options.download
 		const src						= element_options.src
 		const placeholder				= element_options.placeholder
-		const type						= element_options.type // Like button, text ..
+		const type						= element_options.type; // Like button, text ..
 		const target					= element_options.target
+		const loading					= element_options.loading; // lazy | null
 		
 		const element = document.createElement(element_type);
 	
@@ -201,6 +202,11 @@ var common = {
 		// placeholder
 		if (placeholder) {
 			element.placeholder = placeholder
+		}
+
+		// loading
+		if (loading) {
+			element.loading = loading
 		}
 
 

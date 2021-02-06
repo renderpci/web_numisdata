@@ -186,10 +186,10 @@ var mint =  {
 						table		: 'catalog',
 						db_name		: page_globals.WEB_DB,
 						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
+						ar_fields	: ['section_id','norder','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
 						count		: false,
 						limit		: 0,
-						order		: 'term_table DESC, norder ASC',
+						order		: "'norder' ASC",
 						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						resolve_portals_custom	: {
 							"parent" : "catalog" 
@@ -223,6 +223,7 @@ var mint =  {
 							const row = {
 								catalog			: 'MIB',
 								section_id		: response.result[i].section_id,
+								norder 			: response.result[i].norder,
 								term_data 		: response.result[i].term_data,
 								denomination	: response.result[i].ref_type_denomination,
 								term_table		: response.result[i].term_table,
@@ -340,7 +341,7 @@ var mint =  {
 			}
 
 			if (!Array.isArray(arr)){
-			
+				
 				return 
 			}
 
@@ -567,6 +568,9 @@ var mint =  {
 	*/
 	draw_types : function(options) {
 		const self = this
+		let arrDeep = 0
+		let currentItemParent = null
+		let isFirstElement = false
 		
 		if (options.ar_rows.children && options.ar_rows.children.length>0){
 
@@ -637,15 +641,17 @@ var mint =  {
 				//PERIOD wrap
 				const row_period = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "row_node ts_period hide",
+					class_name		: "row_node ts_period period_wrap hide",
 					parent 			: children_container
 				})
 
 				createFolderedGroup(period_label,row_period)
 
+				
+
 				if (row_object.children != null){
 					//if has numismatics groups
-					console.log("row_object_children:",row_object.children);
+					console.log("row_object: ",row_object.term_table);
 					recursiveChildrenSearch(row_object.children,null,row_period)
 
 				}
@@ -659,29 +665,45 @@ var mint =  {
 					}
 
 					if (!Array.isArray(arr)){
-						//console.log(item.section_id)
+						
 						return 
 					} else{
-
+						arrDeep +=1
 					}
 
-					arr.forEach( function(item,index){
-						const currentItem = item;
-					 	recursiveChildrenSearch(item.children,item,container)
-					})
+					for (let i=0;i<arr.length;i++){
+						recursiveChildrenSearch(arr[i].children,arr[i],container)
+						if (arr.length-1 == (i)){
+							arrDeep -=1
+						}
+					}
+
+					// arr.forEach(function(item,index){
+					//  	recursiveChildrenSearch(item.children,item,container)
+					//  	console.log("SUBE NIVEL")
+					// })
 				}
 
 				function createNewItem (item,container){
 					//if has numismatics groups
-					const row_period = container
+					var currentContainer = container
+					console.log(arrDeep)
+					//console.log(item.term_table)
+					//console.log(item.term)
 
 					if (item.term_table === 'ts_numismatic_group'){
-						console.log(item.term)
+						if (arrDeep>1){
+							const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
+							currentContainer = deepEl[deepEl.length-1]
+						} 
+						
 						//GROUP wrap
+						const classDeep = "row_node hide deep:"+arrDeep
+						
 						const children_container = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "children_container",
-							parent 			: row_period
+							parent 			: currentContainer
 						})
 
 						const children_label = common.create_dom_element({
@@ -699,45 +721,184 @@ var mint =  {
 
 						const row_group = common.create_dom_element({
 							element_type	: "div",
-							class_name		: "row_node hide",
+							class_name		: "row_node hide deep:"+arrDeep,
 							parent 			: children_container
 						})
 
-						//createFolderedGroup(children_label,row_group)
+						const types_container = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "types_container hide deep:"+arrDeep,
+							parent 			: children_container
+						})
+	
+						createFolderedGroup(children_label,row_group)
+						createFolderedGroup(children_label,types_container)
+
 
 					} else if (item.term_table === 'types') {
+						console.log(item)
+						if (item.children != null && item.children.length>0){
+							currentItemParent = item
+							isFirstElement = true
 
+						} else{
+							if (arrDeep>1){
+								let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
+								let newArrDeep = arrDeep
+
+								while (deepEl.length==0 && newArrDeep>1){
+									newArrDeep = newArrDeep-1
+									deepEl = container.getElementsByClassName("types_container deep:"+(newArrDeep-1).toString())
+								}
+
+								currentContainer = deepEl[deepEl.length-1]
+							}
+
+							let isSubtype = false
+							if (item.parent[0].term_table === 'types'){
+								isSubtype = true
+							}
+
+							const types_block = create_type_element(item,isSubtype)
+			
+							currentContainer.appendChild(types_block)
+							isFirstElement = false
+						}
 					}
 
-				// 	for (let z = 0; z < group_length; z++) {
 
-				// 		//GROUP wrap
-				// 		const children_container = common.create_dom_element({
-				// 			element_type	: "div",
-				// 			class_name		: "children_container",
-				// 			parent 			: row_period
-				// 		})
+					function create_type_element(data,isSubtype){
 
-				// 		const children_label = common.create_dom_element({
-				// 			element_type	: "div",
-				// 			class_name		: "ts_numismatic_group",
-				// 			text_content 	: row_object.children[z].term,
-				// 			parent 			: children_container
-				// 		})
+						const parentSubType = currentItemParent
+						console.log(currentItemParent)
 
-				// 		common.create_dom_element ({
-				// 			element_type 	: "div",
-				// 			class_name		: "arrow",
-				// 			parent 			: children_label
-				// 		})
+						const type_row = data;
 
-				// 		const row_group = common.create_dom_element({
-				// 			element_type	: "div",
-				// 			class_name		: "row_node hide",
-				// 			parent 			: children_container
-				// 		})
+						// let type_row_term = ""
+						const type_row_term = (type_row.term.indexOf(",") == -1)
+							? type_row.term
+							: type_row.term.slice(0,type_row.term.indexOf(","))
 
+						const mint_number = (type_row.ref_mint_number)
+							? type_row.ref_mint_number+'/'
+							: ''
 
+						let type_number = ""
+						let subType_number = ""
+						let SubTypeClass = ""
+						let type_href = ""
+						let subType_href = ""
+
+						if (type_row.term_data != null){
+							const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
+							type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
+							subType_href = type_href
+						} else {
+							isSubtype = true
+						}
+
+						if (!isSubtype) {
+							type_number = "MIB "+mint_number+type_row_term
+						} else {
+							subType_number = "MIB "+mint_number+type_row_term
+							SubTypeClass = "subType_number"
+							if (isFirstElement){
+								type_href = ""
+								let parent_term = ""
+								currentItemParent.term.indexOf(",") == -1 ? parent_term = currentItemParent.term : parent_term = currentItemParent.term.slice(0,parentSubType.indexOf(","))
+								console.log(parent_term)
+								type_number =  "MIB "+parent_term
+							}
+						}
+
+						//Type wrap
+						const row_type = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "type_wrap"
+						})
+
+						const number_wrap = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "type_number",
+							parent 			: row_type
+						})
+
+						common.create_dom_element({
+							element_type	: "a",
+							inner_html  	: type_number,
+							class_name		: "type_label",
+							href 			: type_href,
+							parent 			: number_wrap
+						})
+
+						common.create_dom_element({
+							element_type	: "a",
+							inner_html 	    : subType_number,
+							class_name		: "subType_label "+SubTypeClass,
+							href 			: subType_href,
+							parent 			: number_wrap
+						})
+
+						const img_wrap = common.create_dom_element({
+							element_type 	: "div",
+							class_name 		: "types_img gallery",
+							parent 			: row_type
+						})
+
+						const img_link_ob = common.create_dom_element({
+							element_type 	: "a",
+							class_name		: "image_link",
+							href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
+							parent 			: img_wrap,
+						})
+
+						common.create_dom_element({
+							element_type	: "img",
+							src 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
+							parent 			: img_link_ob
+						}).loading="lazy"
+
+						const img_link_re = common.create_dom_element({
+							element_type 	: "a",
+							class_name		: "image_link",
+							href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
+							parent 			: img_wrap,
+						})
+
+						common.create_dom_element({
+							element_type	: "img",
+							src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
+							parent 			: img_link_re
+						}).loading="lazy"
+
+						const info_wrap = common.create_dom_element({
+							element_type 	: "div",
+							class_name 		: "info_wrap",
+							parent 			: row_type
+						})
+
+						const type_measures = type_row.ref_type_averages_weight+" g; "+type_row.ref_type_averages_diameter+"mm"
+						common.create_dom_element ({
+							element_type 	: "p",
+							class_name 		: "type_info",
+							text_content 	: type_measures,
+							parent 			: info_wrap
+						})
+
+						const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
+						//const relative_uri = page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section_id
+						common.create_dom_element ({
+							element_type 	: "a",
+							class_name 		: "type_info",
+							text_content 	: "URI",
+							//href 			: relative_uri,
+							parent 			: info_wrap
+						})
+
+						return row_type
+					}
+
+		
 				// 		const types_block = self.draw_types_block (row_object.children[z].types)
 
 				// 		row_group.appendChild(types_block)
@@ -775,9 +936,9 @@ var mint =  {
 				}
 			
 		
-
-			// container final add
-			container.appendChild(fragment)
+				// container final add
+				container.appendChild(fragment)
+			
 
 			function createFolderedGroup(label,row_group) {
 

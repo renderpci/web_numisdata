@@ -48,6 +48,7 @@ var mint =  {
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
 					if (mint_catalog.result) {
+						console.log (mint_catalog)
 						const catMint = mint_catalog.result.find(el => el.term_table==='mints')
 						console.log(catMint.section_id)
 						self.get_types_data({
@@ -664,7 +665,7 @@ var mint =  {
 
 				createFolderedGroup(period_label,row_period)
 				createFolderedGroup(period_label,types_container)
-				
+
 
 				
 
@@ -922,7 +923,7 @@ var mint =  {
 						const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
 						common.create_dom_element ({
 							element_type 	: "a",
-							class_name 		: "type_info",
+							class_name 		: "type_info icon_link",
 							text_content 	: "URI",
 							href 			: subType_href,
 							parent 			: info_wrap

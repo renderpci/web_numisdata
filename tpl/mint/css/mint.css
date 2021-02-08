@@ -68,6 +68,9 @@
   padding-left: 2em;
   margin-bottom: 2em;
 }
+.result #types .types_container .row_node {
+  padding-left: 2em;
+}
 .result #types .types_container .type_wrap {
   width: 32%;
   padding: 1em;

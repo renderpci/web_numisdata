@@ -189,7 +189,7 @@ var mint =  {
 						ar_fields	: ['section_id','norder','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
 						count		: false,
 						limit		: 0,
-						order		: "'norder' ASC",
+						order		: "norder ASC",
 						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 						resolve_portals_custom	: {
 							"parent" : "catalog" 
@@ -255,6 +255,7 @@ var mint =  {
 	parse_types_data : function (options){
 		var parsedData = []
 		const data = options;
+
 		//console.log(data)
 		const rows_length = data.length
 
@@ -300,12 +301,13 @@ var mint =  {
 		console.log(parsedData)
 
 		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_numismatic_group')
-		
+
 		var finded = false; //set true if recursive function found seeked object
 
 		while (numismatic_parent_group.length>0){
 			for (let i=0;i<numismatic_parent_group.length;i++){
 				const currentNumisGroup = numismatic_parent_group[i]
+				console.log (currentNumisGroup.norder)
 				finded = false;
 				putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
 				if(finded){
@@ -314,8 +316,8 @@ var mint =  {
 			}
 		}
 
-		var types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
 
+		var types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
 		finded = false;
 
 		while (types_parent_group.length>0){
@@ -327,6 +329,16 @@ var mint =  {
 					types_parent_group.splice(i,1)
 				}
 			}
+		}
+
+		function sortItems(a,b){
+			if (a.norder > b.norder){
+				return 1
+			}
+			if (a.norder < b.norder){
+				return -1
+			}
+			return 0
 		}	
 
 		function putObjectinArray (arr,obj,item){
@@ -569,7 +581,6 @@ var mint =  {
 	draw_types : function(options) {
 		const self = this
 		let arrDeep = 0
-		let currentItemParent = null
 		let isFirstElement = false
 		
 		if (options.ar_rows.children && options.ar_rows.children.length>0){
@@ -651,7 +662,6 @@ var mint =  {
 
 				if (row_object.children != null){
 					//if has numismatics groups
-					console.log("row_object: ",row_object.term_table);
 					recursiveChildrenSearch(row_object.children,null,row_period)
 
 				}
@@ -661,7 +671,21 @@ var mint =  {
 					
 					if (item != null){
 						//console.log("group: "+item.term)
+						//console.log(item.norder)
 						createNewItem(item,container);
+
+						if (item.children != null){
+							item.children.sort(function(a,b){
+								if (parseInt(a.norder) > parseInt(b.norder)){
+									return 1
+								}
+								if (parseInt(a.norder) < parseInt(b.norder)){
+									return -1
+								}
+								return 0
+							})
+						}
+						
 					}
 
 					if (!Array.isArray(arr)){
@@ -672,6 +696,7 @@ var mint =  {
 					}
 
 					for (let i=0;i<arr.length;i++){
+						 
 						recursiveChildrenSearch(arr[i].children,arr[i],container)
 						if (arr.length-1 == (i)){
 							arrDeep -=1
@@ -687,7 +712,7 @@ var mint =  {
 				function createNewItem (item,container){
 					//if has numismatics groups
 					var currentContainer = container
-					console.log(arrDeep)
+
 					//console.log(item.term_table)
 					//console.log(item.term)
 
@@ -719,26 +744,25 @@ var mint =  {
 							parent 			: children_label
 						})
 
+						const types_container = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "types_container hide deep:"+arrDeep,
+							parent 			: children_container
+						})
+
 						const row_group = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "row_node hide deep:"+arrDeep,
 							parent 			: children_container
 						})
 
-						const types_container = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "types_container hide deep:"+arrDeep,
-							parent 			: children_container
-						})
-	
 						createFolderedGroup(children_label,row_group)
 						createFolderedGroup(children_label,types_container)
 
 
 					} else if (item.term_table === 'types') {
-						console.log(item)
+						
 						if (item.children != null && item.children.length>0){
-							currentItemParent = item
 							isFirstElement = true
 
 						} else{
@@ -769,8 +793,7 @@ var mint =  {
 
 					function create_type_element(data,isSubtype){
 
-						const parentSubType = currentItemParent
-						console.log(currentItemParent)
+						const parentSubType = data.parent[0]
 
 						const type_row = data;
 
@@ -805,8 +828,7 @@ var mint =  {
 							if (isFirstElement){
 								type_href = ""
 								let parent_term = ""
-								currentItemParent.term.indexOf(",") == -1 ? parent_term = currentItemParent.term : parent_term = currentItemParent.term.slice(0,parentSubType.indexOf(","))
-								console.log(parent_term)
+								parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.indexOf(","))
 								type_number =  "MIB "+parent_term
 							}
 						}

@@ -656,7 +656,15 @@ var mint =  {
 					parent 			: children_container
 				})
 
+				const types_container = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "types_container hide deep:",
+					parent 			: row_period
+				})
+
 				createFolderedGroup(period_label,row_period)
+				createFolderedGroup(period_label,types_container)
+				
 
 				
 
@@ -671,7 +679,6 @@ var mint =  {
 					
 					if (item != null){
 						//console.log("group: "+item.term)
-						//console.log(item.norder)
 						createNewItem(item,container);
 
 						if (item.children != null){
@@ -712,9 +719,9 @@ var mint =  {
 				function createNewItem (item,container){
 					//if has numismatics groups
 					var currentContainer = container
-
+					
 					//console.log(item.term_table)
-					//console.log(item.term)
+					console.log(item.term)
 
 					if (item.term_table === 'ts_numismatic_group'){
 						if (arrDeep>1){
@@ -764,17 +771,22 @@ var mint =  {
 						
 						if (item.children != null && item.children.length>0){
 							isFirstElement = true
-
 						} else{
-							if (arrDeep>1){
+							
 								let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
 								let newArrDeep = arrDeep
 
+								//if previously didn't found, search up in hierarchy until find the last types container
 								while (deepEl.length==0 && newArrDeep>1){
 									newArrDeep = newArrDeep-1
 									deepEl = container.getElementsByClassName("types_container deep:"+(newArrDeep-1).toString())
 								}
 
+								currentContainer = deepEl[deepEl.length-1]
+							
+
+							if (currentContainer == null){
+								let deepEl = container.getElementsByClassName("types_container")
 								currentContainer = deepEl[deepEl.length-1]
 							}
 
@@ -784,7 +796,7 @@ var mint =  {
 							}
 
 							const types_block = create_type_element(item,isSubtype)
-			
+							console.log(currentContainer)
 							currentContainer.appendChild(types_block)
 							isFirstElement = false
 						}
@@ -794,7 +806,7 @@ var mint =  {
 					function create_type_element(data,isSubtype){
 
 						const parentSubType = data.parent[0]
-
+						console.log(parentSubType)
 						const type_row = data;
 
 						// let type_row_term = ""
@@ -828,7 +840,7 @@ var mint =  {
 							if (isFirstElement){
 								type_href = ""
 								let parent_term = ""
-								parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.indexOf(","))
+								parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.term.indexOf(","))
 								type_number =  "MIB "+parent_term
 							}
 						}
@@ -908,52 +920,18 @@ var mint =  {
 						})
 
 						const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
-						//const relative_uri = page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section_id
 						common.create_dom_element ({
 							element_type 	: "a",
 							class_name 		: "type_info",
 							text_content 	: "URI",
-							//href 			: relative_uri,
+							href 			: subType_href,
 							parent 			: info_wrap
 						})
 
+						page.activate_images_gallery(img_wrap)
+
 						return row_type
 					}
-
-		
-				// 		const types_block = self.draw_types_block (row_object.children[z].types)
-
-				// 		row_group.appendChild(types_block)
-
-				// 		const image_gallery_containers = types_block.querySelectorAll('.gallery')
-
-				// 		if (image_gallery_containers){
-				// 			for (let i=0;i<image_gallery_containers.length;i++){
-				// 				page.activate_images_gallery(image_gallery_containers[i])
-				// 			}
-				// 		}
-
-				// 		createFolderedGroup(children_label,row_group)
-
-				// 	}
-				// } else {
-				// 	//if doesn't has numismatics groups
-
-
-				// 	const types_block = self.draw_types_block (row_object.children)
-
-				// 	row_period.appendChild(types_block)
-
-				// 	const image_gallery_containers = types_block.querySelectorAll('.gallery')
-				// 	if (image_gallery_containers){
-				// 			for (let i=0;i<image_gallery_containers.length;i++){
-				// 				page.activate_images_gallery(image_gallery_containers[i])
-				// 			}
-				// 		}
-
-				// }
-				// createFolderedGroup(period_label,row_period)
-
 
 				}
 			
@@ -984,164 +962,7 @@ var mint =  {
 
 	},//end draw_types
 
-	//Draw a entyre block of types
-	// param options: array with type objects
-	// return: HTML Object with a types block
-	draw_types_block : function(options) {
-		const self = this
-		const types_ar = options
-		const types_ar_length = types_ar.length
-
-		const children_container = common.create_dom_element({
-			element_type	: "div",
-			class_name		: "types_container",
-		})
-
-		let previowsTypeNumber = ""
-
-		for (let i=0;i<types_ar_length;i++){
-			const type_row = types_ar[i]
-			//if has subtypes
-			if (type_row.children.length > 0){
-				const subTypes = type_row.children
-				const subTypes_length = subTypes.length
-
-				for (let z=0;z<subTypes_length;z++){
-					const subType = subTypes[z]
-
-					let isFirstElemenet = false
-
-					z===0 ? isFirstElemenet = true : isFirstElemenet = false
-					create_type_element(subType,true,isFirstElemenet,type_row.term);
-				}
-			} else {
-				create_type_element(type_row,false,true);
-			}
-		}
-
-		function create_type_element(data,isSubtype,isFirstElement,parentSubType){
-
-			const type_row = data;
-
-			// let type_row_term = ""
-			const type_row_term = (type_row.term.indexOf(",") == -1)
-				? type_row.term
-				: type_row.term.slice(0,type_row.term.indexOf(","))
-
-			const mint_number = (type_row.ref_mint_number)
-				? type_row.ref_mint_number+'/'
-				: ''
-
-			let type_number = ""
-			let subType_number = ""
-			let SubTypeClass = ""
-			const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
-			let type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
-			let subType_href = type_href
-
-			if (!isSubtype) {
-				type_number = "MIB "+mint_number+type_row_term
-			} else {
-				subType_number = "MIB "+mint_number+type_row_term
-				SubTypeClass = "subType_number"
-				if (isFirstElement){
-					type_href = ""
-					let parent_term = ""
-					parentSubType.indexOf(",") == -1 ? parent_term = parentSubType : parent_term = parentSubType.slice(0,parentSubType.indexOf(","))
-					type_number =  "MIB "+parent_term
-				}
-			}
-
-			//Type wrap
-			const row_type = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "type_wrap",
-				parent 			: children_container
-			})
-
-			const number_wrap = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "type_number",
-				parent 			: row_type
-			})
-
-			common.create_dom_element({
-				element_type	: "a",
-				inner_html  	: type_number,
-				class_name		: "type_label",
-				href 			: type_href,
-				parent 			: number_wrap
-			})
-
-			common.create_dom_element({
-				element_type	: "a",
-				inner_html 	    : subType_number,
-				class_name		: "subType_label "+SubTypeClass,
-				href 			: subType_href,
-				parent 			: number_wrap
-			})
-
-			const img_wrap = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "types_img gallery",
-				parent 			: row_type
-			})
-
-			const img_link_ob = common.create_dom_element({
-				element_type 	: "a",
-				class_name		: "image_link",
-				href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-				parent 			: img_wrap,
-			})
-
-			common.create_dom_element({
-				element_type	: "img",
-				src 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-				parent 			: img_link_ob
-			}).loading="lazy"
-
-			const img_link_re = common.create_dom_element({
-				element_type 	: "a",
-				class_name		: "image_link",
-				href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-				parent 			: img_wrap,
-			})
-
-			common.create_dom_element({
-				element_type	: "img",
-				src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-				parent 			: img_link_re
-			}).loading="lazy"
-
-			const info_wrap = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_wrap",
-				parent 			: row_type
-			})
-
-			const type_measures = type_row.ref_type_averages_weight+" g; "+type_row.ref_type_averages_diameter+"mm"
-			common.create_dom_element ({
-				element_type 	: "p",
-				class_name 		: "type_info",
-				text_content 	: type_measures,
-				parent 			: info_wrap
-			})
-
-			const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
-			const relative_uri = page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section_id
-			common.create_dom_element ({
-				element_type 	: "a",
-				class_name 		: "type_info",
-				text_content 	: "URI",
-				href 			: relative_uri,
-				parent 			: info_wrap
-			})
-		}
-
-		return children_container;
-	},
-
-
+	
 	/**
 	* DRAW_MAP
 	*/
@@ -1185,7 +1006,7 @@ var mint =  {
 
 					const findspot_map_data_clean = self.map_data(findspot_map_data,findspot_popup_data)
 					
-					console.log(findspot_popup_data)
+					//console.log(findspot_popup_data)
 
 					map_data_clean.push(findspot_map_data_clean[0])
 				}

@@ -258,14 +258,9 @@ var mint =  {
 		var parsedData = []
 		const data = options;
 
-		//console.log(data)
 		const rows_length = data.length
 
-		// var all_tables_no_types = data.filter(obj => obj.term_table !=  'types')
-		// for (let i=0;i<all_tables_no_types.length;i++){
-		// 	all_tables_no_types[i].children = {}
-		// }
-
+		//Get first data deep and put it to parsed array
 		var mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
 
 		for (let i=0;i<mint_parent_group.length;i++){
@@ -300,8 +295,6 @@ var mint =  {
 			}
 		}
 
-		console.log(parsedData)
-
 		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_numismatic_group')
 
 		var finded = false; //set true if recursive function found seeked object
@@ -318,7 +311,6 @@ var mint =  {
 			}
 		}
 
-
 		var types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
 		finded = false;
 
@@ -333,16 +325,7 @@ var mint =  {
 			}
 		}
 
-		function sortItems(a,b){
-			if (a.norder > b.norder){
-				return 1
-			}
-			if (a.norder < b.norder){
-				return -1
-			}
-			return 0
-		}	
-
+		//Recursive function that create a multidimensional array whith data hyerarchy
 		function putObjectinArray (arr,obj,item){
 			if (item.section_id == obj.parent[0].section_id){
 				finded = true;
@@ -589,11 +572,9 @@ var mint =  {
 
 			const container 	 = options.target
 			const ar_rows		 = options.ar_rows.children
-			
-			console.log("Types parsed rows: ",ar_rows)
-
 			const ar_rows_length = ar_rows.length
 			// container select and clean container div
+
 			while (container.hasChildNodes()) {
 				container.removeChild(container.lastChild);
 			}
@@ -616,7 +597,7 @@ var mint =  {
 				parent 			: lineSeparator
 			})
 
-			//console.groupCollapsed("Types info");
+			
 			for (let i = 0; i < ar_rows_length; i++) {
 
 				const row_object = ar_rows[i]
@@ -680,7 +661,7 @@ var mint =  {
 				
 
 				if (row_object.children != null){
-					//if has numismatics groups
+					//if has children call recursive function that get all children hierarchy one by one
 					recursiveChildrenSearch(row_object.children,null,row_period)
 
 				}
@@ -689,11 +670,11 @@ var mint =  {
 				function recursiveChildrenSearch (arr,item,container){
 					
 					if (item != null){
-						//console.log("group: "+item.term)
 						createNewItem(item,container);
 
 						if (item.children != null){
 							item.children.sort(function(a,b){
+								//sort every hierarchy level
 								if (parseInt(a.norder) > parseInt(b.norder)){
 									return 1
 								}
@@ -707,16 +688,16 @@ var mint =  {
 					}
 
 					if (!Array.isArray(arr)){
-						
 						return 
 					} else{
+						//save current hierarchy level
 						arrDeep +=1
 					}
 
 					for (let i=0;i<arr.length;i++){
-						 
 						recursiveChildrenSearch(arr[i].children,arr[i],container)
 						if (arr.length-1 == (i)){
+							//save current hierarchy level
 							arrDeep -=1
 						}
 					}
@@ -730,16 +711,13 @@ var mint =  {
 				function createNewItem (item,container){
 					//if has numismatics groups
 					var currentContainer = container
-					
-					//console.log(item.term_table)
-					console.log(item.term)
 
 					if (item.term_table === 'ts_numismatic_group'){
 						if (arrDeep>1){
 							const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
 							currentContainer = deepEl[deepEl.length-1]
 						} 
-						
+						//Create a numismatic group
 						//GROUP wrap
 						const classDeep = "row_node hide deep:"+arrDeep
 						
@@ -780,10 +758,13 @@ var mint =  {
 
 					} else if (item.term_table === 'types') {
 						
+						//create a type element
 						if (item.children != null && item.children.length>0){
+							//if is a type and not a subtype mark variable but don't draw anything
 							isFirstElement = true
-						} else{
-							
+						} else{//if is a subtype
+
+								//try to get a type container created yet
 								let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
 								let newArrDeep = arrDeep
 
@@ -807,7 +788,6 @@ var mint =  {
 							}
 
 							const types_block = create_type_element(item,isSubtype)
-							console.log(currentContainer)
 							currentContainer.appendChild(types_block)
 							isFirstElement = false
 						}
@@ -817,7 +797,6 @@ var mint =  {
 					function create_type_element(data,isSubtype){
 
 						const parentSubType = data.parent[0]
-						console.log(parentSubType)
 						const type_row = data;
 
 						// let type_row_term = ""
@@ -988,7 +967,7 @@ var mint =  {
 			place_data : place_data
 		}).then(function(response){
 
-			console.log (response);
+			console.log (mint_popup_data);
 
 			const map_position	= mint_map_data
 			const container		= document.getElementById("map_container")
@@ -1002,6 +981,31 @@ var mint =  {
 				source_maps		: page.maps_config.source_maps
 			})
 
+			// map_legend
+			const map_legend = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "map_legend",
+				parent			: container
+			})
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "legend_item",
+				inner_html		: tstring.mint + '<img src="'+page.maps_config.markers.mint.iconUrl+'"/>',
+				parent			: map_legend
+			})
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "legend_item",
+				inner_html		: tstring.hoard + '<img src="'+page.maps_config.markers.hoard.iconUrl+'"/>',
+				parent			: map_legend
+			})
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "legend_item",
+				inner_html		: tstring.findspot + '<img src="'+page.maps_config.markers.findspot.iconUrl+'"/>',
+				parent			: map_legend
+			})
+
 			var map_data_clean = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
 			
 			//findspots to map
@@ -1012,9 +1016,12 @@ var mint =  {
 					const findspot_map_data = JSON.parse(findspots_map_data[i].map)
 					const findspot_popup_data = parse_popup_data(findspots_map_data[i])
 
+					findspot_popup_data.type = {}
+					findspot_popup_data.type = "findspot"
+
 					const findspot_map_data_clean = self.map_data(findspot_map_data,findspot_popup_data)
 					
-					//console.log(findspot_popup_data)
+					console.log(findspot_popup_data)
 
 					map_data_clean.push(findspot_map_data_clean[0])
 				}
@@ -1027,6 +1034,9 @@ var mint =  {
 				for (let i=0;i<hoards_map_data.length;i++){
 					const hoard_map_data = JSON.parse(hoards_map_data[i].map)
 					const hoard_popup_data = parse_popup_data(hoard_map_data[i])
+
+					hoard_popup_data.type = {}
+					hoard_popup_data.type = "hoard"
 
 					const hoard_map_data_clean = self.map_data(hoard_map_data,hoard_popup_data)
 					
@@ -1109,9 +1119,17 @@ var mint =  {
 	*/
 	map_data : function(data, popup_data) {
 
+		console.log("MAP_DATA: ",popup_data)	
 		const self = this
 
 		// console.log("--map_data data:",data);
+		var markerIcon = page.maps_config.markers.mint
+
+		if (popup_data.type != null && popup_data.type === 'findspot'){
+			markerIcon = page.maps_config.markers.findspot
+		} else if (popup_data.type != null && popup_data.type === 'hoard'){
+			markerIcon = page.maps_config.markers.hoard
+		}
 
 		const ar_data = Array.isArray(data)
 			? data
@@ -1123,7 +1141,7 @@ var mint =  {
 			const item = {
 				lat			: ar_data[i].lat,
 				lon			: ar_data[i].lon,
-				marker_icon	: page.maps_config.markers.mint,
+				marker_icon	: markerIcon,
 				data		: popup_data
 			}
 			data_clean.push(item)

@@ -26,11 +26,11 @@
   display: inline-block;
   margin-left: 0.5em;
 }
+.result .period_label {
+  font-weight: 600;
+}
 .result #types {
-  padding: 1em;
   margin-top: 1em;
-  border-radius: 0.25em;
-  border: 1px solid #cccccc;
 }
 .result #types > .type_row {
   display: table;
@@ -51,6 +51,7 @@
 }
 .result #types .ts_period {
   cursor: pointer;
+  margin-top: 1em;
 }
 .result #types .arrow {
   background: url(../../assets/images/arrow.svg) no-repeat bottom left;
@@ -73,7 +74,6 @@
 .result #types .types_container .type_wrap {
   width: 32%;
   padding: 1em;
-  margin-top: 1em;
 }
 @media screen and (max-width: 980px) {
   .result #types .types_container .type_wrap {
@@ -100,13 +100,10 @@
   }
 }
 @media screen and (max-width: 1600px) {
-  .result #types .types_container .type_wrap .info_wrap a {
-    font-size: 1vw !important ;
-  }
 }
 @media screen and (max-width: 736px) {
   .result #types .types_container .type_wrap .info_wrap a {
-    font-size: 60% !important ;
+    font-size: 100% !important ;
   }
 }
 .result #types .types_container .type_wrap img {

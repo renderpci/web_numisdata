@@ -108,5 +108,6 @@
     "uri": "URI",
     "volume": "Volumen",
     "weight": "Peso",
-    "related_types" : "Tipos relacionados"
+    "related_types" : "Tipos relacionados",
+    "coin_production" : "Producción monetaria"
 }

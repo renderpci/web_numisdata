@@ -108,5 +108,6 @@
   "creator": "Creator",
   "peculiarity_production": "Peculiarity production",
   "secondary_treatment": "Secondary treatment",
-  "related_types" : "Related types"
+  "related_types" : "Related types",
+  "coin_production" : "Coin production"
 }

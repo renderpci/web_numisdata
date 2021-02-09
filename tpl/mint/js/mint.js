@@ -48,7 +48,7 @@ var mint =  {
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
 					if (mint_catalog.result) {
-						console.log (mint_catalog)
+						
 						const catMint = mint_catalog.result.find(el => el.term_table==='mints')
 						console.log(catMint.section_id)
 						self.get_types_data({
@@ -187,7 +187,7 @@ var mint =  {
 						table		: 'catalog',
 						db_name		: page_globals.WEB_DB,
 						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						ar_fields	: ['section_id','norder','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
+						ar_fields	: ['section_id','norder','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_type_material','ref_mint_number'],
 						count		: false,
 						limit		: 0,
 						order		: "norder ASC",
@@ -236,6 +236,7 @@ var mint =  {
 								ref_coins_image_reverse 	: response.result[i].ref_coins_image_reverse,
 								ref_type_averages_diameter 	: response.result[i].ref_type_averages_diameter,
 								ref_type_averages_weight 	: response.result[i].ref_type_averages_weight,
+								ref_type_material 			: response.result[i].ref_type_material,
 								ref_mint_number 			: response.result[i].ref_mint_number,
 							}
 
@@ -599,24 +600,26 @@ var mint =  {
 
 			const fragment = new DocumentFragment();
 
+			const typesLabel = tstring.coin_production || "Coin production"
 			// label types
+
+			const lineSeparator = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_line separator",
+				parent 			: fragment
+			})
+
 			common.create_dom_element({
 				element_type 	: "label",
-				text_content 	: tstring.tipos || "Types",
-				parent 			: fragment
+				class_name 		: "big_label",
+				text_content 	: typesLabel,
+				parent 			: lineSeparator
 			})
 
 			//console.groupCollapsed("Types info");
 			for (let i = 0; i < ar_rows_length; i++) {
 
 				const row_object = ar_rows[i]
-
-				// row_line
-				const row_line = common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "type_row",
-					parent 			: fragment
-				})
 
 				// section_id
 				if (dedalo_logged===true) {
@@ -639,7 +642,7 @@ var mint =  {
 
 				const period_label = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "ts_period",
+					class_name		: "ts_period period_label",
 					text_content 	: row_object.term,
 					parent 			: children_container
 				})
@@ -661,6 +664,13 @@ var mint =  {
 					element_type	: "div",
 					class_name		: "types_container hide deep:",
 					parent 			: row_period
+				})
+
+				// row_line
+				const row_line = common.create_dom_element({
+					element_type 	: "div",
+					class_name 		: "type_row",
+					parent 			: fragment
 				})
 
 				createFolderedGroup(period_label,row_period)
@@ -912,20 +922,17 @@ var mint =  {
 							parent 			: row_type
 						})
 
-						const type_measures = type_row.ref_type_averages_weight+" g; "+type_row.ref_type_averages_diameter+"mm"
+						const type_info = [
+							type_row.ref_type_material,
+							type_row.denomination,
+							type_row.ref_type_averages_weight+"g",
+							type_row.ref_type_averages_diameter+"mm"
+						]
+
 						common.create_dom_element ({
 							element_type 	: "p",
 							class_name 		: "type_info",
-							text_content 	: type_measures,
-							parent 			: info_wrap
-						})
-
-						const permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/type/" + type_row.section_id
-						common.create_dom_element ({
-							element_type 	: "a",
-							class_name 		: "type_info icon_link",
-							text_content 	: "URI",
-							href 			: subType_href,
+							text_content 	: type_info.join(' | '),
 							parent 			: info_wrap
 						})
 

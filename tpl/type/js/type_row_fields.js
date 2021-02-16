@@ -156,9 +156,6 @@ var row_fields = {
 
 
 		// items (ejemplares) list
-
-
-
 			if (item._coins_group && item._coins_group.length>0) {
 				// exclude already showed items (identify images)
 				const data = item._coins_group.filter(el => el.typology_id!="1")
@@ -171,12 +168,32 @@ var row_fields = {
 			}
 
 		// findspots - hoards_and_findspots - (hallazgos) list
-			if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {
-				fragment.appendChild( self.label(item, tstring.findspots) )
+			// if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {
+			// 	fragment.appendChild( self.label(item, tstring.findspots) )
+			// 	fragment.appendChild(
+			// 		self.hoards_and_findspots(item, "findspots")
+			// 	)
+			// }
+
+		// hoards - hoards_and_findspots - (tesoros) list
+			// if (item.ref_coins_hoard_data && item.ref_coins_hoard_data.length>0) {
+			// 	fragment.appendChild( self.label(item, tstring.hoards) )
+			// 	fragment.appendChild(
+			// 		self.hoards_and_findspots(item, "hoards")
+			// 	)
+			// }
+
+		// mix hoards and findspots
+			if ( (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) ||  
+				 (item.ref_coins_hoard_data && item.ref_coins_hoard_data.length>0)
+				) {
+				const label = tstring.findspots + "/" + tstring.hoards
+				fragment.appendChild( self.label(item, label) )
 				fragment.appendChild(
-					self.hoards_and_findspots(item, "findspots")
+					self.hoards_and_findspots(item, label)
 				)
 			}
+
 
 		// row_wrapper
 			const row_wrapper = common.create_dom_element({

@@ -17,6 +17,7 @@
 	# css
 		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/css/main.css';
 		#page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/bootstrap/css/bootstrap.min.css';
+		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css';
 		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/css/page.css';
 		#page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/menu/css/menu.css';
 

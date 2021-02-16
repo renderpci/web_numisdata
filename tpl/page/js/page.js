@@ -23,14 +23,16 @@ var page = {
 					name	: "DARE",
 					// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
 					url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
-					options	: { maxZoom: 11 },
+					options	: {
+						maxZoom: 11
+					},
 					default	: true
 				},
 				{
 					name	: "OSM",
 					url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 					options	: {
-						maxZoom	: 19,
+						maxZoom	: 19
 					}
 				},
 				{
@@ -39,7 +41,7 @@ var page = {
 					url		: 'https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}@2x.png?key=udlBrEEE2SPm1In5dCNb', // 256 ok
 					// url	: 'https://api.maptiler.com/maps/9512807c-ffd5-4ee0-9781-c354711d15e5/style.json?key=udlBrEEE2SPm1In5dCNb', // vector grey
 					options	: {
-						maxZoom	: 20,
+						maxZoom	: 20
 					}
 				},
 				{

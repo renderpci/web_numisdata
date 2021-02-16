@@ -10,7 +10,7 @@ function map_factory() {
 	// vars
 		// target. DOM element where map is placed
 			this.target	= null
-		
+
 		// data. Database parsed rows data to create the map
 			this.data = null
 
@@ -54,11 +54,11 @@ function map_factory() {
 			]
 
 		// icon_main (default icon properties)
-			this.icon_main = null // set on parse			
+			this.icon_main = null // set on parse
 
 		// popup_options
 			this.popup_options
-	
+
 
 
 	/**
@@ -115,8 +115,8 @@ function map_factory() {
 			self.popup_builder	= popup_builder
 			self.popup_options	= popup_options
 			self.icon_main		= icon_main
-		
-	
+
+
 		return self.render_base_map()
 	}//end init
 
@@ -126,25 +126,26 @@ function map_factory() {
 	* RENDER_BASE_MAP
 	*/
 	this.render_base_map = function() {
-		
-		const self = this
 
+		const self = this
 
 		return new Promise(function(resolve){
 
 			// reset map if already exists instance
 				if (self.map) {
+					// resolve(resolve(self.map))
+					// return
 					self.map.off(); // clear All Event Listeners
 					self.map.remove();	// remove map
-				}	
-			
+				}
+
 			// map position
-				const map_position	= self.map_position	
+				const map_position	= self.map_position
 				const map_x			= parseFloat(map_position.lat)
 				const map_y			= parseFloat(map_position.lon)
 				const map_zoom		= parseInt(map_position.zoom)
-				const map_alt		= parseInt(map_position.alt)					
-			
+				const map_alt		= parseInt(map_position.alt)
+
 			// reset map vars
 				self.map				= null
 				self.layer_control		= false
@@ -155,30 +156,30 @@ function map_factory() {
 				self.current_layer		= null
 				self.current_group		= null
 				self.option_selected	= null
-					
-			// layer. Add layer to map 
+
+			// layer. Add layer to map
 				let default_layer	= null
 				const base_maps		= {} // layer selector
-				for (let i = 0; i < self.source_maps.length; i++) {		
+				for (let i = 0; i < self.source_maps.length; i++) {
 
 					const source_map	= self.source_maps[i]
 					const layer			= new L.TileLayer(source_map.url, source_map.options)
-					
+
 					base_maps[source_map.name] = layer
 
 					if (i===0 || source_map.default===true) {
 						default_layer = layer
 					}
 				}
-				
+
 			// map
 				self.map = new L.map(self.map_container, {layers: [default_layer], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
 
-			// layer selector			
+			// layer selector
 				self.layer_control = L.control.layers(base_maps).addTo(self.map);
-			
+
 			// disable zoom handlers
-				self.map.scrollWheelZoom.disable();			
+				self.map.scrollWheelZoom.disable();
 
 			// popupOptions
 				self.popupOptions =	self.popup_options
@@ -187,7 +188,7 @@ function map_factory() {
 				// target. DOM element where map is placed
 				// self.target = target
 				// data. Preparsed data from rows. Contains items with properties 'lat', 'lon', and 'data' like [{lat: lat, lon: lon, data: []}]
-			
+
 			// init map library
 				// self.init({
 				// 	source_maps		: source_maps,
@@ -217,8 +218,8 @@ function map_factory() {
 				if (self.current_group) {
 					// Reset points
 					self.current_group.clearLayers();
-				}		
-		
+				}
+
 			// no data check cases
 				if (!data || data.length<1) {
 					// self.reset_map()
@@ -252,15 +253,15 @@ function map_factory() {
 					// 			var current_tipo_section_id = element.tipo_section_id
 
 					// 			var popup_content = self.build_popup_content(element);
-			
+
 					// 			if(caller_mode==="load_hallazgos" || caller_mode==="load_culturas" || caller_mode==="load_epocas"){
 					// 				var marker_icon = self.icon_finds // green
 					// 			}else{
 					// 				var marker_icon = self.icon_main // Default
 					// 			}
-					
+
 					// 			// Marker set popup and click event
-					// 			var marker = L.marker([lat, lon], {icon: marker_icon}).bindPopup(popup_content)						
+					// 			var marker = L.marker([lat, lon], {icon: marker_icon}).bindPopup(popup_content)
 					// 				marker.on('click', function(e) {
 					// 					self.show_tipos({
 					// 						tipo_section_id : current_tipo_section_id,
@@ -273,31 +274,31 @@ function map_factory() {
 					// 	});//end current_place.layer_data.forEach(function(layer_data)
 					// }
 
-				// const marker_icon = element.marker_icon || self.icon_main						
+				// const marker_icon = element.marker_icon || self.icon_main
 				const marker_icon = element.marker_icon
 					? L.icon(element.marker_icon)
 					: self.icon_main // already parsed on init
 
-				const popup_content	= self.popup_builder(element)					
+				const popup_content	= self.popup_builder(element)
 
 				const popup = L.popup(self.popupOptions)
 						.setLatLng([element.lat, element.lon])
 						.setContent(popup_content)
-						// .openOn(self.map);	// auto open first marker		
-				
+						// .openOn(self.map);	// auto open first marker
+
 				// marker. Set popup and click event
-				const marker = L.marker([element.lat, element.lon], {icon: marker_icon}).bindPopup(popup) //.openPopup();		
+				const marker = L.marker([element.lat, element.lon], {icon: marker_icon}).bindPopup(popup) //.openPopup();
 					  marker.on('click', function(e) {
 						// event publish map_selected_marker
 						event_manager.publish('map_selected_marker', {
 							item	: element,
 							event	: e
-						})			
-					})						
+						})
+					})
 				ar_markers.push(marker)
 			}
-			// console.log("ar_markers:",ar_markers);	
-			
+			// console.log("ar_markers:",ar_markers);
+
 			// group . Create a layer group and add to map
 				self.current_group = L.layerGroup(ar_markers)
 				self.current_group.addTo(self.map)
@@ -308,9 +309,9 @@ function map_factory() {
 					if (feature_group) {
 						self.map.fitBounds(feature_group.getBounds())
 					}
-				}	
-		
-	
+				}
+
+
 			resolve(self.map_container)
 		})
 	}//end parse_data_to_map
@@ -320,17 +321,17 @@ function map_factory() {
 	/**
 	* GROUP_BY_PLACE
 	* Group results rows by property 'lugar' (place)
-	*/	
+	*/
 	this.group_by_place = function(data) {
 
 		const group_data = []
 
 		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
-			
+
 			const item				= data[i]
 			const group_data_item	= group_data.find(el => el.lat===item.lat && el.lon===item.lon)
-			
+
 			if (group_data_item) {
 				// already exists
 				group_data_item.group.push(item.data)
@@ -356,7 +357,7 @@ function map_factory() {
 		// 	const lugar				= element.lugar
 		// 	const nombre			= element.nombre
 		// 	const tipo_section_id	= element.tipo_section_id
-	
+
 		// 	delete element.nombre // Remove unused property
 
 		// 	const group_obj = {
@@ -366,12 +367,12 @@ function map_factory() {
 
 		// 	const ar_filter = ar_data.filter(current_element => current_element.lugar === lugar);
 		// 	if (ar_filter.length>0) {
-				
+
 		// 		// Add to group
 		// 		ar_filter[0].group.push(group_obj)
 		// 		// Merge same lugar tipo_section_id
 		// 		ar_filter[0].tipo_section_id = ar_filter[0].tipo_section_id.concat(tipo_section_id)
-			
+
 		// 	}else{
 
 		// 		element.group = []
@@ -394,7 +395,7 @@ function map_factory() {
 	this.build_popup_content = function(data) {
 
 		console.log("(!) Using default build_popup_content function:", data);
-		
+
 		const self = this
 
 		const popup_wrapper = common.create_dom_element({
@@ -412,14 +413,14 @@ function map_factory() {
 
 		const ar_group_length = ar_group.length
 		for (let i = 0; i < ar_group_length; i++) {
-			
+
 			var nombre = ar_group[i].nombre
 				nombre = nombre.replace(',', ', ') // Add space between names separated with comma
 
 			var tipo_section_id = ar_group[i].tipo_section_id
 
 			var current_element_type = "a"
-			
+
 			var title = common.create_dom_element({
 				element_type 	: current_element_type,
 				parent 			: popup_wrapper,
@@ -429,7 +430,7 @@ function map_factory() {
 					nombre 			: nombre
 				}
 			})
-			title.addEventListener("click",function(e){				
+			title.addEventListener("click",function(e){
 				var tipos = JSON.parse(e.target.dataset.tipo_section_id)
 				self.show_tipos({
 					tipo_section_id : tipos,
@@ -437,7 +438,7 @@ function map_factory() {
 				})
 			})
 		}
-		
+
 
 		// Ceca label
 		if (data.type_label) {
@@ -446,7 +447,7 @@ function map_factory() {
 				parent 			: popup_wrapper,
 				text_content 	: data.type_label
 			})
-		}		
+		}
 
 		return popup_wrapper
 	}//end build_popup_content
@@ -461,7 +462,7 @@ function map_factory() {
 		const self = this
 
 		const map_data = self.initial_map_data
-		
+
 		//self.map.panTo(new L.LatLng(map_data.x, map_data.y))
 		//self.map.setZoom(map_data.zoom)
 

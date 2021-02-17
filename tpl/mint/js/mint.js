@@ -610,7 +610,7 @@ var mint =  {
 						class_name		: "section_id go_to_dedalo",
 						text_content	: row_object.section_id,
 						href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-						parent			: row_line
+						parent			: fragment
 					})
 					link.setAttribute('target', '_blank');
 				}

@@ -343,6 +343,21 @@ function form_factory() {
 
 
 	/**
+	* SET_INPUT_VALUE
+	* Set a q value to a form item
+	*/
+	this.set_input_value = function(form_item, value) {
+				
+		// add value
+			form_item.node_input.value	= value
+			form_item.q					= value
+
+		return true
+	}//end set_input_value
+
+
+
+	/**
 	* BUILD_FILTER
 	* Creates a complete sqo filter using form items values
 	*/

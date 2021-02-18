@@ -184,7 +184,7 @@ var row_fields = {
 			// }
 
 		// mix hoards and findspots
-			if ( (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) ||  
+			if ( (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) ||
 				 (item.ref_coins_hoard_data && item.ref_coins_hoard_data.length>0)
 				) {
 				const label = tstring.findspots + "/" + tstring.hoards
@@ -852,9 +852,10 @@ var row_fields = {
 				function draw_auction(data, parent, class_name, prepend) {
 
 					//label
-					const auctionLabel = "<b>"+(tstring.auction || "Auction")+ "</b>: "
-					const numberLabel = " <b>"+(tstring.number || "Number")+ "</b>: "
-					const dateLabel = " <b>"+(tstring.date || "Date")+ "</b>: "
+					// const auctionLabel = "<b>"+(tstring.auction || "Auction")+ "</b>: "
+					// const numberLabel = " <b>"+(tstring.number || "Number")+ "</b>: "
+					// const dateLabel = " <b>"+(tstring.date || "Date")+ "</b>: "
+
 
 					if (data.name.length<1) return
 					// line
@@ -868,7 +869,7 @@ var row_fields = {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
-								inner_html		: prepend + auctionLabel + data.name,
+								inner_html		: prepend + " " + data.name,
 								parent			: line
 							})
 						}
@@ -877,7 +878,7 @@ var row_fields = {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
-								inner_html		: dateLabel + data.date,
+								inner_html		: " " + data.date,
 								parent			: line
 							})
 						}
@@ -886,7 +887,7 @@ var row_fields = {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
-								inner_html		: numberLabel+(tstring.n || "nº") +" "+ data.number,
+								inner_html		: " "+(tstring.n || "nº") +" "+ data.number,
 								parent			: line
 							})
 						}

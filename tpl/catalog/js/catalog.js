@@ -870,7 +870,7 @@ var catalog =  {
 	/**
 	* ACTIVATE_AUTOCOMPLETE
 	*/
-	activate_autocomplete : function(form_item) {		
+	activate_autocomplete : function(form_item) {
 
 		const self = this
 
@@ -883,7 +883,6 @@ var catalog =  {
 			// // define current_form_item in this scope 
 			// // to allow acces from different places
 			// let current_form_item
-
 
 			// /*
 			//  * jQuery UI Autocomplete HTML Extension
@@ -943,7 +942,7 @@ var catalog =  {
 
 
 			// const cache = {}
-			// $(element).autocomplete({
+			// $(form_item.node_input).autocomplete({
 			// 	delay		: 150,
 			// 	minLength	: 0,
 			// 	html		: true,
@@ -951,10 +950,9 @@ var catalog =  {
 					
 			// 		const term = request.term
 					
-			// 		// fix selected form_item (needed to access from select)
 			// 		// current_form_item = self.form_items[element.id]
 			// 		// (!) fix selected form_item (needed to access from select)
-			// 		current_form_item = self.form.form_items[element.id]
+			// 		current_form_item = self.form.form_items[form_item.node_input.id]
 
 			// 		const field		= current_form_item.q_name // Like 'mint'
 			// 		const q_column	= current_form_item.q_column // Like 'term'
@@ -1492,7 +1490,7 @@ var catalog =  {
 			if(SHOW_DEBUG===true) {
 				console.log("--- search_rows parsed sql_filter:")
 				console.log(sql_filter)
-			}		
+			}
 		
 		const js_promise = data_manager.request({
 			body : {

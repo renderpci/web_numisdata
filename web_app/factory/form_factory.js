@@ -1042,6 +1042,7 @@ function form_factory() {
 		// sql_filter
 			const sql_filter = self.parse_sql_filter(filter)
 
+
 		return sql_filter
 	}//end form_to_sql_filter
 

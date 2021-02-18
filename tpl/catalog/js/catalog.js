@@ -181,21 +181,19 @@ var catalog =  {
 			// })
 
 		// form
-			const form = self.render_form()		
-			container.appendChild(form)
+			const form_node = self.render_form()		
+			container.appendChild(form_node)
 			
 		// first search
 			if (options.global_search && options.global_search.length>1) {
 
-				// global_search string param is received case (via url as ../catalog/my_search_string)
-				const input_global_search = document.getElementById("global_search") // this input is in DOm but hidden by default
-				if (input_global_search) {
-					input_global_search.value = options.global_search
-					// fire change event on input
-					event_manager.fire_event(input_global_search, 'change')
-					// submit form
-					self.form_submit(form)
-				}							
+				const value = decodeURI(options.global_search)
+
+				// set value
+				self.form.set_input_value(self.form.form_items.global_search, value)
+
+				// submit form
+				self.form_submit(form_node)
 			
 			}else if(options.item_type.length>1){
 
@@ -203,9 +201,11 @@ var catalog =  {
 				// console.log("options.label", options.label);
 				// console.log("options.value", options.value);
 
-				// self.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
-				self.form.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
-				self.form_submit(form)
+				// add value as user selected
+				self.form.add_selected_value(self.form.form_items[options.item_type], options.label, options.value)
+				
+				// submit form
+				self.form_submit(form_node)
 
 				// exec first default auto search without params
 					// self.search_rows({
@@ -1539,9 +1539,28 @@ var catalog =  {
 
 			// container select and clean container div
 				const container = document.getElementById(target)
-				// while (container.hasChildNodes()) {
-				// 	container.removeChild(container.lastChild);
-				// }
+
+			// no_results_found check
+				const ar_rows_length = ar_rows.length
+				if (ar_rows_length<1) {
+
+					while (container.hasChildNodes()) {
+						container.removeChild(container.lastChild);
+					}
+					
+					const node_no_results_found = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: "no_results_found",
+						inner_html		: tstring.no_results_found || "No results found",
+						parent			: container
+					})
+
+					// scrool to head again
+						window.scrollTo(0, 0);					
+
+					resolve(container)
+					return false
+				}
 
 			// add_spinner
 				// page.add_spinner(container)

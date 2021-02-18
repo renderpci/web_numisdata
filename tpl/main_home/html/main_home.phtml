@@ -25,10 +25,7 @@
 				<div class="inner">
 					<h1><?php echo $title ?></h1>
 					
-					<?php /*<span class="image main"><img src="<?php echo __WEB_TEMPLATE_WEB__ ?>/assets/images/home2.jpg" alt="" /></span>*/ ?>
-
-					<!-- tiles -->
-				
+					<div id="form_container"></div>				
 
 					<!-- body text -->
 					<p><?php echo $body ?></p>
@@ -68,6 +65,8 @@
 <?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 dom_ready(function(){
-	console.log("main_home loaded!");
+	main_home.set_up({
+		form_container : document.getElementById('form_container')
+	})
 })
 </script>

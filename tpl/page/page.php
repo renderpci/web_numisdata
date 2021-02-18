@@ -24,7 +24,7 @@
 
 	# js
 		// app_utils . web application useful es6 modules compatible with old browsers (Configure CodeKit to ES6 Bundle IIFE)
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app_utils-min.js';
+		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app_utils-min.js';
 		
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/browser.min.js';
@@ -34,7 +34,10 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.poptrox.min.js';
 
 		
-		page::$js_ar_url[] = __WEB_ROOT_WEB__  	  . '/' . WEB_APP_DIR . '/common/js/common'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/biblio_row_fields.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app-min.js';
 
 

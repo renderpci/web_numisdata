@@ -266,6 +266,7 @@ function form_factory() {
 
 	/**
 	* ADD_SELECTED_VALUE
+	* Add value as user selection creating a line with trash icon and so on
 	*/
 	this.add_selected_value = function(form_item, label, value) {
 		
@@ -290,7 +291,8 @@ function form_factory() {
 			// awesome font 5 <i class="far fa-trash-alt"></i>
 			const trash = common.create_dom_element({
 				element_type	: "i",
-				class_name		: "icon remove fal far fa-trash-alt", //  fa-trash awesome font 4
+				// class_name	: "icon remove fal far fa-trash-alt", //  fa-trash awesome font 4
+				class_name		: "icon fa-trash", //awesome font 4
 				parent			: line
 			})
 			trash.addEventListener("click",function(){
@@ -520,73 +522,73 @@ function form_factory() {
 	/**
 	* ADD_SELECTED_VALUE
 	*/
-	this.add_selected_value = function(form_item, label, value) {
-		const container = form_item.node_values
+		// this.add_selected_value = function(form_item, label, value) {
+		// 	const container = form_item.node_values
 
-		// Check if already exists
-			const inputs 		= container.querySelectorAll(".input_values")
-			const inputs_length = inputs.length
-			for (let i = inputs_length - 1; i >= 0; i--) {
-				if (value===inputs[i].value) return false;
-			}
+		// 	// Check if already exists
+		// 		const inputs 		= container.querySelectorAll(".input_values")
+		// 		const inputs_length = inputs.length
+		// 		for (let i = inputs_length - 1; i >= 0; i--) {
+		// 			if (value===inputs[i].value) return false;
+		// 		}
 
-		// Create new line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name   	: "line_value",
-				parent 			: container
-			})
+		// 	// Create new line
+		// 		const line = common.create_dom_element({
+		// 			element_type 	: "div",
+		// 			class_name   	: "line_value",
+		// 			parent 			: container
+		// 		})
 
-		// trash. <i class="fal fa-trash-alt"></i>
-			const trash = common.create_dom_element({
-				element_type 	: "i",
-				class_name   	: "icon fa-trash", //awesome font 4
-				parent 			: line
-			})
-			trash.addEventListener("click",function(){
+		// 	// trash. <i class="fal fa-trash-alt"></i>
+		// 		const trash = common.create_dom_element({
+		// 			element_type 	: "i",
+		// 			class_name   	: "icon fa-trash", //awesome font 4
+		// 			parent 			: line
+		// 		})
+		// 		trash.addEventListener("click",function(){
 
-				// remove from form_item q_selected
-				const index = form_item.q_selected.indexOf(value);
-				if (index > -1) {
-					// remove array element
-					form_item.q_selected.splice(index, 1);
-					
-					// remove dom node
-					this.parentNode.remove()
+		// 			// remove from form_item q_selected
+		// 			const index = form_item.q_selected.indexOf(value);
+		// 			if (index > -1) {
+		// 				// remove array element
+		// 				form_item.q_selected.splice(index, 1);
+						
+		// 				// remove dom node
+		// 				this.parentNode.remove()
 
-					// debug
-					if(SHOW_DEBUG===true) {
-						console.log("form_item.q_selected removed value:",value,form_item.q_selected);
-					}
-				}			
-			})
+		// 				// debug
+		// 				if(SHOW_DEBUG===true) {
+		// 					console.log("form_item.q_selected removed value:",value,form_item.q_selected);
+		// 				}
+		// 			}			
+		// 		})
 
-		// label 
-			const value_label = common.create_dom_element({
-				element_type	: "span",
-				class_name		: "value_label",
-				inner_html		: label,
-				parent			: line
-			})
+		// 	// label 
+		// 		const value_label = common.create_dom_element({
+		// 			element_type	: "span",
+		// 			class_name		: "value_label",
+		// 			inner_html		: label,
+		// 			parent			: line
+		// 		})
 
-		// input 
-			const input = common.create_dom_element({
-				element_type	: "input",
-				class_name		: "input_values",
-				parent			: line
-			})
-			input.value = value
+		// 	// input 
+		// 		const input = common.create_dom_element({
+		// 			element_type	: "input",
+		// 			class_name		: "input_values",
+		// 			parent			: line
+		// 		})
+		// 		input.value = value
 
-		// add to form_item
-			form_item.q_selected.push(value)
+		// 	// add to form_item
+		// 		form_item.q_selected.push(value)
 
-		// clean values
-			form_item.node_input.value 	= ""
-			form_item.q 				= ""
+		// 	// clean values
+		// 		form_item.node_input.value 	= ""
+		// 		form_item.q 				= ""
 
 
-		return true
-	}//end add_selected_value
+		// 	return true
+		// }//end add_selected_value
 
 
 
@@ -1035,7 +1037,10 @@ function form_factory() {
 			}
 
 		// operators value
-			const operators_value = form_node.querySelector('input[name="operators"]:checked').value;
+			const input_operators = form_node.querySelector('input[name="operators"]')
+			const operators_value = input_operators
+				? form_node.querySelector('input[name="operators"]:checked').value
+				: "AND";
 			
 			const filter = {}
 				  filter[operators_value] = ar_query_elements

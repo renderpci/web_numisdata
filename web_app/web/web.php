@@ -29,10 +29,10 @@
 
 // area_name . web_path 
 	$area_name = trim($_GET['area_name'],'/');
-	if (common::validate_area_name($area_name)===false) {
-		http_response_code(404);
-		die("Ops.. Invalid area!");
-	}
+	// if (common::validate_area_name($area_name)===false) {
+	// 	http_response_code(404);
+	// 	die("Ops.. Invalid area!");
+	// }
 	$ar_parts 	= explode('/', $area_name);
 	$ar_len 	= count($ar_parts);
 

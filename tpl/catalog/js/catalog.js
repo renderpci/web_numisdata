@@ -199,9 +199,9 @@ var catalog =  {
 			
 			}else if(options.item_type.length>1){
 
-				console.log(options.item_type);
-				console.log(options.label);
-				console.log(options.value);
+				// console.log("options.item_type", options.item_type);
+				// console.log("options.label", options.label);
+				// console.log("options.value", options.value);
 
 				// self.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
 				self.form.add_selected_value(self.form.form_items[options.item_type],options.label,options.value)
@@ -1204,18 +1204,15 @@ var catalog =  {
 
 		// spinner add
 			page.add_spinner(div_result)
-		
-				
+						
 		// ar_is_term
 			const ar_is_term = []
 			for (let [id, form_item] of Object.entries(form_items)) {
 				if (form_item.is_term===true) ar_is_term.push(form_item)
-			}	
-
+			}
+		
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
-
-			// console.log("form_item:",form_item);
 			
 			const current_group = []
 
@@ -1379,11 +1376,16 @@ var catalog =  {
 					console.log("--- form_submit response:",response)
 				// }
 
+				// scrool to head result
+					// if (response.result.length>0 && div_result) {
+					// 	div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+					// }
+
 				// data parsed
 					const data = page.parse_catalog_data(response.result)
 	
 				// draw
-					setTimeout(()=>{
+					// setTimeout(()=>{
 
 						// clean container_rows_list and add_spinner
 							while (container_rows_list.hasChildNodes()) {
@@ -1393,21 +1395,22 @@ var catalog =  {
 							// page.add_spinner(container_rows_list)
 							page.remove_spinner(div_result)
 
-						self.draw_rows({
-							target  : 'rows_list',
-							ar_rows : data
-						})
-						.then(function(){
-							// // scrool to head result
-							// 	if (response.result.length>0) {
-							// 		const div_result = document.querySelector(".result")
-							// 		if (div_result) {
-							// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-							// 		}
-							// 	}
-						})
-					}, self.draw_delay) // self.draw_delay
-				
+						// draw rows
+							self.draw_rows({
+								target  : 'rows_list',
+								ar_rows : data
+							})
+							.then(function(){
+								// // scrool to head result
+								// 	if (response.result.length>0) {
+								// 		const div_result = document.querySelector(".result")
+								// 		if (div_result) {
+								// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+								// 		}
+								// 	}
+							})
+
+					// }, self.draw_delay) // self.draw_delay				
 			})		
 
 
@@ -1525,14 +1528,14 @@ var catalog =  {
 
 		return new Promise(function(resolve){		
 
-			const target 		 = options.target
-			const ar_rows 		 = options.ar_rows || []
-			const ar_rows_length = ar_rows.length
-
-			const total  		 = self.search_options.total
-			const limit  		 = self.search_options.limit
-			const offset 		 = self.search_options.offset
-
+			// options
+				const target	= options.target
+				const ar_rows	= options.ar_rows || []
+			
+			// pagination vars
+				const total		= self.search_options.total
+				const limit		= self.search_options.limit
+				const offset	= self.search_options.offset
 
 			// container select and clean container div
 				const container = document.getElementById(target)

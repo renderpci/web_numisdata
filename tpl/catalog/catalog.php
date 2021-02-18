@@ -33,7 +33,7 @@
 				
 		// global_search (is inside get var 'area_name' as '/min/36')
 			$global_search = !empty($ar_parts[1]) ? $ar_parts[1] : null;
-			//dump($global_search);
+			// dump($global_search);
 		}
 
 	// page basic vars

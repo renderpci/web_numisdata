@@ -17,7 +17,8 @@
 	# css
 		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/css/main.css';
 		#page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/bootstrap/css/bootstrap.min.css';
-		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css';
+		// page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css';
+		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.css';
 		page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/css/page.css';
 		#page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/menu/css/menu.css';
 
@@ -27,6 +28,7 @@
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app_utils-min.js';
 		
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.min.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/browser.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/breakpoints.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/util.js';

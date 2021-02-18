@@ -4,8 +4,8 @@
 
 var biblio =  {
 
-	trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/biblio/trigger.biblio.php",
-	search_options 	: null,
+	trigger_url		: page_globals.__WEB_TEMPLATE_WEB__ + "/biblio/trigger.biblio.php",
+	search_options	: null,
 
 
 
@@ -48,8 +48,8 @@ var biblio =  {
 		}else if (typeof biblio_section_id!=="undefined") {
 
 			// Defined in html file	
-				var ar_query 	= []
-				var current_obj = {
+				const ar_query		= []
+				const current_obj	= {
 						name 		: "section_id", // input.name,
 						value 		: biblio_section_id,
 						search_mode : "string",
@@ -57,6 +57,7 @@ var biblio =  {
 					}
 					ar_query.push(current_obj)
 
+			// exec search with params
 				self.search_rows({
 					ar_query : ar_query,
 					limit 	 : 1
@@ -77,44 +78,48 @@ var biblio =  {
 		const container = document.getElementById(object.id + "_values")
 
 		// Check if already exists 
-			const inputs 		= container.querySelectorAll(".input_values")
-			const inputs_length = inputs.length
-			for (var i = inputs_length - 1; i >= 0; i--) {
+			const inputs		= container.querySelectorAll(".input_values")
+			const inputs_length	= inputs.length
+			for (let i = inputs_length - 1; i >= 0; i--) {
 				if (value===inputs[i].value) return false;
 			}
 
 		// Create new line 
 			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name   	: "line_value",
-				parent 			: container
-				})
-				// <i class="fal fa-trash-alt"></i>
-				var trash = common.create_dom_element({
-					element_type 	: "i",
-					//class_name   	: "far fa-trash-alt", // awesome font 5
-					class_name   	: "icon fa-trash", //awesome font 4
-					parent 			: line
-					})
-					trash.addEventListener("click",function(){
-						this.parentNode.remove()
-					})
+				element_type	: "div",
+				class_name		: "line_value",
+				parent			: container
+			})
 
+			// trash icon. <i class="fal fa-trash-alt"></i>
+				const trash = common.create_dom_element({
+					element_type	: "i",
+					//class_name	: "far fa-trash-alt", // awesome font 5
+					class_name		: "icon fa-trash", //awesome font 4
+					parent			: line
+				})
+				trash.addEventListener("click",function(){
+					this.parentNode.remove()
+				})
+
+			// des
 				// if (object.dataset.q_name.indexOf(' AS ')!==-1) {
 				// 	const ar_parts = object.dataset.q_name.split(' AS ')
 				// 	// overwrite q_name fro input value
 				// 	object.dataset.q_name = ar_parts[1]
-				// 	// use real_value					
+				// 	// use real_value
 				// 	object.dataset.real_value = real_value[0]
 				// }
 
-				var input = common.create_dom_element({
-					element_type 	: "input",
-					class_name   	: "input_values",
-					parent 			: line,
-					data_set 		: object.dataset // Inherit dataset
+			// input
+				const input = common.create_dom_element({
+					element_type	: "input",
+					class_name		: "input_values",
+					parent			: line,
+					data_set		: object.dataset // Inherit dataset
 				})
 				input.value = value
+		
 
 		return true
 	},//end set_value
@@ -125,14 +130,15 @@ var biblio =  {
 	* ACTIVATE_AUTOCOMPLETE
 	*/
 	activate_autocomplete : function(element) {
-	
+		
 		const self = this
+
 
 		// const cache = {}
 		$(element).autocomplete({
-			delay 	 : 150,
-			minLength: 0,
-			source 	 : function( request, response ) {
+			delay		: 150,
+			minLength	: 0,
+			source		: function( request, response ) {
 				
 				const term  = request.term;
 
@@ -146,10 +152,10 @@ var biblio =  {
 				const trigger_vars = {
 						q				: term,
 						mode			: element.dataset.mode,
-						q_name  		: element.dataset.q_name || null,
-						q_search  		: element.dataset.q_search || element.dataset.q_name,
-						q_table 		: element.dataset.q_table || null,						
-						dd_relations 	: element.dataset.dd_relations || null 
+						q_name			: element.dataset.q_name || null,
+						q_search		: element.dataset.q_search || element.dataset.q_name,
+						q_table			: element.dataset.q_table || null,
+						dd_relations	: element.dataset.dd_relations || null 
 				}
 				if(SHOW_DEBUG===true) {
 					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars);
@@ -167,11 +173,11 @@ var biblio =  {
 						})
 						: response_data.result
 
-					response(result)					
+					response(result)
 
 				}, function(error) {
 					console.error("[activate_autocomplete] Failed get_json!", error);
-				});				
+				});
 			},
 			// When a option is selected in list
 			select: function( event, ui ) {
@@ -187,7 +193,7 @@ var biblio =  {
 		          // add placeholder to get the comma-and-space at the end
 		          terms.push( "" );
 		          this.value = terms.join( ", " );
-		          return false; */						
+		          return false; */
 				self.set_value(this, ui.item.label, ui.item.value)
 				this.value = ''
 				//this.value = ui.item.label
@@ -200,15 +206,15 @@ var biblio =  {
 				// prevent value inserted on focus
 				return false;
 			},
-	        close: function( event, ui ) {
-	        	
-	        },        
-			change: function( event, ui ) {				
+			close: function( event, ui ) {
+				
+			},
+			change: function( event, ui ) {
 
 			},
 			response: function( event, ui ) {
 				//console.log(ui);
-			}			
+			}
 		})
 		.on("keydown", function( event ) {
 			//return false
@@ -224,7 +230,7 @@ var biblio =  {
 		    $(this).autocomplete('search', null)
 		})
 		.blur(function() {	
-		    //$(element).autocomplete('close');
+			//$(element).autocomplete('close');
 		})
 
 

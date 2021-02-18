@@ -725,10 +725,10 @@ function form_factory() {
 						}
 						final_label = ar_clean.join(' | ') // overwrite
 
-					return $( "<li></li>" )
+					return $( "<li class=\"ui-menu-item\"></li>" )
 						.data( "item.autocomplete", item )
 						//.append( $( "<a></a>" )[ this.options.html ? "html" : "text" ]( item.label ) )
-						.append( $( "<div></div>" )[ this.options.html ? "html" : "text" ]( final_label ) )
+						.append( $( "<div class=\"ui-menu-item-wrapper\"></div>" )[ this.options.html ? "html" : "text" ]( final_label ) )
 						.appendTo( ul );
 				}
 			});
@@ -1018,7 +1018,7 @@ function form_factory() {
 
 			if (group[group_op].length>0) {
 				ar_query_elements.push(group)
-			}			
+			}
 		}
 
 		// debug
@@ -1028,7 +1028,7 @@ function form_factory() {
 			}
 
 		// empty form case
-			if (ar_query_elements.length<1) {				
+			if (ar_query_elements.length<1) {
 				return new Promise(function(resolve){
 					resolve(false)
 				})

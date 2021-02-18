@@ -833,6 +833,7 @@ function form_factory() {
 								table		: table,
 								ar_fields	: [q_column + " AS name"],
 								sql_filter	: sql_filter,
+								group		: q_column,
 								limit		: limit,
 								order		: order
 							}

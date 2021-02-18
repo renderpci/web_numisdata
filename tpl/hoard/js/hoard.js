@@ -181,6 +181,7 @@ var hoard =  {
 	},//end draw_map
 
 
+
 	/**
 	* MAP_DATA
 	* @return array data
@@ -202,7 +203,11 @@ var hoard =  {
 				lat			: ar_data[i].lat,
 				lon			: ar_data[i].lon,
 				marker_icon	: page.maps_config.markers.hoard,
-				data		: {}
+				data		: {
+					section_id	: null,
+					title		: '',
+					description	: ''
+				}
 			}
 			data_clean.push(item)
 		}

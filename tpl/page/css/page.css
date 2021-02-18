@@ -143,6 +143,109 @@ form {
   text-align: right;
   margin-right: -2.5em;
 }
+/**
+* FORM
+* Common forms css across all site.
+* Use the specific template to override or add specific features
+*/
+.map {
+  position: relative;
+  height: 75vh;
+  font-size: 1rem;
+  margin-bottom: 3em;
+  background-color: #b1c9e2;
+  border-top: 1px solid #dcdcdc;
+  border-bottom: 1px solid #dcdcdc;
+  transition: opacity 0.5s ease-in-out 0.5s;
+}
+.map .map_legend {
+  z-index: 999;
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background-color: rgb(255 255 255 / 72%);
+  padding: 0.25em;
+  padding-bottom: 0;
+  display: flex;
+}
+.map .map_legend .legend_item {
+  display: inline-block;
+  font-size: 0.95em;
+  margin-right: 0.5em;
+}
+.map .map_legend .legend_item img {
+  height: 1em;
+}
+.map .leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+.map .leaflet-container > .map_container {
+  height: 100%;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content {
+  max-height: calc(75vh - 8em);
+  overflow-y: auto;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 0.25em;
+  z-index: 9999999;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper > div.popup_item {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-items: start;
+  align-content: start;
+  text-align: center;
+  width: 12em;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper > div.popup_item > div.image_wrapper {
+  height: 7.5em;
+  cursor: pointer;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper > div.popup_item > div.image_wrapper:active {
+  opacity: 0.5;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper > div.popup_item > div.image_wrapper > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper > div.popup_item > div.image_wrapper > img.loaded {
+  opacity: 1;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper > div.popup_item > div.text_title {
+  display: block;
+  position: relative;
+  height: 100%;
+  min-height: 56px;
+  width: 100%;
+  padding: 0.5em;
+  font-size: 15px;
+  cursor: default;
+}
+.map .leaflet-container .leaflet-popup--XXXX > .leaflet-popup-content-wrapper > .leaflet-popup-content > .popup_wrapper .more_node {
+  margin-top: 0.5em;
+}
+.map .leaflet-container .mycluster {
+  background-color: #ffdf73;
+  text-align: center;
+  padding: 1em;
+  border-radius: 20px;
+  color: black;
+  font-weight: 600;
+  box-shadow: 3px 6px 6px 0px #ababab;
+}
 .pagination {
   display: flex;
   flex-wrap: wrap;
@@ -769,34 +872,6 @@ a.image_link img {
   width: 100%;
   flex-basis: 100%;
   display: inherit;
-}
-.map_container.leaflet-container {
-  position: relative;
-  height: 60vh;
-  font-size: 1rem;
-  margin-bottom: 3em;
-  background-color: #b1c9e2;
-  border-top: 1px solid #dcdcdc;
-  border-bottom: 1px solid #dcdcdc;
-  transition: opacity 0.5s ease-in-out 0.5s;
-}
-.map_container.leaflet-container .map_legend {
-  z-index: 999;
-  display: block;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  background-color: rgb(255 255 255 / 72%);
-  padding: 0.25em;
-  display: flex;
-}
-.map_container.leaflet-container .map_legend .legend_item {
-  display: inline-block;
-  font-size: 0.95em;
-  margin-right: 0.5em;
-}
-.map_container.leaflet-container .map_legend .legend_item img {
-  height: 1em;
 }
 .map_container.leaflet-container .leaflet-control-layers-toggle {
   background-image: url("../../assets/images/map/layers.png");

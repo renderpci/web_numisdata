@@ -678,12 +678,11 @@ var page = {
 
 		const build_pop_item = function(group_data){
 
-			const section_id	= group_data.section_id
-			// const table			= group_data.table
-			const title			= group_data.title || "Undefined title " + section_id
-			const description	= group_data.description
-			// const image_url		= group_data.identifying_images
-
+			// group_data vars
+				const section_id	= group_data.section_id
+				const title			= group_data.title || "Undefined title " + section_id
+				const description	= group_data.description
+				// const image_url	= group_data.identifying_images
 
 			// popup_item
 				const popup_item = common.create_dom_element({
@@ -743,7 +742,7 @@ var page = {
 				})
 
 			// tooltip descriptions
-				if (description && description.length>3) {
+				if (description && description.length>0) {
 					// page.add_tooltip({
 					// 	element : text_title,
 					// 	content : description

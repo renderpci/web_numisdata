@@ -10,7 +10,7 @@
 * @return object row | array rows
 */
 page.parse_type_data = function(data) {
-	console.log("------------> parse_type_data data:",data);
+	// console.log("------------> parse_type_data data:",data);
 
 	const self = this
 
@@ -439,6 +439,65 @@ page.parse_publication = function(data) {
 
 	return parsed_data
 }//end parse_publication
+
+
+
+/**
+* PARSE_MAP_GLOBAL_DATA
+* @param object row | array rows
+* @return object row | array rows
+*/
+page.parse_map_global_data = function(ar_rows) {
+
+	const self = this
+
+	const data = []
+
+	const ar_rows_length = ar_rows.length
+	for (let i = 0; i < ar_rows_length; i++) {
+		
+		const row = ar_rows[i]
+
+		const georef_geojson = (typeof row.georef_geojson==='string' || row.georef_geojson instanceof String)
+			? JSON.parse(row.georef_geojson)
+			: row.georef_geojson
+
+		if (georef_geojson && georef_geojson.length>0) {
+
+			const coins_list = JSON.parse(row.coins_list) || []
+
+			const item_data = {
+				section_id	: row.section_id,
+				title		: row.name,
+				description	: (tstring.coins || 'Coins') + ' ' + coins_list.length
+			}
+
+			const marker_icon = (function(table ) {
+				let name
+				switch(table){
+					case 'mints'	: name = 'mint';		break;
+					case 'hoards'	: name = 'hoard';		break;
+					case 'findspots': name = 'findspot';	break;
+				}
+				return page.maps_config.markers[name]
+			})(row.table);
+
+			const item = {
+				lat			: null,
+				lon			: null,
+				geojson		: georef_geojson,
+				marker_icon	: marker_icon,
+				data		: item_data
+			}
+
+			data.push(item)
+		}
+	}
+	console.log("parse_map_data data:",data);
+	
+
+	return data
+}//end parse_map_global_data
 
 
 

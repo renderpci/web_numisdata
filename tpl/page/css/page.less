@@ -10,9 +10,9 @@
 
 // import files
 	@import 'form.less';
+	@import 'map_common.less';
 	@import 'pagination.less';
 	@import 'poptrox.less';
-	// @import "@{assets_path}/lib/leaflet/leaflet.less"; // available for all
 
 
 // Usage library
@@ -648,34 +648,8 @@
 
 // map_container
 	.map_container.leaflet-container {
-		position: relative;
-		height: 60vh;
-		font-size: 1rem;
-		margin-bottom: 3em;
-		background-color: @blue_ocean;
-		border-top: 1px solid #dcdcdc;
-		border-bottom: 1px solid #dcdcdc;
-		transition: opacity 0.5s ease-in-out 0.5s;
-
-		.map_legend {
-			z-index: 999;
-			display: block;
-			position: absolute;
-			left: 0;
-			bottom: 0;
-			background-color: rgb(255 255 255 / 72%);
-			padding: 0.25em;
-			display: flex;
-
-			.legend_item {
-				display: inline-block;
-				font-size: 0.95em;
-				margin-right: 0.5em;
-				img {
-					height: 1em;
-				}
-			}
-		}
+		
+		
 
 		// leaflet overwrite
 			// .leaflet-default-icon-path {

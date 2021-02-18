@@ -30,6 +30,7 @@ section.result {
   align-self: center;
   text-overflow: ellipsis;
   background-color: transparent;
+  display: block;
 }
 .biblio_row_wrapper {
   margin-bottom: 0.3em;

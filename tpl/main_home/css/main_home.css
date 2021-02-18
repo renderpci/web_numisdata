@@ -7,4 +7,18 @@
   border-radius: 8px;
   margin-bottom: 6em;
 }
+#search_form {
+  display: flex;
+  padding-top: 1em;
+}
+#search_form > * {
+  height: 3em;
+}
+#search_form .form-row {
+  width: 50%;
+}
+#search_form .form-group.field.button_submit {
+  margin-top: 0.75em;
+  margin-left: 2em;
+}
 /*# sourceMappingURL=main_home.css.map */

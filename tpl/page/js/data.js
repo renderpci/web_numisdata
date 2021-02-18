@@ -255,6 +255,10 @@ page.parse_catalog_data = function(data) {
 	// console.log("------------> parse_catalog_data data:",data);
 	const self = this
 
+	if (!data) {
+		return []
+	}
+
 	if (!Array.isArray(data)) {
 		data = [data]
 	}

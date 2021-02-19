@@ -20,7 +20,7 @@ export const data_manager = function() {
 */
 data_manager.prototype.request = async function(options) {
 
-	console.log("++++ request options:",options);
+	console.log("++++ data_manager request options:", options);
 
 	const url			= options.url || page_globals.JSON_TRIGGER_URL
 	const method		= options.method || 'POST' // *GET, POST, PUT, DELETE, etc.
@@ -39,7 +39,12 @@ data_manager.prototype.request = async function(options) {
 	// lang defaults
 		if (!body.lang) {
 			body.lang = page_globals.WEB_CURRENT_LANG_CODE
-		}			
+		}
+
+	// db_name defaults
+		if (!body.db_name && page_globals.WEB_DB) {
+			body.db_name = page_globals.WEB_DB
+		}
 
 	const handle_errors = function(response) {
 		if (!response.ok) {

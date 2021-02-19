@@ -27,6 +27,7 @@ var map =  {
 		forn_node : null,
 
 
+
 	/**
 	* SET_UP
 	* When the HTML page is loaded
@@ -96,7 +97,7 @@ var map =  {
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
 				table		: 'map_global',
 				ar_fields	: '*',
-				sql_filter	: null,
+				sql_filter	: 'coins_list IS NOT NULL',
 				limit		: 0,
 				count		: false,
 				offset		: 0,
@@ -123,7 +124,11 @@ var map =  {
 			self.form_node	= self.render_form()
 			self.form_container.appendChild(self.form_node)
 
-
+		// events
+			event_manager.subscribe('map_selected_marker', map_selected_marker)
+			function map_selected_marker(options){
+				console.log("///-> map_selected_marker options:",options);
+			}
 
 		return true
 	},//end set_up
@@ -211,6 +216,42 @@ var map =  {
 				}
 			})
 
+		// findspot
+			self.form.item_factory({
+				id			: "findspot",
+				name		: "findspot",
+				label		: tstring.findspot || "findspot",
+				q_column	: "findspot",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// hoard
+			self.form.item_factory({
+				id			: "hoard",
+				name		: "hoard",
+				label		: tstring.hoard || "hoard",
+				q_column	: "hoard",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
@@ -266,25 +307,22 @@ var map =  {
 
 		const rows_container = self.rows_container
 
-		self.map_container.classList.add("loading")
-
-		return
-
 		// loading start
-			if (!self.pagination.total) {
-				page.add_spinner(rows_container)
-			}else{
-				rows_container.classList.add("loading")
-			}
+			// if (!self.pagination.total) {
+			// 	page.add_spinner(rows_container)
+			// }else{
+			// 	rows_container.classList.add("loading")
+			// }
+			self.map_container.classList.add("loading")
 
 		return new Promise(function(resolve){
 
 			const table		= 'coins'
-			const ar_fields	= ['*']
-			const limit		= self.pagination.limit
-			const offset	= self.pagination.offset
-			const count		= true			
-			const order		= "section_id ASC"
+			const ar_fields	= ['section_id','mint_data','hoard_data','findspot_data']
+			const limit		= 0
+			const offset	= 0
+			const count		= false			
+			const order		= null
 
 			const sql_filter = self.form.form_to_sql_filter({
 				form_node : form_node
@@ -305,6 +343,20 @@ var map =  {
 			})
 			.then(function(api_response){
 				console.log("--------------- api_response:",api_response);
+
+
+				const new_map_global_data = self.distribute_coins(api_response.result)
+
+				// fix
+				// self.map_global_data = new_map_global_data
+
+				// render map again
+				self.map_factory_instance.parse_data_to_map(new_map_global_data, 'caller_mode')
+
+				self.map_container.classList.remove("loading")
+
+
+				return;
 				
 				// parse data
 					const data	= page.parse_coin_data(api_response.result)
@@ -344,6 +396,60 @@ var map =  {
 			})
 		})
 	},//end form_submit
+
+
+
+	/**
+	* DISTRIBUTE_COINS
+	* Re-built the map_global_data using given coins
+	* @return 
+	*/
+	distribute_coins : function(rows) {
+
+		const self = this
+						
+		const new_map_global_data = []
+		const map_global_data_len = self.map_global_data.length
+		for (let i = 0; i < map_global_data_len; i++) {
+			
+			const item		= self.map_global_data[i]
+			const item_data	= item.data
+			
+			let found_coins = []
+			switch(item_data.table) {
+				case 'mints':
+					found_coins = rows.filter(function(el){
+						return '["'+item_data.ref_section_id+'"]'===el.mint_data
+					})
+					break;
+				case 'hoards':
+					found_coins = rows.filter(function(el){
+						return '["'+item_data.ref_section_id+'"]'===el.hoard_data
+					})
+					break;
+				case 'findspots':
+					found_coins = rows.filter(function(el){
+						return '["'+item_data.ref_section_id+'"]'===el.findspot_data
+					})
+					break;
+			}
+
+			if (found_coins.length>0) {
+				
+				const coins_list = found_coins
+
+				// update total and description
+					item.data.total			= coins_list.length
+					item.data.description	= (tstring.coins || 'Coins') + ' ' + coins_list.length
+				
+				new_map_global_data.push(item)
+			}
+			// console.log("coins:",coins);			
+		}
+		// console.log("new_map_global_data:",new_map_global_data);
+
+		return new_map_global_data
+	},//end distribute_coins
 	
 
 	

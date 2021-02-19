@@ -58,6 +58,10 @@ function map_factory() {
 
 		// popup_options
 			this.popup_options
+
+
+		// map_container_div (created inside map_container)
+			this.map_container_div = null
 	
 
 
@@ -172,11 +176,12 @@ function map_factory() {
 					}
 				}
 
-				const container = common.create_dom_element({
+				const container = self.map_container_div || common.create_dom_element({
 					element_type	: "div",
 					class_name		: "",
 					parent			: self.map_container
 				}) 
+				self.map_container_div = container
 				
 			// map
 				self.map = new L.map(container, {layers: [default_layer], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
@@ -227,8 +232,12 @@ function map_factory() {
 				}		
 		
 			// no data check cases
-				if (!data || data.length<1) {
-					// self.reset_map()
+				if (!data || data.length<1) {					
+					// self.map.eachLayer(function (layer) {
+					//     self.map.removeLayer(layer);
+					// });
+					self.render_base_map()
+					// self.reset_map()				
 					resolve(self.map_container)
 					return false
 				}
@@ -313,11 +322,25 @@ function map_factory() {
 					for (let k = 0; k < element.geojson.length; k++) {
 						
 						const geojsonFeature = element.geojson[k].layer_data
+						
 						const marker = L.geoJSON(geojsonFeature, {
-							pointToLayer : function(geoJsonPoint, latlng) {
-								return create_marker(element, latlng, marker_icon, popup)
+							pointToLayer : function(feature, latlng) {
+								// return create_marker(element, latlng, marker_icon, popup)
+								return L.marker(latlng, {icon: marker_icon})
+							},
+							onEachFeature : function(feature, layer) {
+								layer.bindPopup(popup)
 							}
 						})
+
+						marker.on('click', function(e) {
+							// event publish map_selected_marker
+							event_manager.publish('map_selected_marker', {
+								item	: element,
+								event	: e
+							})
+						})
+
 						ar_markers.push(marker)
 					}
 					

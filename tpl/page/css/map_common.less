@@ -157,4 +157,52 @@
 		}
 	}
 
+
+
+// map_container
+	.map_container.leaflet-container {
+
+
+
+		// leaflet overwrite
+			// .leaflet-default-icon-path {
+			// 	background-image: url(@{assets_path}/images/marker-icon.png);
+			// }
+			.leaflet-control-layers-toggle {
+				background-image: url("@{assets_path}/images/map/layers.png");
+				width: 36px;
+				height: 36px;
+			}
+			.leaflet-retina .leaflet-control-layers-toggle {
+				background-image: url("@{assets_path}/images/map/layers-2x.png");
+				background-size: 26px 26px;
+			}
+	}
+
+
+
+// popup_item (map)
+	.popup_item {
+
+		>.text_title {
+			font-size: 1.15em;
+			padding-bottom: 0.5em;
+			font-weight: 500;
+		}
+
+		>.text_description {
+			max-height: 14em;
+			overflow-y: auto;
+			padding-right: 0.5em;
+		}
+
+		.note {
+			display: block;
+			color: #aeaeae;
+			font-weight: 300;
+			text-transform: uppercase;
+			letter-spacing: 3px;
+		}
+	}
+
 	

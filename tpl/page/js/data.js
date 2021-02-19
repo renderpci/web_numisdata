@@ -466,21 +466,30 @@ page.parse_map_global_data = function(ar_rows) {
 
 			const coins_list = JSON.parse(row.coins_list) || []
 
-			const item_data = {
-				section_id	: row.section_id,
-				title		: row.name,
-				description	: (tstring.coins || 'Coins') + ' ' + coins_list.length
-			}
-
-			const marker_icon = (function(table ) {
+			const name = (function(table ) {
 				let name
 				switch(table){
 					case 'mints'	: name = 'mint';		break;
 					case 'hoards'	: name = 'hoard';		break;
 					case 'findspots': name = 'findspot';	break;
 				}
-				return page.maps_config.markers[name]
+				return name
 			})(row.table);
+
+			const title = '<span class="note">'+(tstring[name] || name)+'</span> ' + row.name
+
+			const item_data = {
+				section_id	: row.section_id,
+				title		: title,
+				total		: coins_list.length,
+				description	: (tstring.coins || 'Coins') + ' ' + coins_list.length,
+				// usefull properties
+				ref_section_id		: row.ref_section_id,
+				ref_section_tipo	: row.ref_section_tipo,
+				table				: row.table
+			}
+
+			const marker_icon = page.maps_config.markers[name];
 
 			const item = {
 				lat			: null,
@@ -490,7 +499,9 @@ page.parse_map_global_data = function(ar_rows) {
 				data		: item_data
 			}
 
-			data.push(item)
+			// if (row.table!=='findspots' || row.ref_section_id!=3) continue;
+			
+			data.push(item)			
 		}
 	}
 	console.log("parse_map_data data:",data);

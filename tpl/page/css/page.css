@@ -272,6 +272,32 @@ form {
   font-weight: 600;
   box-shadow: 3px 6px 6px 0px #ababab;
 }
+.map_container.leaflet-container .leaflet-control-layers-toggle {
+  background-image: url("../../assets/images/map/layers.png");
+  width: 36px;
+  height: 36px;
+}
+.map_container.leaflet-container .leaflet-retina .leaflet-control-layers-toggle {
+  background-image: url("../../assets/images/map/layers-2x.png");
+  background-size: 26px 26px;
+}
+.popup_item > .text_title {
+  font-size: 1.15em;
+  padding-bottom: 0.5em;
+  font-weight: 500;
+}
+.popup_item > .text_description {
+  max-height: 14em;
+  overflow-y: auto;
+  padding-right: 0.5em;
+}
+.popup_item .note {
+  display: block;
+  color: #aeaeae;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
 .pagination {
   display: flex;
   flex-wrap: wrap;
@@ -903,25 +929,6 @@ a.image_link img {
   width: 100%;
   flex-basis: 100%;
   display: inherit;
-}
-.map_container.leaflet-container .leaflet-control-layers-toggle {
-  background-image: url("../../assets/images/map/layers.png");
-  width: 36px;
-  height: 36px;
-}
-.map_container.leaflet-container .leaflet-retina .leaflet-control-layers-toggle {
-  background-image: url("../../assets/images/map/layers-2x.png");
-  background-size: 26px 26px;
-}
-.popup_item > .text_title {
-  font-size: 1.15em;
-  padding-bottom: 0.5em;
-  font-weight: 500;
-}
-.popup_item > .text_description {
-  max-height: 14em;
-  overflow-y: auto;
-  padding-right: 0.5em;
 }
 .big_label {
   font-size: 1em;

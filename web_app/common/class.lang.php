@@ -26,6 +26,8 @@ class lang {
 			
 			if (empty($lang_obj)) {
 				debug_log(__METHOD__." ERROR: Empty lang_obj ".to_string(), 'ERROR');
+
+				$lang_obj = new stdClass();
 			}
 		}
 		
@@ -45,8 +47,12 @@ class lang {
 		static $lang_file; // Avoid read file again
 
 		if (!isset($lang_file)) {
+			
 			$json_file_path = WEB_LANG_BASE_PATH .'/'. $lang . '.json';
-			$lang_file 		= file_get_contents($json_file_path);
+				
+			$lang_file = file_exists($json_file_path)
+				? file_get_contents($json_file_path)
+				: null;
 
 			if (empty($lang_file)) {
 				debug_log(__METHOD__." ERROR: Empty lang_file ".to_string(), 'ERROR');
@@ -83,4 +89,5 @@ function tstring( $var, $lang=WEB_CURRENT_LANG_CODE ) {
 
 	return $label;
 }
-?>
+
+

@@ -92,14 +92,18 @@
 			margin-left: 5px;
 			width: 100%;
 			align-self: center;
-			text-overflow: ellipsis;
 			background-color: transparent;
 			font-size: 0.85em;
+
+			// white-space: nowrap;
+			// overflow: hidden;
+			// text-overflow: ellipsis;
+			// width: 96%;
+
 			img {
 				vertical-align: middle;
 				height: 1em;
 			}
-
 		}
 
 		input.input_values {
@@ -133,10 +137,15 @@
 			display: flex;
 			flex-wrap: wrap;
 
+			width: 100%;
+			margin: 0;
+
 			.form-group {
 				flex: 0 1 25%;
 				align-self: baseline;
+				padding: 0;
 				padding-top: 0.5em;
+				padding-right: 1em;
 
 				@media screen and (max-width: 736px){
 					flex: 1 1 50%;
@@ -168,9 +177,43 @@
 			float: right;
 			// background-color: #e1c96e;
 			text-align: right;
-			margin-right: -2.5em;
+			// margin-right: -2.5em;
+
+			.operators {
+				margin-right: 1em;
+			}
 		}
 	}//end .form-inline
+
+
+
+// jquery autocomplete overwrite
+	.ui-menu .ui-menu-item {
+		padding-left: 0;
+		width: 100%;
+		display: flex;
+	}
+	.ui-menu .ui-menu-item-wrapper {
+		width: 100%;
+		border: none !important;
+		margin: 0 !important;
+		line-height: 1.4em;
+		font-size: 1em;
+
+		img {
+			vertical-align: middle;
+			height: 1em;
+		}
+	}
+	.ui-widget.ui-widget-content {
+		background-color: #f9f9f9;
+		border: none !important;
+		z-index: 9999;
+	}
+
+
+
+
 
 
 

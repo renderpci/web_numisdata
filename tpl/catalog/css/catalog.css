@@ -13,16 +13,6 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
-/*
-	#wrapper {
-
-		height: 100vh;
-
-	}
-	*/
-form {
-  overflow-x: initial;
-}
 section.result {
   min-height: 80vh;
   padding-top: 2em;
@@ -125,9 +115,6 @@ section.result .spinner_svg {
 .term .keyword {
   font-weight: 300;
   margin: 0;
-}
-span {
-  margin-right: 1em;
 }
 .ref_type_averages_weight,
 .ref_type_averages_diameter {
@@ -269,26 +256,6 @@ span {
 }
 .pagination.bottom {
   margin-top: 3em;
-}
-.ui-menu .ui-menu-item {
-  padding-left: 0;
-  width: 100%;
-  display: flex;
-}
-.ui-menu .ui-menu-item-wrapper {
-  width: 100%;
-  border: none !important;
-  margin: 0 !important;
-  line-height: 1.4em;
-  font-size: 1em;
-}
-.ui-menu .ui-menu-item-wrapper img {
-  vertical-align: middle;
-  height: 1em;
-}
-.ui-widget.ui-widget-content {
-  background-color: #f9f9f9;
-  border: none !important;
 }
 @media print {
   .inner > h1,

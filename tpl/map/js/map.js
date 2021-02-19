@@ -24,6 +24,8 @@ var map =  {
 		// form instance on form_factory
 		form : null,
 
+		forn_node : null,
+
 
 	/**
 	* SET_UP
@@ -139,57 +141,57 @@ var map =  {
 		
 		const form_row = common.create_dom_element({
 			element_type	: "div",
-			class_name 		: "form-row fields",
-			parent 			: fragment
+			class_name		: "form-row fields",
+			parent			: fragment
 		})
 		
 		// section_id
-			// self.form.item_factory({
-			// 	id			: "section_id",
-			// 	name		: "section_id",
-			// 	label		: tstring.is || "ID",
-			// 	q_column	: "section_id",
-			// 	eq			: "=",
-			// 	eq_in		: "",
-			// 	eq_out		: "",
-			// 	parent		: form_row
-			// })
+			self.form.item_factory({
+				id			: "section_id",
+				name		: "section_id",
+				label		: tstring.is || "ID",
+				q_column	: "section_id",
+				eq			: "=",
+				eq_in		: "",
+				eq_out		: "",
+				parent		: form_row
+			})
 
 		// collection
-			// self.form.item_factory({
-			// 	id			: "collection",
-			// 	name		: "collection",
-			// 	label		: tstring.collection || "collection",
-			// 	q_column	: "collection",
-			// 	eq			: "LIKE",
-			// 	eq_in		: "%",
-			// 	eq_out		: "%",
-			// 	parent		: form_row,
-			// 	callback	: function(form_item) {
-			// 		self.form.activate_autocomplete({
-			// 			form_item	: form_item,
-			// 			table		: 'coins'
-			// 		})
-			// 	}
-			// })
+			self.form.item_factory({
+				id			: "collection",
+				name		: "collection",
+				label		: tstring.collection || "collection",
+				q_column	: "collection",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
 
 		// public_info
-			// self.form.item_factory({
-			// 	id			: "public_info",
-			// 	name		: "public_info",
-			// 	label		: tstring.public_info || "public_info",
-			// 	q_column	: "public_info",
-			// 	eq			: "LIKE",
-			// 	eq_in		: "%",
-			// 	eq_out		: "%",
-			// 	parent		: form_row,
-			// 	callback	: function(form_item) {
-			// 		self.form.activate_autocomplete({
-			// 			form_item	: form_item,
-			// 			table		: 'coins'
-			// 		})
-			// 	}
-			// })
+			self.form.item_factory({
+				id			: "public_info",
+				name		: "public_info",
+				label		: tstring.public_info || "public_info",
+				q_column	: "public_info",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
 
 		// mint
 			self.form.item_factory({
@@ -208,7 +210,6 @@ var map =  {
 					})
 				}
 			})
-			
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -237,8 +238,8 @@ var map =  {
 		// form
 			const form_node = common.create_dom_element({
 				element_type	: "form",
-				id 				: "search_form",
-				class_name 		: "form-inline"
+				id				: "search_form",
+				class_name		: "form-inline"
 			})
 			form_node.appendChild(fragment)
 
@@ -248,7 +249,101 @@ var map =  {
 
 
 
+	/**
+	* FORM_SUBMIT
+	*/
+	form_submit : function() {
 
+		const self = this
+		
+		const form_node = self.form_node
+		if (!form_node) {
+			return new Promise(function(resolve){
+				console.error("Error on submit. Invalid form_node.", form_node);
+				resolve(false)
+			})
+		}
+
+		const rows_container = self.rows_container
+
+		self.map_container.classList.add("loading")
+
+		return
+
+		// loading start
+			if (!self.pagination.total) {
+				page.add_spinner(rows_container)
+			}else{
+				rows_container.classList.add("loading")
+			}
+
+		return new Promise(function(resolve){
+
+			const table		= 'coins'
+			const ar_fields	= ['*']
+			const limit		= self.pagination.limit
+			const offset	= self.pagination.offset
+			const count		= true			
+			const order		= "section_id ASC"
+
+			const sql_filter = self.form.form_to_sql_filter({
+				form_node : form_node
+			})
+
+			data_manager.request({
+				body : {
+					dedalo_get		: 'records',
+					table			: table,
+					ar_fields		: ar_fields,
+					sql_filter		: sql_filter,
+					limit			: limit,
+					count			: count,
+					offset			: offset,
+					order			: order,
+					process_result	: null
+				}
+			})
+			.then(function(api_response){
+				console.log("--------------- api_response:",api_response);
+				
+				// parse data
+					const data	= page.parse_coin_data(api_response.result)
+					const total	= api_response.total
+
+					self.pagination.total	= total
+					self.pagination.offset	= offset
+
+					if (!data) {
+						rows_container.classList.remove("loading")
+						resolve(null)
+					}
+				
+				// loading end
+					(function(){
+						while (rows_container.hasChildNodes()) {
+							rows_container.removeChild(rows_container.lastChild);
+						}
+						rows_container.classList.remove("loading")
+					})()
+				
+				// render
+					self.list = self.list || new list_factory() // creates / get existing instance of list
+					self.list.init({
+						data			: data,
+						fn_row_builder	: self.list_row_builder,
+						pagination		: self.pagination,
+						caller			: self
+					})
+					self.list.render_list()
+					.then(function(list_node){
+						if (list_node) {
+							rows_container.appendChild(list_node)
+						}
+						resolve(list_node)
+					})
+			})
+		})
+	},//end form_submit
 	
 
 	

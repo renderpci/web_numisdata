@@ -774,9 +774,43 @@
 // no_results_found
 	.no_results_found {
 		padding: 1em;
-    padding-left: 0;
-    padding-top: 0;
-    font-weight: 600;
-    color: #b7996d;
-    font-size: 1.2em;
+		padding-left: 0;
+		padding-top: 0;
+		font-weight: 600;
+		color: #b7996d;
+		font-size: 1.2em;
 	}
+
+
+
+// search_icon
+	.search_icon {
+		height: 1em;
+		opacity: 0.5;
+		float: right;
+		cursor: pointer;
+		padding: 0.15em;
+		position: relative;
+		bottom: -0.25em;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		&:active {
+			opacity: 0.2;
+		}
+	}
+
+
+
+// randomColor
+	.randomColor(){
+	  @randomColor: `Math.floor(Math.random()*16777215).toString(16)`;
+	  @colorHex: e(@randomColor);
+	  @color: ~"#@{colorHex}";
+	}	
+
+
+
+

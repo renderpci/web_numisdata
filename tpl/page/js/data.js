@@ -1,7 +1,13 @@
+/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*eslint no-undef: "error"*/
+
+"use strict";
+
 /**
 * COMMON DATA PARSERS
 * prototypes page
 */
+
 
 
 /**
@@ -304,7 +310,12 @@ page.parse_catalog_data = function(data) {
 		row.term_data		= JSON.parse(row.term_data)
 		row.term_section_id	= row.term_data ? row.term_data[0] : null
 		row.children		= JSON.parse(row.children)
-		row.parent			= JSON.parse(row.parent)
+		row.parent			= row.parent && Array.isArray(row.parent)
+			? (function(parent_array){
+				// portal resolved case
+				return page.parse_catalog_data(parent_array)
+			  })(row.parent)
+			: JSON.parse(row.parent)
 
 		row.ref_type_averages_diameter = row.ref_type_averages_diameter
 			? parseFloat( row.ref_type_averages_diameter.replace(',', '.') )
@@ -447,6 +458,46 @@ page.parse_publication = function(data) {
 * @param object row | array rows
 * @return object row | array rows
 */
+	// page.parse_map_global_data = function(ar_rows) {
+
+	// 	const self = this
+
+	// 	const ar_rows_length = ar_rows.length
+	// 	for (let i = 0; i < ar_rows_length; i++) {
+			
+	// 		const row = ar_rows[i]
+
+	// 		if (row.parsed) {
+	// 			continue;
+	// 		}
+
+	// 		row.georef_geojson = row.georef_geojson
+	// 			? JSON.parse(row.georef_geojson)
+	// 			: null
+
+	// 		row.coins_list = row.coins_list
+	// 			? JSON.parse(row.coins_list)
+	// 			: null
+
+	// 		row.types_list = row.types_list
+	// 			? JSON.parse(row.types_list)
+	// 			: null
+
+	// 		row.parsed = true
+	// 	}
+		
+
+	// 	return ar_rows
+	// }//end parse_map_global_data
+
+
+
+
+/**
+* parse_map_global_data
+* @param object row | array rows
+* @return object row | array rows
+*/
 page.parse_map_global_data = function(ar_rows) {
 
 	const self = this
@@ -458,13 +509,23 @@ page.parse_map_global_data = function(ar_rows) {
 		
 		const row = ar_rows[i]
 
-		const georef_geojson = (typeof row.georef_geojson==='string' || row.georef_geojson instanceof String)
+		if (row.parsed) {
+			continue;
+		}
+
+		row.georef_geojson = row.georef_geojson
 			? JSON.parse(row.georef_geojson)
-			: row.georef_geojson
+			: null
 
-		if (georef_geojson && georef_geojson.length>0) {
+		row.coins_list = row.coins_list
+			? JSON.parse(row.coins_list)
+			: []
 
-			const coins_list = JSON.parse(row.coins_list) || []
+		row.types_list = row.types_list
+			? JSON.parse(row.types_list)
+			: []
+
+		if (row.georef_geojson && row.georef_geojson.length>0) {
 
 			const name = (function(table ) {
 				let name
@@ -477,37 +538,43 @@ page.parse_map_global_data = function(ar_rows) {
 			})(row.table);
 
 			const title = '<span class="note">'+(tstring[name] || name)+'</span> ' + row.name
+			const description = (tstring.coins || 'Coins') + ' ' + row.coins_list.length +'<br>'+ (tstring.types || 'Types') + ' ' + row.types_list.length
 
 			const item_data = {
-				section_id	: row.section_id,
-				title		: title,
-				total		: coins_list.length,
-				description	: (tstring.coins || 'Coins') + ' ' + coins_list.length,
+				section_id			: row.section_id,
+				title				: title,
+				coins_total			: row.coins_list.length,
+				types_total			: row.types_list.length,
+				description			: description,
 				// usefull properties
 				ref_section_id		: row.ref_section_id,
 				ref_section_tipo	: row.ref_section_tipo,
-				table				: row.table
+				table				: row.table,
+				name				: row.name,
+				term_id				: row.section_id
 			}
 
 			const marker_icon = page.maps_config.markers[name];
 
+			// nomalized item format to use it in leaflet and popup
 			const item = {
 				lat			: null,
 				lon			: null,
-				geojson		: georef_geojson,
+				geojson		: row.georef_geojson,
 				marker_icon	: marker_icon,
 				data		: item_data
 			}
 
-			// if (row.table!=='findspots' || row.ref_section_id!=3) continue;
-			
-			data.push(item)			
+			row.item = item		
+		}else{
+			row.item = null
 		}
-	}
-	console.log("parse_map_data data:",data);
-	
 
-	return data
+		row.parsed = true
+	}
+		
+
+	return ar_rows
 }//end parse_map_global_data
 
 

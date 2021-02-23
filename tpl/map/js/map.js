@@ -18,7 +18,17 @@ var map =  {
 		map_container	: null,
 
 		map_factory_instance : null,
-		// map_global_data
+
+		// master_map_global_data. All records from table 'map_global'
+		master_map_global_data : null,
+
+		// current_map_global_data. Current filtered records from table 'map_global'
+		current_map_global_data : null,
+		
+		// global_data (direct rows from ddbb)
+		global_data : null,
+
+		// map_global_data (ready for map parsed data)
 		map_global_data : null,
 
 		// form instance on form_factory
@@ -44,7 +54,7 @@ var map =  {
 			self.rows_container	= options.rows_container
 
 		// map
-			const source_maps = [
+			self.source_maps = [
 				{
 					name	: "DARE",
 					// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
@@ -69,10 +79,6 @@ var map =  {
 						maxZoom	: 20
 					},
 					default	: true
-
-
-
-
 				},
 				{
 					name	: "ARCGIS",
@@ -81,15 +87,16 @@ var map =  {
 				}
 			]
 
-			self.map_factory_instance = self.map_factory_instance || new map_factory() // creates / get existing instance of map
+			self.map_factory_instance = new map_factory() // creates / get existing instance of map
 			self.map_factory_instance.init({
 				map_container	: self.map_container,
 				map_position	: null,
 				popup_builder	: page.map_popup_builder,
 				popup_options	: page.maps_config.popup_options,
-				source_maps		: source_maps
+				source_maps		: self.source_maps,
+				legend			: page.render_map_legend
 			})
-		
+
 		// map base data from map_global
 			const request_body = {
 				dedalo_get	: 'records',
@@ -97,7 +104,7 @@ var map =  {
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
 				table		: 'map_global',
 				ar_fields	: '*',
-				sql_filter	: 'coins_list IS NOT NULL',
+				sql_filter	: 'coins_list IS NOT NULL && types_list IS NOT NULL',
 				limit		: 0,
 				count		: false,
 				offset		: 0,
@@ -110,12 +117,23 @@ var map =  {
 				console.log("--- search_rows API response:", response);
 
 				if (response.result) {
-					
-					// fix map_global data
-					self.map_global_data = page.parse_map_global_data(response.result)
-					
+
+					// master_map_global_data. fix parsed var master_map_global_data to reuse later
+						self.master_map_global_data = page.parse_map_global_data(response.result)
+
+					// current_map_global_data
+						self.current_map_global_data = self.master_map_global_data
+
+					// clean empty geolocation items
+						const map_points = self.current_map_global_data.filter(function(el){return el.item!==null}).map(function(el){
+							return el.item
+						})
+
 					// initial map with all points without filters
-					self.map_factory_instance.parse_data_to_map(self.map_global_data, 'caller_mode')
+						self.map_factory_instance.parse_data_to_map(map_points)
+						.then(function(){
+							self.map_container.classList.remove('hide_opacity')
+						})
 				}
 			})
 
@@ -124,10 +142,44 @@ var map =  {
 			self.form_node	= self.render_form()
 			self.form_container.appendChild(self.form_node)
 
+		// show search button
+			const show_search_button = document.getElementById("search_icon")
+			show_search_button.addEventListener("mousedown", function(){
+				self.form_node.classList.toggle("hide")
+			})
+
 		// events
 			event_manager.subscribe('map_selected_marker', map_selected_marker)
 			function map_selected_marker(options){
 				console.log("///-> map_selected_marker options:",options);
+
+				const selected_element = typeof options.item.group[0]!=="undefined"
+					? options.item.group[0]
+					: null
+				if (selected_element) {
+					
+					// clean container
+						while (self.rows_container.hasChildNodes()) {
+							self.rows_container.removeChild(self.rows_container.lastChild);
+						}
+						page.add_spinner(self.rows_container)
+					
+					// render related types list
+						self.load_map_selection_info(selected_element)
+						.then(function(response){
+							console.log("--> load_map_selection_info response:",response);
+							if (response) {
+								const types_list_node = self.render_types_list({
+									global_data_item	: response.global_data_item,
+									types_rows			: response.types_rows
+								})
+								self.rows_container.appendChild(types_list_node)
+								page.remove_spinner(self.rows_container)
+							}else{
+								page.remove_spinner(self.rows_container)
+							}
+						})
+				}
 			}
 
 		return true
@@ -180,12 +232,12 @@ var map =  {
 				}
 			})
 
-		// public_info
+		// ref_auction
 			self.form.item_factory({
-				id			: "public_info",
-				name		: "public_info",
-				label		: tstring.public_info || "public_info",
-				q_column	: "public_info",
+				id			: "ref_auction",
+				name		: "ref_auction",
+				label		: tstring.auction || "auction",
+				q_column	: "ref_auction",
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
@@ -255,16 +307,16 @@ var map =  {
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
-				class_name 		: "form-group field button_submit",
-				parent 			: fragment
+				class_name		: "form-group field button_submit",
+				parent			: fragment
 			})
 			const submit_button = common.create_dom_element({
 				element_type	: "input",
-				type 			: "submit",
-				id 				: "submit",
-				value 			: tstring.search || "Search",
-				class_name 		: "btn btn-light btn-block primary",
-				parent 			: submit_group
+				type			: "submit",
+				id				: "submit",
+				value			: tstring.search || "Search",
+				class_name		: "btn btn-light btn-block primary",
+				parent			: submit_group
 			})
 			submit_button.addEventListener("click",function(e){
 				e.preventDefault()
@@ -280,7 +332,7 @@ var map =  {
 			const form_node = common.create_dom_element({
 				element_type	: "form",
 				id				: "search_form",
-				class_name		: "form-inline"
+				class_name		: "form-inline hide"
 			})
 			form_node.appendChild(fragment)
 
@@ -305,7 +357,10 @@ var map =  {
 			})
 		}
 
-		const rows_container = self.rows_container
+		// clean container
+			while (self.rows_container.hasChildNodes()) {
+				self.rows_container.removeChild(self.rows_container.lastChild);
+			}
 
 		// loading start
 			// if (!self.pagination.total) {
@@ -317,82 +372,53 @@ var map =  {
 
 		return new Promise(function(resolve){
 
-			const table		= 'coins'
-			const ar_fields	= ['section_id','mint_data','hoard_data','findspot_data']
-			const limit		= 0
-			const offset	= 0
-			const count		= false			
-			const order		= null
-
-			const sql_filter = self.form.form_to_sql_filter({
+			const ar_fields		= ['section_id','mint_data','hoard_data','findspot_data','type_data']
+			const sql_filter	= self.form.form_to_sql_filter({
 				form_node : form_node
 			})
 
 			data_manager.request({
 				body : {
 					dedalo_get		: 'records',
-					table			: table,
+					table			: 'coins',
 					ar_fields		: ar_fields,
-					sql_filter		: sql_filter,
-					limit			: limit,
-					count			: count,
-					offset			: offset,
-					order			: order,
+					sql_filter		: sql_filter + " AND type_data IS NOT NULL",
+					limit			: 0,
+					count			: false,
+					offset			: 0,
+					order			: null,
+					// group		: "type_data",
 					process_result	: null
 				}
 			})
 			.then(function(api_response){
-				console.log("--------------- api_response:",api_response);
+				console.log("--------------- form_submit api_response:",api_response); 
 
-
-				const new_map_global_data = self.distribute_coins(api_response.result)
+				self.current_map_global_data = self.distribute_coins(api_response.result)
+					console.log("self.current_map_global_data:",self.current_map_global_data);
 
 				// fix
-				// self.map_global_data = new_map_global_data
+					// self.map_global_data = self.current_map_global_data
+					// console.log("self.current_map_global_data:",self.current_map_global_data);
+
+				// select geolocation items
+					const map_points = self.current_map_global_data.map(function(el){
+						return el.item
+					})
 
 				// render map again
-				self.map_factory_instance.parse_data_to_map(new_map_global_data, 'caller_mode')
-
-				self.map_container.classList.remove("loading")
-
-
-				return;
-				
-				// parse data
-					const data	= page.parse_coin_data(api_response.result)
-					const total	= api_response.total
-
-					self.pagination.total	= total
-					self.pagination.offset	= offset
-
-					if (!data) {
-						rows_container.classList.remove("loading")
-						resolve(null)
-					}
-				
-				// loading end
-					(function(){
-						while (rows_container.hasChildNodes()) {
-							rows_container.removeChild(rows_container.lastChild);
-						}
-						rows_container.classList.remove("loading")
-					})()
-				
-				// render
-					self.list = self.list || new list_factory() // creates / get existing instance of list
-					self.list.init({
-						data			: data,
-						fn_row_builder	: self.list_row_builder,
-						pagination		: self.pagination,
-						caller			: self
+					self.map_factory_instance.init({
+						map_container	: self.map_container,
+						map_position	: null,
+						popup_builder	: page.map_popup_builder,
+						popup_options	: page.maps_config.popup_options,
+						source_maps		: self.source_maps,
+						legend			: page.render_map_legend
 					})
-					self.list.render_list()
-					.then(function(list_node){
-						if (list_node) {
-							rows_container.appendChild(list_node)
-						}
-						resolve(list_node)
-					})
+					self.map_factory_instance.parse_data_to_map(map_points, null)
+
+				// loading ends
+					self.map_container.classList.remove("loading")
 			})
 		})
 	},//end form_submit
@@ -400,56 +426,211 @@ var map =  {
 
 
 	/**
-	* DISTRIBUTE_COINS
+	* DISTRIBUTE_coins
 	* Re-built the map_global_data using given coins
 	* @return 
 	*/
-	distribute_coins : function(rows) {
-
+	distribute_coins : function(coin_rows) {
+		
 		const self = this
-						
+		
 		const new_map_global_data = []
-		const map_global_data_len = self.map_global_data.length
-		for (let i = 0; i < map_global_data_len; i++) {
-			
-			const item		= self.map_global_data[i]
-			const item_data	= item.data
+		const master_map_global_data_len = self.master_map_global_data.length
+		for (let i = 0; i < master_map_global_data_len; i++) {
+
+			const map_row = self.master_map_global_data[i]
 			
 			let found_coins = []
-			switch(item_data.table) {
+			switch(map_row.table) {
 				case 'mints':
-					found_coins = rows.filter(function(el){
-						return '["'+item_data.ref_section_id+'"]'===el.mint_data
+					found_coins = coin_rows.filter(function(el){
+						return '["'+map_row.ref_section_id+'"]'===el.mint_data
 					})
 					break;
 				case 'hoards':
-					found_coins = rows.filter(function(el){
-						return '["'+item_data.ref_section_id+'"]'===el.hoard_data
+					found_coins = coin_rows.filter(function(el){
+						return '["'+map_row.ref_section_id+'"]'===el.hoard_data
 					})
 					break;
 				case 'findspots':
-					found_coins = rows.filter(function(el){
-						return '["'+item_data.ref_section_id+'"]'===el.findspot_data
+					found_coins = coin_rows.filter(function(el){
+						return '["'+map_row.ref_section_id+'"]'===el.findspot_data
 					})
 					break;
 			}
+			
+			if (found_coins.length<1) continue; // ignore
 
-			if (found_coins.length>0) {
-				
-				const coins_list = found_coins
+			// coins_list
+				const coins_list = found_coins.map(function(el){
+					return el.section_id
+				})
 
-				// update total and description
-					item.data.total			= coins_list.length
-					item.data.description	= (tstring.coins || 'Coins') + ' ' + coins_list.length
-				
-				new_map_global_data.push(item)
-			}
-			// console.log("coins:",coins);			
+			// get types
+				const types_list = []
+				for (let k = 0; k < found_coins.length; k++) {
+					const type_data = found_coins[k].type_data
+						? JSON.parse(found_coins[k].type_data)
+						: null
+					if ( type_data && types_list.indexOf(type_data[0])===-1 ) {
+						types_list.push(type_data[0])
+					}
+				}
+				// console.log("coins_list:", coins_list);
+				// console.log("types_list:", types_list);
+
+			// recreate row
+				const new_row = JSON.parse( JSON.stringify(map_row) )
+					  new_row.coins_list = coins_list
+					  new_row.types_list = types_list
+
+				// item data update
+					const description = (tstring.coins || 'Coins') + ' ' + new_row.coins_list.length +'<br>'+ (tstring.types || 'Types') + ' ' + new_row.types_list.length
+					new_row.item.data.coins_total = coins_list.length
+					new_row.item.data.types_total = types_list.length
+					new_row.item.data.description = description
+
+			// add cloned and updated row
+				new_map_global_data.push(new_row)
+			
 		}
 		// console.log("new_map_global_data:",new_map_global_data);
 
 		return new_map_global_data
 	},//end distribute_coins
+
+
+
+	/**
+	* LOAD_MAP_SELECTION_INFO
+	* @return 
+	*/
+	load_map_selection_info : function(item) {
+
+		const self = this
+
+		return new Promise(function(resolve){				
+
+			// mint-findspot-hoard row data
+				const global_data_item = self.current_map_global_data.find(function(el){
+					return el.section_id===item.term_id
+				})
+				if (!global_data_item || !global_data_item.types_list || global_data_item.types_list.length<1) {
+					console.warn("Ignored invalid item. Not found item or item.types_list in global_data! ", item.name, item);					
+					resolve(false)
+					return false;
+				}
+				const coins_list	= global_data_item.coins_list
+				const types_list	= global_data_item.types_list
+
+			// search types in catalog using types list
+				const ar_type_id = types_list.map(function(item){
+					return '\'["' + item + '"]\''
+				})
+				const sql_filter = 'term_table=\'types\' AND term_data IN(' + ar_type_id.join(",") + ')'
+
+				const catalog_ar_fields = ['*']
+				
+				const request_body = {
+					dedalo_get	: 'records',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					table		: 'catalog',
+					ar_fields	: catalog_ar_fields,
+					sql_filter	: sql_filter,
+					limit		: 0,
+					count		: false,
+					offset		: 0,
+					order		: "term ASC"
+				}
+				data_manager.request({
+					body : request_body
+				})
+				.then((api_response)=>{				
+					console.log("-> load_map_selection_info api_response:",api_response);
+
+					const types_rows = page.parse_catalog_data(api_response.result)
+						// console.log("types_rows:",types_rows);
+
+					resolve({
+						global_data_item	: global_data_item,
+						types_rows			: types_rows
+					})
+				})
+		})
+	},//end load_map_selection_info
+
+
+
+	/**
+	* RENDER_TYPES_LIST
+	* @return DOM node
+	*/
+	render_types_list : function(options) {
+
+		const global_data_item	= options.global_data_item
+		const types_rows		= options.types_rows
+
+		const fragment = new DocumentFragment()
+
+		const wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "types_list_wrapper",
+			parent			: fragment
+		})
+
+		// title line
+			const title_line = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "line-tittle-wrap",
+				parent			: wrapper
+			})
+			let item_type
+			switch(global_data_item.table){
+				case 'mints'	: item_type = 'mint';		break;
+				case 'hoards'	: item_type = 'hoard';		break;
+				case 'findspots': item_type = 'findspot';	break;
+			}
+			const title = '<span class="note">' + tstring[item_type] + ': </span>' + global_data_item.name
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "line-tittle golden-color",
+				inner_html		: title,
+				parent			: title_line
+			})
+
+		// types list
+		if (types_rows && types_rows.length>0) {
+
+			const types_wrap = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "types_wrap",
+				parent			: fragment
+			})
+
+			// catalog_row_fields
+				for (let i = 0; i < types_rows.length; i++) {
+					const row_node = catalog_row_fields.draw_item(types_rows[i])
+					types_wrap.appendChild(row_node)
+				}
+
+			// catalog draw_rows
+				// catalog.draw_rows({
+				// 	target	: types_wrap,
+				// 	ar_rows	: types_rows
+				// })
+
+			// mint draw_types
+				// mint.draw_types({
+				// 	target	: types_wrap,
+				// 	ar_rows	: {
+				// 		children : types_rows
+				// 	}
+				// })
+		}
+
+		return fragment
+	},//end render_types_list
 	
 
 	

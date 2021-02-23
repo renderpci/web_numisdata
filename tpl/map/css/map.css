@@ -13,4 +13,20 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
+.map_container.map {
+  height: 50vh;
+  margin-bottom: 0;
+}
+.rows_list {
+  padding-top: 0;
+  min-height: 50vh;
+}
+.rows_list .line-tittle {
+  margin-left: 0 !important;
+}
+.rows_list .line-tittle span.note {
+  color: #bebebe;
+  text-transform: uppercase;
+  margin-right: unset;
+}
 /*# sourceMappingURL=map.css.map */

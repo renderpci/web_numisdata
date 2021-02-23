@@ -10,7 +10,7 @@ function map_factory() {
 	// vars
 		// target. DOM element where map is placed
 			this.target	= null
-		
+
 		// data. Database parsed rows data to create the map
 			this.data = null
 
@@ -54,7 +54,7 @@ function map_factory() {
 			]
 
 		// icon_main (default icon properties)
-			this.icon_main = null // set on parse			
+			this.icon_main = null // set on parse
 
 		// popup_options
 			this.popup_options
@@ -62,7 +62,7 @@ function map_factory() {
 
 		// map_container_div (created inside map_container)
 			this.map_container_div = null
-	
+
 
 
 	/**
@@ -80,6 +80,7 @@ function map_factory() {
 			const popup_builder	= options.popup_builder || self.build_popup_content
 			const map_position	= options.map_position || self.initial_map_data
 			const map_container	= options.map_container
+			const legend		= options.legend || null
 			const popup_options	= options.popup_options || {
 				// maxWidth						Number	300	Max width of the popup, in pixels.
 				maxWidth : 420,
@@ -119,8 +120,9 @@ function map_factory() {
 			self.popup_builder	= popup_builder
 			self.popup_options	= popup_options
 			self.icon_main		= icon_main
-		
-	
+			self.legend			= legend
+
+
 		return self.render_base_map()
 	}//end init
 
@@ -130,7 +132,7 @@ function map_factory() {
 	* RENDER_BASE_MAP
 	*/
 	this.render_base_map = function() {
-		
+
 		const self = this
 
 		return new Promise(function(resolve){
@@ -141,15 +143,15 @@ function map_factory() {
 					// return
 					self.map.off(); // clear All Event Listeners
 					self.map.remove();	// remove map
-				}	
-			
+				}
+
 			// map position
-				const map_position	= self.map_position	
+				const map_position	= self.map_position
 				const map_x			= parseFloat(map_position.lat)
 				const map_y			= parseFloat(map_position.lon)
 				const map_zoom		= parseInt(map_position.zoom)
 				const map_alt		= parseInt(map_position.alt)
-			
+
 			// reset map vars
 				self.map				= null
 				self.layer_control		= false
@@ -160,15 +162,15 @@ function map_factory() {
 				self.current_layer		= null
 				self.current_group		= null
 				self.option_selected	= null
-					
-			// layer. Add layer to map 
+
+			// layer. Add layer to map
 				let default_layer	= null
 				const base_maps		= {} // layer selector
-				for (let i = 0; i < self.source_maps.length; i++) {		
+				for (let i = 0; i < self.source_maps.length; i++) {
 
 					const source_map	= self.source_maps[i]
 					const layer			= new L.TileLayer(source_map.url, source_map.options)
-					
+
 					base_maps[source_map.name] = layer
 
 					if (i===0 || source_map.default===true) {
@@ -180,17 +182,17 @@ function map_factory() {
 					element_type	: "div",
 					class_name		: "",
 					parent			: self.map_container
-				}) 
+				})
 				self.map_container_div = container
-				
+
 			// map
 				self.map = new L.map(container, {layers: [default_layer], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
 
-			// layer selector			
+			// layer selector
 				self.layer_control = L.control.layers(base_maps).addTo(self.map);
-			
+
 			// disable zoom handlers
-				self.map.scrollWheelZoom.disable();			
+				self.map.scrollWheelZoom.disable();
 
 			// popupOptions
 				self.popupOptions =	self.popup_options
@@ -199,7 +201,7 @@ function map_factory() {
 				// target. DOM element where map is placed
 				// self.target = target
 				// data. Preparsed data from rows. Contains items with properties 'lat', 'lon', and 'data' like [{lat: lat, lon: lon, data: []}]
-			
+
 			// init map library
 				// self.init({
 				// 	source_maps		: source_maps,
@@ -208,6 +210,12 @@ function map_factory() {
 
 			// draw map
 				// self.parse_data_to_map(data)
+
+			// legend
+				if (self.legend && typeof self.legend==="function") {
+					const legend_node = self.legend()
+					self.map_container.appendChild(legend_node)
+				}
 
 
 			resolve(self.map)
@@ -220,7 +228,7 @@ function map_factory() {
 	* PARSE_DATA_TO_MAP
 	*/
 	this.parse_data_to_map = function(data, caller_mode) {
-		
+
 		const self = this
 
 		return new Promise(function(resolve){
@@ -229,29 +237,30 @@ function map_factory() {
 				if (self.current_group) {
 					// Reset points
 					self.current_group.clearLayers();
-				}		
-		
+				}
+
 			// no data check cases
-				if (!data || data.length<1) {					
+				if (!data || data.length<1) {
 					// self.map.eachLayer(function (layer) {
 					//     self.map.removeLayer(layer);
 					// });
 					self.render_base_map()
-					// self.reset_map()				
+					// self.reset_map()
 					resolve(self.map_container)
 					return false
 				}
-			
+
 			// Group data elements by place
-				const group_data		= (data[0].geojson)
+				const group_data = (data[0].geojson)
 					? self.group_by_place_geojson(data)
 					: self.group_by_place(data)
 				const group_data_length	= group_data.length
 
+
 			// create marker. Build marker with custom icon and popup
 				const create_marker = function(element, latlng, marker_icon, popup) {
-					const marker = L.marker(latlng, {icon: marker_icon}).bindPopup(popup) //.openPopup();		
-					marker.on('click', function(e) {
+					const marker = L.marker(latlng, {icon: marker_icon}).bindPopup(popup) //.openPopup();
+					marker.on('mousedown', function(e) {
 						// event publish map_selected_marker
 						event_manager.publish('map_selected_marker', {
 							item	: element,
@@ -260,12 +269,12 @@ function map_factory() {
 					})
 					return marker
 				}
-	
+
 			const ar_markers = []
 			for (let i = group_data_length - 1; i >= 0; i--) {
 
 				const element = group_data[i]
-
+				
 				// des
 					// var ar_places = JSON.parse(element.lugar)
 					// // Iterate all
@@ -283,15 +292,15 @@ function map_factory() {
 					// 			var current_tipo_section_id = element.tipo_section_id
 
 					// 			var popup_content = self.build_popup_content(element);
-			
+
 					// 			if(caller_mode==="load_hallazgos" || caller_mode==="load_culturas" || caller_mode==="load_epocas"){
 					// 				var marker_icon = self.icon_finds // green
 					// 			}else{
 					// 				var marker_icon = self.icon_main // Default
 					// 			}
-					
+
 					// 			// Marker set popup and click event
-					// 			var marker = L.marker([lat, lon], {icon: marker_icon}).bindPopup(popup_content)						
+					// 			var marker = L.marker([lat, lon], {icon: marker_icon}).bindPopup(popup_content)
 					// 				marker.on('click', function(e) {
 					// 					self.show_tipos({
 					// 						tipo_section_id : current_tipo_section_id,
@@ -320,9 +329,9 @@ function map_factory() {
 				if (element.geojson) {
 
 					for (let k = 0; k < element.geojson.length; k++) {
-						
+
 						const geojsonFeature = element.geojson[k].layer_data
-						
+
 						const marker = L.geoJSON(geojsonFeature, {
 							pointToLayer : function(feature, latlng) {
 								// return create_marker(element, latlng, marker_icon, popup)
@@ -333,7 +342,7 @@ function map_factory() {
 							}
 						})
 
-						marker.on('click', function(e) {
+						marker.on('mousedown', function(e) {
 							// event publish map_selected_marker
 							event_manager.publish('map_selected_marker', {
 								item	: element,
@@ -343,11 +352,11 @@ function map_factory() {
 
 						ar_markers.push(marker)
 					}
-					
+
 				}else{
-				
+
 					// marker. Set popup and click event
-					// const marker = L.marker([element.lat, element.lon], {icon: marker_icon}).bindPopup(popup) //.openPopup();		
+					// const marker = L.marker([element.lat, element.lon], {icon: marker_icon}).bindPopup(popup) //.openPopup();
 					// 	  marker.on('click', function(e) {
 					// 		// event publish map_selected_marker
 					// 		event_manager.publish('map_selected_marker', {
@@ -359,8 +368,8 @@ function map_factory() {
 					ar_markers.push(marker)
 				}
 			}
-			// console.log("ar_markers:",ar_markers);	
-			
+			// console.log("ar_markers:",ar_markers);
+
 			// group . Create a layer group and add to map
 				if (ar_markers.length>0) {
 					// self.current_group = L.layerGroup(ar_markers)
@@ -378,34 +387,34 @@ function map_factory() {
 						cluster_markers.addLayer(ar_markers[k])
 					}
 					self.map.addLayer(cluster_markers);
-				}				
+				}
 
 			// feature_group . Fit points positions on map and adjust the zoom
 				if (ar_markers && ar_markers.length>0) {
 					const feature_group = new L.featureGroup(ar_markers)
 					if (feature_group) {
-							
+
 						self.map.fitBounds(feature_group.getBounds())
 
 						if (self.map.getZoom()>18) {
 							self.map.setZoom(18)
 						}
 					}
-				}	
+				}
 
-				self.map.on('popupopen', function(e) {					
+				self.map.on('popupopen', function(e) {
 					const wrapper	= e.popup._wrapper
 					const ar_img	= wrapper.querySelectorAll('img')
 					if (ar_img) {
 						for (let i = 0; i < ar_img.length; i++) {
 							if (!ar_img[i].classList.contains('loaded')) {
 								ar_img[i].image_in_dom()
-							}							
+							}
 						}
 					}
 				});
-		
-	
+
+
 			resolve(self.map_container)
 		})
 	}//end parse_data_to_map
@@ -415,17 +424,17 @@ function map_factory() {
 	/**
 	* GROUP_BY_PLACE
 	* Group results rows by property 'lugar' (place)
-	*/	
+	*/
 	this.group_by_place = function(data) {
 
 		const group_data = []
 
 		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
-			
+
 			const item				= data[i]
 			const group_data_item	= group_data.find(el => el.lat===item.lat && el.lon===item.lon)
-			
+
 			if (group_data_item) {
 				// already exists
 				group_data_item.group.push(item.data)
@@ -450,23 +459,24 @@ function map_factory() {
 	/**
 	* GROUP_BY_PLACE_GEOJSON
 	* Group results rows by property 'lugar' (place)
-	*/	
+	*/
 	this.group_by_place_geojson = function(data) {
 
 		const group_data = []
 
 		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
-			
+
 			const element			= data[i]
 			const geojson			= element.geojson
 			const geojson_length	= geojson.length
 
 			for (let k = 0; k < geojson_length; k++) {
-				
+
 				const features = geojson[k].layer_data.features
+
 				for (let g = 0; g < features.length; g++) {
-					
+
 					const coordinates	= features[g].geometry.coordinates
 					const lat			= coordinates[0]
 					const lon			= coordinates[1]
@@ -505,7 +515,7 @@ function map_factory() {
 	this.build_popup_content = function(data) {
 
 		console.log("(!) Using default build_popup_content function:", data);
-		
+
 		const self = this
 
 		const popup_wrapper = common.create_dom_element({
@@ -524,10 +534,10 @@ function map_factory() {
 		// title
 			const ar_group_length = ar_group.length
 			for (let i = 0; i < ar_group_length; i++) {
-				
-				const nombre			= ar_group[i].nombre.replace(',', ', ') // Add space between names separated with comma			
+
+				const nombre			= ar_group[i].nombre.replace(',', ', ') // Add space between names separated with comma
 				const tipo_section_id	= ar_group[i].tipo_section_id
-				
+
 				const title = common.create_dom_element({
 					element_type	: "a",
 					parent			: popup_wrapper,
@@ -569,7 +579,7 @@ function map_factory() {
 		const self = this
 
 		const map_data = self.initial_map_data
-		
+
 		//self.map.panTo(new L.LatLng(map_data.x, map_data.y))
 		//self.map.setZoom(map_data.zoom)
 

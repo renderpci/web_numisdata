@@ -348,7 +348,7 @@ var mint =  {
 
 		}
 
-		console.log("parsedData:",parsedData);
+		// console.log("parsedData:",parsedData);
 
 		return (parsedData);
 	},
@@ -564,56 +564,59 @@ var mint =  {
 	* DRAW_TYPES
 	*/
 	draw_types : function(options) {
+		
 		const self = this
+
+		// options
+			const full_ar_rows	= options.ar_rows
+			const container		= options.target
+
 		let arrDeep = 0
 		let isFirstElement = false
 		
-		if (options.ar_rows.children && options.ar_rows.children.length>0){
+		if (full_ar_rows.children && full_ar_rows.children.length>0){
 
-			const container 	 = options.target
-			const ar_rows		 = options.ar_rows.children
+			const ar_rows		 = full_ar_rows.children
 			const ar_rows_length = ar_rows.length
-			// container select and clean container div
-
+			
+			// clean container div
 			while (container.hasChildNodes()) {
 				container.removeChild(container.lastChild);
 			}
 
 			const fragment = new DocumentFragment();
 
-			const typesLabel = tstring.coin_production || "Coin production"
-			// label types
+			// label
+				const typesLabel = tstring.coin_production || "Coin production"
+				const lineSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_line separator",
+					parent 			: fragment
+				})
+				common.create_dom_element({
+					element_type 	: "label",
+					class_name 		: "big_label",
+					text_content 	: typesLabel,
+					parent 			: lineSeparator
+				})
 
-			const lineSeparator = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "info_line separator",
-				parent 			: fragment
-			})
-
-			common.create_dom_element({
-				element_type 	: "label",
-				class_name 		: "big_label",
-				text_content 	: typesLabel,
-				parent 			: lineSeparator
-			})
-
-			
+			// rows
 			for (let i = 0; i < ar_rows_length; i++) {
 
 				const row_object = ar_rows[i]
 
 				// section_id
-				if (dedalo_logged===true) {
+					if (dedalo_logged===true) {
 
-					const link = common.create_dom_element({
-						element_type	: "a",
-						class_name		: "section_id go_to_dedalo",
-						text_content	: row_object.section_id,
-						href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-						parent			: fragment
-					})
-					link.setAttribute('target', '_blank');
-				}
+						const link = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "section_id go_to_dedalo",
+							text_content	: row_object.section_id,
+							href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
+							parent			: fragment
+						})
+						link.setAttribute('target', '_blank');
+					}
 
 				const children_container = common.create_dom_element({
 					element_type	: "div",
@@ -656,275 +659,273 @@ var mint =  {
 
 				createFolderedGroup(period_label,row_period)
 				createFolderedGroup(period_label,types_container)
-
-
 				
 
 				if (row_object.children != null){
 					//if has children call recursive function that get all children hierarchy one by one
 					recursiveChildrenSearch(row_object.children,null,row_period)
-
 				}
+
+			}//end for (let i = 0; i < ar_rows_length; i++)
+
+				
+			function recursiveChildrenSearch (arr,item,container){
+				
+				if (item != null){
+					createNewItem(item,container);
+
+					if (item.children != null){
+						item.children.sort(function(a,b){
+							//sort every hierarchy level
+							if (parseInt(a.norder) > parseInt(b.norder)){
+								return 1
+							}
+							if (parseInt(a.norder) < parseInt(b.norder)){
+								return -1
+							}
+							return 0
+						})
+					}
+					
+				}
+
+				if (!Array.isArray(arr)){
+					return 
+				} else{
+					//save current hierarchy level
+					arrDeep +=1
+				}
+
+				for (let i=0;i<arr.length;i++){
+					recursiveChildrenSearch(arr[i].children,arr[i],container)
+					if (arr.length-1 == (i)){
+						//save current hierarchy level
+						arrDeep -=1
+					}
+				}
+
+				// arr.forEach(function(item,index){
+				//  	recursiveChildrenSearch(item.children,item,container)
+				//  	console.log("SUBE NIVEL")
+				// })
 			}
 
-				function recursiveChildrenSearch (arr,item,container){
+			function createNewItem (item,container){
+				//if has numismatics groups
+				var currentContainer = container
+
+				if (item.term_table === 'ts_numismatic_group'){
+					if (arrDeep>1){
+						const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
+						currentContainer = deepEl[deepEl.length-1]
+					} 
+					//Create a numismatic group
+					//GROUP wrap
+					const classDeep = "row_node hide deep:"+arrDeep
 					
-					if (item != null){
-						createNewItem(item,container);
+					const children_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "children_container",
+						parent 			: currentContainer
+					})
 
-						if (item.children != null){
-							item.children.sort(function(a,b){
-								//sort every hierarchy level
-								if (parseInt(a.norder) > parseInt(b.norder)){
-									return 1
-								}
-								if (parseInt(a.norder) < parseInt(b.norder)){
-									return -1
-								}
-								return 0
-							})
-						}
-						
-					}
+					const children_label = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "ts_numismatic_group",
+						text_content 	: item.term,
+						parent 			: children_container
+					})
 
-					if (!Array.isArray(arr)){
-						return 
-					} else{
-						//save current hierarchy level
-						arrDeep +=1
-					}
+					common.create_dom_element ({
+						element_type 	: "div",
+						class_name		: "arrow",
+						parent 			: children_label
+					})
 
-					for (let i=0;i<arr.length;i++){
-						recursiveChildrenSearch(arr[i].children,arr[i],container)
-						if (arr.length-1 == (i)){
-							//save current hierarchy level
-							arrDeep -=1
-						}
-					}
+					const types_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "types_container hide deep:"+arrDeep,
+						parent 			: children_container
+					})
 
-					// arr.forEach(function(item,index){
-					//  	recursiveChildrenSearch(item.children,item,container)
-					//  	console.log("SUBE NIVEL")
-					// })
-				}
+					const row_group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "row_node hide deep:"+arrDeep,
+						parent 			: children_container
+					})
 
-				function createNewItem (item,container){
-					//if has numismatics groups
-					var currentContainer = container
+					createFolderedGroup(children_label,row_group)
+					createFolderedGroup(children_label,types_container)
 
-					if (item.term_table === 'ts_numismatic_group'){
-						if (arrDeep>1){
-							const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
+
+				} else if (item.term_table === 'types') {
+					
+					//create a type element
+					if (item.children != null && item.children.length>0){
+						//if is a type and not a subtype mark variable but don't draw anything
+						isFirstElement = true
+					} else{//if is a subtype
+
+							//try to get a type container created yet
+							let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
+							let newArrDeep = arrDeep
+
+							//if previously didn't found, search up in hierarchy until find the last types container
+							while (deepEl.length==0 && newArrDeep>1){
+								newArrDeep = newArrDeep-1
+								deepEl = container.getElementsByClassName("types_container deep:"+(newArrDeep-1).toString())
+							}
+
 							currentContainer = deepEl[deepEl.length-1]
-						} 
-						//Create a numismatic group
-						//GROUP wrap
-						const classDeep = "row_node hide deep:"+arrDeep
 						
-						const children_container = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "children_container",
-							parent 			: currentContainer
-						})
 
-						const children_label = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "ts_numismatic_group",
-							text_content 	: item.term,
-							parent 			: children_container
-						})
-
-						common.create_dom_element ({
-							element_type 	: "div",
-							class_name		: "arrow",
-							parent 			: children_label
-						})
-
-						const types_container = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "types_container hide deep:"+arrDeep,
-							parent 			: children_container
-						})
-
-						const row_group = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "row_node hide deep:"+arrDeep,
-							parent 			: children_container
-						})
-
-						createFolderedGroup(children_label,row_group)
-						createFolderedGroup(children_label,types_container)
-
-
-					} else if (item.term_table === 'types') {
-						
-						//create a type element
-						if (item.children != null && item.children.length>0){
-							//if is a type and not a subtype mark variable but don't draw anything
-							isFirstElement = true
-						} else{//if is a subtype
-
-								//try to get a type container created yet
-								let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
-								let newArrDeep = arrDeep
-
-								//if previously didn't found, search up in hierarchy until find the last types container
-								while (deepEl.length==0 && newArrDeep>1){
-									newArrDeep = newArrDeep-1
-									deepEl = container.getElementsByClassName("types_container deep:"+(newArrDeep-1).toString())
-								}
-
-								currentContainer = deepEl[deepEl.length-1]
-							
-
-							if (currentContainer == null){
-								let deepEl = container.getElementsByClassName("types_container")
-								currentContainer = deepEl[deepEl.length-1]
-							}
-
-							let isSubtype = false
-							if (item.parent[0].term_table === 'types'){
-								isSubtype = true
-							}
-
-							const types_block = create_type_element(item,isSubtype)
-							currentContainer.appendChild(types_block)
-							isFirstElement = false
+						if (currentContainer == null){
+							let deepEl = container.getElementsByClassName("types_container")
+							currentContainer = deepEl[deepEl.length-1]
 						}
-					}
 
-
-					function create_type_element(data,isSubtype){
-
-						const parentSubType = data.parent[0]
-						const type_row = data;
-
-						// let type_row_term = ""
-						const type_row_term = (type_row.term.indexOf(",") == -1)
-							? type_row.term
-							: type_row.term.slice(0,type_row.term.indexOf(","))
-
-						const mint_number = (type_row.ref_mint_number)
-							? type_row.ref_mint_number+'/'
-							: ''
-
-						let type_number = ""
-						let subType_number = ""
-						let SubTypeClass = ""
-						let type_href = ""
-						let subType_href = ""
-
-						if (type_row.term_data != null){
-							const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
-							type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
-							subType_href = type_href
-						} else {
+						let isSubtype = false
+						if (item.parent[0].term_table === 'types'){
 							isSubtype = true
 						}
 
-						if (!isSubtype) {
-							type_number = "MIB "+mint_number+type_row_term
-						} else {
-							subType_number = "MIB "+mint_number+type_row_term
-							SubTypeClass = "subType_number"
-							if (isFirstElement){
-								type_href = ""
-								let parent_term = ""
-								parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.term.indexOf(","))
-								type_number =  "MIB "+parent_term
-							}
-						}
+						const types_block = create_type_element(item,isSubtype)
+						currentContainer.appendChild(types_block)
+						isFirstElement = false
+					}
+				}
 
-						//Type wrap
-						const row_type = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "type_wrap"
-						})
 
-						const number_wrap = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "type_number",
-							parent 			: row_type
-						})
+				function create_type_element(data,isSubtype){
 
-						common.create_dom_element({
-							element_type	: "a",
-							inner_html  	: type_number,
-							class_name		: "type_label",
-							href 			: type_href,
-							parent 			: number_wrap
-						})
+					const parentSubType = data.parent[0]
+					const type_row = data;
 
-						common.create_dom_element({
-							element_type	: "a",
-							inner_html 	    : subType_number,
-							class_name		: "subType_label "+SubTypeClass,
-							href 			: subType_href,
-							parent 			: number_wrap
-						})
+					// let type_row_term = ""
+					const type_row_term = (type_row.term.indexOf(",") == -1)
+						? type_row.term
+						: type_row.term.slice(0,type_row.term.indexOf(","))
 
-						const img_wrap = common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "types_img gallery",
-							parent 			: row_type
-						})
+					const mint_number = (type_row.ref_mint_number)
+						? type_row.ref_mint_number+'/'
+						: ''
 
-						const img_link_ob = common.create_dom_element({
-							element_type 	: "a",
-							class_name		: "image_link",
-							href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-							parent 			: img_wrap,
-						})
+					let type_number = ""
+					let subType_number = ""
+					let SubTypeClass = ""
+					let type_href = ""
+					let subType_href = ""
 
-						common.create_dom_element({
-							element_type	: "img",
-							src 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-							parent 			: img_link_ob
-						}).loading="lazy"
-
-						const img_link_re = common.create_dom_element({
-							element_type 	: "a",
-							class_name		: "image_link",
-							href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-							parent 			: img_wrap,
-						})
-
-						common.create_dom_element({
-							element_type	: "img",
-							src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-							parent 			: img_link_re
-						}).loading="lazy"
-
-						const info_wrap = common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_wrap",
-							parent 			: row_type
-						})
-
-						const type_info = [
-							type_row.ref_type_material,
-							type_row.denomination,
-							type_row.ref_type_averages_weight+"g",
-							type_row.ref_type_averages_diameter+"mm"
-						]
-
-						common.create_dom_element ({
-							element_type 	: "p",
-							class_name 		: "type_info",
-							text_content 	: type_info.join(' | '),
-							parent 			: info_wrap
-						})
-
-						page.activate_images_gallery(img_wrap)
-
-						return row_type
+					if (type_row.term_data != null){
+						const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
+						type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
+						subType_href = type_href
+					} else {
+						isSubtype = true
 					}
 
+					if (!isSubtype) {
+						type_number = "MIB "+mint_number+type_row_term
+					} else {
+						subType_number = "MIB "+mint_number+type_row_term
+						SubTypeClass = "subType_number"
+						if (isFirstElement){
+							type_href = ""
+							let parent_term = ""
+							parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.term.indexOf(","))
+							type_number =  "MIB "+parent_term
+						}
+					}
+
+					//Type wrap
+					const row_type = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "type_wrap"
+					})
+
+					const number_wrap = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "type_number",
+						parent 			: row_type
+					})
+
+					common.create_dom_element({
+						element_type	: "a",
+						inner_html  	: type_number,
+						class_name		: "type_label",
+						href 			: type_href,
+						parent 			: number_wrap
+					})
+
+					common.create_dom_element({
+						element_type	: "a",
+						inner_html 	    : subType_number,
+						class_name		: "subType_label "+SubTypeClass,
+						href 			: subType_href,
+						parent 			: number_wrap
+					})
+
+					const img_wrap = common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "types_img gallery",
+						parent 			: row_type
+					})
+
+					const img_link_ob = common.create_dom_element({
+						element_type 	: "a",
+						class_name		: "image_link",
+						href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
+						parent 			: img_wrap,
+					})
+
+					common.create_dom_element({
+						element_type	: "img",
+						src 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
+						parent 			: img_link_ob
+					}).loading="lazy"
+
+					const img_link_re = common.create_dom_element({
+						element_type 	: "a",
+						class_name		: "image_link",
+						href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
+						parent 			: img_wrap,
+					})
+
+					common.create_dom_element({
+						element_type	: "img",
+						src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
+						parent 			: img_link_re
+					}).loading="lazy"
+
+					const info_wrap = common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "info_wrap",
+						parent 			: row_type
+					})
+
+					const type_info = [
+						type_row.ref_type_material,
+						type_row.denomination,
+						type_row.ref_type_averages_weight+"g",
+						type_row.ref_type_averages_diameter+"mm"
+					]
+
+					common.create_dom_element ({
+						element_type 	: "p",
+						class_name 		: "type_info",
+						text_content 	: type_info.join(' | '),
+						parent 			: info_wrap
+					})
+
+					page.activate_images_gallery(img_wrap)
+
+					return row_type
 				}
-			
-		
-				// container final add
-				container.appendChild(fragment)
+
+			}
+
+			// container final add
+			container.appendChild(fragment)
 			
 
 			function createFolderedGroup(label,row_group) {
@@ -940,11 +941,14 @@ var mint =  {
 						label_arrow.style.transform = "rotate(0deg)";
 					}
 				})
-
 			}
 
 		} else {
-			document.getElementById('types').remove()
+			// const types_container = document.getElementById('types')
+			// if (types_container) {
+			// 	types_container.remove()
+			// }
+			container.remove()
 		}
 
 	},//end draw_types
@@ -967,7 +971,7 @@ var mint =  {
 			place_data : place_data
 		}).then(function(response){
 
-			console.log (mint_popup_data);
+			// console.log (mint_popup_data);
 
 			const map_position	= mint_map_data
 			const container		= document.getElementById("map_container")
@@ -978,32 +982,8 @@ var mint =  {
 				map_position	: map_position,
 				popup_builder	: page.map_popup_builder,
 				popup_options	: page.maps_config.popup_options,
-				source_maps		: page.maps_config.source_maps
-			})
-
-			// map_legend
-			const map_legend = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "map_legend",
-				parent			: container
-			})
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "legend_item",
-				inner_html		: tstring.mint + '<img src="'+page.maps_config.markers.mint.iconUrl+'"/>',
-				parent			: map_legend
-			})
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "legend_item",
-				inner_html		: tstring.hoard + '<img src="'+page.maps_config.markers.hoard.iconUrl+'"/>',
-				parent			: map_legend
-			})
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "legend_item",
-				inner_html		: tstring.findspot + '<img src="'+page.maps_config.markers.findspot.iconUrl+'"/>',
-				parent			: map_legend
+				source_maps		: page.maps_config.source_maps,
+				legend			: page.render_map_legend
 			})
 
 			var map_data_clean = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
@@ -1021,7 +1001,7 @@ var mint =  {
 
 					const findspot_map_data_clean = self.map_data(findspot_map_data,findspot_popup_data)
 					
-					console.log(findspot_popup_data)
+					// console.log(findspot_popup_data)
 
 					map_data_clean.push(findspot_map_data_clean[0])
 				}
@@ -1119,7 +1099,7 @@ var mint =  {
 	*/
 	map_data : function(data, popup_data) {
 
-		console.log("MAP_DATA: ",popup_data)	
+		// console.log("MAP_DATA: ",popup_data)	
 		const self = this
 
 		// console.log("--map_data data:",data);

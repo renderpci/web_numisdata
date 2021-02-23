@@ -21,6 +21,8 @@ var catalog =  {
 	// form
 	form : null,
 
+	rows_list_container : null,
+
 
 
 	/**
@@ -29,6 +31,17 @@ var catalog =  {
 	set_up : function(options) {
 	
 		const self = this
+
+		// options
+			const rows_list_container	= options.rows_list_container
+			const global_search			= options.global_search
+			const item_type				= options.item_type
+			const label					= options.label
+			const value					= options.value
+
+		// fix
+			self.rows_list_container = rows_list_container
+
 
 		const container = document.getElementById("items_container")
 				
@@ -185,24 +198,24 @@ var catalog =  {
 			container.appendChild(form_node)
 			
 		// first search
-			if (options.global_search && options.global_search.length>1) {
+			if (global_search && global_search.length>1) {
 
-				const value = decodeURI(options.global_search)
+				const current_value = decodeURI(global_search)
 
 				// set value
-				self.form.set_input_value(self.form.form_items.global_search, value)
+				self.form.set_input_value(self.form.form_items.global_search, current_value)
 
 				// submit form
 				self.form_submit(form_node)
 			
-			}else if(options.item_type.length>1){
+			}else if(item_type.length>1){
 
-				// console.log("options.item_type", options.item_type);
-				// console.log("options.label", options.label);
-				// console.log("options.value", options.value);
+				// console.log("item_type", item_type);
+				// console.log("label", label);
+				// console.log("value", value);
 
 				// add value as user selected
-				self.form.add_selected_value(self.form.form_items[options.item_type], options.label, options.value)
+				self.form.add_selected_value(self.form.form_items[item_type], label, value)
 				
 				// submit form
 				self.form_submit(form_node)
@@ -1397,7 +1410,7 @@ var catalog =  {
 
 						// draw rows
 							self.draw_rows({
-								target  : 'rows_list',
+								target  : self.rows_list_container,
 								ar_rows : data
 							})
 							.then(function(){
@@ -1523,14 +1536,15 @@ var catalog =  {
 	* DRAW_ROWS
 	*/
 	draw_rows : function(options) {
-
+			console.log("options:",options);
 		const self = this
 
-		return new Promise(function(resolve){		
+		// options
+			const target	= options.target // self.rows_list_container
+			const ar_rows	= options.ar_rows || []
 
-			// options
-				const target	= options.target
-				const ar_rows	= options.ar_rows || []
+
+		return new Promise(function(resolve){			
 			
 			// pagination vars
 				const total		= self.search_options.total
@@ -1538,7 +1552,7 @@ var catalog =  {
 				const offset	= self.search_options.offset
 
 			// container select and clean container div
-				const container = document.getElementById(target)
+				const container = target
 
 			// no_results_found check
 				const ar_rows_length = ar_rows.length
@@ -1588,8 +1602,7 @@ var catalog =  {
 					const unique_parent = ar_parent.find(item => item.section_id===parent)
 					if(typeof unique_parent==='undefined'){
 						ar_parent.push(mint_parent)
-					}
-					
+					}					
 				}
 				// create the nodes with the unique parents: ar_parents
 				for (let i = 0; i < ar_parent.length; i++) {

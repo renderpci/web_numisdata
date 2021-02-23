@@ -326,6 +326,9 @@ var catalog_row_fields = {
 					break;
 
 				case "term":
+					const mint_number = (item.ref_mint_number)
+						? item.ref_mint_number+'/'
+						: ''
 					if (item.term_section_id && !item.children) {
 
 						const ar		= item[name].split(", ")
@@ -338,10 +341,7 @@ var catalog_row_fields = {
 									clean.push(ar[i])
 								}
 								return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
-							})()
-						const mint_number = (item.ref_mint_number)
-							? item.ref_mint_number+'/'
-							: ''
+							})()						
 
 						const a_term = common.create_dom_element({
 							element_type	: "a",
@@ -352,7 +352,7 @@ var catalog_row_fields = {
 						})
 						current_value = a_term.outerHTML
 					}else{
-						current_value = "MIB " + item[name]
+						current_value = "MIB " + mint_number + item[name]
 					}
 					break;
 

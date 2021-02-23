@@ -13,12 +13,15 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
-section.result {
+.rows_list {
   min-height: 80vh;
   padding-top: 2em;
   position: relative;
 }
-section.result .spinner_svg {
+.rows_list span {
+  margin-right: 1em;
+}
+.rows_list .spinner_svg {
   position: absolute;
   top: 3em;
   z-index: 99999999;

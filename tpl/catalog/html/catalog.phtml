@@ -31,7 +31,7 @@
 
 					<!-- Result -->
 						<section class="result">
-							<div id="rows_list"></div>
+							<div id="rows_list" class="rows_list"></div>
 						</section>
 
 				</div>
@@ -47,10 +47,11 @@
 <script>
 dom_ready(function(){
 	catalog.set_up({
-		global_search	: <?php echo json_encode($global_search) ?>,
-		item_type		: <?php echo json_encode($item_type) ?>,
-		label			: <?php echo json_encode($label) ?>,
-		value			: <?php echo json_encode($value) ?>
+		global_search		: <?php echo json_encode($global_search) ?>,
+		item_type			: <?php echo json_encode($item_type) ?>,
+		label				: <?php echo json_encode($label) ?>,
+		value				: <?php echo json_encode($value) ?>,
+		rows_list_container	: document.getElementById('rows_list')
 	})
 })
 </script>

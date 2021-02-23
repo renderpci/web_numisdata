@@ -9,25 +9,21 @@
 
 
 // search result
-	section.result {
+	// section.result {
+	.rows_list {
 		min-height: 80vh;
 		padding-top: 2em;
 		position: relative;
+
+		span {
+			margin-right: 1em;
+		}
 
 		.spinner_svg {
 			position: absolute;
 			top: 3em;
 			z-index: 99999999;
 		}
-	}
-
-
-
-// randomColor
-	.randomColor(){
-	  @randomColor: `Math.floor(Math.random()*16777215).toString(16)`;
-	  @colorHex: e(@randomColor);
-	  @color: ~"#@{colorHex}";
 	}
 
 
@@ -321,6 +317,9 @@
 			vertical-align: middle;
 		}
 	}
+	// span {
+ //    	margin-right: 1em;
+	// }
 	.legend_obverse{
 		grid-column-start: 1;
 		grid-row-start: 3;

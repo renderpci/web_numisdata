@@ -274,7 +274,7 @@ function map_factory() {
 			for (let i = group_data_length - 1; i >= 0; i--) {
 
 				const element = group_data[i]
-				
+
 				// des
 					// var ar_places = JSON.parse(element.lugar)
 					// // Iterate all
@@ -375,10 +375,10 @@ function map_factory() {
 					// self.current_group = L.layerGroup(ar_markers)
 					// self.current_group.addTo(self.map)
 					const cluster_markers = L.markerClusterGroup({
-						spiderfyOnMaxZoom: true,
-						showCoverageOnHover: false,
-						zoomToBoundsOnClick: true,
-						maxClusterRadius: 50,
+						spiderfyOnMaxZoom	:  true,
+						showCoverageOnHover	: false,
+						zoomToBoundsOnClick	: true,
+						maxClusterRadius	: 30,
 						iconCreateFunction: function(cluster) {
 							return L.divIcon({ html: cluster.getChildCount(), className: 'mycluster', iconSize: L.point(40, 40) });
 						}

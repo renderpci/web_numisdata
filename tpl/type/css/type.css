@@ -37,9 +37,6 @@
 .result .row_wrapper .find_wrapper div:first-child {
   font-weight: bold;
 }
-.result .row_wrapper img {
-  vertical-align: bottom;
-}
 .result .row_wrapper div.ref_coins_image_obverse,
 .result .row_wrapper div.ref_coins_image_reverse {
   width: 16em;

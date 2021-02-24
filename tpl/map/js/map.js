@@ -104,7 +104,7 @@ var map =  {
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
 				table		: 'map_global',
 				ar_fields	: '*',
-				sql_filter	: 'coins_list IS NOT NULL && types_list IS NOT NULL',
+				sql_filter	: 'coins_list IS NOT NULL AND types_list IS NOT NULL AND georef_geojson IS NOT NULL',
 				limit		: 0,
 				count		: false,
 				offset		: 0,
@@ -484,15 +484,18 @@ var map =  {
 					  new_row.coins_list = coins_list
 					  new_row.types_list = types_list
 
+				const coins_list_total = new_row.coins_list ? new_row.coins_list.length : 0;
+				const types_list_total = new_row.types_list ? new_row.types_list.length : 0;	
+					console.log("new_row:",new_row);
 				// item data update
-					const description = (tstring.coins || 'Coins') + ' ' + new_row.coins_list.length +'<br>'+ (tstring.types || 'Types') + ' ' + new_row.types_list.length
-					new_row.item.data.coins_total = coins_list.length
-					new_row.item.data.types_total = types_list.length
+					const description = (tstring.coins || 'Coins') + ' ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ' ' + types_list_total
+					new_row.item.data.coins_total = coins_list_total
+					new_row.item.data.types_total = types_list_total
 					new_row.item.data.description = description
 
 			// add cloned and updated row
 				new_map_global_data.push(new_row)
-			
+
 		}
 		// console.log("new_map_global_data:",new_map_global_data);
 

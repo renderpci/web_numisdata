@@ -537,14 +537,17 @@ page.parse_map_global_data = function(ar_rows) {
 				return name
 			})(row.table);
 
+			const coins_list_total = row.coins_list ? row.coins_list.length : 0;
+			const types_list_total = row.types_list ? row.types_list.length : 0;
+
 			const title = '<span class="note">'+(tstring[name] || name)+'</span> ' + row.name
-			const description = (tstring.coins || 'Coins') + ' ' + row.coins_list.length +'<br>'+ (tstring.types || 'Types') + ' ' + row.types_list.length
+			const description = (tstring.coins || 'Coins') + ' ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ' ' + types_list_total
 
 			const item_data = {
 				section_id			: row.section_id,
 				title				: title,
-				coins_total			: row.coins_list.length,
-				types_total			: row.types_list.length,
+				coins_total			: coins_list_total,
+				types_total			: types_list_total,
 				description			: description,
 				// usefull properties
 				ref_section_id		: row.ref_section_id,

@@ -34,7 +34,7 @@
 					<?php if (IS_PRODUCTION===false) { ?>
 					<nav>
 						<ul>
-							<li><a href="#menu">Menu</a></li>
+							<li><a href="#menu"><?php echo tstring('menu') ?></a></li>
 						</ul>
 					</nav>
 					<?php } ?>
@@ -46,7 +46,13 @@
 <!-- Menu -->
 	<?php if (IS_PRODUCTION===false) { ?>
 	<nav id="menu">
-		<h2>Menu</h2>
+		<div id="lang_globe" class="lang_globe" title="Switch lang"><i class="fa fa-globe"></i></div>
+		<ul id="page_lang_selector" class="page_lang_selector hide">
+			<?php foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) { ?>
+				<li class="lang_item"><a href="?lang=<?php echo $lang ?>"><?php echo $lang_name ?></a></li>
+			<?php } ?>
+		</ul>		
+		<h2><?php echo tstring('menu') ?></h2>
 		<?php echo $this->menu_tree_html ?>
 	</nav>
 	<?php } ?>

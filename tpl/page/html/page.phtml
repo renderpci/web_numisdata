@@ -31,15 +31,6 @@
 	<script>WEB_AREA='<?php echo $this->area_name ?>'</script>
 </head>
 <body class="is-preload">
-	<?php /*
-	<!-- Lang selector -->
-		<ul id="page_lang_selector">
-			<li><i class="fa fa-globe"></i></li>
-			<?php foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) { ?>
-			<li><a href="?lang=<?php echo $lang ?>"><?php echo $lang_name ?></a></li>
-			<?php }	?>
-		</ul>
-	*/ ?>
 <?php echo $content_html ?>
 <script>
 dom_ready(function(){

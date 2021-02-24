@@ -148,6 +148,29 @@ form {
 .form-inline .form-group.field_operators .operators {
   margin-right: 1em;
 }
+.form-inline .range_slider {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.form-inline .range_slider .range_slider_labels {
+  display: flex;
+  justify-content: space-between;
+  height: 2em;
+  line-height: 1em;
+}
+.form-inline .range_slider .range_slider_labels .range_slider_label {
+  width: auto;
+  text-align: center;
+}
+.form-inline .range_slider .range_slider_labels input.range_slider_value {
+  width: 3em;
+  height: 2em;
+  text-align: center;
+}
+.form-inline .range_slider .ui-slider-handle {
+  margin-top: 4px;
+  height: 23px;
+}
 .ui-menu .ui-menu-item {
   padding-left: 0;
   width: 100%;
@@ -269,13 +292,14 @@ form {
   margin-top: 0.5em;
 }
 .map .leaflet-container .mycluster {
-  background-color: #ffdf73;
+  background-color: #fefefe96;
   text-align: center;
   padding: 1em;
   border-radius: 20px;
   color: black;
   font-weight: 600;
-  box-shadow: 3px 6px 6px 0px #ababab;
+  box-shadow: 3px 3px 2px 0px #ababab;
+  backdrop-filter: blur(10px);
 }
 .map_container.leaflet-container .leaflet-control-layers-toggle {
   background-image: url("../../assets/images/map/layers.png");
@@ -593,6 +617,26 @@ p img.svg {
 .loading {
   opacity: 0.4 !important;
 }
+#menu .lang_globe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1em;
+  cursor: pointer;
+  padding-top: 2.75em;
+  padding-right: 2em;
+}
+#menu > .inner > .page_lang_selector {
+  padding-top: 0.5em;
+  padding-right: 1em;
+}
+#menu > .inner > .page_lang_selector .selected {
+  font-weight: 600;
+  cursor: default;
+  opacity: 1;
+  pointer-events: none;
+  color: #b7996d;
+}
 #wrapper {
   background: white;
   background-image: url('../../assets/images/overlay_white.png');
@@ -809,24 +853,6 @@ p img.svg {
   #main {
     width: 95%;
   }
-}
-ul.page_lang_selector {
-  width: 100%;
-  text-align: center;
-  padding: 0;
-}
-ul.page_lang_selector > li {
-  list-style: none;
-  display: inline-block;
-  text-align: center;
-  opacity: 1;
-}
-ul.page_lang_selector > li#lang_globe {
-  opacity: 0.65;
-}
-ul.page_lang_selector > li a.selected {
-  opacity: 0.65;
-  border: none;
 }
 #footer {
   background-color: #333333;

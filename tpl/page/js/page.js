@@ -95,26 +95,20 @@ var page = {
 	*/
 	setup : function() {
 
-		var self = this
+		const self = this
 
-		// window.ready(function(){
-			// self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
-		// })
 
-		window.ready(function(){
-			// init lang selector
-			// self.init_lang_selector()
-
+		// lang selector activate and hilite_lang
 			self.hilite_lang(page_globals.WEB_CURRENT_LANG_CODE)
 
-			// show footer (from opacity zero)
+		// show footer (from opacity zero)
 			const footer = document.getElementById('footer')
 			if (footer) {
 				setTimeout(function(){
 					footer.classList.remove('hidded')
 				},500)
 			}
-		})
+
 
 		return true
 	},//end setup
@@ -125,17 +119,24 @@ var page = {
 	* HILITE_LANG
 	*/
 	hilite_lang : function(lang) {
-
-		// Lang selected
-			const page_lang_selector = document.getElementById("page_lang_selector")
-			if (page_lang_selector) {
+		
+		const page_lang_selector = document.getElementById("page_lang_selector")
+		if (page_lang_selector) {
+			
+			// Lang selected
 				const nodes = page_lang_selector.querySelectorAll("a")
 				for (let i = 0; i < nodes.length; i++) {
 					if ( nodes[i].href.indexOf(lang) !== -1 ) {
-						nodes[i].classList.add("selected")
+						nodes[i].classList.add("selected")						
 					}
 				}
-			}
+
+			// icon globe events
+				const lang_globe = document.getElementById('lang_globe')
+				lang_globe.addEventListener('click', function(){										
+					page_lang_selector.classList.toggle("hide")
+				})
+		}
 
 		return true
 	},//end hilite_lang

@@ -110,5 +110,6 @@
     "volume": "Volumen",
     "weight": "Peso",
     "related_types" : "Tipos relacionados",
-    "coin_production" : "Producción monetaria"
+    "coin_production" : "Producción monetaria",
+    "menu": "Menu"
 }

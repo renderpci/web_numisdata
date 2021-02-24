@@ -222,10 +222,12 @@ var coins =  {
 				// parse_sql_filter
 				const group			= []
 				const parsed_filter	= self.form.parse_sql_filter(filter, group)
-				let sql_filter	= parsed_filter
+				const sql_filter	= parsed_filter
 					? '(' + parsed_filter + ')'
 					: null
-					console.log("sql_filter:",sql_filter);
+				if(SHOW_DEBUG===true) {
+					console.log("-> coins form_submit sql_filter:",sql_filter);
+				}					
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
 				// 		// loading ends

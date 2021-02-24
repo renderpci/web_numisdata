@@ -416,6 +416,10 @@ function form_factory() {
 
 						const value = form_item.q_selected[j]
 
+						// escape html strings containing single quotes inside.
+						// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
+						const safe_value = value.replace(/(')/g, "''")
+
 						const c_group_op = "AND"
 						const c_group = {}
 							  c_group[c_group_op] = []
@@ -423,7 +427,7 @@ function form_factory() {
 						// elemet
 						const element = {
 							field		: form_item.q_column,
-							value		: (form_item.q_selected_eq==="LIKE") ? `'%${value}%'` : `'${value}'`,
+							value		: (form_item.q_selected_eq==="LIKE") ? `'%${safe_value}%'` : `'${value}'`,
 							op			: form_item.q_selected_eq,
 							sql_filter	: form_item.sql_filter,
 							wrapper		: form_item.wrapper
@@ -453,20 +457,23 @@ function form_factory() {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-
+				console.log("self.form_items:",self.form_items);
+				console.log("ar_query_elements:",ar_query_elements);
 			}
 
 		// empty form case
 			if (ar_query_elements.length<1) {
-				// self.form.form_items.mint.node_input.focus()
+				console.warn("-> form_to_sql_filter empty elements selected:", ar_query_elements)
 				return false;
 			}
 		
 		// operators value (optional)
-			const operators_checked_node = self.node.querySelector('input[name="operators"]:checked')
-			const operators_value = operators_checked_node ? operators_checked_node.value  : 'AND';
-				// console.log("operators_value:",operators_value);
+			const input_operators = self.node.querySelector('input[name="operators"]')
+			const operators_value = input_operators
+				? self.node.querySelector('input[name="operators"]:checked').value
+				: "AND";
 
+		// filter object
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
 
@@ -885,7 +892,7 @@ function form_factory() {
 
 
 	/**
-	* FORM_TO_SQL_FILTER
+	* FORM_TO_SQL_FILTER (DEPRECATED!)
 	* Builds a plain sql filter from the form nodes values
 	*/
 	this.form_to_sql_filter = function(options) {

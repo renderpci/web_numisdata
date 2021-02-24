@@ -26,15 +26,15 @@ function form_factory() {
 
 		// node
 			self.build_form_node(form_item, options.parent)
-		
+
 		// callback
 			if (typeof options.callback==="function") {
 				options.callback(form_item)
 			}
-		
+
 		// store current instance
 			self.form_items[options.id] = form_item
-
+		
 
 		return form_item
 	}//end item_factory
@@ -66,7 +66,7 @@ function form_factory() {
 			// q_table 		: options.q_table, // like 'mints'
 			// q_table_name : 'term_table', // like 'term_table'
 			// autocomplete options
-			eq				: options.eq || "LIKE", // default internal comparator used in autocomplete		
+			eq				: options.eq || "LIKE", // default internal comparator used in autocomplete
 			eq_in			: typeof options.eq_in!=='undefined'  ? options.eq_in  : '', // used in autocomplete to define if term begins with .. o in the middle of..
 			eq_out			: typeof options.eq_out!=='undefined' ? options.eq_out : '%', // used in autocomplete to define if term ends with .. o in the middle of..
 			// category. thesurus terms and not terms
@@ -135,10 +135,10 @@ function form_factory() {
 					const node_slider = common.create_dom_element({
 						element_type	: 'div',
 						id				: form_item.id,
-						class_name		: "form-control " + (form_item.class_name ? (' '+form_item.class_name) : ''),					
+						class_name		: "form-control " + (form_item.class_name ? (' '+form_item.class_name) : ''),
 						// value			: form_item.q || '',
 						parent			: group
-					})					
+					})
 					// node_select.addEventListener("change", function(e){
 					// 		console.log("e.target.value:",e.target.value);
 					// 	if (e.target.value) {
@@ -153,7 +153,7 @@ function form_factory() {
 					const node_select = common.create_dom_element({
 						element_type	: 'select',
 						id				: form_item.id,
-						class_name		: "form-control ui-autocomplete-select" + (form_item.class_name ? (' '+form_item.class_name) : ''),					
+						class_name		: "form-control ui-autocomplete-select" + (form_item.class_name ? (' '+form_item.class_name) : ''),
 						value			: form_item.q || '',
 						parent			: group
 					})
@@ -175,7 +175,7 @@ function form_factory() {
 					})
 					form_item.node_input = node_select
 					break;
-				
+
 				default:
 					const node_input = common.create_dom_element({
 						element_type	: 'input',
@@ -191,7 +191,7 @@ function form_factory() {
 					})
 					form_item.node_input = node_input
 					break;
-			}		
+			}
 
 
 		// values container (user selections)
@@ -205,7 +205,7 @@ function form_factory() {
 
 
 		return true
-	}//end build_form_node	
+	}//end build_form_node
 
 
 
@@ -218,7 +218,7 @@ function form_factory() {
 			element_type	: "div",
 			class_name 		: "form-group field field_operators"
 		})
-		
+
 		const operator_label = common.create_dom_element({
 			element_type	: "span",
 			class_name 		: "radio operators",
@@ -266,10 +266,9 @@ function form_factory() {
 
 	/**
 	* ADD_SELECTED_VALUE
-	* Add value as user selection creating a line with trash icon and so on
 	*/
 	this.add_selected_value = function(form_item, label, value) {
-		
+
 		const container = form_item.node_values
 
 		// Check if already exists
@@ -286,13 +285,12 @@ function form_factory() {
 				parent			: container
 			})
 
-		// trash. 
+		// trash.
 			// awesome font 4 <i class="fal fa-trash-alt"></i>
 			// awesome font 5 <i class="far fa-trash-alt"></i>
 			const trash = common.create_dom_element({
 				element_type	: "i",
-				// class_name	: "icon remove fal far fa-trash-alt", //  fa-trash awesome font 4
-				class_name		: "icon fa-trash", //awesome font 4
+				class_name		: "icon remove fal far fa-trash fa-trash-alt", //  fa-trash awesome font 4
 				parent			: line
 			})
 			trash.addEventListener("click",function(){
@@ -302,7 +300,7 @@ function form_factory() {
 				if (index > -1) {
 					// remove array element
 					form_item.q_selected.splice(index, 1);
-					
+
 					// remove dom node
 					this.parentNode.remove()
 
@@ -310,10 +308,10 @@ function form_factory() {
 					if(SHOW_DEBUG===true) {
 						console.log("form_item.q_selected removed value:",value,form_item.q_selected);
 					}
-				}			
+				}
 			})
 
-		// label 
+		// label
 			const value_label = common.create_dom_element({
 				element_type	: "span",
 				class_name		: "value_label",
@@ -321,7 +319,7 @@ function form_factory() {
 				parent			: line
 			})
 
-		// input 
+		// input
 			const input = common.create_dom_element({
 				element_type	: "input",
 				class_name		: "input_values",
@@ -347,7 +345,7 @@ function form_factory() {
 	* Set a q value to a form item
 	*/
 	this.set_input_value = function(form_item, value) {
-				
+
 		// add value
 			form_item.node_input.value	= value
 			form_item.q					= value
@@ -362,15 +360,15 @@ function form_factory() {
 	* Creates a complete sqo filter using form items values
 	*/
 	this.build_filter = function() {
-		
+
 		const self = this
 
 		const form_items = self.form_items
 			// console.log("form_items:",form_items);
-	
+
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
-			
+
 			const current_group = []
 
 			const group_op = (form_item.is_term===true) ? "OR" : "AND"
@@ -378,7 +376,7 @@ function form_factory() {
 				  group[group_op] = []
 
 			// q value or sql_filter
-				if ( (form_item.q.length>0 && form_item.q!=='*') || form_item.sql_filter ) {
+				if ( (form_item.q.length!==0 && form_item.q!=='*') || form_item.sql_filter ) {
 
 					const c_group_op = 'AND'
 					const c_group = {}
@@ -410,12 +408,12 @@ function form_factory() {
 					// add basic group
 						group[group_op].push(c_group)
 				}
-			
+
 			// q_selected values
-				if (form_item.q_selected.length>0) {
+				if (form_item.q_selected.length!==0) {
 
 					for (let j = 0; j < form_item.q_selected.length; j++) {
-						
+
 						const value = form_item.q_selected[j]
 
 						const c_group_op = "AND"
@@ -443,19 +441,19 @@ function form_factory() {
 
 							// 	c_group[c_group_op].push(element_table)
 							// }
-							
+
 						group[group_op].push(c_group)
 					}
 				}
 
 			if (group[group_op].length>0) {
 				ar_query_elements.push(group)
-			}			
+			}
 		}
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				
+
 			}
 
 		// empty form case
@@ -463,15 +461,15 @@ function form_factory() {
 				// self.form.form_items.mint.node_input.focus()
 				return false;
 			}
-
+		
 		// operators value (optional)
 			const operators_checked_node = self.node.querySelector('input[name="operators"]:checked')
 			const operators_value = operators_checked_node ? operators_checked_node.value  : 'AND';
 				// console.log("operators_value:",operators_value);
-			
+
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
-		
+
 
 		return filter
 	}//end build_filter
@@ -482,22 +480,22 @@ function form_factory() {
 	* PARSE_SQL_FILTER
 	* Convert filter object to plain sql code ready to send to database
 	* @param object filter
-	* @return string 
+	* @return string
 	*/
 	this.parse_sql_filter = function(filter, group){
 
 		const self = this
 
-		const sql_filter = (filter) 
+		const sql_filter = (filter)
 			? (function() {
 
 				const op		= Object.keys(filter)[0]
 				const ar_query	= filter[op]
-				
+
 				const ar_filter = []
 				const ar_query_length = ar_query.length
 				for (let i = 0; i < ar_query_length; i++) {
-					
+
 					const item = ar_query[i]
 
 					const item_op = Object.keys(item)[0]
@@ -514,7 +512,7 @@ function form_factory() {
 					}else{
 						filter_line = (item.field.indexOf("AS")!==-1)
 							? "" +item.field+""  +" "+ item.op +" "+ item.value
-							: "`"+item.field+"`" +" "+ item.op +" "+ item.value	
+							: "`"+item.field+"`" +" "+ item.op +" "+ item.value
 					}
 
 					ar_filter.push(filter_line)
@@ -535,81 +533,8 @@ function form_factory() {
 
 
 	/**
-	* ADD_SELECTED_VALUE
-	*/
-		// this.add_selected_value = function(form_item, label, value) {
-		// 	const container = form_item.node_values
-
-		// 	// Check if already exists
-		// 		const inputs 		= container.querySelectorAll(".input_values")
-		// 		const inputs_length = inputs.length
-		// 		for (let i = inputs_length - 1; i >= 0; i--) {
-		// 			if (value===inputs[i].value) return false;
-		// 		}
-
-		// 	// Create new line
-		// 		const line = common.create_dom_element({
-		// 			element_type 	: "div",
-		// 			class_name   	: "line_value",
-		// 			parent 			: container
-		// 		})
-
-		// 	// trash. <i class="fal fa-trash-alt"></i>
-		// 		const trash = common.create_dom_element({
-		// 			element_type 	: "i",
-		// 			class_name   	: "icon fa-trash", //awesome font 4
-		// 			parent 			: line
-		// 		})
-		// 		trash.addEventListener("click",function(){
-
-		// 			// remove from form_item q_selected
-		// 			const index = form_item.q_selected.indexOf(value);
-		// 			if (index > -1) {
-		// 				// remove array element
-		// 				form_item.q_selected.splice(index, 1);
-						
-		// 				// remove dom node
-		// 				this.parentNode.remove()
-
-		// 				// debug
-		// 				if(SHOW_DEBUG===true) {
-		// 					console.log("form_item.q_selected removed value:",value,form_item.q_selected);
-		// 				}
-		// 			}			
-		// 		})
-
-		// 	// label 
-		// 		const value_label = common.create_dom_element({
-		// 			element_type	: "span",
-		// 			class_name		: "value_label",
-		// 			inner_html		: label,
-		// 			parent			: line
-		// 		})
-
-		// 	// input 
-		// 		const input = common.create_dom_element({
-		// 			element_type	: "input",
-		// 			class_name		: "input_values",
-		// 			parent			: line
-		// 		})
-		// 		input.value = value
-
-		// 	// add to form_item
-		// 		form_item.q_selected.push(value)
-
-		// 	// clean values
-		// 		form_item.node_input.value 	= ""
-		// 		form_item.q 				= ""
-
-
-		// 	return true
-		// }//end add_selected_value
-
-
-
-	/**
 	* FULL_TEXT_SEARCH_OPERATORS_INFO
-	* @return 
+	* @return
 	*/
 	this.full_text_search_operators_info = function() {
 
@@ -657,7 +582,7 @@ function form_factory() {
 			}
 		]
 
-		for (let i = 0; i < pairs.length; i++) {			
+		for (let i = 0; i < pairs.length; i++) {
 
 			common.create_dom_element({
 				element_type	: "div",
@@ -685,7 +610,7 @@ function form_factory() {
 	* @param object options
 	*/
 	this.activate_autocomplete = function(options) {
-		
+
 		const self = this
 
 		// options
@@ -695,7 +620,7 @@ function form_factory() {
 			const cross_filter	= options.cross_filter || true; // look the other form values to generate the sql filter (default true)
 			const order			= options.order || 'name ASC'; // 'name' is the generic column alias
 
-		
+
 		/*
 		 * jQuery UI Autocomplete HTML Extension
 		 *
@@ -727,11 +652,11 @@ function form_factory() {
 					}
 				},
 
-				_renderItem: function( ul, item) {					
+				_renderItem: function( ul, item) {
 
 					var final_label = item.label
 
-					// remove empty values when separator is present						
+					// remove empty values when separator is present
 						var ar_parts 	= final_label.split(' | ')
 						var ar_clean 	= []
 						for (var i = 0; i < ar_parts.length; i++) {
@@ -759,13 +684,13 @@ function form_factory() {
 			minLength	: 0,
 			html		: true,
 			source		: function( request, response ) {
-				
+
 				const term = request.term
 
 				const field		= form_item.q_name // Like 'mint'
 				const q_column	= form_item.q_column // Like 'term'
 
-				// filter build 
+				// filter build
 					const op 	 = "AND"
 					const filter = {}
 						  filter[op] = []
@@ -790,8 +715,8 @@ function form_factory() {
 						// 	})
 						// }
 
-					// cross filter. Add other selected values to the filter to create a interactive filter	
-						if (cross_filter) {				
+					// cross filter. Add other selected values to the filter to create a interactive filter
+						if (cross_filter) {
 							const c_op		= "OR"
 							const c_filter	= {}
 								  c_filter[c_op] = []
@@ -813,9 +738,9 @@ function form_factory() {
 								// q_selected. Values from user already selected values
 									if (current_form_item.q_selected.length>0) {
 										for (let k = 0; k < current_form_item.q_selected.length; k++) {
-											
+
 											const value = current_form_item.q_selected[k]
-											
+
 											c_filter[c_op].push({
 												field	: current_form_item.q_column,
 												value	: (current_form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
@@ -839,7 +764,7 @@ function form_factory() {
 								return;
 							}
 						}
-					
+
 					// sql_filter
 						const sql_filter = self.parse_sql_filter(filter) + ' AND `'+q_column+'`!=\'\''
 
@@ -858,19 +783,19 @@ function form_factory() {
 						.then((api_response) => { // return results in standard format (label, value)
 							console.log("-->autocomplete api_response:", api_response);
 							const result = api_response.result
-							
+
 							const ar_result	= []
 							const len		= result.length
 							for (let i = 0; i < len; i++) {
-								
+
 								const item = result[i]
 
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
 									: [item.name]
-								
+
 								for (let j = 0; j < current_ar_value.length; j++) {
-								
+
 									const item_name = current_ar_value[j]
 									// const item_name = item.name.replace(/[\["|"\]]/g, '')
 
@@ -899,7 +824,7 @@ function form_factory() {
 								if (filter[op].length===1) {
 									cache[ term ] = ar_result_final
 								}
-							
+
 							// debug
 								if(SHOW_DEBUG===true) {
 									// console.log("--- autocomplete api_response:",api_response);
@@ -907,15 +832,15 @@ function form_factory() {
 								}
 
 							response(ar_result_final)
-						})				
+						})
 			},
 			// When a option is selected in list
 			select: function( event, ui ) {
 				// prevent set selected value to autocomplete input
-				event.preventDefault();		
+				event.preventDefault();
 
-				self.add_selected_value(form_item, ui.item.label, ui.item.value)				
-				
+				self.add_selected_value(form_item, ui.item.label, ui.item.value)
+
 				// reset input value
 				this.value = ''
 
@@ -964,7 +889,8 @@ function form_factory() {
 	* Builds a plain sql filter from the form nodes values
 	*/
 	this.form_to_sql_filter = function(options) {
-		
+		console.error("WARNING! form_to_sql_filter is DEPRECATED! Use build_filter instead!");
+
 		const self = this
 
 		// options
@@ -972,11 +898,11 @@ function form_factory() {
 
 		// short vars
 			const form_items = self.form_items
-			
+		
 
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
-			
+
 			const current_group = []
 
 			const group_op = "AND"
@@ -984,7 +910,7 @@ function form_factory() {
 				  group[group_op] = []
 
 			// q value
-				if (form_item.q.length>0) {
+				if (form_item.q.length!==0) {
 
 					const c_group_op = 'AND'
 					const c_group = {}
@@ -999,17 +925,17 @@ function form_factory() {
 							op		: form_item.eq // default is 'LIKE'
 						}
 
-						c_group[c_group_op].push(element)				
+						c_group[c_group_op].push(element)
 
 					// add basic group
 						group[group_op].push(c_group)
 				}
 
 			// q_selected values
-				if (form_item.q_selected.length>0) {
+				if (form_item.q_selected.length!==0) {
 
 					for (let j = 0; j < form_item.q_selected.length; j++) {
-						
+
 						// value
 							const value = form_item.q_selected[j]
 
@@ -1028,7 +954,7 @@ function form_factory() {
 							op		: (form_item.is_term===true) ? "LIKE" : "="
 						}
 						c_group[c_group_op].push(element)
-							
+
 						group[group_op].push(c_group)
 					}
 				}
@@ -1040,15 +966,14 @@ function form_factory() {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				// console.log("self.form_items:",self.form_items);
-				// console.log("ar_query_elements:",ar_query_elements);
+				console.log("self.form_items:",self.form_items);
+				console.log("ar_query_elements:",ar_query_elements);
 			}
 
 		// empty form case
 			if (ar_query_elements.length<1) {
-				return new Promise(function(resolve){
-					resolve(false)
-				})
+				console.warn("-> form_to_sql_filter empty elements selected:", ar_query_elements)
+				return null
 			}
 
 		// operators value
@@ -1056,9 +981,14 @@ function form_factory() {
 			const operators_value = input_operators
 				? form_node.querySelector('input[name="operators"]:checked').value
 				: "AND";
-			
+
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
+
+		// debug
+			if(SHOW_DEBUG===true) {
+				console.log("-> form_to_sql_filter filter:",filter)
+			}
 
 		// sql_filter
 			const sql_filter = self.parse_sql_filter(filter)

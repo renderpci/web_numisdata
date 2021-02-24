@@ -218,15 +218,22 @@ var coins =  {
 			const order		= "section_id ASC"
 
 			// sql_filter
-				const sql_filter = self.form.build_filter()
-				if (!sql_filter|| sql_filter.length<3) {
-					return new Promise(function(resolve){
-						// loading ends
-						rows_container.classList.remove("loading")
-						console.warn("Ignored submit. Invalid sql_filter.", sql_filter);
-						resolve(false)
-					})
-				}
+				const filter = self.form.build_filter()
+				// parse_sql_filter
+				const group			= []
+				const parsed_filter	= self.form.parse_sql_filter(filter, group)
+				let sql_filter	= parsed_filter
+					? '(' + parsed_filter + ')'
+					: null
+					console.log("sql_filter:",sql_filter);
+				// if (!sql_filter|| sql_filter.length<3) {
+				// 	return new Promise(function(resolve){
+				// 		// loading ends
+				// 		rows_container.classList.remove("loading")
+				// 		console.warn("Ignored submit. Invalid sql_filter.", sql_filter);
+				// 		resolve(false)
+				// 	})
+				// }
 
 			data_manager.request({
 				body : {

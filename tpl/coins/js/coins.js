@@ -280,48 +280,14 @@ var coins =  {
 
 	/**
 	* LIST_ROW_BUILDER
+	* This function is a callback defined when list_factory is initialized (!)
 	* @param object data (db row parsed)
 	* @param object caller (instance of class caller like coin)
-	* This function is a callback defined when list_factory is initiated (!)
 	* @return DocumentFragment node 
 	*/
 	list_row_builder : function(data, caller){
-			// console.log("///////////// data:",data);
 
-		const fragment = new DocumentFragment()
-		
-
-		// wrapper
-			const wrapper = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "wrapper",
-				parent			: fragment
-			})
-
-		// image_obverse
-			const image_obverse = common.create_dom_element({
-				element_type	: "img",
-				class_name		: "image",
-				src				: data.image_obverse_thumb,
-				loading			: 'lazy',
-				parent			: wrapper
-			})
-			image_obverse.hires = data.image_obverse
-			image_obverse.addEventListener("load", page.load_hires)			
-		
-		// image_reverse
-			const image_reverse = common.create_dom_element({
-				element_type	: "img",
-				class_name		: "image",
-				src				: data.image_reverse_thumb,
-				loading			: 'lazy',
-				parent			: wrapper
-			})
-			image_reverse.hires = data.image_reverse
-			image_reverse.addEventListener("load", page.load_hires)
-
-
-		return fragment
+		return coins_row_fields.draw_item(data)
 	}//end list_row_builder
 
 

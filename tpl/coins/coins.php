@@ -10,7 +10,8 @@
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator'.JS_SUFFIX.'.js';
 		// page::$js_ar_url[]	= __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/coins_row'.JS_SUFFIX.'.js';
-	
+		page::$js_ar_url[]	= __WEB_TEMPLATE_WEB__ . '/coins/js/coins_row_fields'.JS_SUFFIX.'.js';
+
 
 	// page basic vars
 		$title 			= $this->get_element_from_template_map('title', $template_map->{$mode});

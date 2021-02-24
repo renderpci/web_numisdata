@@ -38,8 +38,8 @@ var coins =  {
 
 		// form
 			self.form		= new form_factory()
-			self.form_node	= self.render_form()
-			self.form_container.appendChild(self.form_node)
+			const form_node	= self.render_form()
+			self.form_container.appendChild(form_node)
 
 		// pagination
 			self.pagination = {
@@ -169,17 +169,17 @@ var coins =  {
 			// fragment.appendChild( forms.build_operators_node() )
 			const operators_node = self.form.build_operators_node()
 			fragment.appendChild( operators_node )
-		
-		// form
-			const form_node = common.create_dom_element({
+
+		// form_node
+			self.form.node = common.create_dom_element({
 				element_type	: "form",
-				id 				: "search_form",
-				class_name 		: "form-inline"
+				id				: "search_form",
+				class_name		: "form-inline form_factory"
 			})
-			form_node.appendChild(fragment)
+			self.form.node.appendChild(fragment)
 
 
-		return form_node
+		return self.form.node
 	},//end render_form
 
 
@@ -191,7 +191,7 @@ var coins =  {
 
 		const self = this
 		
-		const form_node = self.form_node
+		const form_node = self.form.node
 		if (!form_node) {
 			return new Promise(function(resolve){
 				console.error("Error on submit. Invalid form_node.", form_node);
@@ -217,9 +217,16 @@ var coins =  {
 			const count		= true			
 			const order		= "section_id ASC"
 
-			const sql_filter = self.form.form_to_sql_filter({
-				form_node : form_node
-			})
+			// sql_filter
+				const sql_filter = self.form.build_filter()
+				if (!sql_filter|| sql_filter.length<3) {
+					return new Promise(function(resolve){
+						// loading ends
+						rows_container.classList.remove("loading")
+						console.warn("Ignored submit. Invalid sql_filter.", sql_filter);
+						resolve(false)
+					})
+				}
 
 			data_manager.request({
 				body : {

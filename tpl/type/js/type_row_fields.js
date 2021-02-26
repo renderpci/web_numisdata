@@ -728,200 +728,200 @@ var type_row_fields = {
 			})
 
 
-		function draw_coin(data, container) {
+		// function draw_coin(data, container) {
 
-			const wrapper = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "sorted_coin",
-				parent			: container
-			})
+		// 	const wrapper = common.create_dom_element({
+		// 		element_type	: "div",
+		// 		class_name		: "sorted_coin",
+		// 		parent			: container
+		// 	})
 
-			// images
-				const images = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "images_wrapper",
-					parent			: wrapper
-				})
-				const image_link_obverse = common.create_dom_element({
-					element_type	: "a",
-					class_name		: "image_link",
-					href			: data.image_obverse,
-					parent			: images
-				})
-				const image_obverse = common.create_dom_element({
-					element_type	: "img",
-					src				: data.image_obverse,
-					parent			: image_link_obverse
-				})
-				image_obverse.loading="lazy"
-				const image_link_reverse = common.create_dom_element({
-					element_type	: "a",
-					class_name		: "image_link",
-					href			: data.image_reverse,
-					parent			: images
-				})
-				const image_reverse = common.create_dom_element({
-					element_type	: "img",
-					src				: data.image_reverse,
-					parent			: image_link_reverse
-				})
-				image_reverse.loading="lazy"
+		// 	// images
+		// 		const images = common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "images_wrapper",
+		// 			parent			: wrapper
+		// 		})
+		// 		const image_link_obverse = common.create_dom_element({
+		// 			element_type	: "a",
+		// 			class_name		: "image_link",
+		// 			href			: data.image_obverse,
+		// 			parent			: images
+		// 		})
+		// 		const image_obverse = common.create_dom_element({
+		// 			element_type	: "img",
+		// 			src				: data.image_obverse,
+		// 			parent			: image_link_obverse
+		// 		})
+		// 		image_obverse.loading="lazy"
+		// 		const image_link_reverse = common.create_dom_element({
+		// 			element_type	: "a",
+		// 			class_name		: "image_link",
+		// 			href			: data.image_reverse,
+		// 			parent			: images
+		// 		})
+		// 		const image_reverse = common.create_dom_element({
+		// 			element_type	: "img",
+		// 			src				: data.image_reverse,
+		// 			parent			: image_link_reverse
+		// 		})
+		// 		image_reverse.loading="lazy"
 
-			// collection	
-				if (data.collection.length>0){
+		// 	// collection	
+		// 		if (data.collection.length>0){
 
-					const collection_label = (data.number && data.number.length>0)
-						? data.collection + " (" + data.number + ")"
-						: data.collection
+		// 			const collection_label = (data.number && data.number.length>0)
+		// 				? data.collection + " (" + data.number + ")"
+		// 				: data.collection
 				
-					common.create_dom_element({
-						element_type	: "div",
-						class_name		: "golden-color",
-						inner_html		: collection_label,
-						parent			: wrapper
-					})
+		// 			common.create_dom_element({
+		// 				element_type	: "div",
+		// 				class_name		: "golden-color",
+		// 				inner_html		: collection_label,
+		// 				parent			: wrapper
+		// 			})
 
-					if (data.former_collection.length>0){
-						common.create_dom_element({
-							element_type	: "div",
-							class_name		: "",
-							inner_html		: "("+data.former_collection+")",
-							parent			: wrapper
-						})
-					}
-				}
+		// 			if (data.former_collection.length>0){
+		// 				common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "",
+		// 					inner_html		: "("+data.former_collection+")",
+		// 					parent			: wrapper
+		// 				})
+		// 			}
+		// 		}
 
-			// size. weight / dies / diameter
-				const ar_beats = []
-				if (data.weight && data.weight.length>0) {
-					ar_beats.push( data.weight.replace('.', ',') + " g" )
-				}
-				if (data.diameter && data.diameter.length>0) {
-					ar_beats.push( data.diameter.replace('.', ',') + " mm" )
-				}
-				if (data.dies && data.dies.length>0) {
-					ar_beats.push( data.dies + " h" )
-				}
-				const size_text = ar_beats.join("; ")
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "",
-					inner_html		: size_text,
-					parent			: wrapper
-				})
+		// 	// size. weight / dies / diameter
+		// 		const ar_beats = []
+		// 		if (data.weight && data.weight.length>0) {
+		// 			ar_beats.push( data.weight.replace('.', ',') + " g" )
+		// 		}
+		// 		if (data.diameter && data.diameter.length>0) {
+		// 			ar_beats.push( data.diameter.replace('.', ',') + " mm" )
+		// 		}
+		// 		if (data.dies && data.dies.length>0) {
+		// 			ar_beats.push( data.dies + " h" )
+		// 		}
+		// 		const size_text = ar_beats.join("; ")
+		// 		common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "",
+		// 			inner_html		: size_text,
+		// 			parent			: wrapper
+		// 		})
 
-			// findspots + hoard
-				const ar_find = []
-				let label = ""
-				if(data.hoard){
-					const hoard = (data.hoard_place)
-						? data.hoard + " ("+data.hoard_place+")"
-						: data.hoard
-					label = (tstring.hoard || "Hoard")+": "
-					ar_find.push( hoard )
-				}
-				if(data.findspot){
-					const findspot = (data.findspot_place)
-						? data.findspot + " ("+data.findspot_place+")"
-						: data.findspot
-					label = (tstring.fiindspot || "Findspot")+": "
-					ar_find.push( findspot )
-				}
+		// 	// findspots + hoard
+		// 		const ar_find = []
+		// 		let label = ""
+		// 		if(data.hoard){
+		// 			const hoard = (data.hoard_place)
+		// 				? data.hoard + " ("+data.hoard_place+")"
+		// 				: data.hoard
+		// 			label = (tstring.hoard || "Hoard")+": "
+		// 			ar_find.push( hoard )
+		// 		}
+		// 		if(data.findspot){
+		// 			const findspot = (data.findspot_place)
+		// 				? data.findspot + " ("+data.findspot_place+")"
+		// 				: data.findspot
+		// 			label = (tstring.fiindspot || "Findspot")+": "
+		// 			ar_find.push( findspot )
+		// 		}
 
-				const find_text = ar_find.join(" | ")
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "",
-					inner_html		: label+find_text,
-					parent			: wrapper
-				})
+		// 		const find_text = ar_find.join(" | ")
+		// 		common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "",
+		// 			inner_html		: label+find_text,
+		// 			parent			: wrapper
+		// 		})
 
-			// auction
-				function draw_auction(data, parent, class_name, prepend) {
+		// 	// auction
+		// 		function draw_auction(data, parent, class_name, prepend) {
 
-					if (data.name.length<1) return
+		// 			if (data.name.length<1) return
 					
-					// line
-						const line = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "line_full",
-							parent			: parent
-						})
-					// name
-						if (data.name) {
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: class_name+" golden-color",
-								inner_html		: prepend + " " + data.name,
-								parent			: line
-							})
-						}
-					// ref_auction_date
-						if (data.date) {
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: class_name+" golden-color",
-								inner_html		: " " + data.date,
-								parent			: line
-							})
-						}
-					// number
-						if (data.number) {
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: class_name+" golden-color",
-								inner_html		: " "+(tstring.n || "nº") +" "+ data.number,
-								parent			: line
-							})
-						}
+		// 			// line
+		// 				const line = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "line_full",
+		// 					parent			: parent
+		// 				})
+		// 			// name
+		// 				if (data.name) {
+		// 					common.create_dom_element({
+		// 						element_type	: "span",
+		// 						class_name		: class_name+" golden-color",
+		// 						inner_html		: prepend + " " + data.name,
+		// 						parent			: line
+		// 					})
+		// 				}
+		// 			// ref_auction_date
+		// 				if (data.date) {
+		// 					common.create_dom_element({
+		// 						element_type	: "span",
+		// 						class_name		: class_name+" golden-color",
+		// 						inner_html		: " " + data.date,
+		// 						parent			: line
+		// 					})
+		// 				}
+		// 			// number
+		// 				if (data.number) {
+		// 					common.create_dom_element({
+		// 						element_type	: "span",
+		// 						class_name		: class_name+" golden-color",
+		// 						inner_html		: " "+(tstring.n || "nº") +" "+ data.number,
+		// 						parent			: line
+		// 					})
+		// 				}
 
-					return true
-				}
-				if (data.ref_auction_group) {
-					for (let i = 0; i < data.ref_auction_group.length; i++) {
-						draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
-					}
-				}
-				if (data.ref_related_coin_auction_group) {
-					for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
-						draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
-					}
-				}
+		// 			return true
+		// 		}
+		// 		if (data.ref_auction_group) {
+		// 			for (let i = 0; i < data.ref_auction_group.length; i++) {
+		// 				draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
+		// 			}
+		// 		}
+		// 		if (data.ref_related_coin_auction_group) {
+		// 			for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
+		// 				draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
+		// 			}
+		// 		}
 
-			// public_info
-				if (data.public_info && data.public_info.length>0){
+		// 	// public_info
+		// 		if (data.public_info && data.public_info.length>0){
 					
-					const label = (tstring.public_info || "Public_info") + ": "
-					common.create_dom_element({
-						element_type	: "div",
-						inner_html		: label + data.public_info,
-						parent			: wrapper
-					})
-				}
+		// 			const label = (tstring.public_info || "Public_info") + ": "
+		// 			common.create_dom_element({
+		// 				element_type	: "div",
+		// 				inner_html		: label + data.public_info,
+		// 				parent			: wrapper
+		// 			})
+		// 		}
 
-			// biblio
-				const references_container = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "references",
-					parent			: wrapper
-				})
-				const ar_references = data.bibliography_data
-				references_container.appendChild(
-					self.draw_bibliographic_reference(ar_references)
-				)
+		// 	// biblio
+		// 		const references_container = common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "references",
+		// 			parent			: wrapper
+		// 		})
+		// 		const ar_references = data.bibliography_data
+		// 		references_container.appendChild(
+		// 			self.draw_bibliographic_reference(ar_references)
+		// 		)
 
-			// uri
-				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
-				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
-				common.create_dom_element({
-					element_type	: "div",
-					class_name		: "uri-text",
-					inner_html		: uri_text,
-					parent			: wrapper
-				})
+		// 	// uri
+		// 		const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
+		// 		const full_url	= page_globals.__WEB_BASE_URL__ + uri
+		// 		const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
+		// 		common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "uri-text",
+		// 			inner_html		: uri_text,
+		// 			parent			: wrapper
+		// 		})
 
-		}//end draw_coin
+		// }//end draw_coin
 
 
 		// coins group iterate
@@ -943,7 +943,7 @@ var type_row_fields = {
 
 				const typology_coins = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "typology_coins gallery",
+					class_name		: "coins_list typology_coins gallery",
 					parent			: line
 				})
 
@@ -953,7 +953,9 @@ var type_row_fields = {
 					const coin_section_id	= coins[j]
 					const coin_data			= item.ref_coins_union.find(element => element.section_id==coin_section_id)
 					if (coin_data) {
-						draw_coin(coin_data, typology_coins)
+						// draw_coin(coin_data, typology_coins)
+						const coin_node = self.draw_coin(coin_data)
+						typology_coins.appendChild(coin_node)
 					}
 				}
 			}
@@ -963,18 +965,245 @@ var type_row_fields = {
 	},//end items_list
 
 
+
+	draw_coin : function(data) {
+
+		const self = this
+
+		// load_hires. When thumb is loaded, this event is triggered
+		function load_hires() {
+
+			this.removeEventListener("load", load_hires, false)
+
+			const image = this
+			const hires = this.hires
+			setTimeout(function(){
+				image.src = hires
+			}, 1000)
+		}
+
+		const wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "sorted_coin"
+		})
+
+		// images
+			// obverse
+			const images = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "images_wrapper",
+				parent			: wrapper
+			})
+			const image_link_obverse = common.create_dom_element({
+				element_type	: "a",
+				class_name		: "image_link",
+				href			: data.image_obverse,
+				parent			: images
+			})
+			const image_obverse = common.create_dom_element({
+				element_type	: "img",
+				src				: data.image_obverse_thumb,
+				loading			: "lazy",
+				parent			: image_link_obverse
+			})
+			image_obverse.hires = data.image_obverse
+			image_obverse.addEventListener("load", load_hires, false)
+			// reverse
+			const image_link_reverse = common.create_dom_element({
+				element_type	: "a",
+				class_name		: "image_link",
+				href			: data.image_reverse,
+				parent			: images
+			})
+			const image_reverse = common.create_dom_element({
+				element_type	: "img",
+				src				: data.image_reverse_thumb,
+				loading			: "lazy",
+				parent			: image_link_reverse
+			})
+			image_reverse.hires = data.image_reverse
+			image_reverse.addEventListener("load", load_hires, false)
+
+		// collection
+			if (data.collection && data.collection.length>0){
+
+				const collection_label = (data.number && data.number.length>0)
+					? data.collection + " (" + data.number + ")"
+					: data.collection
+			
+				common.create_dom_element({
+					element_type	: "div",
+					class_name		: "golden-color",
+					inner_html		: collection_label,
+					parent			: wrapper
+				})
+
+				if (data.former_collection.length>0){
+					common.create_dom_element({
+						element_type	: "div",
+						class_name		: "",
+						inner_html		: "("+data.former_collection+")",
+						parent			: wrapper
+					})
+				}
+			}
+
+		// size. weight / dies / diameter
+			const ar_beats = []
+			if (data.weight && data.weight.length>0) {
+				ar_beats.push( data.weight.replace('.', ',') + " g" )
+			}
+			if (data.diameter && data.diameter.length>0) {
+				ar_beats.push( data.diameter.replace('.', ',') + " mm" )
+			}
+			if (data.dies && data.dies.length>0) {
+				ar_beats.push( data.dies + " h" )
+			}
+			const size_text = ar_beats.join("; ")
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "",
+				inner_html		: size_text,
+				parent			: wrapper
+			})
+
+		// findspots + hoard
+			const ar_find = []
+			let label = ""
+			if(data.hoard){
+				const hoard = (data.hoard_place)
+					? data.hoard + " ("+data.hoard_place+")"
+					: data.hoard
+				label = (tstring.hoard || "Hoard")+": "
+				ar_find.push( hoard )
+			}
+			if(data.findspot){
+				const findspot = (data.findspot_place)
+					? data.findspot + " ("+data.findspot_place+")"
+					: data.findspot
+				label = (tstring.fiindspot || "Findspot")+": "
+				ar_find.push( findspot )
+			}
+
+			const find_text = ar_find.join(" | ")
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "",
+				inner_html		: label+find_text,
+				parent			: wrapper
+			})
+
+		// auction
+			function draw_auction(data, parent, class_name, prepend) {
+
+				if (data.name.length<1) return
+				
+				// line
+					const line = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "line_full",
+						parent			: parent
+					})
+				// name
+					if (data.name) {
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: prepend + " " + data.name,
+							parent			: line
+						})
+					}
+				// ref_auction_date
+					if (data.date) {
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: " " + data.date,
+							parent			: line
+						})
+					}
+				// number
+					if (data.number) {
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: " "+(tstring.n || "nº") +" "+ data.number,
+							parent			: line
+						})
+					}
+
+				return true
+			}
+			if (data.ref_auction_group) {
+				for (let i = 0; i < data.ref_auction_group.length; i++) {
+					draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
+				}
+			}
+			if (data.ref_related_coin_auction_group) {
+				for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
+					draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
+				}
+			}
+
+		// public_info
+			if (data.public_info && data.public_info.length>0){
+				
+				const label = (tstring.public_info || "Public_info") + ": "
+				common.create_dom_element({
+					element_type	: "div",
+					inner_html		: label + data.public_info,
+					parent			: wrapper
+				})
+			}
+
+		// biblio
+			const references_container = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "references",
+				parent			: wrapper
+			})
+			const ar_references = data.bibliography_data
+			if (ar_references && ar_references.length>0 && typeof ar_references[0]==='object') {
+				const biblio_node = self.draw_bibliographic_reference(ar_references)
+				if (biblio_node) references_container.appendChild(biblio_node)
+			}
+
+		// uri
+			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
+			const full_url	= page_globals.__WEB_BASE_URL__ + uri
+			const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "uri-text",
+				inner_html		: uri_text,
+				parent			: wrapper
+			})
+
+		return wrapper
+	},//end draw_coin
+
+
+
 	draw_bibliographic_reference : function(data) {
+
+		const self = this
 
 		const ref_biblio		= data
 		const ref_biblio_length	= ref_biblio.length
 
 		// row_field set
 		const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
+		
 		const bib_fragment = new DocumentFragment;
 
 		for (let i = 0; i < ref_biblio_length; i++) {
 
 			const current_biblio_object = ref_biblio[i]
+
+			// if (typeof current_biblio_object !== 'object') {
+			// 	console.log("Ignored not resolved biblio row:",current_biblio_object);
+			// 	continue
+			// }
 
 			const biblio_row_wrapper = common.create_dom_element({
 				element_type	: "div",

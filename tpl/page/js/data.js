@@ -40,66 +40,73 @@ page.parse_type_data = function(data) {
 		return row
 	}
 
-	// images url
-		row.ref_coins_image_obverse = typeof data.ref_coins_image_obverse!=="undefined"
-			? common.local_to_remote_path(data.ref_coins_image_obverse)
-			: null
-		row.ref_coins_image_reverse = typeof data.ref_coins_image_reverse!=="undefined"
-			? common.local_to_remote_path(data.ref_coins_image_reverse)
-			: null
+	try {
 
-	// ref_coins_union (resolved portal)
-		if (row.ref_coins_union && Array.isArray(row.ref_coins_union) && row.ref_coins_union.length>0) {
+		// images url
+			row.ref_coins_image_obverse = typeof data.ref_coins_image_obverse!=="undefined"
+				? common.local_to_remote_path(data.ref_coins_image_obverse)
+				: null
+			row.ref_coins_image_reverse = typeof data.ref_coins_image_reverse!=="undefined"
+				? common.local_to_remote_path(data.ref_coins_image_reverse)
+				: null
 
-			row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)
-			
-			// for (let j = 0; j < row.ref_coins_union.length; j++) {
+		// ref_coins_union (resolved portal)
+			if (row.ref_coins_union && Array.isArray(row.ref_coins_union) && row.ref_coins_union.length>0) {
 
-			// 	if (row.ref_coins_union[j].image_obverse) {
-			// 		row.ref_coins_union[j].image_obverse = common.local_to_remote_path(row.ref_coins_union[j].image_obverse)
-			// 	}
-			// 	if (row.ref_coins_union[j].image_reverse) {
-			// 		row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
-			// 	}
-			// }
-		}
+				row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)
+				
+				// for (let j = 0; j < row.ref_coins_union.length; j++) {
 
-	row.uri = self.parse_iri_data(row.uri)
+				// 	if (row.ref_coins_union[j].image_obverse) {
+				// 		row.ref_coins_union[j].image_obverse = common.local_to_remote_path(row.ref_coins_union[j].image_obverse)
+				// 	}
+				// 	if (row.ref_coins_union[j].image_reverse) {
+				// 		row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
+				// 	}
+				// }
+			}
 
-	// json encoded
-	// row.dd_relations			= JSON.parse(row.dd_relations)
-	// row.collection_data		= JSON.parse(row.collection_data)
-	// row.image_obverse_data	= JSON.parse(row.image_obverse_data)
-	// row.image_reverse_data	= JSON.parse(row.image_reverse_data)
-	// row.type_data			= JSON.parse(row.type_data)
+		row.uri = self.parse_iri_data(row.uri)
 
-	// legend text includes svg url
-		row.legend_obverse = row.legend_obverse
-			? self.parse_legend_svg(row.legend_obverse)
-			: null
-		row.legend_reverse = row.legend_reverse
-			? self.parse_legend_svg(row.legend_reverse)
-			: null
+		// json encoded
+		// row.dd_relations			= JSON.parse(row.dd_relations)
+		// row.collection_data		= JSON.parse(row.collection_data)
+		// row.image_obverse_data	= JSON.parse(row.image_obverse_data)
+		// row.image_reverse_data	= JSON.parse(row.image_reverse_data)
+		// row.type_data			= JSON.parse(row.type_data)
 
-		row.material = row.material
-			? page.trim_char( page.remove_gaps(row.material, ' | '), '|')
-			: null
+		// legend text includes svg url
+			row.legend_obverse = row.legend_obverse
+				? self.parse_legend_svg(row.legend_obverse)
+				: null
+			row.legend_reverse = row.legend_reverse
+				? self.parse_legend_svg(row.legend_reverse)
+				: null
 
-		row.symbol_obverse = row.symbol_obverse
-			? page.trim_char( page.remove_gaps(row.symbol_obverse, ' | '), '|')
-			: null
+			row.material = row.material
+				? page.trim_char( page.remove_gaps(row.material, ' | '), '|')
+				: null
 
-		row.symbol_reverse = row.symbol_reverse
-			? page.trim_char( page.remove_gaps(row.symbol_reverse, ' | '), '|')
-			: null
+			row.symbol_obverse = row.symbol_obverse
+				? page.trim_char( page.remove_gaps(row.symbol_obverse, ' | '), '|')
+				: null
 
-		row.symbol_obverse_data = JSON.parse(row.symbol_obverse_data)
-		row.symbol_reverse_data = JSON.parse(row.symbol_reverse_data)
+			row.symbol_reverse = row.symbol_reverse
+				? page.trim_char( page.remove_gaps(row.symbol_reverse, ' | '), '|')
+				: null
 
-	// permanent uri
-		// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+			row.symbol_obverse_data = JSON.parse(row.symbol_obverse_data)
+			row.symbol_reverse_data = JSON.parse(row.symbol_reverse_data)
 
-	row.parsed = true
+		// permanent uri
+			// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+
+		row.parsed = true
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("row:",row);
+	}
 
 	return row
 }//end parse_type_data
@@ -136,115 +143,122 @@ page.parse_coin_data = function(data) {
 		return row
 	}
 
-	// url
-		row.image_obverse		= common.local_to_remote_path(data.image_obverse)
-		row.image_obverse_thumb	= row.image_obverse
-			? row.image_obverse.replace('/1.5MB/','/thumb/')
-			: null
-		row.image_reverse		= common.local_to_remote_path(data.image_reverse)
-		row.image_reverse_thumb	= row.image_reverse
-			? row.image_reverse.replace('/1.5MB/','/thumb/')
+	try {	
+
+		// url
+			row.image_obverse		= common.local_to_remote_path(data.image_obverse)
+			row.image_obverse_thumb	= row.image_obverse
+				? row.image_obverse.replace('/1.5MB/','/thumb/')
+				: null
+			row.image_reverse		= common.local_to_remote_path(data.image_reverse)
+			row.image_reverse_thumb	= row.image_reverse
+				? row.image_reverse.replace('/1.5MB/','/thumb/')
+				: null
+
+		// type_data
+		// if (row.type_data) {
+		// 	row.type_data = self.parse_type_data(row.type_data)
+		// }
+		if (row.type_data && Array.isArray(row.type_data) && row.type_data.length>0) {		
+			row.type_data = self.parse_type_data(row.type_data)		
+		}
+
+		row.type = row.type
+			? page.remove_gaps(row.type, ' | ')
 			: null
 
-	// type_data
-	// if (row.type_data) {
-	// 	row.type_data = self.parse_type_data(row.type_data)
-	// }
-	if (row.type_data && Array.isArray(row.type_data) && row.type_data.length>0) {		
-		row.type_data = self.parse_type_data(row.type_data)		
+		// legend text includes svg url
+		row.legend_obverse = row.legend_obverse
+			? self.parse_legend_svg(row.legend_obverse)
+			: null
+		row.legend_reverse = row.legend_reverse
+			? self.parse_legend_svg(row.legend_reverse)
+			: null
+
+		// countermark text includes svg url
+		row.countermark_obverse = row.countermark_obverse
+			? self.parse_legend_svg(row.countermark_obverse)
+			: null
+		row.countermark_reverse = row.countermark_reverse
+			? self.parse_legend_svg(row.countermark_reverse)
+			: null
+
+		// auction
+			row.ref_auction = row.ref_auction
+				? JSON.parse(row.ref_auction)
+				: null
+			row.ref_auction_date = row.ref_auction_date
+				? JSON.parse(row.ref_auction_date)
+				: null
+			row.ref_auction_number = row.ref_auction_number
+				? JSON.parse(row.ref_auction_number)
+				: null
+
+			row.ref_auction_group = null
+
+			if (row.ref_auction && row.ref_auction.length>0) {
+				row.ref_auction_group = []
+				for (let g = 0; g < row.ref_auction.length; g++) {
+					row.ref_auction_group.push({
+						name	: row.ref_auction[g],
+						date	: typeof row.ref_auction_date[g]!=="undefined" ? self.parse_date(row.ref_auction_date[g]) : '',
+						number	: typeof row.ref_auction_number[g]!=="undefined" ? row.ref_auction_number[g] : ''
+					})
+				}
+			}
+
+		// related_auction
+			row.ref_related_coin_auction = row.ref_related_coin_auction
+				? JSON.parse(row.ref_related_coin_auction)
+				: null
+			row.ref_related_coin_auction_date = row.ref_related_coin_auction_date
+				? JSON.parse(row.ref_related_coin_auction_date)
+				: null
+			row.ref_related_coin_auction_number = row.ref_related_coin_auction_number
+				? JSON.parse(row.ref_related_coin_auction_number)
+				: null
+
+			row.ref_related_coin_auction_group = null
+
+			if (row.ref_related_coin_auction && row.ref_related_coin_auction.length>0) {
+				row.ref_related_coin_auction_group = []
+				for (let g = 0; g < row.ref_related_coin_auction.length; g++) {
+					row.ref_related_coin_auction_group.push({
+						name	: row.ref_related_coin_auction[g],
+						date	: typeof row.ref_related_coin_auction_date[g]!=="undefined" ? self.parse_date(row.ref_related_coin_auction_date[g]) : '',
+						number	: typeof row.ref_related_coin_auction_number[g]!=="undefined" ? row.ref_related_coin_auction_number[g] : ''
+					})
+				}
+			}
+
+
+		// find
+		row.find_date = self.parse_date(row.find_date)
+
+		row.mib_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+
+		row.uri = self.parse_iri_data(row.uri)
+
+		// bibliography (portal resolved case)
+			if (row.bibliography_data && Array.isArray(row.bibliography_data) ) {
+				row.bibliography = page.parse_publication(row.bibliography_data)
+			}
+
+		// add
+			row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
+				? row.type_data[0].mint
+				: null
+			row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
+				? row.type_data[0].number
+				: null
+			// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
+
+		row.parsed = true
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("row:",row);
 	}
-
-	row.type = row.type
-		? page.remove_gaps(row.type, ' | ')
-		: null
-
-	// legend text includes svg url
-	row.legend_obverse = row.legend_obverse
-		? self.parse_legend_svg(row.legend_obverse)
-		: null
-	row.legend_reverse = row.legend_reverse
-		? self.parse_legend_svg(row.legend_reverse)
-		: null
-
-	// countermark text includes svg url
-	row.countermark_obverse = row.countermark_obverse
-		? self.parse_legend_svg(row.countermark_obverse)
-		: null
-	row.countermark_reverse = row.countermark_reverse
-		? self.parse_legend_svg(row.countermark_reverse)
-		: null
-
-	// auction
-		row.ref_auction = row.ref_auction
-			? JSON.parse(row.ref_auction)
-			: null
-		row.ref_auction_date = row.ref_auction_date
-			? JSON.parse(row.ref_auction_date)
-			: null
-		row.ref_auction_number = row.ref_auction_number
-			? JSON.parse(row.ref_auction_number)
-			: null
-
-		row.ref_auction_group = null
-
-		if (row.ref_auction && row.ref_auction.length>0) {
-			row.ref_auction_group = []
-			for (let g = 0; g < row.ref_auction.length; g++) {
-				row.ref_auction_group.push({
-					name	: row.ref_auction[g],
-					date	: typeof row.ref_auction_date[g]!=="undefined" ? self.parse_date(row.ref_auction_date[g]) : '',
-					number	: typeof row.ref_auction_number[g]!=="undefined" ? row.ref_auction_number[g] : ''
-				})
-			}
-		}
-
-	// related_auction
-		row.ref_related_coin_auction = row.ref_related_coin_auction
-			? JSON.parse(row.ref_related_coin_auction)
-			: null
-		row.ref_related_coin_auction_date = row.ref_related_coin_auction_date
-			? JSON.parse(row.ref_related_coin_auction_date)
-			: null
-		row.ref_related_coin_auction_number = row.ref_related_coin_auction_number
-			? JSON.parse(row.ref_related_coin_auction_number)
-			: null
-
-		row.ref_related_coin_auction_group = null
-
-		if (row.ref_related_coin_auction && row.ref_related_coin_auction.length>0) {
-			row.ref_related_coin_auction_group = []
-			for (let g = 0; g < row.ref_related_coin_auction.length; g++) {
-				row.ref_related_coin_auction_group.push({
-					name	: row.ref_related_coin_auction[g],
-					date	: typeof row.ref_related_coin_auction_date[g]!=="undefined" ? self.parse_date(row.ref_related_coin_auction_date[g]) : '',
-					number	: typeof row.ref_related_coin_auction_number[g]!=="undefined" ? row.ref_related_coin_auction_number[g] : ''
-				})
-			}
-		}
-
-
-	// find
-	row.find_date = self.parse_date(row.find_date)
-
-	row.mib_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
-
-	row.uri = self.parse_iri_data(row.uri)
-
-	// bibliography (portal resolved case)
-		if (row.bibliography_data && Array.isArray(row.bibliography_data) ) {
-			row.bibliography = page.parse_publication(row.bibliography_data)
-		}
-
-	// add
-		row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
-			? row.type_data[0].mint
-			: null
-		row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
-			? row.type_data[0].number
-			: null
-		// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
-
-	row.parsed = true
 
 
 	return row
@@ -270,124 +284,133 @@ page.parse_catalog_data = function(data) {
 	}
 
 	const new_data = []
-	const data_length = data.length
-	for (let i = 0; i < data_length; i++) {
 
-		// const row = JSON.parse( JSON.stringify(data[i]) )
-		const row = data[i]
-
-		if (row.parsed) {
-			continue;
-		}
-
-		row.coins_data_union = row.coins_data_union
-			? JSON.parse(row.coins_data_union)
-			: null
-
-		// url
-		row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
-		row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)
-
-		// url thumbs
-		row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
-			? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
-			: null
-		row.ref_coins_image_reverse_thumb = row.ref_coins_image_reverse
-			? row.ref_coins_image_reverse.replace('/1.5MB/', '/thumb/')
-			: null
-
-		// legends
-		row.ref_type_legend_obverse = row.ref_type_legend_obverse
-			? self.parse_legend_svg(row.ref_type_legend_obverse)
-			: null
-		row.ref_type_legend_reverse = row.ref_type_legend_reverse
-			? self.parse_legend_svg(row.ref_type_legend_reverse)
-			: null
-		// symbols
-		row.ref_type_symbol_obverse = row.ref_type_symbol_obverse
-			? self.parse_legend_svg(row.ref_type_symbol_obverse)
-			: null
-		row.ref_type_symbol_reverse = row.ref_type_symbol_reverse
-			? self.parse_legend_svg(row.ref_type_symbol_reverse)
-			: null
-
-		row.term_data		= JSON.parse(row.term_data)
-		row.term_section_id	= row.term_data ? row.term_data[0] : null
-		row.children		= JSON.parse(row.children)
-		row.parent			= row.parent && Array.isArray(row.parent)
-			? (function(parent_array){
-				// portal resolved case
-				return page.parse_catalog_data(parent_array)
-			  })(row.parent)
-			: JSON.parse(row.parent)
-
-		row.ref_type_averages_diameter = row.ref_type_averages_diameter
-			? parseFloat( row.ref_type_averages_diameter.replace(',', '.') )
-			: null
-
-		row.ref_type_total_diameter_items = row.ref_type_total_diameter_items
-			? parseFloat( row.ref_type_total_diameter_items.replace(',', '.') )
-			: null
-
-		row.ref_type_averages_weight = row.ref_type_averages_weight
-			? parseFloat( row.ref_type_averages_weight.replace(',', '.') )
-			: null
-
-		row.ref_type_total_weight_items = row.ref_type_total_weight_items
-			? parseFloat( row.ref_type_total_weight_items.replace(',', '.') )
-			: null
-
-		row.ref_type_material = page.trim_char(row.ref_type_material, '|')
-
-
-		new_data.push(row)
-	}
-
-
-	// add calculated measures values to types parents
+	try {
+		
+		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
 
-			const row = new_data[i]
+			// const row = JSON.parse( JSON.stringify(data[i]) )
+			const row = data[i]
 
-			if (!row.parsed && row.term_table==='types' && row.children) {
-				const ar_mesures_diameter	= []
-				const ar_mesures_weight		= []
-
-				for (let i = 0; i < row.children.length; i++) {
-
-					const current_child	= row.children[i]
-					const child_row		= data.find(el => el.section_id==current_child)
-
-					if(child_row && child_row.ref_type_averages_weight){
-						// get the total items
-						const weight_items = child_row.ref_type_total_weight_items
-						//create a new array with all items - values
-						const ar_current_mesures_weight = new Array(weight_items).fill(child_row.ref_type_averages_weight)
-						// add the current child values to the total array
-						ar_mesures_weight.push(...ar_current_mesures_weight)
-					}
-					if(child_row && child_row.ref_type_averages_diameter){
-						const diameter_items = child_row.ref_type_total_diameter_items
-						const ar_current_mesures_diameter = new Array(diameter_items).fill(child_row.ref_type_averages_diameter)
-						ar_mesures_diameter.push(...ar_current_mesures_diameter)
-
-					}
-				}
-
-				const media_weight		= ar_mesures_weight.reduce((a,b) => a + b, 0)  / ar_mesures_weight.length
-				const media_diameter	= ar_mesures_diameter.reduce((a,b) => a + b, 0) / ar_mesures_diameter.length
-
-				row.ref_type_averages_weight    = media_weight
-				row.ref_type_averages_diameter	= media_diameter
-
-				row.ref_type_total_weight_items		= ar_mesures_weight.length
-				row.ref_type_total_diameter_items	= ar_mesures_diameter.length
+			if (row.parsed) {
+				continue;
 			}
 
-			row.parsed = true
+			row.coins_data_union = row.coins_data_union
+				? JSON.parse(row.coins_data_union)
+				: null
+
+			// url
+			row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
+			row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)
+
+			// url thumbs
+			row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
+				? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
+				: null
+			row.ref_coins_image_reverse_thumb = row.ref_coins_image_reverse
+				? row.ref_coins_image_reverse.replace('/1.5MB/', '/thumb/')
+				: null
+
+			// legends
+			row.ref_type_legend_obverse = row.ref_type_legend_obverse
+				? self.parse_legend_svg(row.ref_type_legend_obverse)
+				: null
+			row.ref_type_legend_reverse = row.ref_type_legend_reverse
+				? self.parse_legend_svg(row.ref_type_legend_reverse)
+				: null
+			// symbols
+			row.ref_type_symbol_obverse = row.ref_type_symbol_obverse
+				? self.parse_legend_svg(row.ref_type_symbol_obverse)
+				: null
+			row.ref_type_symbol_reverse = row.ref_type_symbol_reverse
+				? self.parse_legend_svg(row.ref_type_symbol_reverse)
+				: null
+
+			row.term_data		= JSON.parse(row.term_data)
+			row.term_section_id	= row.term_data ? row.term_data[0] : null
+			row.children		= JSON.parse(row.children)
+			row.parent			= row.parent && Array.isArray(row.parent)
+				? (function(parent_array){
+					// portal resolved case
+					return page.parse_catalog_data(parent_array)
+				  })(row.parent)
+				: JSON.parse(row.parent)
+
+			row.ref_type_averages_diameter = row.ref_type_averages_diameter
+				? parseFloat( row.ref_type_averages_diameter.replace(',', '.') )
+				: null
+
+			row.ref_type_total_diameter_items = row.ref_type_total_diameter_items
+				? parseFloat( row.ref_type_total_diameter_items.replace(',', '.') )
+				: null
+
+			row.ref_type_averages_weight = row.ref_type_averages_weight
+				? parseFloat( row.ref_type_averages_weight.replace(',', '.') )
+				: null
+
+			row.ref_type_total_weight_items = row.ref_type_total_weight_items
+				? parseFloat( row.ref_type_total_weight_items.replace(',', '.') )
+				: null
+
+			row.ref_type_material = page.trim_char(row.ref_type_material, '|')
+
+
+			new_data.push(row)
 		}
 
-	// console.log("parse_catalog_data new_data:",new_data);
+
+		// add calculated measures values to types parents
+			for (let i = 0; i < data_length; i++) {
+
+				const row = new_data[i]
+
+				if (!row.parsed && row.term_table==='types' && row.children) {
+					const ar_mesures_diameter	= []
+					const ar_mesures_weight		= []
+
+					for (let i = 0; i < row.children.length; i++) {
+
+						const current_child	= row.children[i]
+						const child_row		= data.find(el => el.section_id==current_child)
+
+						if(child_row && child_row.ref_type_averages_weight){
+							// get the total items
+							const weight_items = child_row.ref_type_total_weight_items
+							//create a new array with all items - values
+							const ar_current_mesures_weight = new Array(weight_items).fill(child_row.ref_type_averages_weight)
+							// add the current child values to the total array
+							ar_mesures_weight.push(...ar_current_mesures_weight)
+						}
+						if(child_row && child_row.ref_type_averages_diameter){
+							const diameter_items = child_row.ref_type_total_diameter_items
+							const ar_current_mesures_diameter = new Array(diameter_items).fill(child_row.ref_type_averages_diameter)
+							ar_mesures_diameter.push(...ar_current_mesures_diameter)
+
+						}
+					}
+
+					const media_weight		= ar_mesures_weight.reduce((a,b) => a + b, 0)  / ar_mesures_weight.length
+					const media_diameter	= ar_mesures_diameter.reduce((a,b) => a + b, 0) / ar_mesures_diameter.length
+
+					row.ref_type_averages_weight    = media_weight
+					row.ref_type_averages_diameter	= media_diameter
+
+					row.ref_type_total_weight_items		= ar_mesures_weight.length
+					row.ref_type_total_diameter_items	= ar_mesures_diameter.length
+				}
+
+				row.parsed = true
+			}
+
+		// console.log("parse_catalog_data new_data:",new_data);
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("new_data:",new_data);
+	}
+
 
 	return new_data
 }//end parse_catalog_data
@@ -401,56 +424,64 @@ page.parse_catalog_data = function(data) {
 */
 page.parse_publication = function(data) {
 
-	const parsed_data	= []
-	const separator		= " # ";
-	const data_length	= data.length
-	for (let i = 0; i < data_length; i++) {
+	const parsed_data = []
 
-		const reference = data[i]
+	try {
+		
+		const separator		= " # ";
+		const data_length	= data.length
+		for (let i = 0; i < data_length; i++) {
 
-		if (reference.parsed) {
-			continue;
-		}
+			const reference = data[i]
 
-		// add publications property to store all resolved references
-			reference._publications = []
-
-		const publications_data			= JSON.parse(reference.publications_data)
-		const publications_data_length	= publications_data.length
-		if (publications_data_length>0) {
-
-			const ref_publications_authors	= page.split_data(reference.ref_publications_authors, separator)
-			const ref_publications_date		= page.split_data(reference.ref_publications_date, separator)
-			const ref_publications_editor	= page.split_data(reference.ref_publications_editor, separator)
-			const ref_publications_magazine	= page.split_data(reference.ref_publications_magazine, separator)
-			const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
-			const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
-			const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
-
-			for (let j = 0; j < publications_data_length; j++) {
-
-				const section_id = publications_data[j]
-
-				const parsed_item = {
-					reference	: reference.section_id,
-					section_id	: section_id,
-					authors		: ref_publications_authors[j] || null,
-					date		: ref_publications_date[j] || null,
-					editor		: ref_publications_editor[j] || null,
-					magazine	: ref_publications_magazine[j] || null,
-					place		: ref_publications_place[j] || null,
-					title		: ref_publications_title[j] || null,
-					url			: ref_publications_url[j] || null,
-				}
-
-				reference._publications.push(parsed_item)
-				parsed_data.push(parsed_item)
+			if (reference.parsed) {
+				continue;
 			}
-		}
 
-		reference.parsed = true
+			// add publications property to store all resolved references
+				reference._publications = []
+
+			const publications_data			= JSON.parse(reference.publications_data)
+			const publications_data_length	= publications_data.length
+			if (publications_data_length>0) {
+
+				const ref_publications_authors	= page.split_data(reference.ref_publications_authors, separator)
+				const ref_publications_date		= page.split_data(reference.ref_publications_date, separator)
+				const ref_publications_editor	= page.split_data(reference.ref_publications_editor, separator)
+				const ref_publications_magazine	= page.split_data(reference.ref_publications_magazine, separator)
+				const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
+				const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
+				const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
+
+				for (let j = 0; j < publications_data_length; j++) {
+
+					const section_id = publications_data[j]
+
+					const parsed_item = {
+						reference	: reference.section_id,
+						section_id	: section_id,
+						authors		: ref_publications_authors[j] || null,
+						date		: ref_publications_date[j] || null,
+						editor		: ref_publications_editor[j] || null,
+						magazine	: ref_publications_magazine[j] || null,
+						place		: ref_publications_place[j] || null,
+						title		: ref_publications_title[j] || null,
+						url			: ref_publications_url[j] || null,
+					}
+
+					reference._publications.push(parsed_item)
+					parsed_data.push(parsed_item)
+				}
+			}
+
+			reference.parsed = true
+		}
+		// console.log("parsed_data:",parsed_data);
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("row:",row);
 	}
-	// console.log("parsed_data:",parsed_data);
 
 	return parsed_data
 }//end parse_publication
@@ -506,78 +537,83 @@ page.parse_map_global_data = function(ar_rows) {
 
 	const self = this
 
-	const data = []
+	try {
 
-	const ar_rows_length = ar_rows.length
-	for (let i = 0; i < ar_rows_length; i++) {
-		
-		const row = ar_rows[i]
+		const ar_rows_length = ar_rows.length
+		for (let i = 0; i < ar_rows_length; i++) {
+			
+			const row = ar_rows[i]
 
-		if (row.parsed) {
-			continue;
-		}
+			if (row.parsed) {
+				continue;
+			}
 
-		row.georef_geojson = row.georef_geojson
-			? JSON.parse(row.georef_geojson)
-			: null
+			row.georef_geojson = row.georef_geojson
+				? JSON.parse(row.georef_geojson)
+				: null
 
-		row.coins_list = row.coins_list
-			? JSON.parse(row.coins_list)
-			: []
+			row.coins_list = row.coins_list
+				? JSON.parse(row.coins_list)
+				: []
 
-		row.types_list = row.types_list
-			? JSON.parse(row.types_list)
-			: []
+			row.types_list = row.types_list
+				? JSON.parse(row.types_list)
+				: []
 
-		if (row.georef_geojson && row.georef_geojson.length>0) {
+			if ((row.georef_geojson && row.georef_geojson.length>0)  ) {
 
-			const name = (function(table ) {
-				let name
-				switch(table){
-					case 'mints'	: name = 'mint';		break;
-					case 'hoards'	: name = 'hoard';		break;
-					case 'findspots': name = 'findspot';	break;
+				const name = (function(table ) {
+					let name
+					switch(table){
+						case 'mints'	: name = 'mint';		break;
+						case 'hoards'	: name = 'hoard';		break;
+						case 'findspots': name = 'findspot';	break;
+					}
+					return name
+				})(row.table);
+
+				const coins_list_total = row.coins_list ? row.coins_list.length : 0;
+				const types_list_total = row.types_list ? row.types_list.length : 0;
+
+				const title = '<span class="note">'+(tstring[name] || name)+'</span> ' + row.name
+				const description = (tstring.coins || 'Coins') + ' ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ' ' + types_list_total
+
+				const item_data = {
+					section_id			: row.section_id,
+					title				: title,
+					coins_total			: coins_list_total,
+					types_total			: types_list_total,
+					description			: description,
+					// usefull properties
+					ref_section_id		: row.ref_section_id,
+					ref_section_tipo	: row.ref_section_tipo,
+					table				: row.table,
+					name				: row.name,
+					term_id				: row.section_id
 				}
-				return name
-			})(row.table);
 
-			const coins_list_total = row.coins_list ? row.coins_list.length : 0;
-			const types_list_total = row.types_list ? row.types_list.length : 0;
+				const marker_icon = page.maps_config.markers[name];
 
-			const title = '<span class="note">'+(tstring[name] || name)+'</span> ' + row.name
-			const description = (tstring.coins || 'Coins') + ' ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ' ' + types_list_total
+				// nomalized item format to use it in leaflet and popup
+				const item = {
+					lat			: null,
+					lon			: null,
+					geojson		: row.georef_geojson,
+					marker_icon	: marker_icon,
+					data		: item_data
+				}
 
-			const item_data = {
-				section_id			: row.section_id,
-				title				: title,
-				coins_total			: coins_list_total,
-				types_total			: types_list_total,
-				description			: description,
-				// usefull properties
-				ref_section_id		: row.ref_section_id,
-				ref_section_tipo	: row.ref_section_tipo,
-				table				: row.table,
-				name				: row.name,
-				term_id				: row.section_id
+				row.item = item		
+			}else{
+				row.item = null
 			}
 
-			const marker_icon = page.maps_config.markers[name];
-
-			// nomalized item format to use it in leaflet and popup
-			const item = {
-				lat			: null,
-				lon			: null,
-				geojson		: row.georef_geojson,
-				marker_icon	: marker_icon,
-				data		: item_data
-			}
-
-			row.item = item		
-		}else{
-			row.item = null
+			row.parsed = true
 		}
 
-		row.parsed = true
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("ar_rows:",ar_rows);
 	}
 		
 

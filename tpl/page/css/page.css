@@ -327,6 +327,72 @@ form {
   text-transform: uppercase;
   letter-spacing: 3px;
 }
+/**
+* COINS LIST UNIFIED STYLES
+*/
+.coins_list {
+  display: flex;
+  flex-wrap: wrap;
+  /*.sorted_coin:nth-child(3n){
+	// .sorted_coin:last-child(3n)  {
+		border-right: none;
+	}*/
+}
+.coins_list .sorted_coin:last-child {
+  border-right: none;
+}
+.coins_list .sorted_coin {
+  width: 33.33%;
+  margin-bottom: 0.5em;
+  font-size: 80%;
+  border-right: 1px solid #e3e3e3;
+  padding: 0.5em;
+  border-radius: 4px;
+}
+@media screen and (min-width: 1680px) {
+  .coins_list .sorted_coin .uri-text a {
+    font-size: 90%;
+  }
+}
+@media screen and (max-width: 976px) {
+  .coins_list .sorted_coin .uri-text a {
+    font-size: 1.4vw;
+  }
+}
+@media screen and (max-width: 710px) {
+  .coins_list .sorted_coin .uri-text a {
+    font-size: 1.8vw;
+  }
+}
+@media screen and (max-width: 590px) {
+  .coins_list .sorted_coin .uri-text a {
+    font-size: 3vw;
+  }
+}
+.coins_list .sorted_coin .images_wrapper {
+  margin-bottom: 0.5em;
+  position: relative;
+}
+.coins_list .sorted_coin .images_wrapper img {
+  width: 50%;
+  height: 200px;
+  object-fit: contain;
+  object-position: center;
+  background-color: white;
+}
+@media screen and (max-width: 976px) {
+  .coins_list .sorted_coin {
+    width: 48% !important;
+  }
+}
+@media screen and (max-width: 590px) {
+  .coins_list .sorted_coin {
+    flex: inherit;
+    width: 95% !important;
+    border-right: none;
+    margin-top: 1em;
+  }
+}
 .pagination {
   display: flex;
   flex-wrap: wrap;
@@ -924,6 +990,23 @@ p img.svg {
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 0.15em;
+}
+.debug_info {
+  font-size: 0.65em;
+  border-left: 4px solid #ff9632;
+  padding-left: 0.5em;
+  word-break: break-all;
+  position: relative;
+}
+.debug_info:before {
+  content: "DEBUG";
+  height: 1em;
+  transform: rotate(270deg);
+  position: absolute;
+  left: -40px;
+  top: 18px;
+  font-size: 11px;
+  letter-spacing: 3px;
 }
 .wide,
 .full_width {

@@ -11,6 +11,7 @@
 // import files
 	@import 'form.less';
 	@import 'map_common.less';
+	@import 'coins_common.less';
 	@import 'pagination.less';
 	@import 'poptrox.less';
 
@@ -617,6 +618,28 @@
 			background-repeat: no-repeat;
 			background-size: contain;
 			margin-left: 0.15em;
+		}
+	}
+
+
+
+// debug_info
+	.debug_info {
+		font-size: 0.65em;
+		border-left: 4px solid #ff9632;
+		padding-left: 0.5em;
+		word-break: break-all;
+		position: relative;
+
+		&:before {
+			content: "DEBUG";
+			height: 1em;
+			transform: rotate(270deg);
+			position: absolute;
+			left: -40px;
+			top: 18px;
+			font-size: 11px;
+			letter-spacing: 3px;
 		}
 	}
 

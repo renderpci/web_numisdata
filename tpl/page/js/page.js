@@ -109,6 +109,29 @@ var page = {
 				},500)
 			}
 
+		// debug_info
+			let showing_debug
+			document.addEventListener("keydown", function(e){
+				
+				// toogle debug info 
+				if (e.ctrlKey===true && e.key==='d') {
+					const all_debug_info = document.querySelectorAll('.debug_info')
+					if (all_debug_info) {
+						if (showing_debug===true) {
+							for (let i = all_debug_info.length - 1; i >= 0; i--) {
+								all_debug_info[i].classList.add("hide")
+							}
+							showing_debug = false
+						}else{
+							for (let i = all_debug_info.length - 1; i >= 0; i--) {
+								all_debug_info[i].classList.remove("hide")
+							}
+							showing_debug = true
+						}
+					}
+				}
+			})
+
 
 		return true
 	},//end setup
@@ -678,7 +701,7 @@ var page = {
 			group.sort( (a,b) => {return collator.compare(a.title , b.title)});
 
 		const build_pop_item = function(group_data){
-
+			
 			// group_data vars
 				const section_id	= group_data.section_id
 				const title			= group_data.title || "Undefined title " + section_id

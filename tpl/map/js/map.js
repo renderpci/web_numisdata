@@ -36,6 +36,8 @@ var map =  {
 
 		forn_node : null,
 
+		map_config : null,
+
 
 
 	/**
@@ -135,18 +137,40 @@ var map =  {
 							self.map_container.classList.remove('hide_opacity')
 						})
 				}
+
+				// event
+				event_manager.publish('initial_map_loaded')
 			})
 
 		// form
 			self.form		= new form_factory()
-			self.form_node	= self.render_form()
-			self.form_container.appendChild(self.form_node)
+			const form_node	= self.render_form()
+			self.form_container.appendChild(form_node)
+
+		// set config (from local storage)
+			self.set_config()
 
 		// show search button
 			const show_search_button = document.getElementById("search_icon")
 			show_search_button.addEventListener("mousedown", function(){
-				self.form_node.classList.toggle("hide")
+
+				let new_showing_search
+				if (self.map_config.showing_search===true) {					
+					form_node.classList.add("hide")
+					new_showing_search = false
+				}else{
+					form_node.classList.remove("hide")
+					new_showing_search = true
+				}
+				self.set_config({
+					showing_search : new_showing_search
+				})
 			})
+			if (self.map_config.showing_search===true) {
+				form_node.classList.remove("hide")
+			}else{
+				form_node.classList.add("hide")
+			}
 
 		// events
 			event_manager.subscribe('map_selected_marker', map_selected_marker)
@@ -171,19 +195,62 @@ var map =  {
 							if (response) {
 								const types_list_node = self.render_types_list({
 									global_data_item	: response.global_data_item,
-									types_rows			: response.types_rows
+									types_rows			: response.types_rows,
+									coins_rows			: response.coins_rows
 								})
 								self.rows_container.appendChild(types_list_node)
 								page.remove_spinner(self.rows_container)
 							}else{
 								page.remove_spinner(self.rows_container)
 							}
+
+							// scroll map at top
+							self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
 						})
 				}
 			}
 
 		return true
 	},//end set_up
+
+
+
+	/**
+	* SET_CONFIG
+	* @param options object (optional)
+	* @return 
+	*/
+	set_config : function(options) {
+
+		const self = this
+		
+		// cookie
+		const map_config = localStorage.getItem('map_config');
+		if (map_config) {
+			// use existing one
+			self.map_config = JSON.parse(map_config)
+			console.log("--> self.map_config 1 (already exists):", self.map_config);
+		}else{
+			// create a new one
+			const map_config = {
+				showing_search	: false
+			}
+			localStorage.setItem('map_config', JSON.stringify(map_config));
+			self.map_config = map_config
+			console.log("--> self.map_config 2 (create new one):",self.map_config);
+		}
+
+		if (options) {
+			for(const key in options) {
+				self.map_config[key] = options[key]
+			}
+			localStorage.setItem('map_config', JSON.stringify(self.map_config));
+		}
+		
+		// console.log("--> self.map_config [final]:", self.map_config);
+
+		return self.map_config
+	},//end set_config
 
 
 
@@ -201,6 +268,12 @@ var map =  {
 			class_name		: "form-row fields",
 			parent			: fragment
 		})
+
+		common.create_dom_element({
+			element_type	: "div",
+			class_name		: "golden-separator",
+			parent			: form_row
+		})		
 		
 		// section_id
 			self.form.item_factory({
@@ -304,6 +377,124 @@ var map =  {
 				}
 			})
 
+		// material
+			self.form.item_factory({
+				id			: "material",
+				name		: "material",
+				label		: tstring.material || "Material",
+				q_column	: "material",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// denomination
+			self.form.item_factory({
+				id			: "denomination",
+				name		: "denomination",
+				label		: tstring.denomination || "Denomination",
+				q_column	: "denomination",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// range slider date (range_slider)
+			self.form.item_factory({
+				id			: "range_slider",
+				name		: "range_slider",
+				input_type	: 'range_slider',
+				label		: tstring.dating || "Dating",
+				class_name	: 'range_slider',
+				q_column	: "date_in,dating_end",
+				// eq		: "LIKE",
+				// eq_in	: "",
+				// eq_out	: "%",
+				// q_table	: "catalog",
+				sql_filter	: null,
+				parent		: form_row,
+				callback	: function(form_item) {
+
+					// const form_item				= this
+					const node_input				= form_item.node_input
+					const range_slider_value_in		= node_input.parentNode.querySelector('#range_slider_in')
+					const range_slider_value_out	= node_input.parentNode.querySelector('#range_slider_out')
+
+					function set_up_slider() {
+						
+						// compute range years
+						self.get_range_years()
+						.then(function(range_data){
+							// console.log("range_data:",range_data);
+
+							// destroy current slider instance if already exists
+								if ($(node_input).slider("instance")) {
+									$(node_input).slider("destroy")
+								}
+
+							// reset filter
+								form_item.sql_filter = null
+
+							// set inputs values from database
+								range_slider_value_in.value	= range_data.min
+								range_slider_value_in.addEventListener("change",function(e){
+									const value = (e.target.value>=range_data.min)
+										? e.target.value
+										: range_data.min
+									$(node_input).slider( "values", 0, value );
+									e.target.value = value
+								})
+								range_slider_value_out.value = range_data.max
+								range_slider_value_out.addEventListener("change",function(e){
+									const value = (e.target.value<=range_data.max)
+										? e.target.value
+										: range_data.max
+									$(node_input).slider( "values", 1, e.target.value );
+									e.target.value = value
+								})
+
+							// active jquery slider
+								$(node_input).slider({
+									range	: true,
+									min		: range_data.min,
+									max		: range_data.max,
+									step	: 1,
+									values	: [ range_data.min, range_data.max ],
+									slide	: function( event, ui ) {
+										// update input values on user drag slide points
+										range_slider_value_in.value	 = ui.values[0]
+										range_slider_value_out.value = ui.values[1]
+										// console.warn("-----> slide range form_item.sql_filter:",form_item.sql_filter);
+									},
+									change: function( event, ui ) {
+										// update form_item sql_filter value on every slider change
+										form_item.sql_filter = "(date_in >= " + ui.values[0] + " AND date_in <= "+ui.values[1]+")"; // AND (dating_end <= " + ui.values[1] + " OR dating_end IS NULL)
+										form_item.q = ui.value
+										console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
+									}
+								});
+						})
+					}
+
+					// initial_map_loaded event (triggered on initial map data is ready)
+					event_manager.subscribe('initial_map_loaded', set_up_slider)									
+				}
+			})
+
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
@@ -328,16 +519,17 @@ var map =  {
 			const operators_node = self.form.build_operators_node()
 			fragment.appendChild( operators_node )
 		
-		// form
-			const form_node = common.create_dom_element({
+
+		// form_node
+			self.form.node = common.create_dom_element({
 				element_type	: "form",
 				id				: "search_form",
-				class_name		: "form-inline hide"
+				class_name		: "form-inline form_factory"
 			})
-			form_node.appendChild(fragment)
+			self.form.node.appendChild(fragment)
 
-
-		return form_node
+		
+		return self.form.node
 	},//end render_form
 
 
@@ -349,7 +541,7 @@ var map =  {
 
 		const self = this
 		
-		const form_node = self.form_node
+		const form_node = self.form.node
 		if (!form_node) {
 			return new Promise(function(resolve){
 				console.error("Error on submit. Invalid form_node.", form_node);
@@ -372,11 +564,30 @@ var map =  {
 
 		return new Promise(function(resolve){
 
-			const ar_fields		= ['section_id','mint_data','hoard_data','findspot_data','type_data']
-			const sql_filter	= self.form.form_to_sql_filter({
-				form_node : form_node
-			})
-
+			const ar_fields = ['section_id','mint_data','hoard_data','findspot_data','type_data']
+			
+			// sql_filter
+				const filter = self.form.build_filter()
+				
+				// parse_sql_filter
+				const group			= []
+				const parsed_filter	= self.form.parse_sql_filter(filter, group)
+				const sql_filter	= parsed_filter
+					? '(' + parsed_filter + ')'
+					: null
+				if(SHOW_DEBUG===true) {
+					console.log("-> coins form_submit filter:",filter);
+					console.log("-> coins form_submit sql_filter:",sql_filter);
+				}					
+				// if (!sql_filter|| sql_filter.length<3) {
+				// 	return new Promise(function(resolve){
+				// 		// loading ends
+				// 		rows_container.classList.remove("loading")
+				// 		console.warn("Ignored submit. Invalid sql_filter.", sql_filter);
+				// 		resolve(false)
+				// 	})
+				// }
+			
 			data_manager.request({
 				body : {
 					dedalo_get		: 'records',
@@ -394,28 +605,31 @@ var map =  {
 			.then(function(api_response){
 				console.log("--------------- form_submit api_response:",api_response); 
 
-				self.current_map_global_data = self.distribute_coins(api_response.result)
-					console.log("self.current_map_global_data:",self.current_map_global_data);
+				if (api_response.result) {
 
-				// fix
-					// self.map_global_data = self.current_map_global_data
-					// console.log("self.current_map_global_data:",self.current_map_global_data);
+					self.current_map_global_data = self.distribute_coins(api_response.result)
+						console.log("self.current_map_global_data:",self.current_map_global_data);
 
-				// select geolocation items
-					const map_points = self.current_map_global_data.map(function(el){
-						return el.item
-					})
+					// fix
+						// self.map_global_data = self.current_map_global_data
+						// console.log("self.current_map_global_data:",self.current_map_global_data);
 
-				// render map again
-					self.map_factory_instance.init({
-						map_container	: self.map_container,
-						map_position	: null,
-						popup_builder	: page.map_popup_builder,
-						popup_options	: page.maps_config.popup_options,
-						source_maps		: self.source_maps,
-						legend			: page.render_map_legend
-					})
-					self.map_factory_instance.parse_data_to_map(map_points, null)
+					// select geolocation items
+						const map_points = self.current_map_global_data.map(function(el){
+							return el.item
+						})
+
+					// render map again
+						self.map_factory_instance.init({
+							map_container	: self.map_container,
+							map_position	: null,
+							popup_builder	: page.map_popup_builder,
+							popup_options	: page.maps_config.popup_options,
+							source_maps		: self.source_maps,
+							legend			: page.render_map_legend
+						})
+						self.map_factory_instance.parse_data_to_map(map_points, null)
+				}
 
 				// loading ends
 					self.map_container.classList.remove("loading")
@@ -433,6 +647,10 @@ var map =  {
 	distribute_coins : function(coin_rows) {
 		
 		const self = this
+
+		if (!coin_rows) {
+			return false
+		}
 		
 		const new_map_global_data = []
 		const master_map_global_data_len = self.master_map_global_data.length
@@ -525,16 +743,18 @@ var map =  {
 				}
 				const coins_list	= global_data_item.coins_list
 				const types_list	= global_data_item.types_list
+			
+			const ar_calls = []
 
 			// search types in catalog using types list
 				const ar_type_id = types_list.map(function(item){
 					return '\'["' + item + '"]\''
 				})
-				const sql_filter = 'term_table=\'types\' AND term_data IN(' + ar_type_id.join(",") + ')'
+				const sql_filter = 'term_table=\'types\' AND term_data IN(' + ar_type_id.join(",") + ') AND coins_data_union IS NOT NULL'
 
 				const catalog_ar_fields = ['*']
 				
-				const request_body = {
+				const catalog_request_options = {
 					dedalo_get	: 'records',
 					db_name		: page_globals.WEB_DB,
 					lang		: page_globals.WEB_CURRENT_LANG_CODE,
@@ -546,18 +766,53 @@ var map =  {
 					offset		: 0,
 					order		: "term ASC"
 				}
+				ar_calls.push({
+					id		: 'catalog_request',
+					options	: catalog_request_options
+				})
+				
+			// search coins
+				const coins_request_options = {
+					dedalo_get	: 'records',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					table		: 'coins',
+					ar_fields	: ['*'],
+					sql_filter	: 'section_id IN(' + coins_list.join(",") + ')',
+					limit		: 0,
+					count		: false,
+					offset		: 0,
+					order		: null
+				}
+				ar_calls.push({
+					id		: 'coins_request',
+					options	: coins_request_options
+				})
+
+			// request
 				data_manager.request({
-					body : request_body
+					body : {
+						dedalo_get	: 'combi',
+						ar_calls	: ar_calls
+					}
 				})
 				.then((api_response)=>{				
-					console.log("-> load_map_selection_info api_response:",api_response);
+					console.log("-> load_map_selection_info api_response:", api_response);
 
-					const types_rows = page.parse_catalog_data(api_response.result)
-						// console.log("types_rows:",types_rows);
-
+					const catalog_response = api_response.result.find(function(el){
+						return el.id==='catalog_request'
+					})
+					const types_rows = page.parse_catalog_data(catalog_response.result)
+					
+					const coins_response = api_response.result.find(function(el){
+						return el.id==='coins_request'
+					})
+					const coins_rows = page.parse_coin_data(coins_response.result)
+					
 					resolve({
 						global_data_item	: global_data_item,
-						types_rows			: types_rows
+						types_rows			: types_rows,
+						coins_rows			: coins_rows
 					})
 				})
 		})
@@ -573,6 +828,7 @@ var map =  {
 
 		const global_data_item	= options.global_data_item
 		const types_rows		= options.types_rows
+		const coins_rows		= options.coins_rows
 
 		const fragment = new DocumentFragment()
 
@@ -602,6 +858,12 @@ var map =  {
 				parent			: title_line
 			})
 
+		common.create_dom_element({
+			element_type	: "div",
+			class_name		: "golden-separator",
+			parent			: fragment
+		})
+
 		// types list
 		if (types_rows && types_rows.length>0) {
 
@@ -611,10 +873,87 @@ var map =  {
 				parent			: fragment
 			})
 
+			function cross_coins(coins_rows, coins_data_union) {
+				
+				const ar_found_coin_row = []
+				for (let i = coins_data_union.length - 1; i >= 0; i--) {
+					const coin_section_id = coins_data_union[i]
+					const found_coin_row = coins_rows.find(function(el){
+						return el.section_id===coin_section_id
+					})
+					if (found_coin_row) {
+						ar_found_coin_row.push(found_coin_row)
+					}
+				}
+				return ar_found_coin_row
+			}
+
 			// catalog_row_fields
 				for (let i = 0; i < types_rows.length; i++) {
-					const row_node = catalog_row_fields.draw_item(types_rows[i])
-					types_wrap.appendChild(row_node)
+
+					const type_row = types_rows[i]
+
+					// cross_coins
+						const ar_found_coin_row = type_row.coins_data_union
+							? cross_coins(coins_rows, type_row.coins_data_union)
+							: []
+						// console.log("ar_found_coin_row:",ar_found_coin_row, ar_found_coin_row.length);
+						// console.log("type_row:",type_row);
+
+					// type node
+						const type_row_node = catalog_row_fields.draw_item(type_row)						
+						types_wrap.appendChild(type_row_node)
+						
+					// debug info
+						if(SHOW_DEBUG===true) {
+							let t = 'Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coins_data_union)
+							t +='<br>'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
+							t +='<br>Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
+							const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
+							const info = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "debug_info " + debug_show,
+								inner_html		: t,
+								parent			: type_row_node
+							})
+						}
+
+					// coins nodes
+						const ar_found_coin_row_length = ar_found_coin_row.length
+						if (ar_found_coin_row_length>0) {
+
+							const coins_wrap = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "coins_wrap",
+								parent			: types_wrap
+							})
+
+							// button show coins
+								const button_show_coins = common.create_dom_element({
+									element_type	: "div",
+									class_name		: "button_show_coins",
+									inner_html		: (tstring.coins || "Coins") + " (" + ar_found_coin_row_length +")",
+									parent			: coins_wrap
+								})
+								button_show_coins.addEventListener("click", function(){
+									coins_list.classList.toggle("hide")
+									this.classList.toggle("opened")
+								})
+
+							// coins list
+								const coins_list = common.create_dom_element({
+									element_type	: "div",
+									class_name		: "coins_list gallery",
+									parent			: coins_wrap
+								})
+
+							// row nodes
+								for (let k = 0; k < ar_found_coin_row.length; k++) {
+									const coin_row	= ar_found_coin_row[k];
+									const coin_node	= type_row_fields.draw_coin(coin_row)
+									coins_list.appendChild(coin_node)
+								}
+						}
 				}
 
 			// catalog draw_rows
@@ -630,10 +969,82 @@ var map =  {
 				// 		children : types_rows
 				// 	}
 				// })
+		}else{
+
+			// debug info
+				if(SHOW_DEBUG===true) {
+					let t = 'found types '+ JSON.stringify(types_rows, null, 2)
+					t +='<br>found coins '+ JSON.stringify(coins_rows.map(el=>el.section_id), null, 2)				
+					t += '<br>map_global <pre>' + JSON.stringify(global_data_item, null, 3) + '</pre>'
+					const info = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "debug_info ",
+						inner_html		: t,
+						parent			: fragment
+					})
+				}
+					console.log("global_data_item:",global_data_item);
 		}
 
 		return fragment
 	},//end render_types_list
+
+
+
+	/**
+	* GET_RANGE_YEARS
+	* @return 
+	*/
+	get_range_years : function() {
+
+		const self = this
+
+		return new Promise(function(resolve){
+		
+			const ar_fields = ['id','section_id','MIN(date_in + 0) AS min','MAX(date_in + 0) AS max']
+
+			const request_body = {
+				dedalo_get		: 'records',
+				db_name			: page_globals.WEB_DB,
+				lang			: page_globals.WEB_CURRENT_LANG_CODE,
+				table			: 'coins',
+				ar_fields		: ar_fields,
+				limit			: 0,			
+				count			: false,
+				offset			: 0,
+				order			: 'id ASC'
+			}			
+			data_manager.request({
+				body : request_body
+			})
+			.then(function(api_response){
+				console.log("-> get_range_years api_response:",api_response);
+
+				let min = 0
+				let max = 0
+				if (api_response.result) {					
+					for (let i = 0; i < api_response.result.length; i++) {
+						const row = api_response.result[i]
+						const current_min = parseInt(row.min)
+						if (min===0 || current_min<min) {
+							min = current_min
+						}
+						const current_max = parseInt(row.max)
+						// if (current_max>min) {
+							max = current_max
+						// }
+					}
+				}
+
+				const data = {
+					min : min,
+					max : max
+				}
+
+				resolve(data)
+			})
+		})
+	},//end get_range_years
 	
 
 	

@@ -16,7 +16,18 @@
 		margin-bottom: 0;
 	}
 
-	
+
+
+// line-tittle
+	#main .inner .result .line-tittle {
+		margin-left: 0 !important;
+		font-size: 1.75em;
+		padding-top: 0.5em;
+		display: block;
+	}
+
+
+
 // rows_list
 	.rows_list {
 		padding-top: 0;
@@ -25,12 +36,63 @@
 
 
 		.line-tittle {
-			margin-left: 0 !important;
+			
 
 			span.note {
 				color: #bebebe;
 				text-transform: uppercase;
 				margin-right: unset;
 			}
+		}		
+
+		.types {
+			margin-top: 2em;
+			padding-top: 2em;
+
+			&:first-of-type {
+				margin-top: 0;
+				padding-top: 1em;
+			}
 		}
+
+		.coins_wrap {
+			display: block;
+
+			.button_show_coins {
+				// background-color: #d7f0e4;
+				padding: 0.5em;
+				padding-left: 1em;
+				padding-right: 1em;
+				display: block;
+				cursor: pointer;
+
+				&:after {
+					content: " ";
+					display: inline-block;
+					width: 1em;
+					height: 1em;
+					vertical-align: text-top;
+					background-image: url(../../assets/images/icon_arrow.svg);
+					background-repeat: no-repeat;
+					background-size: contain;
+					margin-left: 0.5em;
+					margin-top: 2px;
+				}
+
+				&.opened {
+					&:after {
+						transform: rotate(180deg);
+					}
+				}
+			}
+
+			.coins_list {				
+				// background-color: #eed9a8;
+				// padding-left: 2em;
+				padding: 0;
+				padding-left: 1em;
+				// border: 1px solid @color_gold_logo;			
+			}
+		}
+		
 	}

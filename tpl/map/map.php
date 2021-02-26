@@ -22,6 +22,7 @@
 		page::$js_ar_url[]	= __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/leaflet.markercluster.js';
 		// page::$js_ar_url[]  = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog.js';
 		page::$js_ar_url[]  = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog_row_fields.js';
+		page::$js_ar_url[]  = __WEB_TEMPLATE_WEB__ . '/type/js/type_row_fields.js';
 		// page::$js_ar_url[]  = __WEB_TEMPLATE_WEB__ . '/mint/js/mint.js';
 	
 

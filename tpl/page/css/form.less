@@ -183,6 +183,42 @@
 				margin-right: 1em;
 			}
 		}
+
+		// range_slider
+			.range_slider {
+				padding-left: 1em;
+				padding-right: 1em;
+
+				.range_slider_labels {
+					// background-color: #d5ff94;
+					display: flex;
+					justify-content: space-between;
+					height: 2em;
+					line-height: 1em;
+
+					.range_slider_label {
+						width: auto;
+						text-align: center;
+					}
+					input.range_slider_value {
+						width: 3em;
+						height: 2em;
+						text-align: center;
+
+						&.value_in {
+							// float: left;
+						}
+						&.value_out {
+							// float: right;
+						}
+					}
+				}
+
+				.ui-slider-handle  {
+					margin-top: 4px;
+					height: 23px;
+				}
+			}
 	}//end .form-inline
 
 

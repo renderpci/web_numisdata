@@ -109,12 +109,12 @@ var coins =  {
 				}
 			})
 
-		// public_info
+		// ref_auction
 			self.form.item_factory({
-				id			: "public_info",
-				name		: "public_info",
-				label		: tstring.public_info || "public_info",
-				q_column	: "public_info",
+				id			: "ref_auction",
+				name		: "ref_auction",
+				label		: tstring.auction || "auction",
+				q_column	: "ref_auction",
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
@@ -133,6 +133,78 @@ var coins =  {
 				name		: "mint",
 				label		: tstring.mint || "mint",
 				q_column	: "mint",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// findspot
+			self.form.item_factory({
+				id			: "findspot",
+				name		: "findspot",
+				label		: tstring.findspot || "findspot",
+				q_column	: "findspot",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// hoard
+			self.form.item_factory({
+				id			: "hoard",
+				name		: "hoard",
+				label		: tstring.hoard || "hoard",
+				q_column	: "hoard",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// material
+			self.form.item_factory({
+				id			: "material",
+				name		: "material",
+				label		: tstring.material || "Material",
+				q_column	: "material",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// denomination
+			self.form.item_factory({
+				id			: "denomination",
+				name		: "denomination",
+				label		: tstring.denomination || "Denomination",
+				q_column	: "denomination",
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",

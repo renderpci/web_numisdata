@@ -280,6 +280,10 @@ page.parse_catalog_data = function(data) {
 			continue;
 		}
 
+		row.coins_data_union = row.coins_data_union
+			? JSON.parse(row.coins_data_union)
+			: null
+
 		// url
 		row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
 		row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)

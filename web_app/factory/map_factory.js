@@ -445,7 +445,7 @@ function map_factory() {
 					lon			: item.lon,
 					geojson		: item.geojson,
 					marker_icon	: item.marker_icon,
-					group		: [item.data],
+					group		: [item.data]
 				}
 				group_data.push(new_item)
 			}
@@ -496,7 +496,7 @@ function map_factory() {
 						}
 						group_data.push(new_item)
 					}
-					// break; // only first is used to group
+					break; // only first is used to group
 				}
 			}
 		}

@@ -212,8 +212,8 @@ var type =  {
 
 
 			// render row
-				row_fields.caller	= self
-				const row_node		= row_fields.draw_item(row)
+				type_row_fields.caller	= self
+				const row_node			= type_row_fields.draw_item(row)
 
 
 			resolve(row_node)
@@ -321,72 +321,6 @@ var type =  {
 
 		return parsed_data
 	},//end parse_ordered_coins
-
-
-
-	/**
-	* RENDER_MAP
-	* Note: map_factory draw a base map on init. If no points to render are required,
-	* render command is not necessary
-	*/
-	// render_map : function(options) {
-
-	// 	const self = this
-
-	// 	const target		= options.target
-	// 	const map_data		= options.map_data || []
-	// 	const map_position	= options.map_position
-	// 	if (map_position) {
-	// 		map_position.zoom = 11 // force max zoom for dare
-	// 	}
-
-	// 	if (map_data.length<1) {
-	// 		return null;
-	// 	}
-
-	// 	self.map = self.map || new map_factory() // creates / get existing instance of map
-	// 	self.map.init({
-	// 		target				: target,
-	// 		map_position		: map_position,
-	// 		// data				: map_data,
-	// 		// popup_builder	: self.map_popup_builder,
-	// 		source_maps			: [
-	// 			{
-	// 				name	: "dare",
-	// 				// url	: '//pelagios.org/tilesets/imperium/{z}/{x}/{y}.png',
-	// 				url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
-	// 				options	: { maxZoom: 11 },
-	// 				default	: true
-	// 			},
-	// 			{
-	// 				name	: "arcgis",
-	// 				url		: '//server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-	// 				options	: {}
-	// 			},
-	// 			{
-	// 				name	: "osm",
-	// 				url		: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-	// 				options	: {}
-	// 			},
-	// 			// {
-	// 			// 	name	: "grey",
-	// 			// 	url 	: '//{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYWxleGFkZXYiLCJhIjoiY2lrOHdvaTQzMDEwbHY5a3UxcDYxb25ydiJ9.h737F1gRyib-MFj6uAXs9A',
-	// 			// 	options	: {
-	// 			// 		maxZoom	: 20,
-	// 			// 		id		: 'alexadev.p2lbljap'
-	// 			// 	}
-	// 			// }
-	// 		]
-	// 	})
-
-	// 	const map_data_clean = self.map_data(map_data) // prepares data to use in map
-	// 	self.map.render({
-	// 		map_data : map_data_clean
-	// 	})
-
-
-	// 	return true
-	// },//end render_map
 
 
 

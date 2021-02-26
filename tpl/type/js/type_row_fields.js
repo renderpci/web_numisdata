@@ -4,7 +4,7 @@
 
 
 
-var row_fields = {
+var type_row_fields = {
 
 
 	// caller. Like 'type'
@@ -767,20 +767,17 @@ var row_fields = {
 				})
 				image_reverse.loading="lazy"
 
-
+			// collection	
 				if (data.collection.length>0){
 
-					let ar_label = data.collection
-
-					if (data.number && data.number.length>0){
-						ar_label += " ("+data.number+")"
-					}
-
-				// collection
+					const collection_label = (data.number && data.number.length>0)
+						? data.collection + " (" + data.number + ")"
+						: data.collection
+				
 					common.create_dom_element({
 						element_type	: "div",
 						class_name		: "golden-color",
-						inner_html		: ar_label,
+						inner_html		: collection_label,
 						parent			: wrapper
 					})
 
@@ -792,20 +789,13 @@ var row_fields = {
 							parent			: wrapper
 						})
 					}
-
-
 				}
 
-
-
-			// size_text. weight / dies / diameter
+			// size. weight / dies / diameter
 				const ar_beats = []
-
 				if (data.weight && data.weight.length>0) {
 					ar_beats.push( data.weight.replace('.', ',') + " g" )
-
 				}
-
 				if (data.diameter && data.diameter.length>0) {
 					ar_beats.push( data.diameter.replace('.', ',') + " mm" )
 				}
@@ -820,7 +810,7 @@ var row_fields = {
 					parent			: wrapper
 				})
 
-				// findspots + hoard
+			// findspots + hoard
 				const ar_find = []
 				let label = ""
 				if(data.hoard){
@@ -831,7 +821,6 @@ var row_fields = {
 					ar_find.push( hoard )
 				}
 				if(data.findspot){
-
 					const findspot = (data.findspot_place)
 						? data.findspot + " ("+data.findspot_place+")"
 						: data.findspot
@@ -840,7 +829,6 @@ var row_fields = {
 				}
 
 				const find_text = ar_find.join(" | ")
-
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "",
@@ -848,16 +836,11 @@ var row_fields = {
 					parent			: wrapper
 				})
 
-				// auction
+			// auction
 				function draw_auction(data, parent, class_name, prepend) {
 
-					//label
-					// const auctionLabel = "<b>"+(tstring.auction || "Auction")+ "</b>: "
-					// const numberLabel = " <b>"+(tstring.number || "Number")+ "</b>: "
-					// const dateLabel = " <b>"+(tstring.date || "Date")+ "</b>: "
-
-
 					if (data.name.length<1) return
+					
 					// line
 						const line = common.create_dom_element({
 							element_type	: "div",
@@ -894,7 +877,6 @@ var row_fields = {
 
 					return true
 				}
-
 				if (data.ref_auction_group) {
 					for (let i = 0; i < data.ref_auction_group.length; i++) {
 						draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
@@ -907,13 +889,12 @@ var row_fields = {
 				}
 
 			// public_info
-					if (data.public_info && data.public_info.length>0){
-						const label = (tstring.public_info || "Public_info")+": ";
-
-						common.create_dom_element({
+				if (data.public_info && data.public_info.length>0){
+					
+					const label = (tstring.public_info || "Public_info") + ": "
+					common.create_dom_element({
 						element_type	: "div",
-						class_name		: "",
-						inner_html		: label+data.public_info,
+						inner_html		: label + data.public_info,
 						parent			: wrapper
 					})
 				}
@@ -925,14 +906,13 @@ var row_fields = {
 					parent			: wrapper
 				})
 				const ar_references = data.bibliography_data
-					references_container.appendChild(
-							self.draw_bibliographic_reference(ar_references)
-					)
+				references_container.appendChild(
+					self.draw_bibliographic_reference(ar_references)
+				)
 
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				// const uri_text	= "<a href=\""+uri+"\">URI:" + full_url + "</a>"
 				const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
 				common.create_dom_element({
 					element_type	: "div",
@@ -946,11 +926,10 @@ var row_fields = {
 
 		// coins group iterate
 			const coins_group_length = data.length
-
 			for (let i = 0; i < coins_group_length; i++) {
 
-				const el = data[i]
-				const coinsLenght = el.coins.length;
+				const el			= data[i]
+				const coinsLenght	= el.coins.length;
 				if (el.typology_id==1) continue; // ignore identify images typology
 
 				// typology label
@@ -1908,35 +1887,4 @@ var row_fields = {
 
 
 
-	// /**
-	// * SPLIT_DATA
-	// * Safe value split
-	// */
-	// split_data : function(value, separator) {
-	// 	const result = value ? value.split(separator) : []
-	// 	return result;
-	// },//end split_data
-
-
-
-	// /**
-	// * REMOVE_GAPS
-	// * Removes empty values in multimple values string.
-	// * Like 'pepe | lepe' when 'pepe | lepe | '
-	// */
-	// remove_gaps : function(value, separator) {
-	// 	const beats		= value.split(separator).filter(Boolean)
-	// 	const result	= beats.join(separator)
-
-	// 	return result
-	// },//end remove_gaps
-
-
-
-	// local_to_remote_paths : function(value) {
-	// 	return value.replace(/\/dedalo\/media_test\/media_monedaiberica/g, page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')
-	// },//end local_to_remote_paths
-
-
-
-}//end row_fields
+}//end type_row_fields

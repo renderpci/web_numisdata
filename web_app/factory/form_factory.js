@@ -432,6 +432,7 @@ function form_factory() {
 							sql_filter	: form_item.sql_filter,
 							wrapper		: form_item.wrapper
 						}
+						
 						c_group[c_group_op].push(element)
 
 						// q_table element
@@ -508,18 +509,33 @@ function form_factory() {
 					const item_op = Object.keys(item)[0]
 					if(item_op==="AND" || item_op==="OR") {
 
+						// recursion
 						const current_filter_line = "" + self.parse_sql_filter(item, group) + ""
 						ar_filter.push(current_filter_line)
 						continue;
 					}
 
+					// item_field
+						const item_field = (item.wrapper && item.wrapper.length>0) // like YEAR
+							? item.wrapper + "(" + item.field + ")"
+							: item.field
+
 					let filter_line
-					if (item.op==='MATCH') {
-						filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
+					// if (item.op==='MATCH') {
+					// 	filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
+					// }else{
+					// 	filter_line = (item.field.indexOf("AS")!==-1)
+					// 		? "" +item.field+""  +" "+ item.op +" "+ item.value
+					// 		: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+					// }
+					if (item.sql_filter && item.sql_filter.length>0) {
+						filter_line = item.sql_filter
+					}else if (item.op==='MATCH') {
+						filter_line = "MATCH (" + item_field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
 					}else{
-						filter_line = (item.field.indexOf("AS")!==-1)
-							? "" +item.field+""  +" "+ item.op +" "+ item.value
-							: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+						filter_line = (item_field.indexOf("AS")!==-1 || (item.wrapper && item.wrapper.length>0))
+							? "" +item_field+""  +" "+ item.op +" "+ item.value + (" AND "+item_field+"!=''")
+							: "`"+item_field+"`" +" "+ item.op +" "+ item.value	+ (" AND `"+item_field+"`!=''")
 					}
 
 					ar_filter.push(filter_line)
@@ -731,28 +747,41 @@ function form_factory() {
 								if (current_form_item.id===form_item.id) continue; // skip self
 
 								// q . Value from input
-									if (current_form_item.q.length>0) {
+									if ((current_form_item.q.length!==0 && current_form_item.q!=='*') || current_form_item.sql_filter) {
 
-										const value = current_form_item.q
+										// q element
+											const element = {
+												field		: current_form_item.q_column,
+												value		: `'%${current_form_item.q}%'`,
+												op			: "LIKE", // fixed as 'LIKE'
+												sql_filter	: current_form_item.sql_filter,
+												wrapper		: current_form_item.wrapper
+											}
 
-										c_filter[c_op].push({
-											field	: current_form_item.q_column,
-											value	: `'%${value}%'`,
-											op		: "LIKE"
-										})
+											c_filter[c_op].push(element)
 									}
 
 								// q_selected. Values from user already selected values
-									if (current_form_item.q_selected.length>0) {
+									if (current_form_item.q_selected.length!==0) {
+
 										for (let k = 0; k < current_form_item.q_selected.length; k++) {
 
 											const value = current_form_item.q_selected[k]
 
-											c_filter[c_op].push({
-												field	: current_form_item.q_column,
-												value	: (current_form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
-												op		: (current_form_item.is_term===true) ? "LIKE" : "="
-											})
+											// escape html strings containing single quotes inside.
+											// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
+											const safe_value = value.replace(/(')/g, "''")
+
+											// elemet
+											const element = {
+												field		: current_form_item.q_column,
+												value		: (current_form_item.is_term===true) ? `'%"${safe_value}"%'` : `'${safe_value}'`,
+												op			: (current_form_item.is_term===true) ? "LIKE" : "=",
+												sql_filter	: current_form_item.sql_filter,
+												wrapper		: current_form_item.wrapper
+											}
+
+											c_filter[c_op].push(element)
 										}
 									}
 							}
@@ -773,8 +802,8 @@ function form_factory() {
 						}
 
 					// sql_filter
-						const sql_filter = self.parse_sql_filter(filter) + ' AND `'+q_column+'`!=\'\''
-
+						const sql_filter = self.parse_sql_filter(filter) // + ' AND `'+q_column+'`!=\'\''
+					
 					// search
 						data_manager.request({
 							body : {

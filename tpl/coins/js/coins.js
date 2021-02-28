@@ -288,6 +288,7 @@ var coins =  {
 			const offset	= self.pagination.offset
 			const count		= true			
 			const order		= "section_id ASC"
+			const resolve_portals_custom = {"mint_data" : "mints"}
 
 			// sql_filter
 				const filter = self.form.build_filter()
@@ -319,7 +320,8 @@ var coins =  {
 					count			: count,
 					offset			: offset,
 					order			: order,
-					process_result	: null
+					process_result	: null,
+					resolve_portals_custom : resolve_portals_custom,
 				}
 			})
 			.then(function(api_response){

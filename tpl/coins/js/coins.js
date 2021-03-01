@@ -21,7 +21,6 @@ var coins =  {
 		rows_container	: null,
 
 
-
 	/**
 	* SET_UP
 	* When the HTML page is loaded
@@ -287,7 +286,7 @@ var coins =  {
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
 			const count		= true			
-			const order		= "section_id ASC"
+			const order		= "type ASC"
 			const resolve_portals_custom = {"mint_data" : "mints"}
 
 			// sql_filter
@@ -376,8 +375,9 @@ var coins =  {
 	* @return DocumentFragment node 
 	*/
 	list_row_builder : function(data, caller){
-
+		
 		return coins_row_fields.draw_item(data)
+	
 	}//end list_row_builder
 
 

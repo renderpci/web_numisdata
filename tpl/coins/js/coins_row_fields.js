@@ -27,6 +27,8 @@ var coins_row_fields = {
 				parent			: fragment
 			})
 
+		//INFO BLOCK
+
 			const data_cont = common.create_dom_element({
 				element_type 	: "div",
 				class_name		: "info_container",
@@ -34,22 +36,27 @@ var coins_row_fields = {
 			})
 
 			//mint
+			var mint = "No mint"
 			if (row.mint_data[0] != null){
-
-				common.create_dom_element({
-					element_type	: "a",
-					inner_html  	: row.mint_data[0].name,
-					class_name		: "ceca_label",
-					href 			: "",
-					parent 			: data_cont
-				})
-
+				mint = row.mint_data[0].name
 			}
 
+			common.create_dom_element({
+				element_type	: "a",
+				inner_html  	: mint,
+				class_name		: "ceca_label",
+				href 			: "",
+				parent 			: data_cont
+			})
+
+			var type = "No type"
+			if (row.type != null){
+				type = row.type
+			}
 			//type
 			common.create_dom_element({
 				element_type	: "a",
-				inner_html  	: "MIB "+ row.type,
+				inner_html  	: "MIB "+ type,
 				class_name		: "type_label",
 				href 			: "",
 				parent 			: data_cont
@@ -103,6 +110,33 @@ var coins_row_fields = {
 
 			}
 
+			//countermark obverse
+
+			if (row.countermark_obverse) {
+				const item_text = common.local_to_remote_path(row.countermark_obverse)
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: item_text.trim(),
+					parent			: data_cont
+				})
+			}
+
+			//countermark reverse
+			if (row.countermark_reverse) {
+				const item_text = common.local_to_remote_path(row.countermark_reverse)
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: item_text.trim(),
+					parent			: data_cont
+				})
+			}
+
+
+		//IMAGE BLOCK	
 			const image_container = common.create_dom_element({
 				element_type 	: "div",
 				class_name		: "info_container",

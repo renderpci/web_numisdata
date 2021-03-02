@@ -175,57 +175,40 @@ var coins_row_fields = {
 				const find_label = tstring.find_type || "Find type"
 
 				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
+					element_type	: "div",
+					class_name		: "info_value find_type",
 					inner_html		: find_label + ": " +row.find_type,
 					parent			: data_cont
 				})
 			}
 
 			//hoard
+			var hoard_line = ""
+
 			if (row.hoard && row.hoard.length>0){
-	
-				var hoard_info = row.hoard
-
-				if (row.findspot_place && row.findspot_place.length>0){	
-
-				}
-
-				const hoard = common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: hoard_info,
-					parent			: data_cont
-				})
-
-
-
-
+				hoard_line = row.hoard		
 			}
 
 			//findspot place
 			if (row.findspot_place && row.findspot_place.length>0){
-
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: row.findspot_place,
-					parent			: data_cont
-				})
-
+				hoard_line === "" 
+					? hoard_line = row.findspot_place
+					: hoard_line += " | "+row.findspot_place
 			}
 
 			//findspot date
 			if (row.find_date && row.find_date.length>0){
-
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: row.find_date,
-					parent			: data_cont
-				})
-
+				hoard_line === "" 
+					? hoard_line = row.find_date
+					: hoard_line += " | "+row.find_date
 			}
+
+			const hoard = common.create_dom_element({
+				element_type	: "span",
+				class_name		: "info_value hoard",
+				inner_html		: hoard_line,
+				parent			: data_cont
+			})
 
 			//URI
 			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
@@ -244,31 +227,49 @@ var coins_row_fields = {
 		//IMAGE BLOCK	
 			const image_container = common.create_dom_element({
 				element_type 	: "div",
-				class_name		: "info_container",
+				class_name		: "img_container",
 				parent 			: wrapper
 			})
 
-		// image_obverse
+			// image_obverse
+			const img_link_ob = common.create_dom_element({
+				element_type 	: "a",
+				class_name		: "image_link",
+				href 			: common.local_to_remote_path(row.image_obverse),
+				parent 			: image_container,
+			})
+
 			const image_obverse = common.create_dom_element({
 				element_type	: "img",
 				class_name		: "image",
 				src				: row.image_obverse_thumb,
 				loading			: 'lazy',
-				parent			: image_container
+				parent			: img_link_ob
 			})
 			image_obverse.hires = row.image_obverse
 			image_obverse.addEventListener("load", page.load_hires)			
 		
 		// image_reverse
+
+			const img_link_re = common.create_dom_element({
+				element_type 	: "a",
+				class_name		: "image_link",
+				href 			: common.local_to_remote_path(row.image_reverse),
+				parent 			: image_container,
+			})
+
 			const image_reverse = common.create_dom_element({
 				element_type	: "img",
 				class_name		: "image",
 				src				: row.image_reverse_thumb,
 				loading			: 'lazy',
-				parent			: image_container
+				parent			: img_link_re
 			})
+
 			image_reverse.hires = row.image_reverse
 			image_reverse.addEventListener("load", page.load_hires)
+
+			page.activate_images_gallery(image_container)
 
 		return fragment
 	}//end draw_item

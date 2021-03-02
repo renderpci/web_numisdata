@@ -703,11 +703,6 @@ var mint =  {
 						arrDeep -=1
 					}
 				}
-
-				// arr.forEach(function(item,index){
-				//  	recursiveChildrenSearch(item.children,item,container)
-				//  	console.log("SUBE NIVEL")
-				// })
 			}
 
 			function createNewItem (item,container){

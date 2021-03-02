@@ -16,6 +16,9 @@
 .result .image {
   height: 6em;
 }
+.rows_container .icon_link {
+  margin-left: 0.4em;
+}
 .rows_container .ceca_label {
   border-bottom: none;
   color: inherit;
@@ -24,5 +27,14 @@
   border-top: 1px solid #ddd;
   margin-bottom: 1em;
   padding-top: 1em;
+  display: flex;
+  align-content: space-between;
+}
+.rows_container .row_wrapper .info_container {
+  width: 70%;
+}
+.rows_container .row_wrapper .img_container {
+  width: 30%;
+  text-align: right;
 }
 /*# sourceMappingURL=coins.css.map */

@@ -111,6 +111,22 @@ page.parse_type_data = function(data) {
 		// permanent uri
 			// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
 
+
+		row.term_data = row.term_data
+			? JSON.parse(row.term_data)
+			: null
+
+		row.term_section_tipo = row.term_section_tipo
+			? JSON.parse(row.term_section_tipo)
+			: null	
+
+		row.term_section_label = row.term_section_label
+			? JSON.parse(row.term_section_label)
+			: null
+
+		
+
+
 		row.parsed = true
 
 	} catch (error) {

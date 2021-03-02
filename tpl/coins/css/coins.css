@@ -17,9 +17,12 @@
   height: 6em;
 }
 .rows_container .ceca_label {
-  display: block;
   border-bottom: none;
   color: inherit;
-  font-size: 120%;
+}
+.rows_container .row_wrapper {
+  border-top: 1px solid #ddd;
+  margin-bottom: 1em;
+  padding-top: 1em;
 }
 /*# sourceMappingURL=coins.css.map */

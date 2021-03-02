@@ -23,7 +23,7 @@ var coins_row_fields = {
 		// wrapper
 			const wrapper = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "wrapper",
+				class_name		: "row_wrapper",
 				parent			: fragment
 			})
 
@@ -33,49 +33,75 @@ var coins_row_fields = {
 				element_type 	: "div",
 				class_name		: "info_container",
 				parent 			: wrapper
-			})
+			})	
 
-			//mint
-			var mint = "No mint"
-			if (row.mint_data[0] != null){
-				mint = row.mint_data[0].name
-			}
-
-			common.create_dom_element({
-				element_type	: "a",
-				inner_html  	: mint,
-				class_name		: "ceca_label",
-				href 			: "",
-				parent 			: data_cont
-			})
-
+			//type
 			var type = "No type"
+			var type_uri = ""
+			var type_uri_text = ""
 			if (row.type != null){
 				type = row.type
+				const type_id = JSON.parse(row.type_data)
+
+				type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id[0]
+				type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
+
 			}
-			//type
+
 			common.create_dom_element({
 				element_type	: "a",
-				inner_html  	: "MIB "+ type,
+				inner_html  	: "MIB "+ type + type_uri_text,
 				class_name		: "type_label",
-				href 			: "",
+				href 			: type_uri,
 				parent 			: data_cont
+			})
+
+		
+
+			//mint
+			const mint_line = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_line",
+				parent 			: data_cont
+			})
+
+			var mint = "No mint"
+			var mint_uri = ""
+			var mint_uri_text = ""
+
+			if (row.mint_data[0] != null){
+				const mint_label = tstring.mint || "mint"
+				mint = mint_label + ": " +row.mint_data[0].name
+
+				const mint_id = row.mint_data[0].section_id
+				mint_uri	= page_globals.__WEB_ROOT_WEB__ + "/mint/" + mint_id[0]
+				mint_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
+
+			}
+
+			common.create_dom_element({
+				element_type	: "a",
+				inner_html  	: mint + mint_uri_text,
+				class_name		: "ceca_label",
+				href 			: mint_uri,
+				parent 			: mint_line
 			})
 
 			//ID
 			
 			common.create_dom_element({
-				element_type	: "div",
-				inner_html  	: "ID: "+row.section_id,
+				element_type	: "span",
+				inner_html  	: " | ID: "+row.section_id,
 				class_name		: "ceca_label",
-				parent 			: data_cont
+				parent 			: mint_line
 			})
 
 			// Collection | former | number
 
 			if (row.collection != null && row.collection.length>0){
 
-				var collectionInfo = row.collection
+				const collection_label = tstring.collection || "Collection"
+				var collectionInfo = collection_label + ": " + row.collection
 
 				if (row.former_collection != null && row.former_collection.length>0){
 					collectionInfo += " | "+ row.former_collection
@@ -110,6 +136,14 @@ var coins_row_fields = {
 
 			}
 
+			//countermarks
+
+			const contuermarks_wrapper = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "",
+				parent 			: data_cont
+			})
+
 			//countermark obverse
 
 			if (row.countermark_obverse) {
@@ -119,7 +153,7 @@ var coins_row_fields = {
 					element_type	: "span",
 					class_name		: "info_value",
 					inner_html		: item_text.trim(),
-					parent			: data_cont
+					parent			: contuermarks_wrapper
 				})
 			}
 
@@ -131,9 +165,80 @@ var coins_row_fields = {
 					element_type	: "span",
 					class_name		: "info_value",
 					inner_html		: item_text.trim(),
+					parent			: contuermarks_wrapper
+				})
+			}
+
+			//find type
+			if (row.find_type && row.find_type.length>0){
+
+				const find_label = tstring.find_type || "Find type"
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: find_label + ": " +row.find_type,
 					parent			: data_cont
 				})
 			}
+
+			//hoard
+			if (row.hoard && row.hoard.length>0){
+	
+				var hoard_info = row.hoard
+
+				if (row.findspot_place && row.findspot_place.length>0){	
+
+				}
+
+				const hoard = common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: hoard_info,
+					parent			: data_cont
+				})
+
+
+
+
+			}
+
+			//findspot place
+			if (row.findspot_place && row.findspot_place.length>0){
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: row.findspot_place,
+					parent			: data_cont
+				})
+
+			}
+
+			//findspot date
+			if (row.find_date && row.find_date.length>0){
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: row.find_date,
+					parent			: data_cont
+				})
+
+			}
+
+			//URI
+			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+			const full_url	= page_globals.__WEB_BASE_URL__ + uri
+			const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\">  URI </a> "
+
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "",
+				inner_html		: uri_text,
+				parent			: data_cont
+			})
+
 
 
 		//IMAGE BLOCK	

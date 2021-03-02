@@ -50,20 +50,30 @@ page.parse_type_data = function(data) {
 				? common.local_to_remote_path(data.ref_coins_image_reverse)
 				: null
 
-		// ref_coins_union (resolved portal)
+		// ref_coins_union (resolved portal case)
 			if (row.ref_coins_union && Array.isArray(row.ref_coins_union) && row.ref_coins_union.length>0) {
 
-				row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)
+				// parse portal resolved rows
+				row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)				
 				
-				// for (let j = 0; j < row.ref_coins_union.length; j++) {
+			}else{
 
-				// 	if (row.ref_coins_union[j].image_obverse) {
-				// 		row.ref_coins_union[j].image_obverse = common.local_to_remote_path(row.ref_coins_union[j].image_obverse)
-				// 	}
-				// 	if (row.ref_coins_union[j].image_reverse) {
-				// 		row.ref_coins_union[j].image_reverse = common.local_to_remote_path(row.ref_coins_union[j].image_reverse)
-				// 	}
-				// }
+				row.ref_coins_union = row.ref_coins_union
+					? JSON.parse(row.ref_coins_union)
+					: null
+			}
+
+		// coin_references (resolved portal case)
+			if (row.coin_references && Array.isArray(row.coin_references) && row.coin_references.length>0) {
+				
+				// parse portal resolved rows
+				row.coin_references = page.parse_coin_data(row.coin_references)
+				
+			}else{
+
+				row.coin_references = row.coin_references
+					? JSON.parse(row.coin_references)
+					: null
 			}
 
 		row.uri = self.parse_iri_data(row.uri)

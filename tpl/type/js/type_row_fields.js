@@ -1401,9 +1401,9 @@ var type_row_fields = {
 					})
 					const ar_coins = []
 					for (let j = 0; j < coins_length; j++) {
-						const coin_section_id	= coins[j]
-						const current_coin		= item.ref_coins_union.find(el => el.section_id==coin_section_id)
-							// console.log("item.ref_coins_union:",item.ref_coins_union);
+						const coin_section_id	= coins[j];
+						const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
+							// console.log("item.coin_references:",item.coin_references);
 							// console.log("current_coin:",current_coin, coin_section_id);
 						if (current_coin) {
 							draw_coin(current_coin, typology_coins)
@@ -1483,9 +1483,9 @@ var type_row_fields = {
 
 					const ar_coins = []
 					for (let j = 0; j < coins_length; j++) {
-						const coin_section_id	= coins[j]
-						const current_coin		= item.ref_coins_union.find(el => el.section_id==coin_section_id)
-							// console.log("item.ref_coins_union:",item.ref_coins_union);
+						const coin_section_id	= coins[j];
+						const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
+							// console.log("item.coin_references:",item.coin_references);
 							// console.log("current_coin:",current_coin, coin_section_id);
 						if (current_coin) {
 							draw_coin(current_coin, typology_coins)

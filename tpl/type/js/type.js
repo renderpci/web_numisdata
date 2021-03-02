@@ -128,6 +128,7 @@ var type =  {
 						"bibliography_data"				: "bibliographic_references",
 						// coins resolution
 						"ref_coins_union"				: "coins",
+						"coin_references"				: "coins"
 						"coins.bibliography_data"		: "bibliographic_references",
 						// "coins.images_obverse"		: "images",
 						// findspots resolution

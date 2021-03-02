@@ -38,10 +38,11 @@ var catalog =  {
 			const item_type				= options.item_type
 			const label					= options.label
 			const value					= options.value
+			const export_data_container = options.export_data_container
 
 		// fix
-			self.rows_list_container = rows_list_container
-
+			self.rows_list_container	= rows_list_container
+			self.export_data_container	= export_data_container
 
 		const container = document.getElementById("items_container")
 				
@@ -1213,7 +1214,7 @@ var catalog =  {
 		const form_items = self.form.form_items
 
 		const div_result			= document.querySelector(".result")
-		const container_rows_list	= div_result.querySelector("#rows_list")
+		const container_rows_list	= div_result.querySelector("#rows_list")		
 
 		// spinner add
 			page.add_spinner(div_result)
@@ -1359,6 +1360,12 @@ var catalog =  {
 				return false;
 			}
 
+		// export_data_buttons added once
+			if (!self.export_data_buttons) {
+				self.export_data_buttons = page.render_export_data_buttons()
+				self.export_data_container.appendChild(self.export_data_buttons)
+			}
+
 		// loading set css
 			container_rows_list.classList.add("loading")
 
@@ -1383,19 +1390,16 @@ var catalog =  {
 					columns : [{name : "parents"}]
 				}
 			})
-			.then((response)=>{
+			.then((parsed_data)=>{
 
 				// if(SHOW_DEBUG===true) {
-					console.log("--- form_submit response:",response)
+					console.log("--- form_submit response:", parsed_data)
 				// }
 
 				// scrool to head result
 					// if (response.result.length>0 && div_result) {
 					// 	div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 					// }
-
-				// data parsed
-					const data = page.parse_catalog_data(response.result)
 	
 				// draw
 					// setTimeout(()=>{
@@ -1411,7 +1415,7 @@ var catalog =  {
 						// draw rows
 							self.draw_rows({
 								target  : self.rows_list_container,
-								ar_rows : data
+								ar_rows : parsed_data
 							})
 							.then(function(){
 								// // scrool to head result
@@ -1421,7 +1425,7 @@ var catalog =  {
 								// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 								// 		}
 								// 	}
-							})
+							})						
 
 					// }, self.draw_delay) // self.draw_delay				
 			})		
@@ -1448,86 +1452,100 @@ var catalog =  {
 			const process_result	= options.process_result || null
 			const limit				= options.limit != undefined
 				? options.limit
-				: 30			
+				: 30
 
-		// parse_sql_filter
-			const group = []
-			const parse_sql_filter = function(filter){
+		return new Promise(function(resolve){
 
-				if (filter) {
-					
-					const op		= Object.keys(filter)[0]
-					const ar_query	= filter[op]
-					
-					const ar_filter = []
-					const ar_query_length = ar_query.length
-					for (let i = 0; i < ar_query_length; i++) {
+			// parse_sql_filter
+				const group = []
+				const parse_sql_filter = function(filter){
+
+					if (filter) {
 						
-						const item = ar_query[i]
-
-						const item_op = Object.keys(item)[0]
-						if(item_op==="AND" || item_op==="OR") {
-
-							const current_filter_line = "" + parse_sql_filter(item) + ""
-							ar_filter.push(current_filter_line)
-							continue;
-						}
+						const op		= Object.keys(filter)[0]
+						const ar_query	= filter[op]
 						
-						// const filter_line = (item.field.indexOf("AS")!==-1)
-						// 	? "" +item.field+""  +" "+ item.op +" "+ item.value
-						// 	: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+						const ar_filter = []
+						const ar_query_length = ar_query.length
+						for (let i = 0; i < ar_query_length; i++) {
+							
+							const item = ar_query[i]
 
-						let filter_line
-						if (item.op==='MATCH') {
-							filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
-						}else{
-							filter_line = (item.field.indexOf("AS")!==-1)
-								? "" +item.field+""  +" "+ item.op +" "+ item.value
-								: "`"+item.field+"`" +" "+ item.op +" "+ item.value	
-						}
+							const item_op = Object.keys(item)[0]
+							if(item_op==="AND" || item_op==="OR") {
 
-						ar_filter.push(filter_line)
-
-						// group
-							if (item.group) {
-								group.push(item.group)
+								const current_filter_line = "" + parse_sql_filter(item) + ""
+								ar_filter.push(current_filter_line)
+								continue;
 							}
+							
+							// const filter_line = (item.field.indexOf("AS")!==-1)
+							// 	? "" +item.field+""  +" "+ item.op +" "+ item.value
+							// 	: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+
+							let filter_line
+							if (item.op==='MATCH') {
+								filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
+							}else{
+								filter_line = (item.field.indexOf("AS")!==-1)
+									? "" +item.field+""  +" "+ item.op +" "+ item.value
+									: "`"+item.field+"`" +" "+ item.op +" "+ item.value	
+							}
+
+							ar_filter.push(filter_line)
+
+							// group
+								if (item.group) {
+									group.push(item.group)
+								}
+						}
+						return ar_filter.join(" "+op+" ")
 					}
-					return ar_filter.join(" "+op+" ")
+
+					return null
 				}
 
-				return null
-			}
+			// parsed_filters
+				const sql_filter = parse_sql_filter(filter)
 
-		// parsed_filters
-			const sql_filter = parse_sql_filter(filter)
+			// debug
+				if(SHOW_DEBUG===true) {
+					console.log("--- search_rows parsed sql_filter:")
+					console.log(sql_filter)
+				}
+			
+			// request
+				const request_body = {
+					dedalo_get		: 'records',
+					table			: 'catalog',
+					ar_fields		: ar_fields,
+					lang			: lang,
+					sql_filter		: sql_filter,
+					limit			: limit,
+					group			: (group.length>0) ? group.join(",") : null,
+					count			: false,
+					order			: order,
+					process_result	: process_result
+				}
+				data_manager.request({
+					body : request_body
+				})
+				.then((response)=>{
+					console.log("--- search_rows API response:",response);
 
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("--- search_rows parsed sql_filter:")
-				console.log(sql_filter)
-			}
-		
-		const js_promise = data_manager.request({
-			body : {
-				dedalo_get		: 'records',
-				table			: 'catalog',
-				ar_fields		: ar_fields,
-				lang			: lang,
-				sql_filter		: sql_filter,
-				limit			: limit,
-				group			: (group.length>0) ? group.join(",") : null,
-				count			: false,
-				order			: order,
-				process_result	: process_result
-			}
+					// data parsed
+					const data = page.parse_catalog_data(response.result)
+
+					// send event data_request_done (used by buttons download)
+					event_manager.publish('data_request_done', {
+						request_body		: request_body,
+						result				: data,
+						export_data_parser	: null
+					})
+
+					resolve(data)
+				})
 		})
-		js_promise.then((response)=>{
-			 console.log("--- search_rows API response:",response);
-		})
-		
-
-		return js_promise
 	},//end search_rows
 
 
@@ -1536,15 +1554,15 @@ var catalog =  {
 	* DRAW_ROWS
 	*/
 	draw_rows : function(options) {
-			console.log("options:",options);
+		// console.log("draw_rows options:",options);
+		
 		const self = this
 
 		// options
 			const target	= options.target // self.rows_list_container
 			const ar_rows	= options.ar_rows || []
 
-
-		return new Promise(function(resolve){			
+		return new Promise(function(resolve){
 			
 			// pagination vars
 				const total		= self.search_options.total
@@ -1635,7 +1653,7 @@ var catalog =  {
 
 					// activate images lightbox
 						const images_gallery_containers = container						
-						page.activate_images_gallery(images_gallery_containers, true)
+						page.activate_images_gallery(images_gallery_containers, true)					
 						
 				// },800)
 

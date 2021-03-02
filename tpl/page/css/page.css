@@ -1144,4 +1144,45 @@ a.image_link img {
 .search_icon:active {
   opacity: 0.2;
 }
+.export_data_container {
+  text-align: right;
+  padding-bottom: 1em;
+  padding-top: 1em;
+  padding-right: 0;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  font-size: 1em;
+}
+.export_data_container.on_item {
+  padding: 2.5em;
+}
+@media screen and (max-width: 760px) {
+  .export_data_container {
+    justify-content: space-evenly;
+  }
+}
+.export_data_container .export_container {
+  position: relative;
+}
+.export_data_container .export_container:first-of-type {
+  margin-right: 1em;
+}
+input[type=button].btn.button_download {
+  height: 3em;
+  background-image: url(../../assets/images/icon_download_white.svg);
+  background-repeat: no-repeat;
+  background-size: 1.6em;
+  background-position: 0.5em center;
+  padding-left: 2.5em;
+  padding-right: 1em;
+  font-size: 0.85em;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+input[type=button].btn.button_download.unactive {
+  opacity: 0.2;
+  pointer-events: none;
+}
 /*# sourceMappingURL=page.css.map */

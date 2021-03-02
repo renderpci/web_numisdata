@@ -851,6 +851,64 @@
 	}
 
 
+// export_data_container
+	.export_data_container {
+		text-align: right;
+		padding-bottom: 1em;
+		padding-top: 1em;
+		padding-right: 0;
+		position: relative;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		// background-color: #ffdeba;
+		font-size: 1em;
+
+		&.on_item {
+			padding: 2.5em;
+		}
+
+		@media screen and (max-width: @screen_max_narrower) {			
+			justify-content: space-evenly;
+		}
+
+		.export_container {
+			// display: inline-block;
+			position: relative;	
+
+			&:first-of-type {
+				margin-right: 1em;
+			}	
+		}
+	}
+
+// button_download (export json/csv)
+	input[type=button].btn.button_download {
+		// background-color: @color_grey_dark;
+		// &:hover {
+		// 	background-color: darken(@color_grey_dark, 10%);
+		// }
+
+	    height: 3em;
+	    background-image: url(../../assets/images/icon_download_white.svg);
+	    background-repeat: no-repeat;
+	    background-size: 1.6em;
+	    background-position: .5em center;
+	    padding-left: 2.5em;
+	    padding-right: 1em;
+	   
+	    font-size: 0.85em;
+		// margin: 15px;
+		opacity: 1;
+		transition: opacity 0.3s;	
+
+		&.unactive {
+			opacity: 0.2;
+			pointer-events: none;
+		}
+	}
+
+
 
 // randomColor
 	.randomColor(){

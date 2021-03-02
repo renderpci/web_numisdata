@@ -1071,8 +1071,99 @@ var common = {
 
 
 
+	/**
+	* IS_ELEMENT_IN_VIEWPORT
+	* Check if given element node is in page viewport
+	*/
+	is_element_in_viewport : function (el) {
+
+		const rect = el.getBoundingClientRect();
+
+		return (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
+	},//end is_element_in_viewport
+
+
+	/**
+	* IS_ELEMENT_TOP_IN_VIEWPORT
+	* Check if given element node top is in page viewport
+	*/
+	is_element_top_in_viewport : function (el) {
+
+		const rect = el.getBoundingClientRect();
+
+		return (
+			rect.top <= (window.innerHeight || document.documentElement.clientHeight)
+		);
+	},
+
+
+
+	/**
+	* LANG_CODE_TO_TLD2
+	* Converts Dédalo lang codes like 'lg-eng' to tld2 ISO 639-1 codes like 'en'
+	* @see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+	*/
+	lang_code_to_tld2 : function (lang_code) {
+
+		let tld2
+
+		switch(lang_code){
+			case 'lg-spa': tld2 = 'es'; break;
+			case 'lg-eng': tld2 = 'en'; break;
+			case 'lg-cat': tld2 = 'ca'; break;
+			case 'lg-fra': tld2 = 'fr'; break;
+			case 'lg-ell': tld2 = 'el'; break;
+			case 'lg-deu': tld2 = 'de'; break;
+			case 'lg-por': tld2 = 'pt'; break;
+			case 'lg-eus': tld2 = 'eu'; break;
+			case 'lg-ara': tld2 = 'ar'; break;
+			default : 
+				tld2 = 'lang_code';
+				console.warn("Impossible to convert lang_code to tld2 ISO 639-1 :", lang_code);
+		}
+
+		return tld2
+	},//end lang_code_to_tld2
+
+
+
+	is_object : function(current_var) {
+		return (typeof current_var==='object' && current_var!==null)
+	},//end is_object
+
+
+
+	is_array : function(current_var) {
+		return Array.isArray(current_var)
+	},//end is_array
+
+
+
+	get_today_date : function() {
+		
+		const dt = new Date
+
+		const day		= dt.getDate().toString().padStart(2, '0')
+		const month		= (dt.getMonth()+1).toString().padStart(2, '0')
+		const year		= dt.getFullYear().toString().padStart(4, '0')
+		const hours		= dt.getHours().toString().padStart(2, '0')
+		const minutes	= dt.getMinutes().toString().padStart(2, '0')
+		const seconds	= dt.getSeconds().toString().padStart(2, '0')
+		
+		const dformat = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`
+
+        return dformat
+	},//end get_today_date
+
+
+
 	uniq_fast : function(a) {
-	   
+		
 		const seen = {};
 		const out = [];
 		let len = a.length;
@@ -1086,7 +1177,7 @@ var common = {
 		}
 		
 		return out;
-	}
+	},//end uniq_fast
 
 
 

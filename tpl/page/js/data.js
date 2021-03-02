@@ -301,6 +301,10 @@ page.parse_catalog_data = function(data) {
 				? JSON.parse(row.coins_data_union)
 				: null
 
+			row.coin_references = row.coin_references
+				? JSON.parse(row.coin_references)
+				: null
+
 			// url
 			row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
 			row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)

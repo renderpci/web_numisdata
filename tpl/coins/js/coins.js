@@ -180,15 +180,49 @@ var coins =  {
 				}
 			})
 
-		// material
+		// // material
+		// 	self.form.item_factory({
+		// 		id			: "material",
+		// 		name		: "material",
+		// 		label		: tstring.material || "Material",
+		// 		q_column	: "material",
+		// 		eq			: "LIKE",
+		// 		eq_in		: "%",
+		// 		eq_out		: "%",
+		// 		parent		: form_row,
+		// 		callback	: function(form_item) {
+		// 			self.form.activate_autocomplete({
+		// 				form_item	: form_item,
+		// 				table		: 'coins'
+		// 			})
+		// 		}
+		// 	})
+
+		// // denomination
+		// 	self.form.item_factory({
+		// 		id			: "denomination",
+		// 		name		: "denomination",
+		// 		label		: tstring.denomination || "Denomination",
+		// 		q_column	: "denomination",
+		// 		eq			: "LIKE",
+		// 		eq_in		: "%",
+		// 		eq_out		: "%",
+		// 		parent		: form_row,
+		// 		callback	: function(form_item) {
+		// 			self.form.activate_autocomplete({
+		// 				form_item	: form_item,
+		// 				table		: 'coins'
+		// 			})
+		// 		}
+		// 	})
+
+		// number
 			self.form.item_factory({
-				id			: "material",
-				name		: "material",
-				label		: tstring.material || "Material",
-				q_column	: "material",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
+				id 			: "number",
+				name 		: "number",
+				q_column 	: "type",
+				label		: tstring.number || "number",
+				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
@@ -198,15 +232,97 @@ var coins =  {
 				}
 			})
 
-		// denomination
+		// public_info
 			self.form.item_factory({
-				id			: "denomination",
-				name		: "denomination",
-				label		: tstring.denomination || "Denomination",
-				q_column	: "denomination",
-				eq			: "LIKE",
+				id 			: "public_info",
+				name 		: "public_info",
+				q_column 	: "public_info",
+				label		: tstring.public_info || "Public info",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// countermark_obverse
+			self.form.item_factory({
+				id			: "countermark_obverse",
+				name		: "countermark_obverse",
+				label		: tstring.countermark_obverse || "Countermark obverse",
+				q_column	: "countermark_obverse",
+				eq_in		: "%",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// countermark_obverse
+			self.form.item_factory({
+				id			: "countermark_reverse",
+				name		: "countermark_reverse",
+				label		: tstring.countermark_reverse || "Countermark reverse",
+				q_column	: "countermark_reverse",
+				eq_in		: "%",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// equivalents
+			self.form.item_factory({
+				id			: "equivalents",
+				name		: "equivalents",
+				q_column	: "ref_type_equivalents",
 				eq_in		: "%",
 				eq_out		: "%",
+				label		: tstring.equivalents || "equivalents",
+				is_term		: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'types'
+					})
+				}
+			})
+
+		// bibliography_author
+			self.form.item_factory({
+				id 			: "bibliography_author",
+				name 		: "bibliography_author",
+				q_column 	: "bibliography_author",
+				label		: tstring.authorship || "Authorship",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// bibliography_title
+			self.form.item_factory({
+				id 			: "bibliography_title",
+				name 		: "bibliography_title",
+				q_column 	: "bibliography_title",
+				label		: tstring.bibliography || "Bibliography",
+				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({

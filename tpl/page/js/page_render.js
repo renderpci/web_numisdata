@@ -98,7 +98,7 @@ page.render_export_data_buttons = function() {
 
 				// data_object.data. parsed rows is optional
 				data_object.data = (export_data_parser && typeof export_data_parser==='function')
-					? window[export_data_parser](rows)
+					? export_data_parser(rows)
 					: rows
 
 				return data_object

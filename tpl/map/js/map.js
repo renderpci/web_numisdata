@@ -196,7 +196,8 @@ var map =  {
 								const types_list_node = self.render_types_list({
 									global_data_item	: response.global_data_item,
 									types_rows			: response.types_rows,
-									coins_rows			: response.coins_rows
+									coins_rows			: response.coins_rows,
+									info				: response.info
 								})
 								self.rows_container.appendChild(types_list_node)
 								page.remove_spinner(self.rows_container)
@@ -822,7 +823,11 @@ var map =  {
 					resolve({
 						global_data_item	: global_data_item,
 						types_rows			: types_rows,
-						coins_rows			: coins_rows
+						coins_rows			: coins_rows,
+						info				: {
+							coins_list : coins_list,
+							types_list : types_list
+						}
 					})
 				})
 		})
@@ -835,10 +840,11 @@ var map =  {
 	* @return DOM node
 	*/
 	render_types_list : function(options) {
-
+		
 		const global_data_item	= options.global_data_item
 		const types_rows		= options.types_rows
 		const coins_rows		= options.coins_rows
+		const info				= options.info
 
 		const fragment = new DocumentFragment()
 
@@ -918,11 +924,15 @@ var map =  {
 						
 					// debug info
 						// if(SHOW_DEBUG===true) {
-							let t = 'Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
-							t +='<br>'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
-							t +='<br>Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
-							const debug_show = 'hide' // ar_found_coin_row.length>0 ? 'hide' : ''
-							const info = common.create_dom_element({
+							let t = ''
+							t +='-global_data_item types_list ('+info.types_list.length+'): ' + JSON.stringify(info.types_list, null, 2)
+							t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)							
+							t +='<br>-Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
+							t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
+							t +='<br>-Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
+							
+							const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
+							common.create_dom_element({
 								element_type	: "div",
 								class_name		: "debug_info " + debug_show,
 								inner_html		: t,

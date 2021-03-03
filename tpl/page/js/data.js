@@ -408,6 +408,120 @@ page.parse_catalog_data = function(data) {
 
 			row.ref_type_material = page.trim_char(row.ref_type_material, '|')
 
+			
+			//
+			/*
+
+			row.ref_coins_collection_data = row.ref_coins_collection_data
+				? JSON.parse(row.ref_coins_collection_data)
+				: null
+
+			row.ref_coins_image_obverse_data = row.ref_coins_image_obverse_data
+				? JSON.parse(row.ref_coins_image_obverse_data)
+				: null
+
+			row.ref_coins_image_reverse_data = row.ref_coins_image_reverse_data
+				? JSON.parse(row.ref_coins_image_reverse_data)
+				: null
+
+			row.ref_type_denomination_data = row.ref_type_denomination_data
+				? JSON.parse(row.ref_type_denomination_data)
+				: null
+
+			row.ref_type_design_obverse_data = row.ref_type_design_obverse_data
+				? JSON.parse(row.ref_type_design_obverse_data)
+				: null
+					
+		    row.ref_type_design_reverse_data = row.ref_type_design_reverse_data
+				? JSON.parse(row.ref_type_design_reverse_data)
+				: null
+
+		  //   row.ref_type_equivalents = row.ref_type_equivalents
+				// ? JSON.parse(row.ref_type_equivalents)
+				// : null
+
+			row.ref_type_equivalents_data = row.ref_type_equivalents_data
+				? JSON.parse(row.ref_type_equivalents_data)
+				: null
+
+			row.ref_type_legend_obverse = row.ref_type_legend_obverse
+				? JSON.parse(row.ref_type_legend_obverse)
+				: null
+
+			row.ref_type_legend_obverse_data = row.ref_type_legend_obverse_data
+				? JSON.parse(row.ref_type_legend_obverse_data)
+				: null
+
+			row.ref_type_legend_reverse_data = row.ref_type_legend_reverse_data
+				? JSON.parse(row.ref_type_legend_reverse_data)
+				: null
+
+			row.ref_type_legend_transcription_obverse = row.ref_type_legend_transcription_obverse
+				? JSON.parse(row.ref_type_legend_transcription_obverse)
+				: null
+
+			// row.ref_type_legend_transcription_reverse = row.ref_type_legend_transcription_reverse
+			// 	? JSON.parse(row.ref_type_legend_transcription_reverse)
+			// 	: null
+
+			row.ref_type_material_data = row.ref_type_material_data
+				? JSON.parse(row.ref_type_material_data)
+				: null
+
+			row.ref_type_people_data = row.ref_type_people_data
+				? JSON.parse(row.ref_type_people_data)
+				: null
+
+			row.ref_type_people_role_data = row.ref_type_people_role_data
+				? JSON.parse(row.ref_type_people_role_data)
+				: null
+
+			row.ref_type_symbol_obverse_data = row.ref_type_symbol_obverse_data
+				? JSON.parse(row.ref_type_symbol_obverse_data)
+				: null
+
+			// row.coins_data = row.coins_data
+			// 	? JSON.parse(row.coins_data)
+			// 	: null
+
+			row.p_creator = row.p_creator
+				? JSON.parse(row.p_creator)
+				: null
+			*/
+			//
+
+			row.term_section_label = row.term_section_label
+				? JSON.parse(row.term_section_label)
+				: null
+
+			row.term_section_tipo = row.term_section_tipo
+				? JSON.parse(row.term_section_tipo)
+				: null
+
+			row.p_mint = row.p_mint
+				? JSON.parse(row.p_mint)
+				: null
+
+			row.p_period = row.p_period
+				? JSON.parse(row.p_period)
+				: null
+
+			row.p_territory = row.p_territory
+				? JSON.parse(row.p_territory)
+				: null
+
+			row.parents = row.parents
+				? JSON.parse(row.parents)
+				: null
+
+			row.parents_text = row.parents_text
+				? JSON.parse(row.parents_text)
+				: null
+
+			row.p_culture = row.p_culture
+				? JSON.parse(row.p_culture)
+				: null
+
 
 			new_data.push(row)
 		}

@@ -162,18 +162,22 @@ page.parse_coin_data = function(data) {
 		console.trace()
 	}
 
-	if (row.parsed) {
+	if (!row || row.parsed) {
 		return row
 	}
 
 	try {	
 
 		// url
-			row.image_obverse		= common.local_to_remote_path(data.image_obverse)
+			row.image_obverse		= row.image_obverse
+				? common.local_to_remote_path(data.image_obverse)
+				: null
 			row.image_obverse_thumb	= row.image_obverse
 				? row.image_obverse.replace('/1.5MB/','/thumb/')
 				: null
-			row.image_reverse		= common.local_to_remote_path(data.image_reverse)
+			row.image_reverse		= row.image_reverse
+				? common.local_to_remote_path(data.image_reverse)
+				: null
 			row.image_reverse_thumb	= row.image_reverse
 				? row.image_reverse.replace('/1.5MB/','/thumb/')
 				: null
@@ -712,52 +716,3 @@ page.parse_iri_data = function(data) {
 
 
 
-/**
-* GET_RECORDS
-* Generic get_records function
-*/
-// page.get_records = function(options) {
-// 	console.log("---> data get_records options:",options);
-// 	const self = this
-
-// 	// options
-// 		const db_name			= options.db_name || page_globals.WEB_DB
-// 		const lang				= options.lang || page_globals.WEB_CURRENT_LANG_CODE
-// 		const table				= options.table
-// 		const ar_fields			= options.ar_fields  || '*'
-// 		const sql_filter		= options.sql_filter || null
-// 		const limit				= options.limit || 0
-// 		const count				= options.count || false
-// 		const offset			= options.offset || 0
-// 		const order				= options.order || 'norder ASC'
-// 		const parse				= options.parse || page.parse_ts_web
-// 		const process_result	= options.process_result || null
-
-// 	return new Promise(function(resolve){
-
-// 		data_manager.request({
-// 			body : {
-// 				dedalo_get		: 'records',
-// 				db_name			: db_name,
-// 				lang			: lang,
-// 				table			: table,
-// 				ar_fields		: ar_fields,
-// 				sql_filter		: sql_filter,
-// 				limit			: limit,
-// 				count			: count,
-// 				offset			: offset,
-// 				order			: order,
-// 				process_result	: process_result
-// 			}
-// 		})
-// 		.then(function(response){
-// 			console.log("page.get_records API response:",response);
-			
-// 			const data = (typeof parse==="function")
-// 				? parse(response.result)
-// 				: response.result
-
-// 			resolve(data)
-// 		})
-// 	})		
-// }//end get_records

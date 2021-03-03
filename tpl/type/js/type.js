@@ -14,6 +14,12 @@ var type =  {
 	// map. Instance of map_factory
 	map : null,
 
+	// div where the export data buttons where placed
+	export_data_container : null,
+
+	// section_id
+	section_id : null,
+
 
 
 	/**
@@ -21,23 +27,32 @@ var type =  {
 	* When the HTML page is loaded
 	*/
 	set_up : function(options) {
-
-		const self = this
-
 		// debug
 			if(SHOW_DEBUG===true) {
 				console.log("type set_up options:",options);
 			}
 
+		const self = this		
+
+		// options
+			self.export_data_container	= options.export_data_container
+			self.section_id				= options.section_id
+
+		// export_data_buttons added once
+			const export_data_buttons = page.render_export_data_buttons()
+			self.export_data_container.appendChild(export_data_buttons)
+			self.export_data_container.classList.add('hide')
+
+
 		// trigger render type with current options.section_id
-			if (typeof options.section_id!=="undefined") {
+			if (typeof self.section_id!=="undefined") {
 
 				// search by section_id	and draw on receive data
 					self.get_row_data({
-						section_id : options.section_id
+						section_id : self.section_id
 					})
 					.then(function(response){
-						console.log("/// response:", response);
+						// console.log("/// response:", response);
 						// console.log("/// row:", response.result[0]);
 
 						// container. clean container div
@@ -61,14 +76,21 @@ var type =  {
 							// parse data
 								page.parse_type_data(row)
 
+							// send event data_request_done (used by buttons download)
+								event_manager.publish('data_request_done', {
+									request_body		: null,
+									result				: row,
+									export_data_parser	: page.export_parse_type_data
+								})			
+
 							// render row nodes
 							self.list_row_builder(row)
 							.then(function(row_wrapper){
 
 								// append final rendered node
-									container.appendChild(row_wrapper)
+									container.appendChild(row_wrapper)								
 
-								// activate images lightbox
+								// activate images light box
 									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
 									// console.log("images_gallery_containers:",images_gallery_containers);
 									if (images_gallery_containers) {
@@ -76,6 +98,9 @@ var type =  {
 											page.activate_images_gallery(images_gallery_containers[i])
 										}
 									}
+
+								// show export buttons
+									self.export_data_container.classList.remove('hide')
 							})
 						}
 					})

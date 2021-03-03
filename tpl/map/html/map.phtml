@@ -30,6 +30,9 @@
 					<!-- result -->
 						<section id="rows_container" class="result rows_list"></section>
 
+					<!-- export_data -->
+						<div id="export_data" class="export_data_container"></div>
+
 				</div>
 			</div>
 
@@ -43,9 +46,10 @@
 <script>
 dom_ready(function(){
 	map.set_up({
-		form_container	: document.getElementById('form_container'),
-		rows_container	: document.getElementById('rows_container'),
-		map_container	: document.getElementById('map_container')
+		form_container			: document.getElementById('form_container'),
+		rows_container			: document.getElementById('rows_container'),
+		map_container			: document.getElementById('map_container'),
+		export_data_container	: document.getElementById('export_data'),
 	})
 })
 </script>

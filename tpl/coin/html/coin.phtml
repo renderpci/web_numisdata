@@ -24,7 +24,8 @@
 
 					<!-- Result -->
 						<section class="result">
-							<div id="row_detail"></div>							
+							<div id="row_detail"></div>
+							<div id="export_data" class="export_data_container"></div>
 						</section>
 
 				</div>
@@ -40,7 +41,8 @@
 <script>
 dom_ready(function(){
 	coin.set_up({
-		section_id : <?php echo json_encode($section_id) ?>
+		section_id				: <?php echo json_encode($section_id) ?>,
+		export_data_container	: document.getElementById('export_data')
 	})
 })
 </script>

@@ -1192,6 +1192,7 @@ a.image_link img {
 }
 .export_data_container {
   text-align: right;
+  width: 100%;
   padding-bottom: 2em;
   padding-top: 2em;
   padding-right: 0;

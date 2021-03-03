@@ -13,9 +13,10 @@ var map = {
 	* VARS
 	*/
 		// DOM items ready from page html
-		form_container	: null,
-		rows_container	: null,
-		map_container	: null,
+		form_container			: null,
+		rows_container			: null,
+		map_container			: null,
+		export_data_container	: null,
 
 		map_factory_instance : null,
 
@@ -51,9 +52,15 @@ var map = {
 		const self = this
 
 		// options
-			self.form_container	= options.form_container			
-			self.map_container	= options.map_container
-			self.rows_container	= options.rows_container
+			self.form_container			= options.form_container
+			self.map_container			= options.map_container
+			self.rows_container			= options.rows_container
+			self.export_data_container	= options.export_data_container
+
+		// export_data_buttons added once
+			const export_data_buttons = page.render_export_data_buttons()
+			self.export_data_container.appendChild(export_data_buttons)
+			self.export_data_container.classList.add('hide')
 
 		// map
 			self.source_maps = [
@@ -206,7 +213,10 @@ var map = {
 							}
 
 							// scroll map at top
-							self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+								self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+
+							// show export buttons
+								self.export_data_container.classList.remove('hide')
 						})
 				}
 			}
@@ -815,10 +825,18 @@ var map = {
 						// console.log("COINS: coins_rows:",coins_rows );
 
 					// send event data_request_done (used by buttons download)
-					event_manager.publish('data_request_done', {
-						request_body	: coins_request_options,
-						result			: coins_rows
-					})
+						event_manager.publish('data_request_done', {
+							request_body		: null,
+							result				: {
+								catalog	: types_rows,
+								coins	: coins_rows,
+								map_item : {
+									coins_list : coins_list,
+									types_list : types_list
+								}
+							},
+							export_data_parser	: page.export_parse_map_data
+						})	
 					
 					resolve({
 						global_data_item	: global_data_item,

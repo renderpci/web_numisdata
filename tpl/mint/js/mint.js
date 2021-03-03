@@ -6,7 +6,14 @@
 
 
 
-var mint =  {
+var mint = {
+
+
+	/**
+	* VARS
+	*/
+		section_id				: null,
+		export_data_container	: null,
 
 
 
@@ -18,14 +25,24 @@ var mint =  {
 		const self = this
 
 		// options
-			const section_id = options.section_id
-		if (section_id) {
+			self.export_data_container	= options.export_data_container
+			self.section_id				= options.section_id
+
+
+		// export_data_buttons added once
+			const export_data_buttons = page.render_export_data_buttons()
+			self.export_data_container.appendChild(export_data_buttons)
+			self.export_data_container.classList.add('hide')
+
+		
+		if (self.section_id) {
+			
 			// search by section_id
 			self.get_row_data({
-				section_id : section_id
+				section_id : self.section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result[1]);
+				console.log("--> set_up get_row_data API response:",response.result[1]);				
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -61,9 +78,21 @@ var mint =  {
 							})
 						})
 					}
+
+				// send event data_request_done (used by buttons download)
+					event_manager.publish('data_request_done', {
+						request_body		: null,
+						result				: {
+							mint			: mint.result,
+							mint_catalog	: mint_catalog.result
+						},
+						export_data_parser	: page.export_parse_mint_data
+					})
+
+				// show export_data_container
+					self.export_data_container.classList.remove('hide')
 			})
 		}
-
 
 		// navigate records group
 			// document.onkeyup = function(e) {

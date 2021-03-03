@@ -75,21 +75,165 @@ page.export_parse_catalog_data = function(rows) {
 
 	const data = []
 	for (let i = rows.length - 1; i >= 0; i--) {
+		
 		// clone row
 		const row = JSON.parse( JSON.stringify(rows[i]) )
 
 		// clean row
 		delete row.global_search
 		delete row.dd_tm
+
+		const clean_row = row; // sortObjectByKeys(row)
 		
 
 		// sorted object keys
-		data.push( sortObjectByKeys(row) )
+		data.push(clean_row)
 	}
 
 
 	return data
 };//end export_parse_catalog_data
+
+
+
+/**
+* EXPORT_PARSE_TYPE_DATA
+* @return array rows
+*/
+page.export_parse_type_data = function(rows) {
+
+	if(Array.isArray(rows)===false) {
+		rows = [rows]
+	}
+	
+	const data = []
+	for (let i = rows.length - 1; i >= 0; i--) {
+		
+		// clone row
+		const row = JSON.parse( JSON.stringify(rows[i]) )
+
+		// clean row
+		// delete row.global_search
+		delete row.dd_tm
+		delete row.dd_relations
+
+		const clean_row = row; // sortObjectByKeys(row)
+		
+
+		// sorted object keys
+		data.push(clean_row)
+	}
+	console.warn("data:",data);
+
+
+	return data	
+};//end export_parse_type_data
+
+
+
+/**
+* EXPORT_PARSE_COIN_DATA
+* @return array rows
+*/
+page.export_parse_coin_data = function(rows) {
+
+	if(Array.isArray(rows)===false) {
+		rows = [rows]
+	}
+	
+	const data = []
+	for (let i = rows.length - 1; i >= 0; i--) {
+		
+		// clone row
+		const row = JSON.parse( JSON.stringify(rows[i]) )
+
+		// clean row
+		// delete row.global_search
+		delete row.dd_tm
+		delete row.dd_relations
+
+		const clean_row = row; // sortObjectByKeys(row)
+		
+
+		// sorted object keys
+		data.push(clean_row)
+	}
+	console.warn("data:",data);
+
+
+	return data	
+};//end export_parse_coin_data
+
+
+
+
+/**
+* EXPORT_PARSE_MINT_DATA
+* @return array rows
+*/
+page.export_parse_mint_data = function(rows) {
+
+	if(Array.isArray(rows)===false) {
+		rows = [rows]
+	}
+	
+	const data = []
+	for (let i = rows.length - 1; i >= 0; i--) {
+		
+		// clone row
+		const row = JSON.parse( JSON.stringify(rows[i]) )
+
+		// clean row
+		// delete row.global_search
+		// delete row.dd_tm
+		// delete row.dd_relations
+
+		const clean_row = row; // sortObjectByKeys(row)
+		
+
+		// sorted object keys
+		data.push(clean_row)
+	}
+	console.warn("data:",data);
+
+
+	return data	
+};//end export_parse_mint_data
+
+
+
+/**
+* EXPORT_PARSE_MAP_DATA
+* @return array rows
+*/
+page.export_parse_map_data = function(rows) {
+
+	if(Array.isArray(rows)===false) {
+		rows = [rows]
+	}
+	
+	const data = []
+	for (let i = rows.length - 1; i >= 0; i--) {
+		
+		// clone row
+		const row = JSON.parse( JSON.stringify(rows[i]) )
+
+		// clean row
+		// delete row.global_search
+		// delete row.dd_tm
+		// delete row.dd_relations
+
+		const clean_row = row; // sortObjectByKeys(row)
+		
+
+		// sorted object keys
+		data.push(clean_row)
+	}
+	console.warn("data:",data);
+
+
+	return data	
+};//end export_parse_map_data
 
 
 

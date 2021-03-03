@@ -2,8 +2,11 @@
 
 
 
-var coin =  {
+var coin = {
 
+
+	section_id				: null,
+	export_data_container	: null,
 
 
 	/**
@@ -15,12 +18,21 @@ var coin =  {
 
 		const self = this
 
+		// options
+			self.section_id				= options.section_id
+			self.export_data_container	= options.export_data_container
+
+		// export_data_buttons added once
+			const export_data_buttons = page.render_export_data_buttons()
+			self.export_data_container.appendChild(export_data_buttons)
+			self.export_data_container.classList.add('hide')
+
 		// trigger render coin with current options.section_id 
-			if (typeof options.section_id!=="undefined" || options.section_id<1) {
+			if (self.section_id || self.section_id<1) {
 				
 				// search by section_id
 					self.get_row_data({
-						section_id : options.section_id
+						section_id : self.section_id
 					})
 					.then(function(data){
 
@@ -36,9 +48,13 @@ var coin =  {
 								row		: row
 							})
 							.then(function(){
+								
 								// activate images gallery light box
-								const images_gallery_container = target.querySelector('.gallery')
-								page.activate_images_gallery(images_gallery_container)
+									const images_gallery_container = target.querySelector('.gallery')
+									page.activate_images_gallery(images_gallery_container)
+
+								// show export buttons
+									self.export_data_container.classList.remove('hide')
 							})
 						}		
 					})
@@ -81,11 +97,8 @@ var coin =  {
 			// vars
 				const sql_filter	= 'section_id=' + section_id
 				const ar_fields		= ['*']
-			
-			
-			// request
-			return data_manager.request({
-				body : {
+
+			const request_body = {
 					dedalo_get		: 'records',
 					db_name			: page_globals.WEB_DB,
 					lang			: page_globals.WEB_CURRENT_LANG_CODE,
@@ -101,12 +114,23 @@ var coin =  {
 						images_reverse		: 'images_reverse',
 						bibliography_data	: 'bibliography_data'
 					}
-				}
+				}			
+			
+			// request
+			return data_manager.request({
+				body : request_body
 			})
 			.then(function(api_response){
 	
 				// parse server data
 					const data = page.parse_coin_data(api_response.result)
+
+				// send event data_request_done (used by buttons download)
+					event_manager.publish('data_request_done', {
+						request_body		: request_body,
+						result				: data,
+						export_data_parser	: page.export_parse_coin_data
+					})
 
 				resolve(data)
 			})

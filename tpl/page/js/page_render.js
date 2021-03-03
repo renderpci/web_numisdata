@@ -62,6 +62,7 @@ page.render_export_data_buttons = function() {
 		function get_data() {
 
 			const data_object = {
+				info		: "WARNING! This is a draft version data. Please do not use it in production",
 				source_org	: "MIB (Moneda Ibérica - Iberian Coin)",
 				source_url	: "https://mib.numisdata.org",
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
@@ -72,8 +73,17 @@ page.render_export_data_buttons = function() {
 
 				// result or request_body are invalid
 					if (!request_body) {
-						console.warn("Invalid result or request_body:", request_body);
-						return null
+
+						if (result) {
+							setTimeout(function(){
+								resolve(result)
+							}, 1000)
+							return
+						}else{
+							console.warn("Invalid result or request_body:", request_body);
+							resolve(false)
+							return
+						}
 					}
 
 				// if result is not limited, we can use directly
@@ -145,7 +155,7 @@ page.render_export_data_buttons = function() {
 				})
 			
 			get_data().then(function(data){
-				// console.log("data:",data);				
+				// console.log("data:",data);
 
 				const file_name	= 'mib_export_data.json'
 				

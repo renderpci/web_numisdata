@@ -1,3 +1,18 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
 .result {
   min-height: 50vh;
   display: block;
@@ -11,8 +26,10 @@
 .result a.section_id {
   float: right;
 }
-.result > div {
+.result #row_detail {
   margin-bottom: 2em;
+  width: 100%;
+  display: inline-block;
 }
 .result #row_detail a.underline-text {
   margin-top: -0.1em;

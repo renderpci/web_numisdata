@@ -17,15 +17,11 @@
 // globals
 	window.data_manager		= new data_manager_alias();
 	window.event_manager	= new event_manager_alias();
-	// window.data_manager_alias = function(){
-	// 		alert("44");
-	// };
 
 
-
-setTimeout(function(){
-	console.log("Activated app_utils !");
-	console.log("Avilable data_manager:",data_manager);
-	console.log("Avilable event_manager:",event_manager);
-},10)
-	
+// debug
+	// setTimeout(function(){
+	// 	console.log("Activated app_utils !");
+	// 	console.log("Avilable data_manager:",data_manager);
+	// 	console.log("Avilable event_manager:",event_manager);
+	// },10)

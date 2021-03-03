@@ -315,7 +315,7 @@ function form_factory() {
 			const value_label = common.create_dom_element({
 				element_type	: "span",
 				class_name		: "value_label",
-				text_content	: label,
+				inner_html		: label,
 				parent			: line
 			})
 

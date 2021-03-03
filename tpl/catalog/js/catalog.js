@@ -1364,6 +1364,7 @@ var catalog =  {
 			if (!self.export_data_buttons) {
 				self.export_data_buttons = page.render_export_data_buttons()
 				self.export_data_container.appendChild(self.export_data_buttons)
+				self.export_data_container.classList.add("hide")
 			}
 
 		// loading set css
@@ -1425,6 +1426,7 @@ var catalog =  {
 								// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 								// 		}
 								// 	}
+								self.export_data_container.classList.remove("hide")
 							})						
 
 					// }, self.draw_delay) // self.draw_delay				
@@ -1540,7 +1542,7 @@ var catalog =  {
 					event_manager.publish('data_request_done', {
 						request_body		: request_body,
 						result				: data,
-						export_data_parser	: null
+						export_data_parser	: page.export_parse_catalog_data
 					})
 
 					resolve(data)

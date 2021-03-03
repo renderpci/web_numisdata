@@ -39,6 +39,7 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page_render.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data_export.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/biblio_row_fields.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app-min.js';

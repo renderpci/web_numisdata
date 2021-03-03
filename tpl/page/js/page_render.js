@@ -108,7 +108,7 @@ page.render_export_data_buttons = function() {
 	// event data_request_done is triggered when new search is done
 		event_manager.subscribe('data_request_done', manage_data_request_done)
 		function manage_data_request_done(options) {			
-			console.warn("data_request_done options:",options);
+			// console.warn("data_request_done options:",options);
 			request_body		= options.request_body
 			result				= options.result
 			export_data_parser	= options.export_data_parser || null
@@ -140,9 +140,9 @@ page.render_export_data_buttons = function() {
 				button.classList.add("unactive")
 				const spinner = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "spinner",
+					class_name		: "spinner small",
 					parent			: button_export_json_container
-				})				
+				})
 			
 			get_data().then(function(data){
 				// console.log("data:",data);				
@@ -194,7 +194,7 @@ page.render_export_data_buttons = function() {
 				button.classList.add("unactive")
 				const spinner = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "spinner",
+					class_name		: "spinner small",
 					parent			: button_export_csv_container
 				})
 

@@ -122,6 +122,61 @@
 	.loading {
 		opacity: 0.4 !important;
 	}
+	// spinner loading	
+	.spinner {
+		@border_size: 7px;
+		@border_color: @color_gold_logo;
+		display: block;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		height: 90px;
+		width: 90px;
+		margin: -45px 0 0 -45px;
+		border: @border_size transparent solid; // rgba(0, 0, 0, 0.25)
+		border-top: @border_size @border_color solid;
+		border-right: @border_size @border_color solid;
+		border-bottom: @border_size @border_color solid;
+		border-radius: 50%;
+		-webkit-animation: spin3 1.25s infinite linear;
+		animation: spin3 1.25s infinite linear;
+
+		&.small {
+			@border_size: 4px;
+			border: @border_size transparent solid; // rgba(0, 0, 0, 0.25)
+			border-top: @border_size @border_color solid;
+			border-right: @border_size @border_color solid;
+			border-bottom: @border_size @border_color solid;
+			height: 30px;
+			width: 30px;
+			top: 106%;
+			left: 57px;
+		}
+	}	
+	@-webkit-keyframes spin3 {
+		from {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+		to {
+			-webkit-transform: rotate(359deg);
+			transform: rotate(359deg);
+		}
+		}
+		@keyframes spin3 {
+		from {
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+			-webkit-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+		to {
+			-webkit-transform: rotate(359deg);
+			transform: rotate(359deg);
+			-webkit-transform: rotate(359deg);
+			transform: rotate(359deg);
+		}
+	}
 
 
 
@@ -854,8 +909,8 @@
 // export_data_container
 	.export_data_container {
 		text-align: right;
-		padding-bottom: 1em;
-		padding-top: 1em;
+		padding-bottom: 2em;
+		padding-top: 2em;
 		padding-right: 0;
 		position: relative;
 		display: flex;
@@ -893,8 +948,8 @@
 	    background-image: url(../../assets/images/icon_download_white.svg);
 	    background-repeat: no-repeat;
 	    background-size: 1.6em;
-	    background-position: .5em center;
-	    padding-left: 2.5em;
+	    background-position: .75em center;
+	    padding-left: 3em;
 	    padding-right: 1em;
 	   
 	    font-size: 0.85em;
@@ -903,7 +958,7 @@
 		transition: opacity 0.3s;	
 
 		&.unactive {
-			opacity: 0.2;
+			opacity: 0.15;
 			pointer-events: none;
 		}
 	}

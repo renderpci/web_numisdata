@@ -683,6 +683,52 @@ p img.svg {
 .loading {
   opacity: 0.4 !important;
 }
+.spinner {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 90px;
+  width: 90px;
+  margin: -45px 0 0 -45px;
+  border: 7px transparent solid;
+  border-top: 7px #b7996d solid;
+  border-right: 7px #b7996d solid;
+  border-bottom: 7px #b7996d solid;
+  border-radius: 50%;
+  -webkit-animation: spin3 1.25s infinite linear;
+  animation: spin3 1.25s infinite linear;
+}
+.spinner.small {
+  border: 4px transparent solid;
+  border-top: 4px #b7996d solid;
+  border-right: 4px #b7996d solid;
+  border-bottom: 4px #b7996d solid;
+  height: 30px;
+  width: 30px;
+  top: 106%;
+  left: 57px;
+}
+@-webkit-keyframes spin3 {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes spin3 {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
 #menu .lang_globe {
   position: absolute;
   top: 0;
@@ -1146,8 +1192,8 @@ a.image_link img {
 }
 .export_data_container {
   text-align: right;
-  padding-bottom: 1em;
-  padding-top: 1em;
+  padding-bottom: 2em;
+  padding-top: 2em;
   padding-right: 0;
   position: relative;
   display: flex;
@@ -1174,15 +1220,15 @@ input[type=button].btn.button_download {
   background-image: url(../../assets/images/icon_download_white.svg);
   background-repeat: no-repeat;
   background-size: 1.6em;
-  background-position: 0.5em center;
-  padding-left: 2.5em;
+  background-position: 0.75em center;
+  padding-left: 3em;
   padding-right: 1em;
   font-size: 0.85em;
   opacity: 1;
   transition: opacity 0.3s;
 }
 input[type=button].btn.button_download.unactive {
-  opacity: 0.2;
+  opacity: 0.15;
   pointer-events: none;
 }
 /*# sourceMappingURL=page.css.map */

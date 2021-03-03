@@ -82,10 +82,8 @@ page.export_parse_catalog_data = function(rows) {
 		delete row.global_search
 		delete row.dd_tm
 		
-		// row.table = row.table.split(',')
 
-		// sort object keys		
-
+		// sorted object keys
 		data.push( sortObjectByKeys(row) )
 	}
 

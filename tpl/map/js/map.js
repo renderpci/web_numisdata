@@ -5,7 +5,7 @@
 
 
 
-var map =  {
+var map = {
 
 
 

@@ -4,7 +4,7 @@
 "use strict";
 
 
-var catalog =  {
+var catalog = {
 
 	trigger_url			: page_globals.__WEB_TEMPLATE_WEB__ + "/catalog/trigger.catalog.php",
 	search_options		: {},

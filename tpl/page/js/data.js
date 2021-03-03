@@ -297,10 +297,6 @@ page.parse_coin_data = function(data) {
 				row.bibliography = page.parse_publication(row.bibliography_data)
 			}
 
-				
-
-
-
 		row.parsed = true
 
 	} catch (error) {

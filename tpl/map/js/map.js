@@ -750,7 +750,7 @@ var map =  {
 				const ar_type_id = types_list.map(function(item){
 					return '\'["' + item + '"]\''
 				})
-				const sql_filter = 'term_table=\'types\' AND term_data IN(' + ar_type_id.join(",") + ') AND coins_data_union IS NOT NULL'
+				const sql_filter = 'term_table=\'types\' AND term_data IN(' + ar_type_id.join(",") + ') AND coin_references IS NOT NULL'
 
 				const catalog_ar_fields = ['*']
 				
@@ -873,11 +873,13 @@ var map =  {
 				parent			: fragment
 			})
 
-			function cross_coins(coins_rows, coins_data_union) {
+			function cross_coins(coins_rows, coin_references) {
+				// console.log("coins_rows:",coins_rows);
+				// console.log("coin_references:",coin_references);
 				
 				const ar_found_coin_row = []
-				for (let i = coins_data_union.length - 1; i >= 0; i--) {
-					const coin_section_id = coins_data_union[i]
+				for (let i = coin_references.length - 1; i >= 0; i--) {
+					const coin_section_id = coin_references[i]
 					const found_coin_row = coins_rows.find(function(el){
 						return el.section_id===coin_section_id
 					})
@@ -894,8 +896,8 @@ var map =  {
 					const type_row = types_rows[i]
 
 					// cross_coins
-						const ar_found_coin_row = type_row.coins_data_union
-							? cross_coins(coins_rows, type_row.coins_data_union)
+						const ar_found_coin_row = type_row.coin_references
+							? cross_coins(coins_rows, type_row.coin_references)
 							: []
 						// console.log("ar_found_coin_row:",ar_found_coin_row, ar_found_coin_row.length);
 						// console.log("type_row:",type_row);

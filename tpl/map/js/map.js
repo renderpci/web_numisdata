@@ -808,6 +808,16 @@ var map =  {
 						return el.id==='coins_request'
 					})
 					const coins_rows = page.parse_coin_data(coins_response.result)
+
+					// verify
+						// console.log("GLOBAL_MAP: coins_list:",coins_list);
+						// console.log("COINS: coins_rows:",coins_rows );
+
+					// send event data_request_done (used by buttons download)
+					event_manager.publish('data_request_done', {
+						request_body	: coins_request_options,
+						result			: coins_rows
+					})
 					
 					resolve({
 						global_data_item	: global_data_item,
@@ -907,18 +917,18 @@ var map =  {
 						types_wrap.appendChild(type_row_node)
 						
 					// debug info
-						if(SHOW_DEBUG===true) {
-							let t = 'Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coins_data_union)
-							t +='<br>'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
+						// if(SHOW_DEBUG===true) {
+							let t = 'Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
+							t +='<br>'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
 							t +='<br>Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
-							const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
+							const debug_show = 'hide' // ar_found_coin_row.length>0 ? 'hide' : ''
 							const info = common.create_dom_element({
 								element_type	: "div",
 								class_name		: "debug_info " + debug_show,
 								inner_html		: t,
 								parent			: type_row_node
 							})
-						}
+						// }
 
 					// coins nodes
 						const ar_found_coin_row_length = ar_found_coin_row.length

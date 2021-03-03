@@ -46,13 +46,28 @@
 			display: flex;
 			align-content: space-between;
 
+			@media screen and (max-width: 736px){
+				flex-direction: column-reverse;
+			}
+
 			.info_container {
 				width: 70%;
+
+				@media screen and (max-width: 736px){
+					width: 100%;
+				}
+
 			}
 
 			.img_container {
 				width: 30%;
 				text-align: right;
+				flex-direction: row;
+
+				@media screen and (max-width: 736px){
+					width: 100%;
+					text-align: left;
+				}
 			}
 		}
 	}

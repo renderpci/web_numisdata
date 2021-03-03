@@ -30,11 +30,28 @@
   display: flex;
   align-content: space-between;
 }
+@media screen and (max-width: 736px) {
+  .rows_container .row_wrapper {
+    flex-direction: column-reverse;
+  }
+}
 .rows_container .row_wrapper .info_container {
   width: 70%;
+}
+@media screen and (max-width: 736px) {
+  .rows_container .row_wrapper .info_container {
+    width: 100%;
+  }
 }
 .rows_container .row_wrapper .img_container {
   width: 30%;
   text-align: right;
+  flex-direction: row;
+}
+@media screen and (max-width: 736px) {
+  .rows_container .row_wrapper .img_container {
+    width: 100%;
+    text-align: left;
+  }
 }
 /*# sourceMappingURL=coins.css.map */

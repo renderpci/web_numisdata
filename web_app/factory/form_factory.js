@@ -382,10 +382,14 @@ function form_factory() {
 					const c_group = {}
 						  c_group[c_group_op] = []
 
+					// escape html strings containing single quotes inside.
+					// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
+					const safe_value = form_item.q.replace(/(')/g, "''")
+
 					// q element
 						const element = {
 							field		: form_item.q_column,
-							value		: `'${form_item.eq_in}${form_item.q}${form_item.eq_out}'`, // Like '%${form_item.q}%'
+							value		: `'${form_item.eq_in}${safe_value}${form_item.eq_out}'`, // Like '%${form_item.q}%'
 							op			: form_item.eq, // default is 'LIKE'
 							sql_filter	: form_item.sql_filter,
 							wrapper		: form_item.wrapper
@@ -415,7 +419,6 @@ function form_factory() {
 					for (let j = 0; j < form_item.q_selected.length; j++) {
 
 						const value = form_item.q_selected[j]
-
 						// escape html strings containing single quotes inside.
 						// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
 						const safe_value = value.replace(/(')/g, "''")
@@ -427,7 +430,7 @@ function form_factory() {
 						// elemet
 						const element = {
 							field		: form_item.q_column,
-							value		: (form_item.q_selected_eq==="LIKE") ? `'%${safe_value}%'` : `'${value}'`,
+							value		: (form_item.q_selected_eq==="LIKE") ? `'%${safe_value}%'` : `'${safe_value}'`,
 							op			: form_item.q_selected_eq,
 							sql_filter	: form_item.sql_filter,
 							wrapper		: form_item.wrapper
@@ -952,12 +955,14 @@ function form_factory() {
 					const c_group = {}
 						  c_group[c_group_op] = []
 
-					const value_parsed = (form_item.eq_in) + form_item.q + (form_item.eq_out)
+					const safe_value = form_item.q.replace(/(')/g, "''")
+
+					const value_parsed = (form_item.eq_in) + safe_value + (form_item.eq_out)
 
 					// q element
 						const element = {
 							field	: form_item.q_column,
-							value	: `'${form_item.q}'`,
+							value	: value_parsed, // `'${form_item.q}'`,
 							op		: form_item.eq // default is 'LIKE'
 						}
 

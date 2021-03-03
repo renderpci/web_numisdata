@@ -41,7 +41,7 @@ include dirname(dirname(dirname(__FILE__))) . '/config/config.php';
 	<title>Translator</title>
 	<style type="text/css" media="screen">
 		input {
-			width: 19%;
+			width: 12.8%;
 			padding: 0.6em;
 			margin: 0;
 			border: none;

@@ -1189,7 +1189,7 @@ var type_row_fields = {
 		const self = this
 
 		const ref_biblio		= data
-		const ref_biblio_length	= ref_biblio.length
+		const ref_biblio_length	= ref_biblio ? ref_biblio.length : 0
 
 		// row_field set
 		const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
@@ -1225,7 +1225,7 @@ var type_row_fields = {
 
 	hoards_and_findspots : function(item, name) {
 		if(SHOW_DEBUG===true) {
-			// console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
+			console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
 		}
 
 		const self = this
@@ -1437,13 +1437,13 @@ var type_row_fields = {
 			}
 
 		// findspots
-			const findspots_data		= item.ref_coins_findspots_data
+			const findspots_data		= item.ref_coins_findspots_data;
 			const findspots_data_length	= findspots_data.length
-
+			
 			for (let i = 0; i < findspots_data_length; i++) {
 
 				const findspot		= findspots_data[i]
-				const coins			= JSON.parse(findspot.coins) || []
+				const coins			= JSON.parse(findspot.coins) || []				
 				const coins_length	= coins.length
 
 				if (coins_length<1) {

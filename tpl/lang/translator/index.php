@@ -4,16 +4,16 @@
 include dirname(dirname(dirname(__FILE__))) . '/config/config.php';
 
 // close access
-	$ip = 	getenv('HTTP_CLIENT_IP')?:
-			getenv('HTTP_X_FORWARDED_FOR')?:
-			getenv('HTTP_X_FORWARDED')?:
-			getenv('HTTP_FORWARDED_FOR')?:
-			getenv('HTTP_FORWARDED')?:
-			getenv('REMOTE_ADDR');
-	$allow_ip = ['127.0.0.1','localhost','::1'];
-	if (!in_array($ip, $allow_ip)) {
-		die("You don't have access here! ".$ip);
-	}	
+	// $ip = 	getenv('HTTP_CLIENT_IP')?:
+	// 		getenv('HTTP_X_FORWARDED_FOR')?:
+	// 		getenv('HTTP_X_FORWARDED')?:
+	// 		getenv('HTTP_FORWARDED_FOR')?:
+	// 		getenv('HTTP_FORWARDED')?:
+	// 		getenv('REMOTE_ADDR');
+	// $allow_ip = ['127.0.0.1','localhost','::1'];
+	// if (!in_array($ip, $allow_ip)) {
+	// 	die("You don't have access here! ".$ip);
+	// }	
 
 
 // base lang

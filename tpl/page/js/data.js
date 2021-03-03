@@ -111,7 +111,6 @@ page.parse_type_data = function(data) {
 		// permanent uri
 			// row.permanent_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
 
-
 		row.term_data = row.term_data
 			? JSON.parse(row.term_data)
 			: null
@@ -122,9 +121,7 @@ page.parse_type_data = function(data) {
 
 		row.term_section_label = row.term_section_label
 			? JSON.parse(row.term_section_label)
-			: null
-
-		
+			: null		
 
 
 		row.parsed = true
@@ -185,8 +182,32 @@ page.parse_coin_data = function(data) {
 		// if (row.type_data) {
 		// 	row.type_data = self.parse_type_data(row.type_data)
 		// }
-		if (row.type_data && Array.isArray(row.type_data) && row.type_data.length>0) {		
-			row.type_data = self.parse_type_data(row.type_data)		
+		if (row.type_data && Array.isArray(row.type_data) && row.type_data.length>0) {	
+			
+			// case resolved portal 	
+			row.type_data = self.parse_type_data(row.type_data)
+
+			// add
+			row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
+				? row.type_data[0].mint
+				: null
+			row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
+				? row.type_data[0].number
+				: null
+
+			row.type_section_id = row.type_data && typeof row.type_data[0]!=="undefined"
+				? row.type_data[0].section_id
+				: null
+
+		}else{
+
+			row.type_data = row.type_data
+				? JSON.parse(row.type_data)
+				: null
+
+			row.type_section_id = row.type_data && typeof row.type_data[0]!=="undefined"
+				? row.type_data[0]
+				: null
 		}
 
 		row.type = row.type
@@ -265,19 +286,16 @@ page.parse_coin_data = function(data) {
 
 		row.uri = self.parse_iri_data(row.uri)
 
+		
+
 		// bibliography (portal resolved case)
 			if (row.bibliography_data && Array.isArray(row.bibliography_data) ) {
 				row.bibliography = page.parse_publication(row.bibliography_data)
 			}
 
-		// add
-			row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
-				? row.type_data[0].mint
-				: null
-			row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
-				? row.type_data[0].number
-				: null
-			// const value = common.clean_gaps((mint + " " + number), " | ", " | ")
+				
+
+
 
 		row.parsed = true
 

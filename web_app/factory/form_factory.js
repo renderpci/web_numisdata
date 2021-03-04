@@ -34,7 +34,7 @@ function form_factory() {
 
 		// store current instance
 			self.form_items[options.id] = form_item
-		
+
 
 		return form_item
 	}//end item_factory
@@ -435,7 +435,7 @@ function form_factory() {
 							sql_filter	: form_item.sql_filter,
 							wrapper		: form_item.wrapper
 						}
-						
+
 						c_group[c_group_op].push(element)
 
 						// q_table element
@@ -470,7 +470,7 @@ function form_factory() {
 				console.warn("-> form_to_sql_filter empty elements selected:", ar_query_elements)
 				return false;
 			}
-		
+
 		// operators value (optional)
 			const input_operators = self.node.querySelector('input[name="operators"]')
 			const operators_value = input_operators
@@ -806,7 +806,7 @@ function form_factory() {
 
 					// sql_filter
 						const sql_filter = self.parse_sql_filter(filter) // + ' AND `'+q_column+'`!=\'\''
-					
+
 					// search
 						data_manager.request({
 							body : {
@@ -937,7 +937,7 @@ function form_factory() {
 
 		// short vars
 			const form_items = self.form_items
-		
+
 
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {

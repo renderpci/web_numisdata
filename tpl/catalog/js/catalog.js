@@ -18,10 +18,12 @@ var catalog = {
 	// form_items
 	// form_items : [],
  
-	// form
+	// form factory instance
 	form : null,
 
-	rows_list_container : null,
+	// DOM containers
+	rows_list_container		: null,
+	export_data_container	: null,
 
 
 
@@ -32,19 +34,19 @@ var catalog = {
 	
 		const self = this
 
-		// options
-			const rows_list_container	= options.rows_list_container
+		// options			
 			const global_search			= options.global_search
 			const item_type				= options.item_type
 			const label					= options.label
 			const value					= options.value
-			const export_data_container = options.export_data_container
+			const rows_list_container	= options.rows_list_container
+			const export_data_container	= options.export_data_container
+			const form_items_container	= options.form_items_container
 
 		// fix
 			self.rows_list_container	= rows_list_container
 			self.export_data_container	= export_data_container
-
-		const container = document.getElementById("items_container")
+			self.form_items_container	= form_items_container
 				
 		// load mints list
 			// self.load_mint_list().then(function(response){
@@ -196,7 +198,7 @@ var catalog = {
 
 		// form
 			const form_node = self.render_form()		
-			container.appendChild(form_node)
+			self.form_items_container.appendChild(form_node)
 			
 		// first search
 			if (global_search && global_search.length>1) {
@@ -1213,12 +1215,17 @@ var catalog = {
 
 		const form_items = self.form.form_items
 
-		const div_result			= document.querySelector(".result")
-		const container_rows_list	= div_result.querySelector("#rows_list")		
-
+		const container_rows_list	= self.rows_list_container //	div_result.querySelector("#rows_list")
+		const div_result			= container_rows_list.parentNode // document.querySelector(".result")
+		
 		// spinner add
-			page.add_spinner(div_result)
-						
+			// page.add_spinner(div_result)
+			const spinner = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "spinner",
+				parent			: div_result
+			})
+
 		// ar_is_term
 			const ar_is_term = []
 			for (let [id, form_item] of Object.entries(form_items)) {
@@ -1356,7 +1363,8 @@ var catalog = {
 		// empty form case
 			if (ar_query_elements.length<1) {
 				// self.form_items.mint.node_input.focus()
-				page.remove_spinner(div_result)
+				// page.remove_spinner(div_result)
+				spinner.remove()
 				return false;
 			}
 
@@ -1392,44 +1400,34 @@ var catalog = {
 				}
 			})
 			.then((parsed_data)=>{
-
 				// if(SHOW_DEBUG===true) {
-					console.log("--- form_submit response:", parsed_data)
+					// console.log("--- form_submit response:", parsed_data)
 				// }
-
-				// scrool to head result
-					// if (response.result.length>0 && div_result) {
-					// 	div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-					// }
 	
 				// draw
-					// setTimeout(()=>{
+					// clean container_rows_list and add_spinner
+						while (container_rows_list.hasChildNodes()) {
+							container_rows_list.removeChild(container_rows_list.lastChild);
+						}
+						container_rows_list.classList.remove("loading")							
+						// page.remove_spinner(div_result)
+						spinner.remove()
 
-						// clean container_rows_list and add_spinner
-							while (container_rows_list.hasChildNodes()) {
-								container_rows_list.removeChild(container_rows_list.lastChild);
-							}
-							container_rows_list.classList.remove("loading")
-							// page.add_spinner(container_rows_list)
-							page.remove_spinner(div_result)
-
-						// draw rows
-							self.draw_rows({
-								target  : self.rows_list_container,
-								ar_rows : parsed_data
-							})
-							.then(function(){
-								// // scrool to head result
-								// 	if (response.result.length>0) {
-								// 		const div_result = document.querySelector(".result")
-								// 		if (div_result) {
-								// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-								// 		}
-								// 	}
-								self.export_data_container.classList.remove("hide")
-							})						
-
-					// }, self.draw_delay) // self.draw_delay				
+					// draw rows
+						self.draw_rows({
+							target  : self.rows_list_container,
+							ar_rows : parsed_data
+						})
+						.then(function(){
+							// // scrool to head result
+							// 	if (response.result.length>0) {
+							// 		const div_result = document.querySelector(".result")
+							// 		if (div_result) {
+							// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+							// 		}
+							// 	}
+							self.export_data_container.classList.remove("hide")
+						})
 			})		
 
 
@@ -1645,19 +1643,19 @@ var catalog = {
 			render_nodes()
 			.then(fragment => {
 
-				// setTimeout(()=>{
-					while (container.hasChildNodes()) {
-						container.removeChild(container.lastChild);
-					}
+				
+				while (container.hasChildNodes()) {
+					container.removeChild(container.lastChild);
+				}
 
-					// bulk fragment nodes to container
-					container.appendChild(fragment)
+				// bulk fragment nodes to container
+				container.appendChild(fragment)
 
-					// activate images lightbox
-						const images_gallery_containers = container						
-						page.activate_images_gallery(images_gallery_containers, true)					
-						
-				// },800)
+				// activate images lightbox
+					setTimeout(function(){
+						const images_gallery_containers = container
+						page.activate_images_gallery(images_gallery_containers, true)	
+					}, 1200)				
 
 				resolve(container)
 			})

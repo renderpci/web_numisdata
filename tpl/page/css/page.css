@@ -874,7 +874,8 @@ p img.svg {
   float: inherit;
   display: flex;
 }
-#main .inner > h1 {
+#main .inner > h1,
+#main .inner > .main_container > h1 {
   font-variant: small-caps;
   color: #4c4430;
   letter-spacing: 0.05em;
@@ -1194,7 +1195,7 @@ a.image_link img {
   text-align: right;
   width: 100%;
   padding-bottom: 2em;
-  padding-top: 2em;
+  padding-top: 5em;
   padding-right: 0;
   position: relative;
   display: flex;
@@ -1224,7 +1225,12 @@ input[type=button].btn.button_download {
   background-position: 0.75em center;
   padding-left: 3em;
   padding-right: 1em;
+  line-height: 3em;
   font-size: 0.85em;
+  font-weight: 200;
+  letter-spacing: 2px;
+  border: 1px solid #7c7c7c;
+  border-radius: 6px;
   opacity: 1;
   transition: opacity 0.3s;
 }

@@ -14,9 +14,9 @@
   opacity: 1;
 }
 .rows_list {
-  min-height: 80vh;
-  padding-top: 2em;
   position: relative;
+  min-height: 42vh;
+  padding-top: 2em;
 }
 .rows_list span {
   margin-right: 1em;
@@ -25,6 +25,11 @@
   position: absolute;
   top: 3em;
   z-index: 99999999;
+}
+.spinner {
+  position: fixed;
+  top: 40vh;
+  z-index: 999999;
 }
 .row_wrapper {
   margin-bottom: 1em;

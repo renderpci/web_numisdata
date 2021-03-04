@@ -832,3 +832,39 @@ page.parse_iri_data = function(data) {
 
 
 
+
+/**
+* PARSE_TS_WEB
+* @return 
+*/
+page.parse_ts_web = function(rows) {
+	
+	if (!Array.isArray(rows)) {
+		rows = [rows]
+	}
+
+	for (let i = 0; i < rows.length; i++) {
+		
+		const row = rows[i]
+
+		if (row.parsed===true) continue;
+			console.log("page_globals.__WEB_MEDIA_BASE_URL__:",page_globals.__WEB_MEDIA_BASE_URL__);	
+
+		// fix link paths to aboslute paths
+			row.cuerpo = row.cuerpo
+				? row.cuerpo.replaceAll('../../../media', page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')
+				: null
+
+			row.entradilla = row.entradilla
+				? row.entradilla.replaceAll('../../../media', page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')
+				: null
+
+		row.parsed = true
+	}
+
+	
+	return rows
+};//end parse_ts_web
+
+
+

@@ -58,7 +58,7 @@ page.parse_type_data = function(data) {
 				
 			}else{
 
-				row.ref_coins_union = row.ref_coins_union
+				row.ref_coins_union = row.ref_coins_union && !Array.isArray(row.ref_coins_union)
 					? JSON.parse(row.ref_coins_union)
 					: null
 			}
@@ -71,7 +71,7 @@ page.parse_type_data = function(data) {
 				
 			}else{
 
-				row.coin_references = row.coin_references
+				row.coin_references = row.coin_references && !Array.isArray(row.coin_references)
 					? JSON.parse(row.coin_references)
 					: null
 			}

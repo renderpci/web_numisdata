@@ -81,7 +81,7 @@
 	
 	// api_web_user_code
 		# Verification user code (must be identical in config of client and server)
-		define('API_WEB_USER_CODE', '654asdiKrhdTetQksl?uoQaW2'); // 5eDfj2ñlowqQqXjkas6sad87asWa
+		define('API_WEB_USER_CODE', '654asdiKrhdTetQksluoQaW2'); // 5eDfj2ñlowqQqXjkas6sad87asWa
 
 	// common core functions
 		include(__WEB_BASE_PATH__ .'/'. WEB_APP_DIR . '/common/class.page.php');

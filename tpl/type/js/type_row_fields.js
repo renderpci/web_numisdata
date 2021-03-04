@@ -442,20 +442,42 @@ var type_row_fields = {
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a> '
+				const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> URI </a> '
 				common.create_dom_element({
-					element_type	: "div",
+					element_type	: "span",
 					class_name		: "",
 					inner_html		: uri_text,
 					parent			: line
 				})
+
+			// collection uri
+
+				if (identify_coin.uri && identify_coin.uri.length>0) {
+					for (let i = 0; i < identify_coin.uri.length; i++) {
+
+						const el = identify_coin.uri[i]
+						const label	= el.label || "URI"
+						const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
+
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "",
+							inner_html		: uri_text,
+							parent			: line
+						})
+
+					}
+				}
+
+
+
 			// collection
 				if (identify_coin.collection.length>0){
 
 					// line
 						const line_collection = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "line_full",
+							element_type	: "span",
+							class_name		: "info_value",
 							parent			: line
 						})
 
@@ -484,8 +506,8 @@ var type_row_fields = {
 					if (data.name.length<1) return
 					// line
 						const line = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "line_full",
+							element_type	: "span",
+							class_name		: "info_value",
 							parent			: parent
 						})
 					// name
@@ -623,13 +645,13 @@ var type_row_fields = {
 			if (item[name] && item[name].length>0) {
 
 				// const catalogue_number = JSON.parse(item["catalogue_data"])[0]
-				const type_section_id = item["section_id"]
+				// const type_section_id = item["section_id"]
 
 				const mint_number = (item.mint_number)
 					? item.mint_number+'/'
 					: ''
 
-				const item_text = item[name] + " " + type_section_id +' | '+  mint_number + item["number"]
+				const item_text = item[name] + " " +  mint_number + item["number"]
 
 				const node = common.create_dom_element({
 					element_type 	: "span",
@@ -766,13 +788,13 @@ var type_row_fields = {
 		// 		})
 		// 		image_reverse.loading="lazy"
 
-		// 	// collection	
+		// 	// collection
 		// 		if (data.collection.length>0){
 
 		// 			const collection_label = (data.number && data.number.length>0)
 		// 				? data.collection + " (" + data.number + ")"
 		// 				: data.collection
-				
+
 		// 			common.create_dom_element({
 		// 				element_type	: "div",
 		// 				class_name		: "golden-color",
@@ -839,7 +861,7 @@ var type_row_fields = {
 		// 		function draw_auction(data, parent, class_name, prepend) {
 
 		// 			if (data.name.length<1) return
-					
+
 		// 			// line
 		// 				const line = common.create_dom_element({
 		// 					element_type	: "div",
@@ -889,7 +911,7 @@ var type_row_fields = {
 
 		// 	// public_info
 		// 		if (data.public_info && data.public_info.length>0){
-					
+
 		// 			const label = (tstring.public_info || "Public_info") + ": "
 		// 			common.create_dom_element({
 		// 				element_type	: "div",
@@ -1029,7 +1051,7 @@ var type_row_fields = {
 				const collection_label = (data.number && data.number.length>0)
 					? data.collection + " (" + data.number + ")"
 					: data.collection
-			
+
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "golden-color",
@@ -1096,7 +1118,7 @@ var type_row_fields = {
 			function draw_auction(data, parent, class_name, prepend) {
 
 				if (data.name.length<1) return
-				
+
 				// line
 					const line = common.create_dom_element({
 						element_type	: "div",
@@ -1146,7 +1168,7 @@ var type_row_fields = {
 
 		// public_info
 			if (data.public_info && data.public_info.length>0){
-				
+
 				const label = (tstring.public_info || "Public_info") + ": "
 				common.create_dom_element({
 					element_type	: "div",
@@ -1172,11 +1194,31 @@ var type_row_fields = {
 			const full_url	= page_globals.__WEB_BASE_URL__ + uri
 			const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a>'
 			common.create_dom_element({
-				element_type	: "div",
+				element_type	: "span",
 				class_name		: "uri-text",
 				inner_html		: uri_text,
 				parent			: wrapper
 			})
+
+
+		//collection uri
+			if (data.uri && data.uri.length>0) {
+				for (let i = 0; i < data.uri.length; i++) {
+
+					const el = data.uri[i]
+					const label	= el.label || "URI"
+					const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
+
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "",
+						inner_html		: uri_text,
+						parent			: wrapper
+					})
+
+				}
+			}
+
 
 		return wrapper
 	},//end draw_coin
@@ -1192,7 +1234,7 @@ var type_row_fields = {
 
 		// row_field set
 		const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
-		
+
 		const bib_fragment = new DocumentFragment;
 
 		for (let i = 0; i < ref_biblio_length; i++) {
@@ -1437,11 +1479,11 @@ var type_row_fields = {
 		// findspots
 			const findspots_data		= item.ref_coins_findspots_data;
 			const findspots_data_length	= findspots_data.length
-			
+
 			for (let i = 0; i < findspots_data_length; i++) {
 
 				const findspot		= findspots_data[i]
-				const coins			= JSON.parse(findspot.coins) || []				
+				const coins			= JSON.parse(findspot.coins) || []
 				const coins_length	= coins.length
 
 				if (coins_length<1) {

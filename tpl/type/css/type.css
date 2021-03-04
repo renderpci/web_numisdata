@@ -33,6 +33,11 @@
 }
 .result .row_wrapper .identify_coin {
   font-size: 0.9em;
+  padding-right: 1em;
+}
+.result .row_wrapper .identify_coin .icon_link {
+  padding-right: 1em;
+  margin-left: 0;
 }
 .result .row_wrapper .find_wrapper div:first-child {
   font-weight: bold;
@@ -43,7 +48,6 @@
   height: 15em;
   margin: 0;
   margin-top: 1em;
-  margin-bottom: 1em;
   position: relative;
 }
 .result .row_wrapper div.ref_coins_image_obverse > a > img,
@@ -57,6 +61,7 @@
 }
 .result .row_wrapper .id_line {
   font-size: 1.2em;
+  margin-top: 1em;
 }
 .result .row_wrapper .catalogue {
   font-weight: 600;
@@ -70,17 +75,28 @@
 .result .row_wrapper .design_reverse,
 .result .row_wrapper .symbol_reverse,
 .result .row_wrapper .legend_reverse {
-  text-indent: 2em;
+  padding-left: 2em;
 }
+.result .row_wrapper .legend_obverse .info_value,
 .result .row_wrapper .legend_reverse .info_value {
-  font-size: 34px !important;
+  display: block;
+  font-size: 32px !important;
   font-weight: 400;
   color: black;
-  vertical-align: bottom;
-  line-height: 36px;
+  line-height: 32px;
+  height: 32px;
+}
+.result .row_wrapper .legend_obverse .info_value span,
+.result .row_wrapper .legend_reverse .info_value span {
+  text-indent: 0;
+}
+.result .row_wrapper .legend_obverse .info_value > img,
+.result .row_wrapper .legend_reverse .info_value > img {
+  height: 100%;
+  position: relative;
+  top: 6px;
 }
 .result .row_wrapper .public_info {
-  font-size: 2em;
   margin-top: 1em;
   margin-bottom: 1em;
 }

@@ -193,6 +193,7 @@
 .legend_obverse {
   grid-column-start: 1;
   grid-row-start: 3;
+  display: grid;
 }
 .legend_obverse img {
   height: 1.2em;
@@ -200,6 +201,12 @@
 }
 .legend_obverse span {
   margin-right: 0;
+  font-weight: 400;
+  color: black;
+}
+.legend_obverse .ref_type_legend_transcription_obverse {
+  color: unset;
+  font-weight: unset;
 }
 .ref_type_design_reverse {
   grid-column-start: 2;
@@ -228,6 +235,12 @@
 }
 .legend_reverse span {
   margin-right: 0;
+  font-weight: 400;
+  color: black;
+}
+.legend_reverse .ref_type_legend_transcription_reverse {
+  color: unset;
+  font-weight: unset;
 }
 .coins_images {
   display: inline-grid;

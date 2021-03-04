@@ -45,6 +45,11 @@
 		}
 		.identify_coin{
 			font-size: 0.9em;
+			padding-right: 1em;
+			.icon_link{
+				padding-right: 1em;
+				margin-left:0;
+			}
 		}
 
 		.find_wrapper{
@@ -62,7 +67,7 @@
 			height: 15em;
 			margin: 0;
 			margin-top: 1em;
-			margin-bottom: 1em;
+			// margin-bottom: 1em;
 			position: relative;
 			// background-color: #333333;
 
@@ -83,6 +88,7 @@
 
 		.id_line {
 			font-size: 1.2em;
+			margin-top: 1em;
 		}
 		.catalogue {
 			font-weight: 600;
@@ -92,19 +98,29 @@
 		}
 
 		.design_obverse, .symbol_obverse, .legend_obverse, .design_reverse, .symbol_reverse, .legend_reverse{
-			text-indent : 2em;
+			padding-left: 2em;
 		}
-		.legend_reverse{
+		.legend_obverse, .legend_reverse{
 			.info_value{
-				font-size: 34px !important;
+				display: block;
+				font-size: 32px !important;
 				font-weight: 400;
 				color: black;
-				vertical-align: bottom;
-				line-height: 36px;
+				// vertical-align: bottom;
+				line-height: 32px;
+				height: 32px;
+				span{
+					text-indent: 0;
+				}
+				>img {
+					height: 100%;
+					position: relative;
+    				top: 6px;
+				}
 			}
 		}
 		.public_info{
-			font-size: 2em;
+			// font-size: 2em;
 			margin-top: 1em;
 			margin-bottom: 1em;
 		}
@@ -122,8 +138,8 @@
 		}
 
 		.items_list {
-		}		
-		
+		}
+
 		.typology_coins {
 			// moved to page to share use
 			// display: flex;
@@ -192,7 +208,7 @@
 			// 	}
 			// }
 		}
-	
+
 		// coins in findspot coins list
 		.find_coins {
 			display: flex;

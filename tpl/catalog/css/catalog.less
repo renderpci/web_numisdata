@@ -236,7 +236,7 @@
 			border-top: none;
 		}
 	}
-	
+
 	.term {
 		// font-variant-caps: normal;
 		// font-weight: bold;
@@ -330,13 +330,21 @@
 	.legend_obverse{
 		grid-column-start: 1;
 		grid-row-start: 3;
+		display: grid;
 		img{
 			height: 1.2em;
 			vertical-align: middle;
 		}
 		span{
 			margin-right: 0;
+			font-weight: 400;
+    		color: black;
 		}
+		.ref_type_legend_transcription_obverse{
+			color: unset;
+			font-weight: unset;
+		}
+
 	}
 
 	.ref_type_design_reverse{
@@ -365,6 +373,12 @@
 		}
 		span{
 			margin-right: 0;
+			font-weight: 400;
+    		color: black;
+		}
+		.ref_type_legend_transcription_reverse{
+			color: unset;
+			font-weight: unset;
 		}
 	}
 
@@ -445,5 +459,3 @@
 			padding: 0 !important;
 		}
 	}
-
-

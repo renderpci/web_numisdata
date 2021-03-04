@@ -442,8 +442,7 @@ var type_row_fields = {
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
 				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				// const uri_text	= "URI: <a href=\""+uri+"\">" + full_url + "</a>"
-				const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\">  URI </a> "
+				const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a> '
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "",
@@ -1171,7 +1170,7 @@ var type_row_fields = {
 		// uri
 			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 			const full_url	= page_globals.__WEB_BASE_URL__ + uri
-			const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
+			const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a>'
 			common.create_dom_element({
 				element_type	: "div",
 				class_name		: "uri-text",
@@ -1322,8 +1321,7 @@ var type_row_fields = {
 				// uri
 					const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 					const full_uri	= page_globals.__WEB_BASE_URL__ + uri
-					// const uri_text	= "URI: <a href=\""+uri+"\">" + full_uri + "</a>"
-					const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\"> URI </a>"
+					const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a>'
 					common.create_dom_element({
 						element_type	: "div",
 						class_name		: "",

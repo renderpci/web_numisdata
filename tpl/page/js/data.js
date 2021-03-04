@@ -589,6 +589,10 @@ page.parse_publication = function(data) {
 	const parsed_data = []
 
 	try {
+
+		if(!data) {
+			return data
+		}
 		
 		const separator		= " # ";
 		const data_length	= data.length
@@ -603,7 +607,9 @@ page.parse_publication = function(data) {
 			// add publications property to store all resolved references
 				reference._publications = []
 
-			const publications_data			= JSON.parse(reference.publications_data)
+			const publications_data			= reference.publications_data
+				? JSON.parse(reference.publications_data)
+				: []
 			const publications_data_length	= publications_data.length
 			if (publications_data_length>0) {
 
@@ -642,7 +648,7 @@ page.parse_publication = function(data) {
 
 	} catch (error) {
 		console.error("ERROR CATCH " , error);
-		console.warn("row:",row);
+		console.warn("data:", data);
 	}
 
 	return parsed_data

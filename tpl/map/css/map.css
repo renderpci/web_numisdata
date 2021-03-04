@@ -13,9 +13,17 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
+#wrapper {
+  overflow-x: hidden;
+}
 .map_container.map {
   height: 50vh;
   margin-bottom: 0;
+}
+.full_width {
+  width: calc(100vw - 16px);
+  margin-left: calc(-50vw + 50% + 8px);
+  margin-right: calc(-50vw + 50%);
 }
 #main .inner .result .line-tittle {
   margin-left: 0 !important;

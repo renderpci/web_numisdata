@@ -1655,7 +1655,7 @@ var catalog = {
 					setTimeout(function(){
 						const images_gallery_containers = container
 						page.activate_images_gallery(images_gallery_containers, true)	
-					}, 1200)				
+					}, 600)				
 
 				resolve(container)
 			})

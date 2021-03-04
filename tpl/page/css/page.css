@@ -1164,9 +1164,19 @@ a.image_link img {
   padding-bottom: 0;
   margin-bottom: 0.2em;
 }
+.poptrox-popup .pic {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
 .poptrox-popup .pic > img {
-  min-width: 150px;
-  min-height: 150px;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  padding: 1em;
+  padding-left: 80px;
+  padding-right: 80px;
 }
 .no_results_found {
   padding: 1em;

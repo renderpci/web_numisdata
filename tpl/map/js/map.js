@@ -216,10 +216,10 @@ var map = {
 								spinner.remove()
 
 								// activate images lightbox
-									setTimeOut(function(){
+									setTimeout(function(){
 										const images_gallery_containers = self.rows_container
 										page.activate_images_gallery(images_gallery_containers, true)
-									},1200)
+									},600)
 									
 
 							}else{

@@ -846,9 +846,22 @@
 // poptrox override
 	.poptrox-popup {
 		.pic {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			// padding-left: 86px;
+			// padding-right: 86px;
+			background-color: #ffffff;
+
 			>img {
-				min-width: 150px;
-				min-height: 150px;
+				// min-width: 150px;
+				// min-height: 150px;
+				height: 100%;
+				width: 100%;
+				object-fit: contain;
+				padding: 1em;
+				padding-left: 80px;
+				padding-right: 80px;
 			}
 		}
 	}

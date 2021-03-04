@@ -16,6 +16,9 @@
 .result .image {
   height: 6em;
 }
+.rows_container {
+  margin-bottom: 2em;
+}
 .rows_container .icon_link {
   margin-left: 0.4em;
 }
@@ -24,11 +27,12 @@
   color: inherit;
 }
 .rows_container .row_wrapper {
-  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   margin-bottom: 1em;
   padding-top: 1em;
   display: flex;
   align-content: space-between;
+  padding-left: 1em;
 }
 @media screen and (max-width: 736px) {
   .rows_container .row_wrapper {
@@ -53,5 +57,8 @@
     width: 100%;
     text-align: left;
   }
+}
+.rows_container .row_wrapper:last-child {
+  border-bottom: none;
 }
 /*# sourceMappingURL=coins.css.map */

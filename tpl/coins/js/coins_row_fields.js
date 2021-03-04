@@ -11,6 +11,7 @@ var coins_row_fields = {
 
 	ar_rows : [],
 	caller  : null,
+	last_type : null,
 
 
 
@@ -20,6 +21,13 @@ var coins_row_fields = {
 		
 		const fragment = new DocumentFragment()
 		
+		// wrapper
+			const type_wrapper = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "type_wrapper",
+				parent			: fragment
+			})
+
 		// wrapper
 			const wrapper = common.create_dom_element({
 				element_type	: "div",
@@ -36,28 +44,49 @@ var coins_row_fields = {
 			})	
 
 			//type
-			var type = "No type"
-			var type_uri = ""
-			var type_uri_text = ""
+
 			if (row.type != null){
-				type = row.type
+
+				const type = row.type
 				const type_id = JSON.parse(row.type_data)
+				const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id[0]
+				const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
 
-				type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id[0]
-				type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
+				if (self.last_type == null){
 
+
+					common.create_dom_element({
+						element_type	: "a",
+						inner_html  	: "MIB "+ type + type_uri_text,
+						class_name		: "type_label",
+						href 			: type_uri,
+						parent 			: type_wrapper
+					})
+				} else if (self.last_type !== type) {
+
+					common.create_dom_element({
+						element_type	: "a",
+						inner_html  	: "MIB "+ type + type_uri_text,
+						class_name		: "type_label",
+						href 			: type_uri,
+						parent 			: type_wrapper
+					})
+				}
+
+			} else {
+				var type = "No type"
+				var type_uri = ""
+				var type_uri_text = ""
+
+				common.create_dom_element({
+					element_type	: "a",
+					inner_html  	: "MIB "+ type + type_uri_text,
+					class_name		: "noType_label",
+					href 			: type_uri,
+					parent 			: data_cont
+				})
 			}
-
-			common.create_dom_element({
-				element_type	: "a",
-				inner_html  	: "MIB "+ type + type_uri_text,
-				class_name		: "type_label",
-				href 			: type_uri,
-				parent 			: data_cont
-			})
-
-		
-
+			
 			//mint
 			const mint_line = common.create_dom_element({
 				element_type	: "div",
@@ -270,6 +299,9 @@ var coins_row_fields = {
 			image_reverse.addEventListener("load", page.load_hires)
 
 			page.activate_images_gallery(image_container)
+
+
+		self.last_type = row.type
 
 		return fragment
 	}//end draw_item

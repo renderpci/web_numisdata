@@ -30,6 +30,9 @@
 	}
 
 	.rows_container {
+
+		margin-bottom:2em;
+
 		.icon_link {
 			margin-left: 0.4em
 		}
@@ -40,11 +43,12 @@
 		}
 
 		.row_wrapper {
-			border-top: 1px solid #ddd;
+			border-bottom: 1px solid #ddd;
 			margin-bottom: 1em;
 			padding-top: 1em;
 			display: flex;
 			align-content: space-between;
+			padding-left:1em;
 
 			@media screen and (max-width: 736px){
 				flex-direction: column-reverse;
@@ -69,6 +73,9 @@
 					text-align: left;
 				}
 			}
+		}
+		.row_wrapper:last-child {
+			border-bottom: none;
 		}
 	}
 	

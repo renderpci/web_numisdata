@@ -265,7 +265,7 @@ var coins =  {
 				}
 			})
 
-		// countermark_obverse
+		// countermark_reverse
 			self.form.item_factory({
 				id			: "countermark_reverse",
 				name		: "countermark_reverse",
@@ -402,7 +402,7 @@ var coins =  {
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
 			const count		= true			
-			const order		= "type ASC"
+			const order		= "type"
 			const resolve_portals_custom = {"mint_data" : "mints"}
 
 			// sql_filter
@@ -478,6 +478,12 @@ var coins =  {
 						resolve(list_node)
 					})
 			})
+
+			// scrool to head result
+			const div_result = document.querySelector(".rows_container")
+			if (div_result) {
+				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+			}
 		})
 	},//end form_submit
 

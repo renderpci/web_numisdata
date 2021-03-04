@@ -77,7 +77,6 @@ function list_factory() {
 
 			const ar_rows_length = self.data.length
 
-
 			// pagination
 				let paginator_options
 				if (self.pagination) {

@@ -51,27 +51,27 @@ page.parse_type_data = function(data) {
 				: null
 
 		// ref_coins_union (resolved portal case)
-			if (row.ref_coins_union && Array.isArray(row.ref_coins_union) && row.ref_coins_union.length>0) {
+			if (row.ref_coins_union && Array.isArray(row.ref_coins_union)) {
 
 				// parse portal resolved rows
-				row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)				
+				row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)
 				
 			}else{
 
-				row.ref_coins_union = row.ref_coins_union && !Array.isArray(row.ref_coins_union)
+				row.ref_coins_union = row.ref_coins_union
 					? JSON.parse(row.ref_coins_union)
 					: null
 			}
 
 		// coin_references (resolved portal case)
-			if (row.coin_references && Array.isArray(row.coin_references) && row.coin_references.length>0) {
+			if (row.coin_references && Array.isArray(row.coin_references)) {
 				
 				// parse portal resolved rows
 				row.coin_references = page.parse_coin_data(row.coin_references)
 				
 			}else{
 
-				row.coin_references = row.coin_references && !Array.isArray(row.coin_references)
+				row.coin_references = row.coin_references
 					? JSON.parse(row.coin_references)
 					: null
 			}
@@ -121,7 +121,7 @@ page.parse_type_data = function(data) {
 
 		row.term_section_label = row.term_section_label
 			? JSON.parse(row.term_section_label)
-			: null		
+			: null
 
 
 		row.parsed = true
@@ -183,16 +183,13 @@ page.parse_coin_data = function(data) {
 				: null
 
 		// type_data
-		// if (row.type_data) {
-		// 	row.type_data = self.parse_type_data(row.type_data)
-		// }
-		if (row.type_data && Array.isArray(row.type_data) && row.type_data.length>0) {	
+		if (row.type_data && Array.isArray(row.type_data)) {	
 			
 			// case resolved portal 	
 			row.type_data = self.parse_type_data(row.type_data)
 
 			// add
-			row.mint	= row.type_dat && typeof row.type_data[0]!=="undefined"
+			row.mint	= row.type_data && typeof row.type_data[0]!=="undefined"
 				? row.type_data[0].mint
 				: null
 			row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
@@ -290,7 +287,6 @@ page.parse_coin_data = function(data) {
 
 		row.uri = self.parse_iri_data(row.uri)
 
-		
 
 		// bibliography (portal resolved case)
 			if (row.bibliography_data && Array.isArray(row.bibliography_data) ) {

@@ -848,8 +848,7 @@ page.parse_ts_web = function(rows) {
 		const row = rows[i]
 
 		if (row.parsed===true) continue;
-			console.log("page_globals.__WEB_MEDIA_BASE_URL__:",page_globals.__WEB_MEDIA_BASE_URL__);	
-
+		
 		// fix link paths to aboslute paths
 			row.cuerpo = row.cuerpo
 				? row.cuerpo.replaceAll('../../../media', page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')

@@ -70,7 +70,7 @@ function map_factory() {
 	*/
 	this.init = function(options) {
 		if(SHOW_DEBUG===true) {
-			console.log("--> init options:",options)
+			// console.log("--> map_factory init options:",options)
 		}
 
 		const self = this

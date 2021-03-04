@@ -47,7 +47,9 @@ var map = {
 	* @param object options
 	*/
 	set_up : function(options) {
-		console.log("--> map set_up options:",options);
+		if(SHOW_DEBUG===true) {
+			// console.log("--> map set_up options:",options);
+		}		
 
 		const self = this
 
@@ -256,7 +258,7 @@ var map = {
 		if (map_config) {
 			// use existing one
 			self.map_config = JSON.parse(map_config)
-			console.log("--> self.map_config 1 (already exists):", self.map_config);
+			// console.log("--> self.map_config 1 (already exists):", self.map_config);
 		}else{
 			// create a new one
 			const map_config = {
@@ -264,7 +266,7 @@ var map = {
 			}
 			localStorage.setItem('map_config', JSON.stringify(map_config));
 			self.map_config = map_config
-			console.log("--> self.map_config 2 (create new one):",self.map_config);
+			// console.log("--> self.map_config 2 (create new one):",self.map_config);
 		}
 
 		if (options) {
@@ -272,8 +274,7 @@ var map = {
 				self.map_config[key] = options[key]
 			}
 			localStorage.setItem('map_config', JSON.stringify(self.map_config));
-		}
-		
+		}		
 		// console.log("--> self.map_config [final]:", self.map_config);
 
 		return self.map_config

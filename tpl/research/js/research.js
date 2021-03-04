@@ -21,7 +21,7 @@ var research =  {
 	*/
 	set_up : function(options) {
 		if(SHOW_DEBUG===true) {
-			console.log("generic.set_up options:", options);
+			// console.log("generic.set_up options:", options);
 		}
 
 		const self = this
@@ -110,21 +110,25 @@ var research =  {
 			const fragment = new DocumentFragment()
 
 			// console.log("render_row row:",row);
+
+			const title		= row.titulo
+			const abstract	= row.entradilla
+			const body		= row.cuerpo
 		
 			// title
-				const title = common.create_dom_element({
+				common.create_dom_element({
 					element_type	: "h1",
 					class_name		: "title",
-					inner_html		: row.titulo,
+					inner_html		: title,
 					parent			: fragment
 				})			
 			
 			// abstract
-				if (row.entradilla && row.entradilla.length>0) {
-					const abstract = common.create_dom_element({
+				if (abstract && abstract.length>0) {
+					common.create_dom_element({
 						element_type	: "p",
 						class_name		: "abstract",
-						inner_html		: row.entradilla,
+						inner_html		: abstract,
 						parent			: fragment
 					})
 				}
@@ -157,11 +161,11 @@ var research =  {
 
 
 			// body
-				if (row.cuerpo && row.cuerpo.length>0) {
-					const body = common.create_dom_element({
+				if (body && body.length>0) {
+					common.create_dom_element({
 						element_type	: "section",
 						class_name		: "content",
-						inner_html		: row.cuerpo,
+						inner_html		: body,
 						parent			: fragment
 					})
 

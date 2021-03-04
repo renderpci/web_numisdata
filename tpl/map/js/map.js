@@ -193,7 +193,12 @@ var map = {
 						while (self.rows_container.hasChildNodes()) {
 							self.rows_container.removeChild(self.rows_container.lastChild);
 						}
-						page.add_spinner(self.rows_container)
+						// page.add_spinner(self.rows_container)
+						const spinner = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "spinner",
+							parent			: self.rows_container
+						})
 					
 					// render related types list
 						self.load_map_selection_info(selected_element)
@@ -207,10 +212,21 @@ var map = {
 									info				: response.info
 								})
 								self.rows_container.appendChild(types_list_node)
-								page.remove_spinner(self.rows_container)
+								// page.remove_spinner(self.rows_container)
+								spinner.remove()
+
+								// activate images lightbox
+									setTimeOut(function(){
+										const images_gallery_containers = self.rows_container
+										page.activate_images_gallery(images_gallery_containers, true)
+									},1200)
+									
+
 							}else{
-								page.remove_spinner(self.rows_container)
+								// page.remove_spinner(self.rows_container)
+								spinner.remove()
 							}
+							
 
 							// scroll map at top
 								self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})

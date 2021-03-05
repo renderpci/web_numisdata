@@ -24,6 +24,13 @@ form {
 .form-group {
   position: relative;
 }
+span.form_input_label {
+  position: absolute;
+  font-size: 14px;
+  top: 4px;
+  left: 0;
+  opacity: 0.7;
+}
 .search_operators_info {
   position: absolute;
   top: 1.5em;

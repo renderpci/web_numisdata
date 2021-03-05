@@ -136,7 +136,7 @@
 		"lg-fra" => "Français",
 		"lg-ita" => "Italiano",
 		"lg-por" => "Português",
-		"lg-cat" => "Valencià",
+		"lg-cat" => "Valencià"
 	]));
 
 	define('WEB_MAP_PROVIDER_URL', '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');

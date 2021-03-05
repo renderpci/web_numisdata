@@ -1173,7 +1173,7 @@ a.image_link img {
 .poptrox-popup .pic > img {
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: scale-down;
   padding: 1em;
   padding-left: 80px;
   padding-right: 80px;

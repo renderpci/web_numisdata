@@ -134,6 +134,44 @@ page.parse_type_data = function(data) {
 	return row
 }//end parse_type_data
 
+page.parse_mint_data = function(data) {
+	const self = this
+
+	// array case
+		if (Array.isArray(data)) {
+			const new_data = []
+			for (let i = 0; i < data.length; i++) {
+				new_data.push( page.parse_coin_data(data[i]) )
+			}
+			return new_data
+		}
+
+	const row = data
+
+	if (typeof row !== 'object') {
+		console.log("parse_coin_data row:",row);
+		console.trace()
+	}
+
+	if (!row || row.parsed) {
+		return row
+	}
+
+	try {	
+
+		row.name = data.mint 
+		row.place = data.place
+		row.parsed = true
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("row:",row);
+	}
+
+	return row
+
+}
+
 
 
 /**

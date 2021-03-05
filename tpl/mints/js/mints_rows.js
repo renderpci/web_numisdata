@@ -5,312 +5,333 @@
 var mint_rows = {
 
 
+	ar_rows : [],
+	caller  : null,
+	last_type : null,
 
-	row_object : null,
 
 
+	draw_item : function(row) {
 
-	name : function() {
+		const self = this
+		
+		const fragment = new DocumentFragment()
 
-		const row_object = this.row_object
-
-		// line
-		const line = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "info_line name"
-		})
-
-		// section_id
-		if (dedalo_logged===true) {
-
-			const link = common.create_dom_element({
-				element_type 	: "a",
-				class_name 		: "section_id go_to_dedalo",
-				text_content 	: row_object.section_id,
-				href 			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
-				parent 			: line
+		// wrapper
+			const wrapper = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "row_wrapper",
+				parent			: fragment
 			})
-			link.setAttribute('target', '_blank');
-		}
+			
+		return fragment
+	}
 
-		// name
-		if (row_object.name && row_object.name.length>0) {
+	// row_object : null,
 
-			const name		= row_object.name
-			const link_mint	= common.create_dom_element({
-				element_type 	: "a",
-				class_name 		: "info_value",
-				text_content 	: name,
-				href 			: "./mint/" + row_object.section_id,
-				parent 			: line
-			})
-			link_mint.setAttribute('target', '_blank');
 
-		}else{
 
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_value",
-				text_content 	: "Undefined name",
-				parent 			: line
-			})
-		}
+	// name : function() {
 
+	// 	const row_object = this.row_object
 
-		return line
-	},//end name
+	// 	// line
+	// 	const line = common.create_dom_element({
+	// 		element_type 	: "div",
+	// 		class_name 		: "info_line name"
+	// 	})
 
+	// 	// section_id
+	// 	if (dedalo_logged===true) {
 
+	// 		const link = common.create_dom_element({
+	// 			element_type 	: "a",
+	// 			class_name 		: "section_id go_to_dedalo",
+	// 			text_content 	: row_object.section_id,
+	// 			href 			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
+	// 			parent 			: line
+	// 		})
+	// 		link.setAttribute('target', '_blank');
+	// 	}
 
-	place : function() {
+	// 	// name
+	// 	if (row_object.name && row_object.name.length>0) {
 
-		const row_object = this.row_object
+	// 		const name		= row_object.name
+	// 		const link_mint	= common.create_dom_element({
+	// 			element_type 	: "a",
+	// 			class_name 		: "info_value",
+	// 			text_content 	: name,
+	// 			href 			: "./mint/" + row_object.section_id,
+	// 			parent 			: line
+	// 		})
+	// 		link_mint.setAttribute('target', '_blank');
 
-		// line
-		const line = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "info_line place"
-		})
+	// 	}else{
 
-		// place
-		if (row_object.place && row_object.place.length>0) {
+	// 		common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "info_value",
+	// 			text_content 	: "Undefined name",
+	// 			parent 			: line
+	// 		})
+	// 	}
 
-			const place = row_object.place
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_value",
-				text_content 	: place,
-				parent 			: line
-			})
 
-		}else{
+	// 	return line
+	// },//end name
 
-			// common.create_dom_element({
-			// 	element_type 	: "div",
-			// 	class_name 		: "info_value",
-			// 	text_content 	: "Undefined place",
-			// 	parent 			: line
-			// })
-		}
 
 
-		return line
-	},//end place
+	// place : function() {
 
+	// 	const row_object = this.row_object
 
+	// 	// line
+	// 	const line = common.create_dom_element({
+	// 		element_type 	: "div",
+	// 		class_name 		: "info_line place"
+	// 	})
 
-	publication_date : function() {
+	// 	// place
+	// 	if (row_object.place && row_object.place.length>0) {
 
-		const row_object = this.row_object
+	// 		const place = row_object.place
+	// 		common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "info_value",
+	// 			text_content 	: place,
+	// 			parent 			: line
+	// 		})
 
-		const line = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "info_line publication_date hide"
-		})
+	// 	}else{
 
-		if (row_object.publication_date) {
+	// 		// common.create_dom_element({
+	// 		// 	element_type 	: "div",
+	// 		// 	class_name 		: "info_value",
+	// 		// 	text_content 	: "Undefined place",
+	// 		// 	parent 			: line
+	// 		// })
+	// 	}
 
-			const ar_date 	= row_object.publication_date.split("-")
-			let final_date 	= parseInt(ar_date[0])
 
-			if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {
-				final_date = final_date + "-" + parseInt(ar_date[1])
-			}
-			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
-				final_date = final_date + "-" + parseInt(ar_date[2])
-			}
+	// 	return line
+	// },//end place
 
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_value",
-				text_content 	: final_date,
-				parent 			: line
-			})
 
-			line.classList.remove("hide")
-		}
 
-		return line
-	},//end publication_date
+	// publication_date : function() {
 
+	// 	const row_object = this.row_object
 
+	// 	const line = common.create_dom_element({
+	// 		element_type 	: "div",
+	// 		class_name 		: "info_line publication_date hide"
+	// 	})
 
-	row_title : function() {
+	// 	if (row_object.publication_date) {
 
-		const row_object = this.row_object
-		const typology 		= this.get_typology()
-
-		// pdf data
-		const pdf_uri 			= row_object.pdf || '[]'
-		const ar_pdf_uri 		= JSON.parse(pdf_uri)
-		const ar_pdf_uri_length = ar_pdf_uri.length
-
-
-		// line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_line row_title"
-			})
-
-		// title
-			const title 		= row_object.title || ""
-			const title_style 	= typology==="book" ? " italic" : ""
-			common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "title" + title_style + (ar_pdf_uri_length>0 ? " blue" : ""),
-				text_content 	: title,
-				parent 			: line
-			})
-
-		// pdf_uri
-			for (let i = 0; i < ar_pdf_uri_length; i++) {
-
-				const pdf_item = ar_pdf_uri[i]
-
-				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "pdf",
-					title 			: pdf_item.title,
-					// text_content : pdf_item.title,
-					// href 			: pdf_item.iri,
-					parent 			: line
-				}).addEventListener("click",(e) => {
-					window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
-				})
-			}
+	// 		const ar_date 	= row_object.publication_date.split("-")
+	// 		let final_date 	= parseInt(ar_date[0])
 
+	// 		if( typeof(ar_date[1]!=="undefined") && parseInt(ar_date[1]) > 0 ) {
+	// 			final_date = final_date + "-" + parseInt(ar_date[1])
+	// 		}
+	// 		if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
+	// 			final_date = final_date + "-" + parseInt(ar_date[2])
+	// 		}
 
-		return line
-	},//end row_title
+	// 		common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "info_value",
+	// 			text_content 	: final_date,
+	// 			parent 			: line
+	// 		})
 
+	// 		line.classList.remove("hide")
+	// 	}
 
+	// 	return line
+	// },//end publication_date
 
-	row_body : function() {
 
-		const row_object = this.row_object
-		const typology 		= this.get_typology()
 
+	// row_title : function() {
 
-		// line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_line row_body" + " " + typology
-			})
+	// 	const row_object = this.row_object
+	// 	const typology 		= this.get_typology()
+
+	// 	// pdf data
+	// 	const pdf_uri 			= row_object.pdf || '[]'
+	// 	const ar_pdf_uri 		= JSON.parse(pdf_uri)
+	// 	const ar_pdf_uri_length = ar_pdf_uri.length
+
+
+	// 	// line
+	// 		const line = common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "info_line row_title"
+	// 		})
+
+	// 	// title
+	// 		const title 		= row_object.title || ""
+	// 		const title_style 	= typology==="book" ? " italic" : ""
+	// 		common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "title" + title_style + (ar_pdf_uri_length>0 ? " blue" : ""),
+	// 			text_content 	: title,
+	// 			parent 			: line
+	// 		})
+
+	// 	// pdf_uri
+	// 		for (let i = 0; i < ar_pdf_uri_length; i++) {
+
+	// 			const pdf_item = ar_pdf_uri[i]
+
+	// 			common.create_dom_element({
+	// 				element_type 	: "div",
+	// 				class_name 		: "pdf",
+	// 				title 			: pdf_item.title,
+	// 				// text_content : pdf_item.title,
+	// 				// href 			: pdf_item.iri,
+	// 				parent 			: line
+	// 			}).addEventListener("click",(e) => {
+	// 				window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
+	// 			})
+	// 		}
 
 
-		switch(typology){
+	// 	return line
+	// },//end row_title
 
-			case 'book': // book
 
-				// place
-					if (row_object.place) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value place grey",
-							text_content 	: row_object.place,
-							parent 			: line
-						})
-					}
-
-				// editor
-					if (row_object.editor) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value editor grey",
-							text_content 	: ": " + row_object.editor,
-							parent 			: line
-						})
-					}
-				break;
-
-			default: // article, etc.
-
-				// magazine
-					if (row_object.magazine) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value magazine grey italic",
-							text_content 	: row_object.magazine,
-							parent 			: line
-						})
-					}
-
-				// serie
-					if (row_object.serie) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value serie grey",
-							text_content 	: ": " + row_object.serie,
-							parent 			: line
-						})
-					}
-
-				// physical_description
-					if (row_object.physical_description) {
-
-						const text_content = (row_object.serie.length>0)
-							? ", "+row_object.physical_description
-							: row_object.physical_description
-
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value physical_description grey",
-							text_content 	: text_content,
-							parent 			: line
-						})
-					}
-
-				break;
-		}//end switch(typology_parsed)
-
-
-		return line
-	},//end row_body
-
-
-
-	row_url : function() {
-
-		const row_object = this.row_object
-
-		// line
-			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_line row_url"
-			})
-
-		// url_data
-			const url_data = row_object.url_data
-			if (url_data && url_data.length>0) {
-
-				const ar_url_data 		 = JSON.parse(url_data)
-				const ar_url_data_length = ar_url_data.length
-				for (let i = 0; i < ar_url_data_length; i++) {
-
-					const url_item = ar_url_data[i]
-
-					common.create_dom_element({
-						element_type 	: "a",
-						class_name 		: "url_data",
-						title 			: url_item.title,
-						text_content 	: url_item.title,
-						href 			: url_item.iri,
-						parent 			: line
-					})
-
-					if ( !(i%2) && i<ar_url_data_length && ar_url_data_length>1 ) {
-						common.create_dom_element({
-							element_type 	: "span",
-							class_name 		: "separator",
-							text_content 	: " | ",
-							parent 			: line
-						})
-					}
-				}
-			}
-
-		return line
-	},//end row_url
+
+	// row_body : function() {
+
+	// 	const row_object = this.row_object
+	// 	const typology 		= this.get_typology()
+
+
+	// 	// line
+	// 		const line = common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "info_line row_body" + " " + typology
+	// 		})
+
+
+	// 	switch(typology){
+
+	// 		case 'book': // book
+
+	// 			// place
+	// 				if (row_object.place) {
+	// 					common.create_dom_element({
+	// 						element_type 	: "div",
+	// 						class_name 		: "info_value place grey",
+	// 						text_content 	: row_object.place,
+	// 						parent 			: line
+	// 					})
+	// 				}
+
+	// 			// editor
+	// 				if (row_object.editor) {
+	// 					common.create_dom_element({
+	// 						element_type 	: "div",
+	// 						class_name 		: "info_value editor grey",
+	// 						text_content 	: ": " + row_object.editor,
+	// 						parent 			: line
+	// 					})
+	// 				}
+	// 			break;
+
+	// 		default: // article, etc.
+
+	// 			// magazine
+	// 				if (row_object.magazine) {
+	// 					common.create_dom_element({
+	// 						element_type 	: "div",
+	// 						class_name 		: "info_value magazine grey italic",
+	// 						text_content 	: row_object.magazine,
+	// 						parent 			: line
+	// 					})
+	// 				}
+
+	// 			// serie
+	// 				if (row_object.serie) {
+	// 					common.create_dom_element({
+	// 						element_type 	: "div",
+	// 						class_name 		: "info_value serie grey",
+	// 						text_content 	: ": " + row_object.serie,
+	// 						parent 			: line
+	// 					})
+	// 				}
+
+	// 			// physical_description
+	// 				if (row_object.physical_description) {
+
+	// 					const text_content = (row_object.serie.length>0)
+	// 						? ", "+row_object.physical_description
+	// 						: row_object.physical_description
+
+	// 					common.create_dom_element({
+	// 						element_type 	: "div",
+	// 						class_name 		: "info_value physical_description grey",
+	// 						text_content 	: text_content,
+	// 						parent 			: line
+	// 					})
+	// 				}
+
+	// 			break;
+	// 	}//end switch(typology_parsed)
+
+
+	// 	return line
+	// },//end row_body
+
+
+
+	// row_url : function() {
+
+	// 	const row_object = this.row_object
+
+	// 	// line
+	// 		const line = common.create_dom_element({
+	// 			element_type 	: "div",
+	// 			class_name 		: "info_line row_url"
+	// 		})
+
+	// 	// url_data
+	// 		const url_data = row_object.url_data
+	// 		if (url_data && url_data.length>0) {
+
+	// 			const ar_url_data 		 = JSON.parse(url_data)
+	// 			const ar_url_data_length = ar_url_data.length
+	// 			for (let i = 0; i < ar_url_data_length; i++) {
+
+	// 				const url_item = ar_url_data[i]
+
+	// 				common.create_dom_element({
+	// 					element_type 	: "a",
+	// 					class_name 		: "url_data",
+	// 					title 			: url_item.title,
+	// 					text_content 	: url_item.title,
+	// 					href 			: url_item.iri,
+	// 					parent 			: line
+	// 				})
+
+	// 				if ( !(i%2) && i<ar_url_data_length && ar_url_data_length>1 ) {
+	// 					common.create_dom_element({
+	// 						element_type 	: "span",
+	// 						class_name 		: "separator",
+	// 						text_content 	: " | ",
+	// 						parent 			: line
+	// 					})
+	// 				}
+	// 			}
+	// 		}
+
+	// 	return line
+	// },//end row_url
 
 
 

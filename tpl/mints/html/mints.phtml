@@ -22,12 +22,10 @@
 						<h1><?php echo $title ?></h1>
 
 					<!-- Form -->
-						<section class="form"></section>
+						<div id="form_container"></div>
 
 					<!-- Result -->
-						<section class="result">
-							<div id="rows_list"> <span>Loading rows..</span> </div>
-						</section>
+						<section id="rows_container" class="result"></section>
 
 				</div>
 			</div>
@@ -41,6 +39,9 @@
 <?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 dom_ready(function(){
-	mints.set_up({})
+	mints.set_up({
+		form_container	: document.getElementById('form_container'),
+		rows_container	: document.getElementById('rows_container')
+	})
 })
 </script>

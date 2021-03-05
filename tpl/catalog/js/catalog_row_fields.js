@@ -149,11 +149,18 @@ var catalog_row_fields = {
 							  class_name 	: "legend_obverse",
 							  parent 		: descriptions
 						})
-						self.node_factory(item, "ref_type_legend_obverse", legend_obverse, null, null)
+						// self.node_factory(item, "ref_type_legend_obverse", legend_obverse, null, null)
+						if (item.ref_type_legend_obverse) {
+							legend_obverse.appendChild(
+								page.render_legend({
+									value : item.ref_type_legend_obverse,
+									style : 'small legend_obverse_box'
+								})
+							)
+						}						
 						self.node_factory(item, "ref_type_legend_transcription_obverse", legend_obverse, null, null)
 
 					// reverse
-
 						self.node_factory(item, "ref_type_design_reverse", descriptions, null, null)
 						self.node_factory(item, "ref_type_symbol_reverse", descriptions, null, null)
 
@@ -163,7 +170,15 @@ var catalog_row_fields = {
 							  parent 		: descriptions
 						})
 
-						self.node_factory(item, "ref_type_legend_reverse", legend_reverse, null, null)
+						// self.node_factory(item, "ref_type_legend_reverse", legend_reverse, null, null)
+						if (item.ref_type_legend_reverse) {
+							legend_reverse.appendChild(
+								page.render_legend({
+									value : item.ref_type_legend_reverse,
+									style : 'small legend_obverse_box'
+								})
+							)
+						}
 						self.node_factory(item, "ref_type_legend_transcription_reverse", legend_reverse, null, null)
 
 					self.node_factory(item, "ref_type_equivalents", type_container, null, null)

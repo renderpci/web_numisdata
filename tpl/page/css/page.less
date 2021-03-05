@@ -986,6 +986,82 @@
 
 
 
+// legend_box
+	.legend_box {
+		
+		// default
+		display: inline-block;
+		// background-color: #ecf0e2;		
+		margin: 0;
+		position: relative;
+		color: #000000;
+		font-weight: 400;
+
+		>img {
+			height: 100%;
+			position: relative;			
+		}
+		>span {
+			// display: inline-block;
+		}
+
+		// small (catalog list)
+		&.small {
+			@height : 16px;
+			// @images_offset : (@height/4); // 9px;
+			font-size: @height !important;
+			line-height: @height;
+			height: @height;
+			// top: -@images_offset;
+
+			>img {
+				// top: @images_offset;
+			}
+		}
+		
+		// median (type detail)
+		&.median {
+			@height : 32px;
+			@images_offset : (@height/4); // 9px;
+			font-size: @height !important;
+			line-height: @height;
+			height: @height;
+			top: -@images_offset;
+
+			>img {
+				top: @images_offset;
+			}
+		}
+
+		&.big {
+			@height : 64px;
+			@images_offset : (@height/4); // 18px;
+			font-size: @height !important;
+			line-height: @height;
+			height: @height;
+			top: -@images_offset;
+
+			>img {
+				top: @images_offset;
+			}
+		}
+
+		&.huge {
+			@height : 128px;
+			@images_offset : (@height/4); // 18px;
+			font-size: @height !important;
+			line-height: @height;
+			height: @height;
+			top: -@images_offset;
+
+			>img {
+				top: @images_offset;
+			}
+		}
+	}
+
+
+
 // randomColor
 	.randomColor(){
 	  @randomColor: `Math.floor(Math.random()*16777215).toString(16)`;

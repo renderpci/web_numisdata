@@ -71,30 +71,13 @@
 }
 .result .row_wrapper .design_obverse,
 .result .row_wrapper .symbol_obverse,
-.result .row_wrapper .legend_obverse,
 .result .row_wrapper .design_reverse,
-.result .row_wrapper .symbol_reverse,
-.result .row_wrapper .legend_reverse {
+.result .row_wrapper .symbol_reverse {
   padding-left: 2em;
 }
-.result .row_wrapper .legend_obverse .info_value,
-.result .row_wrapper .legend_reverse .info_value {
-  display: block;
-  font-size: 32px !important;
-  font-weight: 400;
-  color: black;
-  line-height: 32px;
-  height: 32px;
-}
-.result .row_wrapper .legend_obverse .info_value span,
-.result .row_wrapper .legend_reverse .info_value span {
-  text-indent: 0;
-}
-.result .row_wrapper .legend_obverse .info_value > img,
-.result .row_wrapper .legend_reverse .info_value > img {
-  height: 100%;
-  position: relative;
-  top: 6px;
+.result .row_wrapper .legend_box {
+  margin-left: 1.35em;
+  margin-top: 0.3em;
 }
 .result .row_wrapper .public_info {
   margin-top: 1em;

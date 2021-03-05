@@ -46,7 +46,6 @@ page.render_map_legend = function(){
 
 
 
-
 /**
 * RENDER_EXPORT_DATA_BUTTONS
 * @return promise : DOM node
@@ -242,3 +241,47 @@ page.render_export_data_buttons = function() {
 
 	return fragment
 };//end render_export_data_buttons
+
+
+
+/**
+* RENDER_LEGEND
+* Genericunified legend renderer
+* @return promise : DOM node
+*/
+page.render_legend = function(options) {
+	
+	const self = this
+
+	// options
+		const value = options.value || ''
+		const style = options.style || 'median'
+
+	// convert text nodes into span nodes
+		// const regex = / /g;
+		// const parsed_node = document.createElement("div")
+		// 	  parsed_node.innerHTML	= value
+
+		// const textNodes = Array.from(parsed_node.childNodes).filter(node => node.nodeType===3 && node.textContent.trim().length > 0)
+		// 		console.log("textNodes:",textNodes);
+
+		// textNodes.forEach(node => {
+		// 	// node.textContent = node.textContent.replace(regex, '&nbsp;')
+		// 	const span = document.createElement('span');
+		// 	node.after(span);
+		// 	span.appendChild(node);
+		// });
+		// console.log("parsed_node:",parsed_node);
+
+	const legend_node = common.create_dom_element({
+		element_type	: "div",
+		class_name		: "legend_box " + style,
+		inner_html		: value.trim()
+	})	
+	// while (parsed_node.hasChildNodes()) {
+	// 	legend_node.appendChild(parsed_node.firstChild);
+	// }
+	
+
+	return legend_node
+};//end render_legend

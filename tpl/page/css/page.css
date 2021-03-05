@@ -1252,4 +1252,47 @@ input[type=button].btn.button_download.unactive {
   opacity: 0.15;
   pointer-events: none;
 }
+.legend_box {
+  display: inline-block;
+  margin: 0;
+  position: relative;
+  color: #000000;
+  font-weight: 400;
+}
+.legend_box > img {
+  height: 100%;
+  position: relative;
+}
+.legend_box.small {
+  font-size: 16px !important;
+  line-height: 16px;
+  height: 16px;
+}
+.legend_box.median {
+  font-size: 32px !important;
+  line-height: 32px;
+  height: 32px;
+  top: -8px;
+}
+.legend_box.median > img {
+  top: 8px;
+}
+.legend_box.big {
+  font-size: 64px !important;
+  line-height: 64px;
+  height: 64px;
+  top: -16px;
+}
+.legend_box.big > img {
+  top: 16px;
+}
+.legend_box.huge {
+  font-size: 128px !important;
+  line-height: 128px;
+  height: 128px;
+  top: -32px;
+}
+.legend_box.huge > img {
+  top: 32px;
+}
 /*# sourceMappingURL=page.css.map */

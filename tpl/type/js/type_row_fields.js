@@ -30,11 +30,12 @@ var type_row_fields = {
 				self.catalog_hierarchy(item, "catalog_hierarchy")
 			)
 
-		const identify_coin = common.create_dom_element({
-			element_type	: "div",
-			class_name		: "identify_coin_wrapper gallery",
-			parent 			: fragment
-		})
+		// identify_coin_wrapper
+			const identify_coin = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "identify_coin_wrapper gallery",
+				parent			: fragment
+			})
 
 		// ref_coins_image_obverse
 			identify_coin.appendChild(
@@ -67,9 +68,17 @@ var type_row_fields = {
 			)
 
 		// legend_obverse
-			fragment.appendChild(
-				self.default(item, "legend_obverse", page.local_to_remote_path)
-			)
+			// fragment.appendChild(
+			// 	self.default(item, "legend_obverse", page.local_to_remote_path)
+			// )
+			if (item.legend_obverse) {
+				fragment.appendChild(
+					page.render_legend({
+						value : item.legend_obverse,
+						style : 'median legend_obverse_box'
+					})
+				)
+			}
 
 		// design_reverse
 			fragment.appendChild(
@@ -82,9 +91,17 @@ var type_row_fields = {
 			)
 
 		// legend_reverse
-			fragment.appendChild(
-				self.default(item, "legend_reverse", page.local_to_remote_path)
-			)
+			// fragment.appendChild(
+			// 	self.default(item, "legend_reverse", page.local_to_remote_path)
+			// )
+			if (item.legend_reverse) {
+				fragment.appendChild(
+					page.render_legend({
+						value : item.legend_reverse,
+						style : 'median legend_reverse_box'
+					})
+				)
+			}
 
 		// public_info
 			fragment.appendChild(
@@ -114,6 +131,7 @@ var type_row_fields = {
 					return label +": "+ ar_final.join(" | ")
 				})
 			)
+		
 		// bibliography
 			const ar_references = item.bibliography_data
 				fragment.appendChild(
@@ -146,14 +164,12 @@ var type_row_fields = {
 				}
 			}
 
-		// // catalog hierarchy
-		// 	fragment.appendChild(
-		// 		self.default(item, "section_id", function(value){
-		// 			return "<em>Info about current type catalog hierarchy. Catalog section_id: " + item["catalogue_data"] + "</em>"
-		// 		})
-		// 	)
-
-
+		// catalog hierarchy
+			// 	fragment.appendChild(
+			// 		self.default(item, "section_id", function(value){
+			// 			return "<em>Info about current type catalog hierarchy. Catalog section_id: " + item["catalogue_data"] + "</em>"
+			// 		})
+			// 	)
 
 		// items (ejemplares) list
 			if (item._coins_group && item._coins_group.length>0) {
@@ -193,7 +209,6 @@ var type_row_fields = {
 					self.hoards_and_findspots(item, label)
 				)
 			}
-
 
 		// row_wrapper
 			const row_wrapper = common.create_dom_element({
@@ -379,6 +394,7 @@ var type_row_fields = {
 
 		return line
 	},//end catalog_hierarchy
+
 
 
 	image : function(item, name) {

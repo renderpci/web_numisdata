@@ -2,7 +2,7 @@
 
 
 
-var mint_rows = {
+var mints_rows = {
 
 
 	ar_rows : [],
@@ -17,13 +17,33 @@ var mint_rows = {
 		
 		const fragment = new DocumentFragment()
 
-		// wrapper
-			const wrapper = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "row_wrapper",
-				parent			: fragment
-			})
-			
+	// wrapper
+		const wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "mints_row_wrapper",
+			parent			: fragment
+		})
+
+		const name = row.name
+		const mint_id = row.section_id
+		const mint_uri	= page_globals.__WEB_ROOT_WEB__ + "/mint/" + mint_id
+		const mint_uri_text	= "<a class=\"icon_link\" href=\""+mint_uri+"\"></a> "
+
+		common.create_dom_element({
+			element_type	: "a",
+			inner_html  	: row.name + mint_uri_text,
+			class_name		: "name",
+			href 			: mint_uri,
+			parent 			: wrapper
+		})
+
+		common.create_dom_element({
+			element_type	: "div",
+			inner_html  	: row.place,
+			class_name		: "",
+			parent 			: wrapper
+		})
+
 		return fragment
 	}
 

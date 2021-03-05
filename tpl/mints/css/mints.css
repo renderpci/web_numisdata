@@ -36,6 +36,9 @@ section.result {
   border-bottom: 1px solid #dedede;
   padding-bottom: 1em;
 }
+.mints_row_wrapper .icon_link {
+  border: none;
+}
 .mints_row_wrapper div,
 .mints_row_wrapper h1 {
   font-family: cambria;
@@ -44,8 +47,10 @@ section.result {
   line-height: 1.4;
 }
 .mints_row_wrapper .name {
+  border-bottom: dotted 1px rgba(190, 135, 90, 0.5);
   font-variant: small-caps;
   letter-spacing: 1px;
+  font-size: 130%;
 }
 .mints_row_wrapper .name > * {
   display: inline-block;

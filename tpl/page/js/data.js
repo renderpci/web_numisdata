@@ -157,17 +157,6 @@ page.parse_mint_data = function(data) {
 		return row
 	}
 
-	try {	
-
-		row.name = data.mint 
-		row.place = data.place
-		row.parsed = true
-
-	} catch (error) {
-		console.error("ERROR CATCH " , error);
-		console.warn("row:",row);
-	}
-
 	return row
 
 }

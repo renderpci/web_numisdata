@@ -60,6 +60,7 @@ function form_factory() {
 			q_selected		: [], // user picked values from autocomplete options
 			q_selected_eq	: options.q_selected_eq || "=", // default internal comparator used in autocomplete	with user picked values
 			q_column		: options.q_column, // like 'term'
+			q_column_filter	: options.q_column_filter, // overwrite q_column as filter column name
 			q_splittable	: options.q_splittable || false, // depending on its value the item content will be splitted or not on loading it
 			sql_filter		: options.sql_filter || null,
 			// special double filters
@@ -177,6 +178,7 @@ function form_factory() {
 					break;
 
 				default:
+					let label_node
 					const node_input = common.create_dom_element({
 						element_type	: 'input',
 						type			: 'text',
@@ -187,7 +189,23 @@ function form_factory() {
 						parent			: group
 					})
 					node_input.addEventListener("keyup", function(e){
+						// asign value
 						form_item.q = e.target.value
+						// show label at top
+						if (node_input.value.length>0) {
+							label_node = label_node || common.create_dom_element({
+								element_type	: 'span',
+								class_name		: "form_input_label",
+								inner_html		: form_item.label,
+								parent			: group
+							})
+						}
+					})
+					node_input.addEventListener("blur", function(e){
+						if (label_node && node_input.value.length===0) {
+							label_node.remove()
+							label_node = null
+						}						
 					})
 					form_item.node_input = node_input
 					break;
@@ -725,7 +743,7 @@ function form_factory() {
 
 					// main column search item
 						filter[op].push({
-							field	: q_column,
+							field	: form_item.q_column_filter || q_column,
 							value	: `'${value_parsed}'`,
 							op		: form_item.eq, // 'LIKE',
 							group	: q_column
@@ -805,7 +823,7 @@ function form_factory() {
 						}
 
 					// sql_filter
-						const sql_filter = self.parse_sql_filter(filter) // + ' AND `'+q_column+'`!=\'\''
+						const sql_filter = self.parse_sql_filter(filter) // + ' AND `'+q_column+'` IS NOT NULL' // + ' AND `'+q_column+'`!=\'\''
 
 					// search
 						data_manager.request({
@@ -828,6 +846,8 @@ function form_factory() {
 							for (let i = 0; i < len; i++) {
 
 								const item = result[i]
+
+								if (!item.name) { continue; }
 
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)

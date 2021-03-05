@@ -426,30 +426,30 @@ var catalog = {
 
 		// legend_obverse
 			self.form.item_factory({
-				id 			: "legend_obverse",
-				name 		: "legend_obverse",
-				label		: tstring.legend_obverse || "legend obverse",
-				q_column 	: "ref_type_legend_obverse",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
+				id				: "legend_obverse",
+				name			: "legend_obverse",
+				label			: tstring.legend_obverse || "legend obverse",
+				q_column		: "ref_type_legend_obverse",
+				q_column_filter	: "ref_type_legend_transcription_obverse",
+				eq_in			: "%",
+				is_term			: false,
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.activate_autocomplete(form_item);
 				}
 			})
 
 		// legend_reverse
 			self.form.item_factory({
-				id 			: "legend_reverse",
-				name 		: "legend_reverse",
-				label		: tstring.legend_reverse || "legend reverse",
-				q_column 	: "ref_type_legend_reverse",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
+				id				: "legend_reverse",
+				name			: "legend_reverse",
+				label			: tstring.legend_reverse || "legend reverse",
+				q_column		: "ref_type_legend_reverse",
+				q_column_filter	: "ref_type_legend_transcription_reverse",
+				eq_in			: "%",
+				is_term			: false,
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.activate_autocomplete(form_item);
 				}
 			})

@@ -53,12 +53,13 @@
 	.tree_wrapper {
 		width: 100%;
 		padding: 2em;
+		padding-left: 0;
 
 		
 		// every level
 		.tree_node {
 			margin-left: 1.65em;
-
+			
 			>span {
 				vertical-align: text-bottom;
 				font-size: 1.15em;
@@ -76,13 +77,16 @@
 				font-weight: 400;
 
 				&.hilite {
-					background-color: @qdp_yellow;
+					background-color: @color_gold_logo;					
 					padding: 0.15em;
 					padding-left: 0.35em;
 					padding-right: 0.35em;
 					border-radius: 0.15em;
 					vertical-align: text-top;
-					line-height: 0.65em;   
+					line-height: 0.65em;
+					color: white;
+					padding-top: 0.26em;
+					height: 1.25em;
 				}
 
 				small {
@@ -150,7 +154,7 @@
 			}
 
 			>.scope_note {
-				background-color: #94c67c;
+				background-color: @color_gold_logo;
 				padding: 0.75em;
 				line-height: 1.4em;
 				color: #ffffff;

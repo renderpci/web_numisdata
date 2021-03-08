@@ -124,7 +124,8 @@ var thesaurus =  {
 			'space',
 			'time',
 			'tld',
-			'relations'
+			'mib_bibliography'
+			// 'relations'
 		]
 
 		// sort vars
@@ -243,6 +244,7 @@ var thesaurus =  {
 						? [self.term_id]
 						: null
 					self.data_clean	= page.parse_tree_data(ar_rows, hilite_terms) // prepares data to use in list
+						console.log("self.data_clean:",self.data_clean);
 					// temporal 
 						// console.log("self.data_clean:",self.data_clean);
 						// for (let i = 0; i < self.clean_data.length; i++) {

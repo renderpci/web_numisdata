@@ -274,7 +274,7 @@ var type_row_fields = {
 				// 	parent			: line
 				// })
 
-				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
+				const catalog_url = page_globals.__WEB_BASE_URL__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
 
 				const prompt_label = common.create_dom_element({
 					element_type	: "a",

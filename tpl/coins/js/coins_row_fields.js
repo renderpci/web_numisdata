@@ -48,13 +48,12 @@ var coins_row_fields = {
 			if (row.type != null){
 
 				const type = row.type
-				const type_id = JSON.parse(row.type_data)
-				const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id[0]
+				const type_id = JSON.parse(row.type_data[0])
+				console.log(row.type_data[0])
+				const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id
 				const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
 
 				if (self.last_type == null){
-
-
 					common.create_dom_element({
 						element_type	: "a",
 						inner_html  	: "MIB "+ type + type_uri_text,

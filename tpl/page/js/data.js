@@ -890,3 +890,191 @@ page.parse_ts_web = function(rows) {
 
 
 
+/**
+* PARSE_TREE_DATA
+* Parse rows data to use in tree_factory (thesaurus tables)
+* Table ts_thematic, ts_technique, ts_onomastic, ts_material
+*/
+page.parse_tree_data = function(ar_rows, hilite_terms) {
+		console.log("ar_rows:",ar_rows);
+	const data = []
+
+	// sample 
+		// childrens: "[{"type":"dd48","section_id":"2","section_tipo":"technique1","from_component_tipo":"hierarchy49"},{"type":"dd48","section_id":"3","section_tipo":"technique1","from_component_tipo":"hierarchy49"}]"
+		// code: "1191026"
+		// dd_relations: null
+		// descriptor: "yes"
+		// illustration: null
+		// indexation: null
+		// model: null
+		// norder: "0"
+		// parent: "["hierarchy1_273"]"
+		// related: ""
+		// scope_note: "En el presente Tesauro el empleo del término es más restrictivo, ya que se aplica a los procedimientos técnicos empleados en la elaboración de bienes culturales."
+		// section_id: "1"
+		// space: "{"alt":16,"lat":"39.462571","lon":"-0.376295","zoom":12}"
+		// table: "ts_technique,ts_material"
+		// term: "Técnica"
+		// term_id: "technique1_1"
+		// time: null
+		// tld: "technique1"
+
+	const ar_parse = ['parent','childrens','space','mib_bibliography'] // 
+	function decode_field(field) {
+		if (field) {
+			return JSON.parse(field)
+		}
+		return null;
+	}
+	function parse_item(item){
+		for (let i = ar_parse.length - 1; i >= 0; i--) {
+			const name = ar_parse[i]
+			item[name] = decode_field(item[name])
+		}
+
+		return item
+	}
+
+	const ar_rows_length = ar_rows.length
+	for (let i = 0; i < ar_rows_length; i++) {
+		
+		// parse json encoded strings
+			const item = parse_item(ar_rows[i])
+
+		// resolve relations images url
+			// if (item.relations && item.relations.length>0) {
+			// 	for (let j = item.relations.length - 1; j >= 0; j--) {
+					
+			// 		item.relations[j].image_url = item.relations[j].image
+			// 			? common.get_media_engine_url(item.relations[j].image, 'image')
+			// 			: __WEB_TEMPLATE_WEB__ + '/assets/images/default.jpg'
+
+			// 		item.relations[j].thumb_url = item.relations[j].image
+			// 			? common.get_media_engine_url(item.relations[j].image, 'image', 'thumb')
+			// 			: __WEB_TEMPLATE_WEB__ + '/assets/images/default.jpg'
+
+			// 		item.relations[j].path = page.section_tipo_to_template(item.relations[j].section_tipo)
+			// 	}
+			// }
+					
+		data.push(item)
+	}
+
+	const term_id_to_remove = []
+	
+	// update_children_data recursive
+		function update_children_data(data, row){
+			
+			if ( ((!row.childrens || row.childrens.length===0) ) // && (!row.mib_bibliography || row.mib_bibliography.length===0)
+				|| row.descriptor!=='yes') {
+
+				if (!row.parent) {
+					console.warn("parent not found for row:",row );
+					return true
+				}
+
+				const parent_term_id	= row.parent[0];
+				const parent_row		= data.find(item => item.term_id===parent_term_id)
+				if (parent_row && parent_row.childrens && parent_row.childrens.length>0) {
+					
+					const child_key = parent_row.childrens.findIndex(el => el.section_tipo===row.tld && el.section_id===row.section_id)
+					// console.log("child_key:",child_key, row.term_id, row);
+					if (child_key!==-1) {
+						
+						const term = row.term
+						
+						// ND cases. Before remove, add ND term to parent
+							if (row.descriptor==='no') {
+								if (parent_row.nd) {
+									parent_row.nd.push(term)
+									parent_row.nd_term_id.push(row.term_id) // useful for search
+								}else{
+									parent_row.nd = [term]
+									parent_row.nd_term_id = [row.term_id]
+								}
+								// console.log("parent_row.nd:", parent_row.nd, parent_row.term_id, row.term_id);
+							}
+						
+						// remove me as child
+						parent_row.childrens.splice(child_key, 1)
+
+						// recursion with parent
+						update_children_data(data, parent_row)
+					}
+				}
+				// set to remove
+				term_id_to_remove.push(row.term_id)
+			}
+
+			return true
+		}
+
+	// remove unused terms
+		const data_length = ar_rows_length
+		// for (let i = 0; i < data_length; i++) {
+		for (let i = data_length - 1; i >= 0; i--) {
+
+			const row = data[i]
+			
+			const parent_term_id = (row.parent && row.parent[0]) ? row.parent[0] : false
+			if (!parent_term_id) {
+				console.warn("Ignored undefined parent_term_id:",row.term_id, row );
+				// set to remove
+				term_id_to_remove.push(row.term_id)
+				continue
+			}
+
+			// update children data
+			// update_children_data(data, row)
+		}
+		if (term_id_to_remove.length>0) {
+			console.warn("term_id_to_remove:",term_id_to_remove);
+		}
+			
+
+	// remove unused terms
+		const data_clean = data.filter(el => term_id_to_remove.indexOf(el.term_id)===-1);
+	
+	// open hilite parent terms (recursive)
+		for (let i = 0; i < data_clean.length; i++) {
+			const row = data_clean[i]
+			
+			// hilite_terms (ussually one term from user request url like /thesaurus/technique1_1)
+				if (hilite_terms && (hilite_terms.indexOf(row.term_id)!==-1 || (row.nd_term_id && hilite_terms.indexOf(row.nd_term_id)!==-1)) ) {
+					row.hilite = true
+				}
+				if (hilite_terms) {
+					if (hilite_terms.indexOf(row.term_id)!==-1) {
+						// direct
+						row.hilite = true
+					}else if(row.nd_term_id) {
+						// using nd
+						for (let i = 0; i < row.nd_term_id.length; i++) {
+							if (hilite_terms.indexOf(row.nd_term_id[i])!==-1) {
+								row.hilite = true
+								break;
+							}
+						}
+					}						
+				}
+			
+			if (row.hilite===true) {
+				set_status_as_opened(data_clean, row, false)
+			}
+		}
+		function set_status_as_opened(data_clean, row, recursion) {
+			const parent_term_id	= row.parent[0]
+			const parent_row		= data_clean.find(item => item.term_id===parent_term_id)
+			if (parent_row) {
+				parent_row.status = "opened"
+				set_status_as_opened(data_clean, parent_row, true)
+			}
+		}
+	
+
+	return data_clean
+}//end parse_tree_data
+
+
+
+

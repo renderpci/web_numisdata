@@ -13,6 +13,7 @@
 	// @codekit-append "../../../web_app/factory/form_factory.js";
 	// @codekit-append "../../../web_app/factory/map_factory.js";
 	// @codekit-append "../../../web_app/factory/list_factory.js";
+	// @codekit-append "../../../web_app/factory/tree_factory.js";
 
 
 // app_utils. Note that we include here the MINIFIED version (!)

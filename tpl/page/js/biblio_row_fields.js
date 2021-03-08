@@ -226,20 +226,20 @@ var biblio_row_fields = {
 						})
 					}
 
-				// volume
-					if (biblio_object.volume) {
+				// volume (DEACTIVATED. IS EQUAL TO 'title_secondary')
+					// if (biblio_object.volume) {
 
-						const text_content = (biblio_object.serie.length>0)
-							? ", "+biblio_object.volume
-							: biblio_object.volume
+					// 	const text_content = (biblio_object.serie.length>0)
+					// 		? ", "+biblio_object.volume
+					// 		: biblio_object.volume
 
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value volume grey italic",
-							text_content 	: text_content,
-							parent 			: line
-						})
-					}
+					// 	common.create_dom_element({
+					// 		element_type 	: "div",
+					// 		class_name 		: "info_value volume grey italic",
+					// 		text_content 	: text_content,
+					// 		parent 			: line
+					// 	})
+					// }
 
 				// other_people_info : name and role other_people_name
 					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {

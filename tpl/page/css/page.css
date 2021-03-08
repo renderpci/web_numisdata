@@ -687,6 +687,9 @@ body {
 p img.svg {
   vertical-align: middle;
 }
+nav ul {
+  margin: 0;
+}
 .loading {
   opacity: 0.4 !important;
 }

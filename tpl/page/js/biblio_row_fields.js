@@ -217,6 +217,20 @@ var biblio_row_fields = {
 								parent 			: line
 							})
 						}
+					// volume
+						if (biblio_object.volume) {
+
+							const volume = (biblio_object.volume)
+								? ", "+biblio_object.volume
+								: ""
+
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value volume grey italic",
+								text_content 	: volume,
+								parent 			: line
+							})
+						}
 
 				break;
 

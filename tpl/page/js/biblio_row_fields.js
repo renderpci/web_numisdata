@@ -479,7 +479,7 @@ var biblio_row_fields = {
 
 			// authors
 				const authors = (biblio_object.ref_publications_authors)
-					? biblio_object.ref_publications_authors + " "
+					? biblio_object.ref_publications_authors.replace(/ \| /g,'; ')
 					: ""
 
 				common.create_dom_element({
@@ -490,7 +490,7 @@ var biblio_row_fields = {
 
 			// date
 				const date = (biblio_object.ref_publications_date)
-					? "("+biblio_object.ref_publications_date + "): "
+					? " ("+biblio_object.ref_publications_date + "): "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -528,7 +528,7 @@ var biblio_row_fields = {
 
 			// magazine number ref_publications_magazine_number	regular
 				const magazine_number = (biblio_object.ref_publications_magazine_number)
-					? " " +biblio_object.ref_publications_magazine_number + ", "
+					? " " +biblio_object.ref_publications_magazine_number
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -581,8 +581,8 @@ var biblio_row_fields = {
 
 			// title colective ref_publications_title_colective	cursiva
 				const title_colective = (biblio_object.ref_publications_title_colective)
-					? " <em>" +biblio_object.ref_publications_title_colective + " </em>"
-					: ""
+					? '<em>' +biblio_object.ref_publications_title_colective + '</em>, '
+					: ''
 				common.create_dom_element({
 					element_type	: "span",
 					inner_html		: title_colective,
@@ -591,8 +591,8 @@ var biblio_row_fields = {
 
 			// title colective alt ref_publications_title_colective_alt	cursiva
 				const title_colective_alt = (biblio_object.ref_publications_title_colective_alt)
-					? " <em>" +biblio_object.ref_publications_title_colective_alt + "</em>"
-					: ""
+					? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>, '
+					: ''
 				common.create_dom_element({
 					element_type	: "span",
 					inner_html		: title_colective_alt,
@@ -601,7 +601,7 @@ var biblio_row_fields = {
 
 			// place
 				const place = (biblio_object.ref_publications_place)
-					? ", " +biblio_object.ref_publications_place + " "
+					? " " +biblio_object.ref_publications_place + ""
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -611,7 +611,7 @@ var biblio_row_fields = {
 
 			// pages
 				const pages = (biblio_object.pages)
-					? ", p. " +biblio_object.pages + " "
+					? ", p. " +biblio_object.pages + ""
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -621,7 +621,7 @@ var biblio_row_fields = {
 
 			// sheet
 				const sheet = (biblio_object.sheet)
-					? ", "+ biblio_object.sheet + " "
+					? ", "+ biblio_object.sheet + ""
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -631,7 +631,7 @@ var biblio_row_fields = {
 
 			// reference
 				const reference = (biblio_object.reference)
-					? ", n. " +biblio_object.reference + " "
+					? ", n. " +biblio_object.reference + ""
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -656,7 +656,7 @@ var biblio_row_fields = {
 					: ''
 
 				const link = (url)
-					? "<a href=\"" + url +"\">"+url_title+" </a> "
+					? " | <a href=\"" + url +"\">"+url_title+" </a> "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",

@@ -57,13 +57,27 @@ var type_row_fields = {
 				self.id_line(item, "id_line")
 			)
 
+		// sides_wrapper
+		const sides_wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "sides_wrapper",
+			parent			: fragment
+		})
+
+		// obverse_info_wrapper
+		const obverse_wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "obverse_wrapper",
+			parent			: sides_wrapper
+		})
+
 		// design_obverse
-			fragment.appendChild(
+			obverse_wrapper.appendChild(
 				self.default(item, "design_obverse")
 			)
 
 		// symbol_obverse
-			fragment.appendChild(
+			obverse_wrapper.appendChild(
 				self.default(item, "symbol_obverse")
 			)
 
@@ -72,7 +86,7 @@ var type_row_fields = {
 			// 	self.default(item, "legend_obverse", page.local_to_remote_path)
 			// )
 			if (item.legend_obverse) {
-				fragment.appendChild(
+				obverse_wrapper.appendChild(
 					page.render_legend({
 						value : item.legend_obverse,
 						style : 'median legend_obverse_box'
@@ -80,13 +94,20 @@ var type_row_fields = {
 				)
 			}
 
+		// reverse_info_wrapper
+		const reverse_wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "reverse_wrapper",
+			parent			: sides_wrapper
+		})
+
 		// design_reverse
-			fragment.appendChild(
+			reverse_wrapper.appendChild(
 				self.default(item, "design_reverse")
 			)
 
 		// symbol_reverse
-			fragment.appendChild(
+			reverse_wrapper.appendChild(
 				self.default(item, "symbol_reverse")
 			)
 
@@ -95,7 +116,7 @@ var type_row_fields = {
 			// 	self.default(item, "legend_reverse", page.local_to_remote_path)
 			// )
 			if (item.legend_reverse) {
-				fragment.appendChild(
+				reverse_wrapper.appendChild(
 					page.render_legend({
 						value : item.legend_reverse,
 						style : 'median legend_reverse_box'

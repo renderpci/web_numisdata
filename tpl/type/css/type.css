@@ -24,6 +24,17 @@
 .result > div {
   margin-bottom: 2em;
 }
+.result .row_wrapper .sides_wrapper {
+  display: flex;
+  flex-flow: row;
+  margin-top: 1em;
+}
+.result .row_wrapper .sides_wrapper .obverse_wrapper {
+  width: 50%;
+}
+.result .row_wrapper .sides_wrapper .reverse_wrapper {
+  width: 50%;
+}
 .result .row_wrapper .info_line.inline {
   display: inline-block;
 }

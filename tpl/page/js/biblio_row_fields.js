@@ -581,7 +581,7 @@ var biblio_row_fields = {
 
 			// title colective ref_publications_title_colective	cursiva
 				const title_colective = (biblio_object.ref_publications_title_colective)
-					? " <em>" +biblio_object.ref_publications_title_colective + ", </em>"
+					? " <em>" +biblio_object.ref_publications_title_colective + " </em>"
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -591,7 +591,7 @@ var biblio_row_fields = {
 
 			// title colective alt ref_publications_title_colective_alt	cursiva
 				const title_colective_alt = (biblio_object.ref_publications_title_colective_alt)
-					? " <em>" +biblio_object.ref_publications_title_colective_alt + ", </em>"
+					? " <em>" +biblio_object.ref_publications_title_colective_alt + "</em>"
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -601,7 +601,7 @@ var biblio_row_fields = {
 
 			// place
 				const place = (biblio_object.ref_publications_place)
-					? "" +biblio_object.ref_publications_place + ". "
+					? ", " +biblio_object.ref_publications_place + " "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -611,7 +611,7 @@ var biblio_row_fields = {
 
 			// pages
 				const pages = (biblio_object.pages)
-					? " p. " +biblio_object.pages + ", "
+					? ", p. " +biblio_object.pages + " "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -621,7 +621,7 @@ var biblio_row_fields = {
 
 			// sheet
 				const sheet = (biblio_object.sheet)
-					? ""+ biblio_object.sheet + ", "
+					? ", "+ biblio_object.sheet + " "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -631,13 +631,20 @@ var biblio_row_fields = {
 
 			// reference
 				const reference = (biblio_object.reference)
-					? " n. " +biblio_object.reference + ". "
+					? ", n. " +biblio_object.reference + " "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
 					inner_html		: reference,
 					parent			: line
 				})
+
+			// final point
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: '.',
+					parent			: line
+					})
 
 			// URI
 				const url_title = (biblio_object.ref_publications_url)

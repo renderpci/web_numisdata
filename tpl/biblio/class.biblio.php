@@ -117,7 +117,7 @@ class biblio {
 			'magazine',
 			'serie',
 			'physical_description',
-			'title_secundary',
+			'title_secondary',
 			'authors_secondary',
 			'other_people',
 			'place',
@@ -126,7 +126,7 @@ class biblio {
 			'pdf',
 			'pdf_uri',
 			'descriptors',
-			'volume',
+			// 'volume',
 			'other_people_name',
 			'other_people_role'
 		];

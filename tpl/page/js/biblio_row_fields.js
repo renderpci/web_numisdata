@@ -104,7 +104,7 @@ var biblio_row_fields = {
 			final_date = typeof(ar_date[0])!=="undefined"
 				? parseInt(ar_date[0])
 				: ''
-				final_date = final_date + "-" + parseInt(ar_date[1])
+				final_date = final_date //+ "-" + parseInt(ar_date[1])
 
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
 				final_date = final_date + "-" + parseInt(ar_date[2])
@@ -184,6 +184,7 @@ var biblio_row_fields = {
 			})
 
 		switch(typology){
+			//new
 
 			case 'book': // book
 					if (biblio_object.place) {
@@ -203,6 +204,35 @@ var biblio_row_fields = {
 							parent 			: line
 						})
 					}
+					// volume
+						if (biblio_object.volume) {
+
+							const volume = (biblio_object.volume)
+								? ", "+biblio_object.volume
+								: ""
+
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value volume grey italic",
+								text_content 	: volume,
+								parent 			: line
+							})
+						}
+					// volume
+						if (biblio_object.volume) {
+
+							const volume = (biblio_object.volume)
+								? ", "+biblio_object.volume
+								: ""
+
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "info_value volume grey italic",
+								text_content 	: volume,
+								parent 			: line
+							})
+						}
+
 				break;
 
 			default: // article, etc.
@@ -226,20 +256,20 @@ var biblio_row_fields = {
 						})
 					}
 
-				// volume
-					if (biblio_object.volume) {
+				// volume (DEACTIVATED. IS EQUAL TO 'title_secondary')
+					// if (biblio_object.volume) {
 
-						const text_content = (biblio_object.serie.length>0)
-							? ", "+biblio_object.volume
-							: biblio_object.volume
+					// 	const text_content = (biblio_object.serie.length>0)
+					// 		? ", "+biblio_object.volume
+					// 		: biblio_object.volume
 
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value volume grey italic",
-							text_content 	: text_content,
-							parent 			: line
-						})
-					}
+					// 	common.create_dom_element({
+					// 		element_type 	: "div",
+					// 		class_name 		: "info_value volume grey italic",
+					// 		text_content 	: text_content,
+					// 		parent 			: line
+					// 	})
+					// }
 
 				// other_people_info : name and role other_people_name
 					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
@@ -412,7 +442,7 @@ var biblio_row_fields = {
 
 			// date
 				const date = (biblio_object.ref_publications_date)
-					? "("+biblio_object.ref_publications_date + ") "
+					? "("+biblio_object.ref_publications_date + "): "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -420,17 +450,24 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
-			// title
+			// title if book italics 1, 4, if not regular
+			// ref_publications_typology
+
+
 				const title = (biblio_object.ref_publications_title)
 					? biblio_object.ref_publications_title + ". "
 					: ""
+				const format_title = (biblio_object.ref_publications_typology === "[1]" || biblio_object.ref_publications_typology === "[4]")
+					? "<em>" + title + "</em>"
+					: title
+
 				common.create_dom_element({
 					element_type	: "span",
-					inner_html		: title,
+					inner_html		: format_title,
 					parent			: line
 				})
 
-			// magazine
+			// magazine in italics
 				const magazine = (biblio_object.ref_publications_magazine)
 					? "<em>"+biblio_object.ref_publications_magazine + ". </em>"
 					: ""
@@ -441,6 +478,45 @@ var biblio_row_fields = {
 				})
 
 
+			// magazine number ref_publications_magazine_number	regular
+				const magazine_number = (biblio_object.ref_publications_magazine_number)
+					? " " +biblio_object.ref_publications_magazine_number + ", "
+					: ""
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: magazine_number,
+					parent			: line
+				})
+
+			// title colective ref_publications_title_colective	cursiva
+				const title_colective = (biblio_object.ref_publications_title_colective)
+					? " <em>" +biblio_object.ref_publications_title_colective + ", </em>"
+					: ""
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: title_colective,
+					parent			: line
+				})
+
+			// title colective alt ref_publications_title_colective_alt	cursiva
+				const title_colective_alt = (biblio_object.ref_publications_title_colective_alt)
+					? " <em>" +biblio_object.ref_publications_title_colective_alt + ", </em>"
+					: ""
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: title_colective_alt,
+					parent			: line
+				})
+
+			// place
+				const place = (biblio_object.ref_publications_place)
+					? "" +biblio_object.ref_publications_place + ". "
+					: ""
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: place,
+					parent			: line
+				})
 
 			// pages
 				const pages = (biblio_object.pages)
@@ -452,19 +528,9 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
-			// reference
-				const reference = (biblio_object.reference)
-					? " " +biblio_object.reference + ". "
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: reference,
-					parent			: line
-				})
-
 			// sheet
 				const sheet = (biblio_object.sheet)
-					? " s." +biblio_object.sheet + ". "
+					? ""+ biblio_object.sheet + ", "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -472,13 +538,13 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
-			// place
-				const place = (biblio_object.ref_publications_place)
-					? " s." +biblio_object.ref_publications_place + ". "
+			// reference
+				const reference = (biblio_object.reference)
+					? " n. " +biblio_object.reference + ". "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
-					inner_html		: place,
+					inner_html		: reference,
 					parent			: line
 				})
 

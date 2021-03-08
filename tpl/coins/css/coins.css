@@ -16,6 +16,11 @@
 .result .image {
   height: 6em;
 }
+@media screen and (max-width: 736px) {
+  .result .image {
+    height: 8em;
+  }
+}
 .rows_container {
   margin-bottom: 2em;
 }
@@ -34,13 +39,13 @@
   align-content: space-between;
   padding-left: 1em;
 }
-@media screen and (max-width: 736px) {
+@media screen and (max-width: 625px) {
   .rows_container .row_wrapper {
     flex-direction: column-reverse;
   }
 }
 .rows_container .row_wrapper .info_container {
-  width: 70%;
+  flex-grow: 1;
 }
 @media screen and (max-width: 736px) {
   .rows_container .row_wrapper .info_container {
@@ -48,7 +53,6 @@
   }
 }
 .rows_container .row_wrapper .img_container {
-  width: 30%;
   text-align: right;
   flex-direction: row;
 }

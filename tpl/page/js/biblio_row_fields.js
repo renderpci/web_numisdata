@@ -498,9 +498,9 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
+
 			// title if book italics 1, 4, if not regular
 			// ref_publications_typology
-
 
 				const title = (biblio_object.ref_publications_title)
 					? biblio_object.ref_publications_title + ". "
@@ -536,6 +536,49 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
+
+			// other_people_info : name and role other_people_name
+				if (biblio_object.ref_publications_other_people_name && biblio_object.ref_publications_other_people_name.length>0) {
+					const other_people_name = biblio_object.ref_publications_other_people_name.split(" | ");
+					const other_people_role = biblio_object.ref_publications_other_people_role.split(" | ")
+
+					const particle_in = tstring.in || 'In'
+
+					common.create_dom_element({
+							element_type 	: "span",
+							text_content 	: particle_in,
+							parent 			: line
+						})
+
+					const other_people_length = other_people_name.length
+					for (let g = 0; g < other_people_length; g++) {
+
+						const name = other_people_name[g]
+
+						const text_content = (g!==0)
+							? ", "+name
+							: " "+name
+
+						common.create_dom_element({
+							element_type 	: "span",
+							text_content 	: text_content,
+							parent 			: line
+						})
+					}
+
+					const role = typeof other_people_role[0]!=='undefined'
+						? ' ('+other_people_role[0].toLowerCase()+'.): '
+						: ' '
+
+					common.create_dom_element({
+							element_type 	: "span",
+							text_content 	: role,
+							parent 			: line
+						})
+				}
+
+
+
 			// title colective ref_publications_title_colective	cursiva
 				const title_colective = (biblio_object.ref_publications_title_colective)
 					? " <em>" +biblio_object.ref_publications_title_colective + ", </em>"
@@ -565,38 +608,6 @@ var biblio_row_fields = {
 					inner_html		: place,
 					parent			: line
 				})
-
-			// other_people_info : name and role other_people_name
-				if (biblio_object.ref_publications_other_people_name && biblio_object.ref_publications_other_people_name.length>0) {
-					const other_people_name = biblio_object.ref_publications_other_people_name.split(" | ");
-					const other_people_role = biblio_object.ref_publications_other_people_role.split(" | ")
-
-					const role = typeof other_people_role[0]!=='undefined'
-						? ', ('+other_people_role[0]+') '
-						: ', '
-
-					common.create_dom_element({
-							element_type 	: "span",
-							text_content 	: role,
-							parent 			: line
-						})
-
-					const other_people_length = other_people_name.length
-					for (let g = 0; g < other_people_length; g++) {
-
-						const name = other_people_name[g]
-
-						const text_content = (g!==0)
-							? ", "+name
-							: " "+name
-
-						common.create_dom_element({
-							element_type 	: "span",
-							text_content 	: text_content,
-							parent 			: line
-						})
-					}
-				}
 
 			// pages
 				const pages = (biblio_object.pages)

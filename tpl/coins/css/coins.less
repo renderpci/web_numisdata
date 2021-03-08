@@ -26,6 +26,11 @@
 
 		.image {
 			height: 6em;
+
+			@media screen and (max-width: 736px){
+				height: 8em;
+			}
+
 		}
 	}
 
@@ -50,12 +55,12 @@
 			align-content: space-between;
 			padding-left:1em;
 
-			@media screen and (max-width: 736px){
+			@media screen and (max-width: 625px){
 				flex-direction: column-reverse;
 			}
 
 			.info_container {
-				width: 70%;
+				flex-grow:1;
 
 				@media screen and (max-width: 736px){
 					width: 100%;
@@ -64,7 +69,6 @@
 			}
 
 			.img_container {
-				width: 30%;
 				text-align: right;
 				flex-direction: row;
 

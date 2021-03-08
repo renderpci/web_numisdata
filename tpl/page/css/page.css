@@ -465,6 +465,11 @@ span.form_input_label {
 .pagination > .navigator a.selected {
   background-color: #eeeeee;
 }
+@media screen and (max-width: 625px) {
+  .pagination > .navigator a.selected {
+    display: inline;
+  }
+}
 .pagination > .navigator a.unactive,
 .pagination > .navigator li.unactive {
   opacity: 0.5;
@@ -479,6 +484,24 @@ span.form_input_label {
   text-decoration: none;
   padding: 0 1.75rem;
 }
+@media screen and (max-width: 980px) {
+  .pagination > .navigator .next,
+  .pagination > .navigator .previous {
+    font-size: 0;
+    padding: 0;
+  }
+}
+@media screen and (max-width: 625px) {
+  .pagination > .navigator .page {
+    display: none;
+  }
+}
+@media screen and (max-width: 736px) {
+  .pagination > .navigator .page {
+    width: 5vw;
+    min-width: auto;
+  }
+}
 .pagination > .navigator .next:after,
 .pagination > .navigator .previous:before {
   -moz-osx-font-smoothing: grayscale;
@@ -487,16 +510,32 @@ span.form_input_label {
   font-style: normal;
   font-weight: normal;
   text-transform: none !important;
-  display: inline;
+  display: inline !important;
   color: inherit !important;
+}
+@media screen and (max-width: 980px) {
+  .pagination > .navigator .next:after,
+  .pagination > .navigator .previous:before {
+    font-size: 2vw;
+  }
 }
 .pagination > .navigator .previous:before {
   content: '\f104';
   margin-right: 0.9375em;
 }
+@media screen and (max-width: 980px) {
+  .pagination > .navigator .previous:before {
+    margin-right: 0;
+  }
+}
 .pagination > .navigator .next:after {
   content: '\f105';
   margin-left: 0.9375em;
+}
+@media screen and (max-width: 980px) {
+  .pagination > .navigator .next:after {
+    margin-left: 0;
+  }
 }
 .pagination > .spacer {
   flex: 1 1;

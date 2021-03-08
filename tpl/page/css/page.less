@@ -1016,13 +1016,14 @@
 
 			>img {
 				// top: @images_offset;
+				vertical-align: text-bottom;
 			}
 		}
 		
 		// median (type detail)
 		&.median {
 			@height : 32px;
-			@images_offset : (@height/4); // 9px;
+			@images_offset : (@height/4) - 1; // 9px;
 			font-size: @height !important;
 			line-height: @height;
 			height: @height;
@@ -1035,7 +1036,7 @@
 
 		&.big {
 			@height : 64px;
-			@images_offset : (@height/4); // 18px;
+			@images_offset : (@height/4) - 1; // 18px;
 			font-size: @height !important;
 			line-height: @height;
 			height: @height;
@@ -1048,7 +1049,7 @@
 
 		&.huge {
 			@height : 128px;
-			@images_offset : (@height/4); // 18px;
+			@images_offset : (@height/4) - 2; // 18px;
 			font-size: @height !important;
 			line-height: @height;
 			height: @height;

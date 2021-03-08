@@ -184,6 +184,7 @@ var biblio_row_fields = {
 			})
 
 		switch(typology){
+			//new
 
 			case 'book': // book
 					if (biblio_object.place) {

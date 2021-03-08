@@ -53,19 +53,24 @@ var coins_row_fields = {
 				const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id
 				const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
 
+				var mint_number = ""
+
+				if (row.mint_number != null){
+					mint_number = row.mint_number+"/"
+				}
+
 				if (self.last_type == null){
 					common.create_dom_element({
 						element_type	: "a",
-						inner_html  	: "MIB "+ type + type_uri_text,
+						inner_html  	: "MIB "+ mint_number + type + type_uri_text,
 						class_name		: "type_label",
 						href 			: type_uri,
 						parent 			: type_wrapper
 					})
 				} else if (self.last_type !== type) {
-
 					common.create_dom_element({
 						element_type	: "a",
-						inner_html  	: "MIB "+ type + type_uri_text,
+						inner_html  	: "MIB "+ mint_number + type + type_uri_text,
 						class_name		: "type_label",
 						href 			: type_uri,
 						parent 			: type_wrapper

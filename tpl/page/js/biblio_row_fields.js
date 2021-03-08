@@ -467,7 +467,7 @@ var biblio_row_fields = {
 			const publication_url = biblio_object.ref_publications_url
 
 			//check in url if has a Zenon reference for parsing
-			if (publication_url != null && publication_url.includes("Zenon")){
+			if (publication_url != null && publication_url.includes("/Record/")){
 				biblio_object = parse_zenon_bibliography(biblio_object);
 			}
 
@@ -629,12 +629,20 @@ var biblio_row_fields = {
 				})
 
 			// URI
+				const url_title = (biblio_object.ref_publications_url)
+					?  biblio_object.ref_publications_url.split(", ")[0]
+					: ''
+
 				const url = (biblio_object.ref_publications_url)
-					? "<a href=\"" + biblio_object.ref_publications_url +"\">"+biblio_object.ref_publications_url+" </a> "
+					? biblio_object.ref_publications_url.split(", ")[1]
+					: ''
+
+				const link = (url)
+					? "<a href=\"" + url +"\">"+url_title+" </a> "
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
-					inner_html		: url,
+					inner_html		: link,
 					parent			: line
 				})
 
@@ -650,9 +658,9 @@ var biblio_row_fields = {
 						biblio_data[property] = biblio_data[property].split(" # ")[0]
 
 						//erase Zenon word of url string
-						if (property === "ref_publications_url") {
-							biblio_data[property] = biblio_data[property].split(", ")[1]
-						}
+						// if (property === "ref_publications_url") {
+						// 	biblio_data[property] = biblio_data[property].split(", ")[1]
+						// }
 					}
 				}
 

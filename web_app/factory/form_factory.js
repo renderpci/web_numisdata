@@ -199,6 +199,9 @@ function form_factory() {
 								inner_html		: form_item.label,
 								parent			: group
 							})
+						}else if (label_node) {
+							label_node.remove()
+							label_node = null
 						}
 					})
 					node_input.addEventListener("blur", function(e){

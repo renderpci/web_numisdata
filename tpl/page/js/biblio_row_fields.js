@@ -505,7 +505,7 @@ var biblio_row_fields = {
 				const title = (biblio_object.ref_publications_title)
 					? biblio_object.ref_publications_title + ". "
 					: ""
-				const format_title = (biblio_object.ref_publications_typology === "[1]" || biblio_object.ref_publications_typology === "[4]")
+				const format_title = (biblio_object.ref_publications_typology === "[\"1\"]" || biblio_object.ref_publications_typology === "[\"4\"]")
 					? "<em>" + title + "</em>"
 					: title
 

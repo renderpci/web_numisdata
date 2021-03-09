@@ -1366,7 +1366,8 @@ input[type=button].btn.button_download.unactive {
   line-height: 16px;
   height: 16px;
 }
-.legend_box.small > img {
+.legend_box.small img {
+  position: relative;
   vertical-align: text-bottom;
 }
 .legend_box.median {
@@ -1375,7 +1376,8 @@ input[type=button].btn.button_download.unactive {
   height: 32px;
   top: -7px;
 }
-.legend_box.median > img {
+.legend_box.median img {
+  position: relative;
   top: 7px;
 }
 .legend_box.big {
@@ -1384,7 +1386,8 @@ input[type=button].btn.button_download.unactive {
   height: 64px;
   top: -15px;
 }
-.legend_box.big > img {
+.legend_box.big img {
+  position: relative;
   top: 15px;
 }
 .legend_box.huge {
@@ -1393,7 +1396,8 @@ input[type=button].btn.button_download.unactive {
   height: 128px;
   top: -30px;
 }
-.legend_box.huge > img {
+.legend_box.huge img {
+  position: relative;
   top: 30px;
 }
 /*# sourceMappingURL=page.css.map */

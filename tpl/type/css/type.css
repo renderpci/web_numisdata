@@ -188,8 +188,8 @@
   .result .row_wrapper .sides_wrapper .reverse_wrapper {
     width: 100%;
   }
-  .result .row_wrapper .sides_wrapper .obverse_wrapper > *,
-  .result .row_wrapper .sides_wrapper .reverse_wrapper > * {
+  .result .row_wrapper .sides_wrapper .obverse_wrapper > .info_line,
+  .result .row_wrapper .sides_wrapper .reverse_wrapper > .info_line {
     min-height: 1.5em;
   }
 }

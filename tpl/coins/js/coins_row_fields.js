@@ -65,6 +65,7 @@ var coins_row_fields = {
 						inner_html  	: "MIB "+ mint_number + type + type_uri_text,
 						class_name		: "type_label",
 						href 			: type_uri,
+						target 			: "_blank",
 						parent 			: type_wrapper
 					})
 				} else if (self.last_type !== type) {
@@ -73,6 +74,7 @@ var coins_row_fields = {
 						inner_html  	: "MIB "+ mint_number + type + type_uri_text,
 						class_name		: "type_label",
 						href 			: type_uri,
+						target 			: "_blank",
 						parent 			: type_wrapper
 					})
 				}
@@ -117,6 +119,7 @@ var coins_row_fields = {
 				inner_html  	: mint + mint_uri_text,
 				class_name		: "ceca_label",
 				href 			: mint_uri,
+				target 			: "_blank",
 				parent 			: mint_line
 			})
 

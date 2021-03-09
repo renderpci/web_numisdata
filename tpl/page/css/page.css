@@ -236,7 +236,8 @@ span.form_input_label {
 }
 .map .map_legend .legend_item img {
   height: 1em;
-  vertical-align: middle;
+  vertical-align: bottom;
+  margin-left: 2px;
 }
 .map .leaflet-container {
   height: 100%;

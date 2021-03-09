@@ -44,6 +44,13 @@
     flex-direction: column-reverse;
   }
 }
+.rows_container .row_wrapper .legend_box {
+  height: 1em;
+  font-size: 100% !important;
+}
+.rows_container .row_wrapper .legend_box img {
+  top: 0.2em;
+}
 .rows_container .row_wrapper .info_container {
   flex-grow: 1;
 }

@@ -92,6 +92,11 @@ var type_row_fields = {
 						style : 'median legend_obverse_box'
 					})
 				)
+			} else {
+				common.create_dom_element({
+					element_type 	: "div",
+					parent 			: wrapper
+				})
 			}
 
 		// reverse_info_wrapper

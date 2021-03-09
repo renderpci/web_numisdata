@@ -27,7 +27,10 @@
 .result .row_wrapper .sides_wrapper {
   display: flex;
   flex-flow: row;
+  max-width: 1000px;
+  margin: auto;
   margin-top: 1em;
+  align-content: space-between;
 }
 .result .row_wrapper .sides_wrapper .obverse_wrapper {
   width: 50%;
@@ -53,9 +56,14 @@
 .result .row_wrapper .find_wrapper div:first-child {
   font-weight: bold;
 }
+.result .row_wrapper .identify_coin_wrapper {
+  align-content: space-between;
+  margin: 0 auto;
+  max-width: 1000px;
+}
 .result .row_wrapper div.ref_coins_image_obverse,
 .result .row_wrapper div.ref_coins_image_reverse {
-  width: 16em;
+  width: 50%;
   height: 15em;
   margin: 0;
   margin-top: 1em;
@@ -84,11 +92,12 @@
 .result .row_wrapper .symbol_obverse,
 .result .row_wrapper .design_reverse,
 .result .row_wrapper .symbol_reverse {
-  padding-left: 2em;
+  text-align: center;
 }
 .result .row_wrapper .legend_box {
-  margin-left: 1.35em;
   margin-top: 0.3em;
+  text-align: center;
+  width: 100%;
 }
 .result .row_wrapper .public_info {
   margin-top: 1em;

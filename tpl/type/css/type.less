@@ -34,7 +34,10 @@
 		.sides_wrapper{
 			display:flex;
 			flex-flow:row;
-			margin-top:1em;
+			max-width: 1000px;
+			margin: auto;
+			margin-top: 1em;
+			align-content: space-between;
 
 			.obverse_wrapper {
 				width: 50%;
@@ -76,8 +79,14 @@
 		// 	vertical-align: bottom;
 		// }
 
+		.identify_coin_wrapper {
+			align-content: space-between;
+			margin: 0 auto;
+			max-width: 1000px;
+		}
+
 		div.ref_coins_image_obverse, div.ref_coins_image_reverse {
-			width: 16em;
+			width: 50%;
 			height: 15em;
 			margin: 0;
 			margin-top: 1em;
@@ -112,7 +121,8 @@
 		}
 
 		.design_obverse, .symbol_obverse, .design_reverse, .symbol_reverse {
-			padding-left: 2em;
+			//padding-left: 2em;
+			text-align:center;
 		}
 		.legend_obverse, .legend_reverse{
 			// .info_value{
@@ -134,8 +144,9 @@
 			// }
 		}
 		.legend_box {
-			margin-left: 1.35em;
 			margin-top: 0.3em;
+			text-align: center;
+			width: 100%;
 		}
 		.public_info{
 			// font-size: 2em;

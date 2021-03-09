@@ -141,7 +141,7 @@ page.parse_mint_data = function(data) {
 		if (Array.isArray(data)) {
 			const new_data = []
 			for (let i = 0; i < data.length; i++) {
-				new_data.push( page.parse_coin_data(data[i]) )
+				new_data.push( page.parse_mint_data(data[i]) )
 			}
 			return new_data
 		}
@@ -149,7 +149,7 @@ page.parse_mint_data = function(data) {
 	const row = data
 
 	if (typeof row !== 'object') {
-		console.log("parse_coin_data row:",row);
+		console.log("parse_mint_data row:",row);
 		console.trace()
 	}
 
@@ -161,6 +161,32 @@ page.parse_mint_data = function(data) {
 
 }
 
+page.parse_hoard_data = function(data) {
+	const self = this
+
+	// array case
+		if (Array.isArray(data)) {
+			const new_data = []
+			for (let i = 0; i < data.length; i++) {
+				new_data.push( page.parse_hoard_data(data[i]) )
+			}
+			return new_data
+		}
+
+	const row = data
+
+	if (typeof row !== 'object') {
+		console.log("parse_hoard_data row:",row);
+		console.trace()
+	}
+
+	if (!row || row.parsed) {
+		return row
+	}
+
+	return row
+
+}
 
 
 /**

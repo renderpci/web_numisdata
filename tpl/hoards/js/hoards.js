@@ -5,7 +5,7 @@
 
 
 
-var coins =  {
+var hoards =  {
 
 
 
@@ -90,12 +90,12 @@ var coins =  {
 				parent		: form_row
 			})
 
-		// collection
+		// name
 			self.form.item_factory({
-				id			: "collection",
-				name		: "collection",
-				label		: tstring.collection || "collection",
-				q_column	: "collection",
+				id			: "name",
+				name		: "name",
+				label		: tstring.name || "Name",
+				q_column	: "name",
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
@@ -103,17 +103,17 @@ var coins =  {
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
-						table		: 'coins'
+						table		: 'hoards'
 					})
 				}
 			})
 
-		// ref_auction
+		// place
 			self.form.item_factory({
-				id			: "ref_auction",
-				name		: "ref_auction",
-				label		: tstring.auction || "auction",
-				q_column	: "ref_auction",
+				id			: "place",
+				name		: "place",
+				label		: tstring.place || "Place",
+				q_column	: "place",
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
@@ -121,217 +121,10 @@ var coins =  {
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
-						table		: 'coins'
+						table		: 'hoards'
 					})
 				}
 			})
-
-		// mint
-			self.form.item_factory({
-				id			: "mint",
-				name		: "mint",
-				label		: tstring.mint || "mint",
-				q_column	: "mint",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// findspot
-			self.form.item_factory({
-				id			: "findspot",
-				name		: "findspot",
-				label		: tstring.findspot || "findspot",
-				q_column	: "findspot",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// hoard
-			self.form.item_factory({
-				id			: "hoard",
-				name		: "hoard",
-				label		: tstring.hoard || "hoard",
-				q_column	: "hoard",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// // material
-		// 	self.form.item_factory({
-		// 		id			: "material",
-		// 		name		: "material",
-		// 		label		: tstring.material || "Material",
-		// 		q_column	: "material",
-		// 		eq			: "LIKE",
-		// 		eq_in		: "%",
-		// 		eq_out		: "%",
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'coins'
-		// 			})
-		// 		}
-		// 	})
-
-		// // denomination
-		// 	self.form.item_factory({
-		// 		id			: "denomination",
-		// 		name		: "denomination",
-		// 		label		: tstring.denomination || "Denomination",
-		// 		q_column	: "denomination",
-		// 		eq			: "LIKE",
-		// 		eq_in		: "%",
-		// 		eq_out		: "%",
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'coins'
-		// 			})
-		// 		}
-		// 	})
-
-		// number
-			self.form.item_factory({
-				id 			: "number",
-				name 		: "number",
-				q_column 	: "type",
-				label		: tstring.number || "number",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// public_info
-			self.form.item_factory({
-				id 			: "public_info",
-				name 		: "public_info",
-				q_column 	: "public_info",
-				label		: tstring.public_info || "Public info",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// countermark_obverse
-			self.form.item_factory({
-				id			: "countermark_obverse",
-				name		: "countermark_obverse",
-				label		: tstring.countermark_obverse || "Countermark obverse",
-				q_column	: "countermark_obverse",
-				eq_in		: "%",
-				is_term		: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// countermark_reverse
-			self.form.item_factory({
-				id			: "countermark_reverse",
-				name		: "countermark_reverse",
-				label		: tstring.countermark_reverse || "Countermark reverse",
-				q_column	: "countermark_reverse",
-				eq_in		: "%",
-				is_term		: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// equivalents
-			self.form.item_factory({
-				id			: "equivalents",
-				name		: "equivalents",
-				q_column	: "ref_type_equivalents",
-				eq_in		: "%",
-				eq_out		: "%",
-				label		: tstring.equivalents || "equivalents",
-				is_term		: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'types'
-					})
-				}
-			})
-
-		// bibliography_author
-			self.form.item_factory({
-				id 			: "bibliography_author",
-				name 		: "bibliography_author",
-				q_column 	: "bibliography_author",
-				label		: tstring.authorship || "Authorship",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-
-		// bibliography_title
-			self.form.item_factory({
-				id 			: "bibliography_title",
-				name 		: "bibliography_title",
-				q_column 	: "bibliography_title",
-				label		: tstring.bibliography || "Bibliography",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
-			
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -397,13 +190,15 @@ var coins =  {
 
 		return new Promise(function(resolve){
 
-			const table		= 'coins'
+			const table		= 'hoards'
 			const ar_fields	= ['*']
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
 			const count		= true			
-			const order		= "type"
-			const resolve_portals_custom = {"mint_data" : "mints"}
+			const order		= "name"
+			const resolve_portals_custom = {
+				"bibliography_data" : "bibliographic_references"
+			}
 
 			// sql_filter
 				const filter = self.form.build_filter()
@@ -443,7 +238,7 @@ var coins =  {
 				console.log("--------------- api_response:",api_response);
 				
 				// parse data
-					const data	= page.parse_coin_data(api_response.result)
+					const data	= page.parse_hoard_data(api_response.result)
 					const total	= api_response.total
 
 					self.pagination.total	= total
@@ -498,7 +293,7 @@ var coins =  {
 	*/
 	list_row_builder : function(data, caller){
 		
-		return coins_row_fields.draw_item(data)
+		return hoards_row_fields.draw_item(data)
 	
 	}//end list_row_builder
 

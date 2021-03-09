@@ -517,7 +517,7 @@ var biblio_row_fields = {
 
 			// magazine in italics
 				const magazine = (biblio_object.ref_publications_magazine)
-					? "<em>"+biblio_object.ref_publications_magazine + ". </em>"
+					? "<em>"+biblio_object.ref_publications_magazine + " </em>"
 					: ""
 				common.create_dom_element({
 					element_type	: "span",

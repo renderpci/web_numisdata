@@ -580,9 +580,13 @@ var biblio_row_fields = {
 
 
 			// title colective ref_publications_title_colective	cursiva
-				const title_colective = (biblio_object.ref_publications_title_colective)
-					? '<em>' +biblio_object.ref_publications_title_colective + '</em>, '
-					: ''
+				const title_colective_previous = (biblio_object.ref_publications_title_colective)
+					? '<em>' +biblio_object.ref_publications_title_colective + '</em>'
+					: null
+				const title_colective = ( title_colective_previous && biblio_object.ref_publications_place)
+					? title_colective_previous +', '
+					: title_colective_previous
+
 				common.create_dom_element({
 					element_type	: "span",
 					inner_html		: title_colective,
@@ -590,9 +594,13 @@ var biblio_row_fields = {
 				})
 
 			// title colective alt ref_publications_title_colective_alt	cursiva
-				const title_colective_alt = (biblio_object.ref_publications_title_colective_alt)
-					? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>, '
-					: ''
+				const title_colective_alt_previous = (biblio_object.ref_publications_title_colective_alt)
+					? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>'
+					: null
+				const title_colective_alt = ( title_colective_alt_previous && biblio_object.ref_publications_place)
+					? title_colective_alt_previous +', '
+					: title_colective_alt_previous
+
 				common.create_dom_element({
 					element_type	: "span",
 					inner_html		: title_colective_alt,
@@ -601,7 +609,7 @@ var biblio_row_fields = {
 
 			// place
 				const place = (biblio_object.ref_publications_place)
-					? " " +biblio_object.ref_publications_place + ""
+					? " " +biblio_object.ref_publications_place
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -611,7 +619,7 @@ var biblio_row_fields = {
 
 			// pages
 				const pages = (biblio_object.pages)
-					? ", p. " +biblio_object.pages + ""
+					? ", p. " +biblio_object.pages
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -621,7 +629,7 @@ var biblio_row_fields = {
 
 			// sheet
 				const sheet = (biblio_object.sheet)
-					? ", "+ biblio_object.sheet + ""
+					? ", "+ biblio_object.sheet
 					: ""
 				common.create_dom_element({
 					element_type	: "span",
@@ -631,7 +639,7 @@ var biblio_row_fields = {
 
 			// reference
 				const reference = (biblio_object.reference)
-					? ", n. " +biblio_object.reference + ""
+					? ", n. " +biblio_object.reference
 					: ""
 				common.create_dom_element({
 					element_type	: "span",

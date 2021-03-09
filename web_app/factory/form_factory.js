@@ -75,6 +75,7 @@ function form_factory() {
 			callback		: options.callback || false, // callback function
 			list_format		: options.list_format || null,
 			wrapper			: options.wrapper || null, // like YEAR to obtain YEAR(name)
+			value_wrapper	: options.value_wrapper || null, // like ['["','"]'] to obtain ["value"]
 			// nodes (are set on build_form_node)
 			node_input		: null,
 			node_values		: null,
@@ -444,6 +445,11 @@ function form_factory() {
 						// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
 						const safe_value = value.replace(/(')/g, "''")
 
+						// item_value
+							const item_value =  (form_item.value_wrapper && form_item.value_wrapper.length>1) // like [""]
+								? form_item.value_wrapper[0] + safe_value + form_item.value_wrapper[1]
+								: safe_value
+
 						const c_group_op = "AND"
 						const c_group = {}
 							  c_group[c_group_op] = []
@@ -451,7 +457,7 @@ function form_factory() {
 						// elemet
 						const element = {
 							field		: form_item.q_column,
-							value		: (form_item.q_selected_eq==="LIKE") ? `'%${safe_value}%'` : `'${safe_value}'`,
+							value		: (form_item.q_selected_eq==="LIKE") ? `'%${item_value}%'` : `'${item_value}'`,
 							op			: form_item.q_selected_eq,
 							sql_filter	: form_item.sql_filter,
 							wrapper		: form_item.wrapper

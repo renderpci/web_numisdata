@@ -61,16 +61,16 @@
   margin: 0 auto;
   max-width: 1000px;
 }
-.result .row_wrapper div.ref_coins_image_obverse,
-.result .row_wrapper div.ref_coins_image_reverse {
+.result .row_wrapper .ref_coins_image_obverse,
+.result .row_wrapper .ref_coins_image_reverse {
   width: 50%;
   height: 15em;
   margin: 0;
   margin-top: 1em;
   position: relative;
 }
-.result .row_wrapper div.ref_coins_image_obverse > a > img,
-.result .row_wrapper div.ref_coins_image_reverse > a > img {
+.result .row_wrapper .ref_coins_image_obverse > a > img,
+.result .row_wrapper .ref_coins_image_reverse > a > img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -159,5 +159,38 @@
   list-style: circle;
   text-indent: -1em;
   padding-left: 1em;
+}
+@media screen and (min-width: 960px) {
+  #main .inner .identify_coin_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    max-width: unset;
+  }
+  #main .inner .identify_coin_wrapper .ref_coins_image_obverse,
+  #main .inner .identify_coin_wrapper .ref_coins_image_reverse {
+    width: 55%;
+  }
+  .result .row_wrapper .sides_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    max-width: unset;
+  }
+  .result .row_wrapper .sides_wrapper .legend_box,
+  .result .row_wrapper .sides_wrapper .design_obverse,
+  .result .row_wrapper .sides_wrapper .symbol_obverse,
+  .result .row_wrapper .sides_wrapper .design_reverse,
+  .result .row_wrapper .sides_wrapper .symbol_reverse {
+    text-align: left;
+  }
+  .result .row_wrapper .sides_wrapper .obverse_wrapper,
+  .result .row_wrapper .sides_wrapper .reverse_wrapper {
+    width: 100%;
+  }
+  .result .row_wrapper .sides_wrapper .obverse_wrapper > *,
+  .result .row_wrapper .sides_wrapper .reverse_wrapper > * {
+    min-height: 1.5em;
+  }
 }
 /*# sourceMappingURL=type.css.map */

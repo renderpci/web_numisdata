@@ -85,7 +85,8 @@
 			max-width: 1000px;
 		}
 
-		div.ref_coins_image_obverse, div.ref_coins_image_reverse {
+
+		.ref_coins_image_obverse, .ref_coins_image_reverse {
 			width: 50%;
 			height: 15em;
 			margin: 0;
@@ -105,9 +106,9 @@
 					border-radius: initial;
 				}
 			}
-
-
 		}
+
+
 
 		.id_line {
 			font-size: 1.2em;
@@ -334,4 +335,35 @@
 		// 		}
 		// 	}
 		// }
-}
+}//end result
+
+
+
+// update 9-3-2021 paco
+	@media screen and (min-width: 960px){	
+		#main .inner .identify_coin_wrapper {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			margin: 0;
+			max-width: unset;
+			.ref_coins_image_obverse, .ref_coins_image_reverse {
+				width: 55%;
+			}
+		}
+		.result .row_wrapper .sides_wrapper {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			margin: 0;
+			max-width: unset;
+
+			.legend_box, .design_obverse, .symbol_obverse, .design_reverse, .symbol_reverse {
+				text-align: left;
+			}
+			.obverse_wrapper, .reverse_wrapper {
+				width: 100%;
+				>* {
+					min-height: 1.5em;
+				}
+			}
+		}
+	}

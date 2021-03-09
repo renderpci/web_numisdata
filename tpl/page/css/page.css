@@ -822,6 +822,27 @@ nav ul {
 .golden-color {
   color: #be875a;
 }
+#header .pre_alert {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 60px 0 0;
+  border-color: #ff0000 transparent transparent transparent;
+}
+#header .pre_alert:before {
+  content: "PRE";
+  font-size: 14px;
+  color: white;
+  position: absolute;
+  top: -53px;
+  left: 7px;
+  transform: rotate(316deg);
+  font-weight: 500;
+}
 #header > .head_inner > div.logo_big {
   text-align: center;
   margin-bottom: 1.8em;
@@ -837,6 +858,7 @@ nav ul {
   background-size: 50%;
   background-repeat: no-repeat;
   background-position: 80% 5%;
+  margin: 0;
 }
 #header > .head_inner > a.logo > .symbol {
   display: flex;
@@ -891,6 +913,27 @@ nav ul {
 }
 #header nav .logo {
   margin: 0;
+}
+#header .header_warning {
+  background-color: #585858;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2em;
+}
+#header .header_warning > img {
+  height: 2em;
+  margin: 0.5em;
+}
+#header .header_warning > span {
+  font-size: 0.9em;
+  font-weight: 400;
+  color: #fba91a;
+  padding: 0.3em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 #header .symbol img {
   height: 6em !important;
@@ -1019,8 +1062,8 @@ nav ul {
 #footer {
   background-color: #333333;
   padding: 0;
-  padding-top: 8em;
-  padding-bottom: 6em;
+  padding-top: 5em;
+  padding-bottom: 5em;
   color: #b7996d;
   opacity: 1;
   transition: opacity 0.35s ease-in-out;
@@ -1061,7 +1104,12 @@ nav ul {
   opacity: 1;
 }
 #footer .inner ul.copyright {
-  opacity: 0.75;
+  opacity: 0.8;
+  font-size: 0.9em;
+}
+#footer .inner ul.copyright .logo_dedalo {
+  height: 1.2em;
+  vertical-align: bottom;
 }
 .hide {
   display: none !important;

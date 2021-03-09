@@ -13,7 +13,10 @@ var page = {
 	/**
 	* VARS
 	*/
-		trigger_url : page_globals.__WEB_ROOT_WEB__ + "/web/trigger.web.php",
+		trigger_url : page_globals.__WEB_ROOT_WEB__ + '/web/trigger.web.php',
+
+
+		default_image : page_globals.__WEB_ROOT_WEB__ + '/tpl/assets/images/default.jpg',
 
 		// maps common config
 		maps_config : {

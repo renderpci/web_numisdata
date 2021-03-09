@@ -42,7 +42,7 @@ var biblio =  {
 			// exec first default search without params
 				self.search_rows({
 					ar_query : [],
-					limit 	 : 100
+					limit 	 : 10
 				}) // First search
 
 		}else if (typeof biblio_section_id!=="undefined") {
@@ -287,7 +287,7 @@ var biblio =  {
 				}
 			}	
 			if(SHOW_DEBUG===true) {
-				console.log("search.ar_query:", ar_query);
+				// console.log("search.ar_query:", ar_query);
 			}
 
 		// operators value
@@ -330,7 +330,7 @@ var biblio =  {
 		const trigger_vars = {
 			mode		: "search_rows",
 			ar_query	: typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit		: options.limit || 100,
+			limit		: options.limit || 10,
 			// pagination
 			offset		: options.offset || 0,
 			count		: options.count || false,
@@ -341,13 +341,13 @@ var biblio =  {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("[biblio.search_rows] trigger_vars:",trigger_vars);
+				// console.log("[biblio.search_rows] trigger_vars:",trigger_vars);
 			}	
 
 		// Http request directly in javascript to the API is possible too..
 		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
 				if(SHOW_DEBUG===true) {
-					console.log("[biblio.search_rows] get_json_data response:", response);
+					// console.log("[biblio.search_rows] get_json_data response:", response);
 				}
 
 				container.style.opacity = "1"
@@ -413,8 +413,7 @@ var biblio =  {
 		const self = this
 	
 		const ar_rows 		 = options.ar_rows || []
-		const ar_rows_length = ar_rows.length
-		
+		const ar_rows_length = ar_rows.length		
 		
 		// clean container select and clean container div
 			const container = document.getElementById(options.target)	
@@ -446,6 +445,11 @@ var biblio =  {
 					//console.log(collator.compare(order_a , order_b));
 				return collator.compare(order_a , order_b)
 			});
+
+		// self.search_options
+			const transcription_query = self.search_options.ar_query.find(function(el){
+				return el.name==="transcription"
+			}) || null			
 
 		// rows build
 			for (let i = 0; i < ar_rows_length; i++) {
@@ -501,6 +505,15 @@ var biblio =  {
 				// descriptors
 				if (biblio_object.descriptors && biblio_object.descriptors.length>1) {
 					biblio_row_wrapper.appendChild( row_field.descriptors(biblio_object.descriptors) )
+				}
+
+				// transcription
+				if (transcription_query && transcription_query.value.length>0 
+					&& biblio_object.transcription && biblio_object.transcription.length>0) {
+					const transcription_node = row_field.transcription(biblio_object.transcription, transcription_query.value)
+					if (transcription_node) {
+						biblio_row_wrapper.appendChild(transcription_node)
+					}					
 				}					
 				
 			}//end for (var i = 0; i < len; i++)
@@ -542,7 +555,7 @@ var biblio =  {
 				total  	: options.total,
 				limit  	: options.limit,
 				offset 	: options.offset,
-				n_nodes : 10,
+				n_nodes : 6,
 				callback: (item) => {
 
 					const offset = item.offset

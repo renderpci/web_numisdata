@@ -1,3 +1,18 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
 /*
 	#wrapper {
 
@@ -102,6 +117,24 @@ section.result {
   color: #ffffff !important;
   border-radius: 3px;
   font-size: 0.8em;
+}
+.biblio_row_wrapper .transcription {
+  background-color: #f8f5f2;
+  padding: 0.5em;
+  border-radius: 8px;
+}
+.biblio_row_wrapper .transcription br {
+  content: "";
+  margin: 2em;
+  display: block;
+  font-size: 24%;
+}
+.biblio_row_wrapper .transcription mark {
+  background-color: #333333;
+  color: white;
+  padding-left: 0.15em;
+  padding-right: 0.15em;
+  border-radius: 3px;
 }
 .form-inline .form-row {
   display: flex;

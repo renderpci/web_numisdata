@@ -447,6 +447,26 @@ var biblio_row_fields = {
 	},//end descriptors
 
 
+
+	transcription : function(value, q){
+		
+		const self = this
+
+		const text = page.search_fragment_in_text(q, value, 510)
+
+		const transcription_node = (text && text.length>1)
+			? common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_value transcription",
+				inner_html		: text
+			  })
+			: null
+
+		return transcription_node
+	},//end transcription
+
+
+
 	row_bibliography : function(){
 
 			var biblio_object = this.biblio_object

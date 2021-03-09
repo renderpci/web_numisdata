@@ -916,7 +916,7 @@ nav ul {
   margin: 0;
 }
 #header .header_warning {
-  background-color: #585858;
+  background-color: #f0f0f0;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -931,7 +931,7 @@ nav ul {
 #header .header_warning > span {
   font-size: 0.9em;
   font-weight: 400;
-  color: #fba91a;
+  color: #aaa;
   padding: 0.3em;
   text-transform: uppercase;
   letter-spacing: 1px;

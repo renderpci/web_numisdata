@@ -546,7 +546,7 @@ function form_factory() {
 					}
 
 					// item_field
-						const item_field = (item.wrapper && item.wrapper.length>0) // like YEAR
+						const item_field = (item.wrapper && item.wrapper.length>0) // like YEAR(mycolumn_name)
 							? item.wrapper + "(" + item.field + ")"
 							: item.field
 

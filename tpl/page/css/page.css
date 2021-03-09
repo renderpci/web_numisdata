@@ -1357,7 +1357,7 @@ input[type=button].btn.button_download.unactive {
   color: #000000;
   font-weight: 400;
 }
-.legend_box > img {
+.legend_box img {
   height: 100%;
   position: relative;
 }
@@ -1367,7 +1367,6 @@ input[type=button].btn.button_download.unactive {
   height: 16px;
 }
 .legend_box.small img {
-  position: relative;
   vertical-align: text-bottom;
 }
 .legend_box.median {
@@ -1377,7 +1376,6 @@ input[type=button].btn.button_download.unactive {
   top: -7px;
 }
 .legend_box.median img {
-  position: relative;
   top: 7px;
 }
 .legend_box.big {
@@ -1387,7 +1385,6 @@ input[type=button].btn.button_download.unactive {
   top: -15px;
 }
 .legend_box.big img {
-  position: relative;
   top: 15px;
 }
 .legend_box.huge {
@@ -1397,7 +1394,6 @@ input[type=button].btn.button_download.unactive {
   top: -30px;
 }
 .legend_box.huge img {
-  position: relative;
   top: 30px;
 }
 /*# sourceMappingURL=page.css.map */

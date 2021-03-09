@@ -110,15 +110,16 @@ var coins =  {
 
 		// ref_auction
 			self.form.item_factory({
-				id			: "ref_auction",
-				name		: "ref_auction",
-				label		: tstring.auction || "auction",
-				q_column	: "ref_auction",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
+				id				: "ref_auction",
+				name			: "ref_auction",
+				label			: tstring.auction || "auction",
+				q_column		: "ref_auction",
+				eq				: "LIKE",
+				eq_in			: "%",
+				eq_out			: "%",
+				value_wrapper	: ['["','"]'],
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
 						table		: 'coins'

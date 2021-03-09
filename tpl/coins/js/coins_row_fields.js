@@ -65,6 +65,7 @@ var coins_row_fields = {
 						inner_html  	: "MIB "+ mint_number + type + type_uri_text,
 						class_name		: "type_label",
 						href 			: type_uri,
+						target 			: "_blank",
 						parent 			: type_wrapper
 					})
 				} else if (self.last_type !== type) {
@@ -73,6 +74,7 @@ var coins_row_fields = {
 						inner_html  	: "MIB "+ mint_number + type + type_uri_text,
 						class_name		: "type_label",
 						href 			: type_uri,
+						target 			: "_blank",
 						parent 			: type_wrapper
 					})
 				}
@@ -117,6 +119,7 @@ var coins_row_fields = {
 				inner_html  	: mint + mint_uri_text,
 				class_name		: "ceca_label",
 				href 			: mint_uri,
+				target 			: "_blank",
 				parent 			: mint_line
 			})
 
@@ -180,26 +183,42 @@ var coins_row_fields = {
 			//countermark obverse
 
 			if (row.countermark_obverse) {
-				const item_text = common.local_to_remote_path(row.countermark_obverse)
+				
+				contuermarks_wrapper.appendChild(
+					page.render_legend({
+						value : row.countermark_obverse,
+						style : 'median legend_reverse_box'
+					})
+				)
 
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: item_text.trim(),
-					parent			: contuermarks_wrapper
-				})
+				// const item_text = common.local_to_remote_path(row.countermark_obverse)
+
+				// common.create_dom_element({
+				// 	element_type	: "span",
+				// 	class_name		: "info_value",
+				// 	inner_html		: item_text.trim(),
+				// 	parent			: contuermarks_wrapper
+				// })
 			}
 
 			//countermark reverse
 			if (row.countermark_reverse) {
-				const item_text = common.local_to_remote_path(row.countermark_reverse)
+				
+				contuermarks_wrapper.appendChild(
+					page.render_legend({
+						value : row.countermark_reverse,
+						style : 'median legend_reverse_box'
+					})
+				)
 
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "info_value",
-					inner_html		: item_text.trim(),
-					parent			: contuermarks_wrapper
-				})
+				// const item_text = common.local_to_remote_path(row.countermark_reverse)
+
+				// common.create_dom_element({
+				// 	element_type	: "span",
+				// 	class_name		: "info_value",
+				// 	inner_html		: item_text.trim(),
+				// 	parent			: contuermarks_wrapper
+				// })
 			}
 
 			//find type
@@ -246,7 +265,7 @@ var coins_row_fields = {
 			//URI
 			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
 			const full_url	= page_globals.__WEB_BASE_URL__ + uri
-			const uri_text	= "<a class=\"icon_link\" href=\""+uri+"\">  URI </a> "
+			const uri_text	= "<a class=\"icon_link\" target='_blank' href=\""+uri+"\">  URI </a> "
 
 			common.create_dom_element({
 				element_type	: "div",

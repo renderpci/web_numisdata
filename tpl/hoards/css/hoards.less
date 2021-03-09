@@ -42,37 +42,45 @@
 			margin-left: 0.4em
 		}
 
-		.ceca_label {
-			border-bottom: none;
-			color: inherit;
+		.name {
+			font-variant: small-caps;
+			letter-spacing: 1px;
+			font-size:130%;
 		}
 
 		.row_wrapper {
 			border-bottom: 1px solid #ddd;
 			margin-bottom: 1em;
 			padding-top: 1em;
-			display: flex;
-			align-content: space-between;
 			padding-left:1em;
 
 			@media screen and (max-width: 625px){
-				flex-direction: column-reverse;
+				//flex-direction: column-reverse;
 			}
 
-			.legend_box {
-				height: 1em;
-				font-size: 100% !important;
+			.title_wrap{
+				margin-bottom: 1em;
+			}
 
-				img {
-					top: 0.2em;
-				}
+			.info_text_wrap{
+				margin-left: 1em;
 			}
 
 			.info_container {
-				flex-grow:1;
+				font-size: 100%;
+				font-variant: inherit;
+
+				display: flex;
+				flex-direction: row;
 
 				@media screen and (max-width: 736px){
 					width: 100%;
+				}
+
+				.map_wrapper{
+					width:25%;
+					height: 8em;
+					background-color: gray;
 				}
 
 			}

@@ -27,37 +27,40 @@
 .rows_container .icon_link {
   margin-left: 0.4em;
 }
-.rows_container .ceca_label {
-  border-bottom: none;
-  color: inherit;
+.rows_container .name {
+  font-variant: small-caps;
+  letter-spacing: 1px;
+  font-size: 130%;
 }
 .rows_container .row_wrapper {
   border-bottom: 1px solid #ddd;
   margin-bottom: 1em;
   padding-top: 1em;
-  display: flex;
-  align-content: space-between;
   padding-left: 1em;
 }
 @media screen and (max-width: 625px) {
-  .rows_container .row_wrapper {
-    flex-direction: column-reverse;
-  }
 }
-.rows_container .row_wrapper .legend_box {
-  height: 1em;
-  font-size: 100% !important;
+.rows_container .row_wrapper .title_wrap {
+  margin-bottom: 1em;
 }
-.rows_container .row_wrapper .legend_box img {
-  top: 0.2em;
+.rows_container .row_wrapper .info_text_wrap {
+  margin-left: 1em;
 }
 .rows_container .row_wrapper .info_container {
-  flex-grow: 1;
+  font-size: 100%;
+  font-variant: inherit;
+  display: flex;
+  flex-direction: row;
 }
 @media screen and (max-width: 736px) {
   .rows_container .row_wrapper .info_container {
     width: 100%;
   }
+}
+.rows_container .row_wrapper .info_container .map_wrapper {
+  width: 25%;
+  height: 8em;
+  background-color: gray;
 }
 .rows_container .row_wrapper .img_container {
   text-align: right;
@@ -72,4 +75,4 @@
 .rows_container .row_wrapper:last-child {
   border-bottom: none;
 }
-/*# sourceMappingURL=coins.css.map */
+/*# sourceMappingURL=hoards.css.map */

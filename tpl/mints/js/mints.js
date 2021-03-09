@@ -124,6 +124,12 @@ var mints =  {
 			})
 			submit_button.addEventListener("click",function(e){
 				e.preventDefault()
+				self.pagination = {
+					total	: null,
+					limit	: 10,
+					offset	: 0,
+					n_nodes	: 8
+				}
 				self.form_submit()
 			})
 

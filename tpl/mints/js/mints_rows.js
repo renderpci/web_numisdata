@@ -34,6 +34,7 @@ var mints_rows = {
 			inner_html  	: row.name + mint_uri_text,
 			class_name		: "name",
 			href 			: mint_uri,
+			target 			: "_blank",
 			parent 			: wrapper
 		})
 

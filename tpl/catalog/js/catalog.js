@@ -498,19 +498,19 @@ var catalog = {
 				}
 			})
 
-		// collection
-			self.form.item_factory({
-				id 			: "collection",
-				name 		: "collection",
-				q_column 	: "ref_coins_collection",
-				q_table 	: "any",
-				label		: tstring.collection || "collection",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
-				}
-			})
+		// collection (disabled by keynote note 09-03-2021)
+			// self.form.item_factory({
+			// 	id 			: "collection",
+			// 	name 		: "collection",
+			// 	q_column 	: "ref_coins_collection",
+			// 	q_table 	: "any",
+			// 	label		: tstring.collection || "collection",
+			// 	is_term 	: false,
+			// 	parent		: form_row,
+			// 	callback	: function(form_item) {
+			// 		self.activate_autocomplete(form_item);
+			// 	}
+			// })
 
 		// denomination
 			self.form.item_factory({
@@ -540,19 +540,19 @@ var catalog = {
 				}
 			})
 
-		// company
-			self.form.item_factory({
-				id 			: "company",
-				name 		: "company",
-				q_column 	: "ref_coins_auction_company",
-				q_table 	: "types",
-				label		: tstring.company || "company",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
-				}
-			})
+		// company (disabled by keynote note 09-03-2021)
+			// self.form.item_factory({
+			// 	id 			: "company",
+			// 	name 		: "company",
+			// 	q_column 	: "ref_coins_auction_company",
+			// 	q_table 	: "types",
+			// 	label		: tstring.company || "company",
+			// 	is_term 	: false,
+			// 	parent		: form_row,
+			// 	callback	: function(form_item) {
+			// 		self.activate_autocomplete(form_item);
+			// 	}
+			// })
 
 		// technique
 			self.form.item_factory({
@@ -582,7 +582,90 @@ var catalog = {
 				callback	: function(form_item) {
 					self.activate_autocomplete(form_item);
 				}
-			})		
+			})
+
+		// range slider date (range_slider) (!) WORKING HERE
+			// self.form.item_factory({
+			// 	id			: "range_slider",
+			// 	name		: "range_slider",
+			// 	input_type	: 'range_slider',
+			// 	label		: tstring.dating || "Dating",
+			// 	class_name	: 'range_slider',
+			// 	q_column	: "ref_date_in,ref_date_end",
+			// 	// eq		: "LIKE",
+			// 	// eq_in	: "",
+			// 	// eq_out	: "%",
+			// 	// q_table	: "catalog",
+			// 	sql_filter	: null,
+			// 	parent		: form_row,
+			// 	callback	: function(form_item) {
+
+			// 		// const form_item				= this
+			// 		const node_input				= form_item.node_input
+			// 		const range_slider_value_in		= node_input.parentNode.querySelector('#range_slider_in')
+			// 		const range_slider_value_out	= node_input.parentNode.querySelector('#range_slider_out')
+
+			// 		function set_up_slider() {
+						
+			// 			// compute range years
+			// 			self.get_catalog_range_years()
+			// 			.then(function(range_data){
+			// 				// console.log("range_data:",range_data);
+
+			// 				// destroy current slider instance if already exists
+			// 					if ($(node_input).slider("instance")) {
+			// 						$(node_input).slider("destroy")
+			// 					}
+
+			// 				// reset filter
+			// 					form_item.sql_filter = null
+
+			// 				// set inputs values from database
+			// 					range_slider_value_in.value	= range_data.min
+			// 					range_slider_value_in.addEventListener("change",function(e){
+			// 						const value = (e.target.value>=range_data.min)
+			// 							? e.target.value
+			// 							: range_data.min
+			// 						$(node_input).slider( "values", 0, value );
+			// 						e.target.value = value
+			// 					})
+			// 					range_slider_value_out.value = range_data.max
+			// 					range_slider_value_out.addEventListener("change",function(e){
+			// 						const value = (e.target.value<=range_data.max)
+			// 							? e.target.value
+			// 							: range_data.max
+			// 						$(node_input).slider( "values", 1, e.target.value );
+			// 						e.target.value = value
+			// 					})
+
+			// 				// active jquery slider
+			// 					$(node_input).slider({
+			// 						range	: true,
+			// 						min		: range_data.min,
+			// 						max		: range_data.max,
+			// 						step	: 1,
+			// 						values	: [ range_data.min, range_data.max ],
+			// 						slide	: function( event, ui ) {
+			// 							// update input values on user drag slide points
+			// 							range_slider_value_in.value	 = ui.values[0]
+			// 							range_slider_value_out.value = ui.values[1]
+			// 							// console.warn("-----> slide range form_item.sql_filter:",form_item.sql_filter);
+			// 						},
+			// 						change: function( event, ui ) {
+			// 							// update form_item sql_filter value on every slider change
+			// 							form_item.sql_filter = "(ref_date_in >= " + ui.values[0] + " AND ref_date_in <= "+ui.values[1]+")"; // AND (ref_date_end <= " + ui.values[1] + " OR ref_date_end IS NULL)
+			// 							form_item.q = ui.value
+			// 							console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
+			// 						}
+			// 					});
+			// 			})
+			// 		}
+
+			// 		// initial_map_loaded event (triggered on initial map data is ready)
+			// 		// event_manager.subscribe('initial_map_loaded', set_up_slider)
+			// 		set_up_slider()
+			// 	}
+			// })
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -1734,7 +1817,64 @@ var catalog = {
 			const node = catalog_row_fields.draw_item(row_object)
 
 		return node
-	}
+	},
+
+
+
+	/**
+	* GET_CATALOG_RANGE_YEARS
+	* @return 
+	*/
+	get_catalog_range_years : function() {
+
+		const self = this
+
+		return new Promise(function(resolve){
+		
+			const ar_fields = ['id','section_id','MIN(ref_date_in + 0) AS min','MAX(ref_date_in + 0) AS max']
+
+			const request_body = {
+				dedalo_get		: 'records',
+				db_name			: page_globals.WEB_DB,
+				lang			: page_globals.WEB_CURRENT_LANG_CODE,
+				table			: 'catalog',
+				ar_fields		: ar_fields,
+				limit			: 0,			
+				count			: false,
+				offset			: 0,
+				order			: 'id ASC'
+			}			
+			data_manager.request({
+				body : request_body
+			})
+			.then(function(api_response){
+				console.log("-> get_catalog_range_years api_response:",api_response);
+
+				let min = 0
+				let max = 0
+				if (api_response.result) {					
+					for (let i = 0; i < api_response.result.length; i++) {
+						const row = api_response.result[i]
+						const current_min = parseInt(row.min)
+						if (min===0 || current_min<min) {
+							min = current_min
+						}
+						const current_max = parseInt(row.max)
+						// if (current_max>min) {
+							max = current_max
+						// }
+					}
+				}
+
+				const data = {
+					min : min,
+					max : max
+				}
+
+				resolve(data)
+			})
+		})
+	},//end get_catalog_range_years
 
 
 

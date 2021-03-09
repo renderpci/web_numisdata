@@ -1,9 +1,10 @@
 // Variables
 	@assets_path: "../../assets";
 	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
 
 // Usage library
-	//@import "@{assets_path}/css/library.less";
+	@import "@{page_path}/css/library.less";
 
 // wrapper
 	/*
@@ -58,7 +59,6 @@
 			display: block;
 		}
 	}
-		
 		
 
 
@@ -213,6 +213,30 @@
 				border-radius: 3px;
 				font-size: 0.8em;			
 			}
+
+
+		// transcription
+		.transcription {
+			background-color: #f8f5f2;
+			padding: 0.5em;
+			border-radius: 8px;
+
+			br {
+				content: "";
+				margin: 2em;
+				display: block;
+				font-size: 24%;
+			}
+
+			mark {
+				background-color: @color_grey_dark;
+				color: white;
+				padding-left: 0.15em;
+				padding-right: 0.15em;
+				border-radius: 3px;
+			}
+		}	
+
 
 
 		// .info_line {

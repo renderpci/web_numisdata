@@ -90,7 +90,7 @@ class biblio {
 						// scape
 						$value 		 = self::escape_value($value_obj->value);
 						$ar_filter[] = '`'.$value_obj->name."` LIKE '%".$value."%'";
-
+						
 						// if ($value_obj->name==='authors' && strpos($value_obj->value, ' | ')===false) {
 						// 	$use_union = true;
 						// }
@@ -128,7 +128,8 @@ class biblio {
 			'descriptors',
 			// 'volume',
 			'other_people_name',
-			'other_people_role'
+			'other_people_role',
+			'transcription'
 		];
 
 		$portals_custom = [

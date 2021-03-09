@@ -22,11 +22,6 @@
 						<h1><?php echo $title ?></h1>
 						<div class="golden-separator"></div>
 
-					<!-- abstract -->
-						<?php if(!empty($abstract)) { ?>
-						<p><?php echo $abstract ?></p>
-						<?php } ?>
-
 					<!-- Form -->
 						<div id="form_container"></div>
 
@@ -45,7 +40,7 @@
 <?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 dom_ready(function(){
-	coins.set_up({
+	hoards.set_up({
 		form_container	: document.getElementById('form_container'),
 		rows_container	: document.getElementById('rows_container')
 	})

@@ -281,6 +281,30 @@
 	#header {
 		// padding-top: 2em;
 
+		.pre_alert {			
+			position: fixed;
+			left: 0;
+			top: 0;
+			z-index: 9;
+
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-width: 60px 60px 0 0;
+			border-color: #ff0000 transparent transparent transparent;
+
+			&:before {
+				content: "PRE";
+				font-size: 14px;
+				color: white;
+				position: absolute;
+				top: -53px;
+				left: 7px;
+				transform: rotate(316deg);
+				font-weight: 500;
+			}
+		}
+
 		>.head_inner {
 
 			>div.logo_big {
@@ -299,6 +323,7 @@
 				background-size: 50%;
 				background-repeat: no-repeat;
 				background-position: 80% 5%;
+				margin: 0;
 
 				>.symbol {
 					display: flex;
@@ -359,9 +384,31 @@
 			}
 		}
 
+		.header_warning {
+			background-color: #585858;
+			text-align: center;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			margin-bottom: 2em;
+
+			>img {
+				height: 2em;
+				margin: 0.5em;
+			}
+			
+			>span {
+				font-size: 0.9em;
+				font-weight: 400;
+				color: #fba91a;
+				padding: 0.3em;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+		}
+
 		.symbol{
-
-
 
 			img {
 				height: 6em !important;
@@ -376,7 +423,6 @@
 				     2px 2px 0 #333333;
 			}
 		}
-
 
 		@media screen and (max-width: 736px){
 			padding-top:0;
@@ -561,8 +607,8 @@
 		background-color: @color_grey_dark;
 		//background-image: url(../../assets/images/overlay.png);
 		padding: 0;
-		padding-top: 8em;
-		padding-bottom: 6em;
+		padding-top: 5em;
+		padding-bottom: 5em;
 		color: @color_gold_logo;
 		opacity: 1;
 		transition: opacity 0.35s ease-in-out;
@@ -636,7 +682,13 @@
 			}
 
 			ul.copyright {
-				opacity: 0.75;
+				opacity: 0.8;
+				font-size: 0.9em;
+
+				.logo_dedalo {
+					height: 1.2em;
+					vertical-align: bottom;
+				}
 			}
 		}
 
@@ -1000,11 +1052,11 @@
 		color: #000000;
 		font-weight: 400;
 
-		>img {
+		img {
 			height: 100%;
 			position: relative;			
 		}
-		>span {
+		span {
 			// display: inline-block;
 		}
 
@@ -1017,9 +1069,9 @@
 			height: @height;
 			// top: -@images_offset;
 
-			>img {
+			img {
 				// top: @images_offset;
-				vertical-align: text-bottom;
+				vertical-align: text-bottom;			
 			}
 		}
 		
@@ -1032,7 +1084,7 @@
 			height: @height;
 			top: -@images_offset;
 
-			>img {
+			img {
 				top: @images_offset;
 			}
 		}
@@ -1045,7 +1097,7 @@
 			height: @height;
 			top: -@images_offset;
 
-			>img {
+			img {
 				top: @images_offset;
 			}
 		}
@@ -1058,7 +1110,7 @@
 			height: @height;
 			top: -@images_offset;
 
-			>img {
+			img {
 				top: @images_offset;
 			}
 		}

@@ -45,10 +45,10 @@ page.parse_type_data = function(data) {
 		// images url
 			row.ref_coins_image_obverse = typeof data.ref_coins_image_obverse!=="undefined"
 				? common.local_to_remote_path(data.ref_coins_image_obverse)
-				: null
+				: page.default_image
 			row.ref_coins_image_reverse = typeof data.ref_coins_image_reverse!=="undefined"
 				? common.local_to_remote_path(data.ref_coins_image_reverse)
-				: null
+				: page.default_image
 
 		// ref_coins_union (resolved portal case)
 			if (row.ref_coins_union && Array.isArray(row.ref_coins_union)) {
@@ -141,7 +141,7 @@ page.parse_mint_data = function(data) {
 		if (Array.isArray(data)) {
 			const new_data = []
 			for (let i = 0; i < data.length; i++) {
-				new_data.push( page.parse_coin_data(data[i]) )
+				new_data.push( page.parse_mint_data(data[i]) )
 			}
 			return new_data
 		}
@@ -149,7 +149,7 @@ page.parse_mint_data = function(data) {
 	const row = data
 
 	if (typeof row !== 'object') {
-		console.log("parse_coin_data row:",row);
+		console.log("parse_mint_data row:",row);
 		console.trace()
 	}
 
@@ -161,6 +161,32 @@ page.parse_mint_data = function(data) {
 
 }
 
+page.parse_hoard_data = function(data) {
+	const self = this
+
+	// array case
+		if (Array.isArray(data)) {
+			const new_data = []
+			for (let i = 0; i < data.length; i++) {
+				new_data.push( page.parse_hoard_data(data[i]) )
+			}
+			return new_data
+		}
+
+	const row = data
+
+	if (typeof row !== 'object') {
+		console.log("parse_hoard_data row:",row);
+		console.trace()
+	}
+
+	if (!row || row.parsed) {
+		return row
+	}
+
+	return row
+
+}
 
 
 /**
@@ -198,16 +224,16 @@ page.parse_coin_data = function(data) {
 		// url
 			row.image_obverse		= row.image_obverse
 				? common.local_to_remote_path(data.image_obverse)
-				: null
+				: page.default_image
 			row.image_obverse_thumb	= row.image_obverse
 				? row.image_obverse.replace('/1.5MB/','/thumb/')
-				: null
+				: page.default_image
 			row.image_reverse		= row.image_reverse
 				? common.local_to_remote_path(data.image_reverse)
-				: null
+				: page.default_image
 			row.image_reverse_thumb	= row.image_reverse
 				? row.image_reverse.replace('/1.5MB/','/thumb/')
-				: null
+				: page.default_image
 
 		// type_data
 		if (row.type_data && Array.isArray(row.type_data)) {	
@@ -373,16 +399,20 @@ page.parse_catalog_data = function(data) {
 				: null
 
 			// url
-			row.ref_coins_image_obverse = common.local_to_remote_path(row.ref_coins_image_obverse)
-			row.ref_coins_image_reverse = common.local_to_remote_path(row.ref_coins_image_reverse)
+			row.ref_coins_image_obverse = row.ref_coins_image_obverse
+				? common.local_to_remote_path(row.ref_coins_image_obverse)
+				: page.default_image
+			row.ref_coins_image_reverse = row.ref_coins_image_reverse
+				? common.local_to_remote_path(row.ref_coins_image_reverse)
+				: page.default_image
 
 			// url thumbs
 			row.ref_coins_image_obverse_thumb = row.ref_coins_image_obverse
 				? row.ref_coins_image_obverse.replace('/1.5MB/', '/thumb/')
-				: null
+				: page.default_image
 			row.ref_coins_image_reverse_thumb = row.ref_coins_image_reverse
 				? row.ref_coins_image_reverse.replace('/1.5MB/', '/thumb/')
-				: null
+				: page.default_image
 
 			// legends
 			row.ref_type_legend_obverse = row.ref_type_legend_obverse

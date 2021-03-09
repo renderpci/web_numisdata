@@ -13,7 +13,10 @@ var page = {
 	/**
 	* VARS
 	*/
-		trigger_url : page_globals.__WEB_ROOT_WEB__ + "/web/trigger.web.php",
+		trigger_url : page_globals.__WEB_ROOT_WEB__ + '/web/trigger.web.php',
+
+
+		default_image : page_globals.__WEB_ROOT_WEB__ + '/tpl/assets/images/default.jpg',
 
 		// maps common config
 		maps_config : {
@@ -829,7 +832,92 @@ var page = {
 		setTimeout(function(){
 			image.src = hires
 		}, 100)
-	}//end load_hires
+	},//end load_hires	
+
+
+
+	/**
+	* SEARCH_FRAGMENT_IN_TEXT
+	* @return 
+	*/
+	search_fragment_in_text : function(q, value, limit) {
+		
+		function search(q, text) {
+			
+			if (q!=="") {
+				const re = new RegExp(q,"g"); // search for all instances
+				const newText = text.replace(re, `<mark>${q}</mark>`);
+				return newText
+			}
+			return text
+		}
+
+		function truncate(text, limit, after) {
+			// Make sure an element and number of items to truncate is provided
+			if (!text || !limit) return;
+
+			// Get the inner content of the element
+			let content = text.trim();
+
+			// Convert the content into an array of words
+			// Remove any words above the limit
+			content = content.split(' ').slice(0, limit);
+
+			// Convert the array of words back into a string
+			// If there's content to add after it, add it
+			content = content.join(' ') + (after ? after : '');
+
+			return content
+		}
+
+		// String.prototype.trunc = function(n) {
+		//   if (this.length <= n) {
+		//     return this;
+		//   }
+		//   var truncated = this.substr(0, n);
+		//   if (this.charAt(n) === ' ') {
+		//     return truncated;
+		//   }
+		//   return truncated.substr(0, truncated.lastIndexOf(' '));
+		// }
+
+
+		// normalize breaks
+			value = value.replaceAll('<br />', '<br>');
+
+		// search q position
+			const position	= value.indexOf(q)
+
+		let text = ''
+		if (position!==-1) {
+			// trim text using position
+
+			let _in		= position - (limit/2)
+			let _out	= position + (limit/2) + q.length
+
+			const text_slice = value.slice(_in, _out)
+
+			const first_space	= text_slice.indexOf(' ')
+			const last_space	= text_slice.lastIndexOf(' ')
+
+			// cut text at first and last spaces
+			text = text_slice.slice(first_space, last_space)
+			
+			// hilite the q word
+			text = search(q, text)
+
+			text = ".. " + text.trim() + " .."
+
+		}else{
+			// trim text freely
+
+			// text = truncate(value, limit, null)
+			text = ''
+		}
+		
+
+		return text
+	},//end search_fragment_in_text
 
 
 

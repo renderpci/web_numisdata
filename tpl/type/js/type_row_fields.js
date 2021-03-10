@@ -92,12 +92,17 @@ var type_row_fields = {
 						style : 'median legend_obverse_box'
 					})
 				)
-			} else {
+			}else{
 				common.create_dom_element({
 					element_type 	: "div",
 					parent 			: wrapper
 				})
 			}
+		
+		// legend_obverse_transcription
+			obverse_wrapper.appendChild(
+				self.default(item, "legend_obverse_transcription")
+			)
 
 		// reverse_info_wrapper
 		const reverse_wrapper = common.create_dom_element({
@@ -128,6 +133,11 @@ var type_row_fields = {
 					})
 				)
 			}
+
+		// legend_reverse_transcription
+			reverse_wrapper.appendChild(
+				self.default(item, "legend_reverse_transcription")
+			)
 
 		// public_info
 			fragment.appendChild(
@@ -375,7 +385,7 @@ var type_row_fields = {
 			for (let i = parents_ordered.length - 1; i >= 0; i--) {
 
 				if (parents_ordered[i].term_table === 'mints') {
-					console.log("parents_ordered[i]", parents_ordered[i]);
+					// console.log("parents_ordered[i]", parents_ordered[i]);
 					const mint_section_id = (parents_ordered[i].term_data)
 						? JSON.parse(parents_ordered[i].term_data)[0]
 						: ''
@@ -479,8 +489,6 @@ var type_row_fields = {
 		const identify_coin = item.ref_coins_union.find(item => item.section_id===identify_coin_id)
 
 		if (identify_coin) {
-
-			console.log("identify_coin:",identify_coin);
 
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id

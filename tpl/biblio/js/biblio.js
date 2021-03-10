@@ -155,7 +155,8 @@ var biblio =  {
 						q_name			: element.dataset.q_name || null,
 						q_search		: element.dataset.q_search || element.dataset.q_name,
 						q_table			: element.dataset.q_table || null,
-						dd_relations	: element.dataset.dd_relations || null
+						dd_relations	: element.dataset.dd_relations || null,
+						limit			: element.dataset.limit || 30
 				}
 				if(SHOW_DEBUG===true) {
 					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars);
@@ -163,17 +164,51 @@ var biblio =  {
 
 				common.get_json_data(trigger_url, trigger_vars).then(function(response_data) {
 					// if(SHOW_DEBUG===true) {
-						console.log("[biblio.activate_autocomplete] response_data",response_data)
+						// console.log("[biblio.activate_autocomplete] response_data",response_data)
 					// }
 
-					const result = (element.id==="fecha_publicacion")
-						? response_data.result.map( item => {
+					let result_final = []
+					if (element.id==='descriptors') {
+
+						const len = response_data.result.length
+						for (let i = 0; i < len; i++) {
+
+							const item = response_data.result[i]
+
+							const terms = item.label.split(" - ")
+							for (let k = 0; k < terms.length; k++) {
+
+								const term_name = terms[k].trim()
+								const found = result_final.find(el => el.value===term_name)
+								if (!found && term_name.length > 0) {
+									result_final.push({
+										label : term_name, 
+										value : term_name
+									})
+								}
+							}
+						}
+
+						const ar_ordered_result	= page.sort_array_by_property(result_final, "value")
+						const ar_filtered_result= (term.length!=0) ? page.filter_drop_down_list(ar_ordered_result, term) : ar_ordered_result
+						const ar_drow_down_list	= ar_filtered_result.slice(0,30)
+	
+						// replace
+						result_final = ar_drow_down_list
+
+					}else if(element.id==="fecha_publicacion") {
+
+						result_final = response_data.result.map( item => {
 							item.label = item.label.substring(0, 4)
 							return item
 						})
-						: response_data.result
 
-					response(result)
+					}else{
+															
+						result_final = response_data.result
+					}
+
+					response(result_final)
 
 				}, function(error) {
 					console.error("[activate_autocomplete] Failed get_json!", error);

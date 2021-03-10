@@ -260,7 +260,7 @@ function map_factory() {
 			// create marker. Build marker with custom icon and popup
 				const create_marker = function(element, latlng, marker_icon, popup) {
 					const marker = L.marker(latlng, {icon: marker_icon}).bindPopup(popup) //.openPopup();
-					marker.on('mousedown', function(e) {
+					marker.on('click', function(e) {
 						// event publish map_selected_marker
 						event_manager.publish('map_selected_marker', {
 							item	: element,
@@ -342,7 +342,7 @@ function map_factory() {
 							}
 						})
 
-						marker.on('mousedown', function(e) {
+						marker.on('click', function(e) {
 							// event publish map_selected_marker
 							event_manager.publish('map_selected_marker', {
 								item	: element,

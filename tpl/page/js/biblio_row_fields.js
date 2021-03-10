@@ -281,25 +281,6 @@ var biblio_row_fields = {
 
 			default: // article, etc.
 
-					if (biblio_object.magazine) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value magazine grey italic",
-							text_content 	: biblio_object.magazine,
-							parent 			: line
-						})
-					}
-
-				// serie
-					if (biblio_object.serie) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value serie grey",
-							inner_html 		: ' ' + biblio_object.serie,
-							parent 			: line
-						})
-					}
-
 				// other_people_info : name and role other_people_name
 					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
 						const other_people_name = biblio_object.other_people_name.split(" | ");
@@ -395,6 +376,31 @@ var biblio_row_fields = {
 				// 			})
 				// 		}
 				// 	}
+
+				// magazine
+
+
+				if (biblio_object.magazine) {
+					const magazine_separator = (biblio_object.title_secondary)
+						? ", "
+						: ""
+					common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "info_value magazine grey italic",
+						text_content 	: magazine_separator+biblio_object.magazine,
+						parent 			: line
+					})
+				}
+
+			// serie
+				if (biblio_object.serie) {
+					common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "info_value serie grey",
+						inner_html 		: ' ' + biblio_object.serie,
+						parent 			: line
+					})
+				}
 
 				// physical_description
 					const text_content = (biblio_object.physical_description)

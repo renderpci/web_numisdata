@@ -225,9 +225,7 @@
 
 		// transcription
 		.transcription {
-			background-color: #f8f5f2;
-			padding: 0.5em;
-			border-radius: 8px;
+
 
 			br {
 				content: "";
@@ -242,6 +240,23 @@
 				padding-left: 0.15em;
 				padding-right: 0.15em;
 				border-radius: 3px;
+			}
+
+			.occurrence {
+				background-color: #faf7f3;
+				padding: 1em;
+				border-radius: 8px;
+				margin-top: 0.25em;
+
+				.page_number {
+					font-weight: 300;
+					// font-family: system-ui;
+					color: @color_gold_logo;
+				}
+
+				.item_transcription {
+					font-size: 0.85em;
+				}
 			}
 		}
 

@@ -76,6 +76,7 @@ function form_factory() {
 			list_format		: options.list_format || null,
 			wrapper			: options.wrapper || null, // like YEAR to obtain YEAR(name)
 			value_wrapper	: options.value_wrapper || null, // like ['["','"]'] to obtain ["value"]
+			value_split		: options.value_split || null, // like ' - ' to generate one item by beat in autocomplete
 			// nodes (are set on build_form_node)
 			node_input		: null,
 			node_values		: null,
@@ -847,16 +848,18 @@ function form_factory() {
 							}
 						})
 						.then((api_response) => { // return results in standard format (label, value)
-							console.log("-->autocomplete api_response:", api_response);
-							const result = api_response.result
-
+							// console.log("-->autocomplete api_response:", api_response);
+							
 							const ar_result	= []
-							const len		= result.length
+
+							const result	= api_response.result
+							const len		= api_response.result.length							
+							
 							for (let i = 0; i < len; i++) {
 
-								const item = result[i]
+								const item = api_response.result[i]
 
-								if (!item.name) { continue; }
+								if (!item.name || item.name.length<1) { continue; }							
 
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
@@ -864,16 +867,36 @@ function form_factory() {
 
 								for (let j = 0; j < current_ar_value.length; j++) {
 
-									const item_name = current_ar_value[j]
+									const item_name		= current_ar_value[j] // self.format_drop_down_list(q_column, current_ar_value[j])
+									const item_value	= current_ar_value[j]
 									// const item_name = item.name.replace(/[\["|"\]]/g, '')
 
-									const found = ar_result.find(el => el.value===item_name)
-									if (!found) {
-										ar_result.push({
-											label	: item_name, // item_name,
-											value	: item_name // item.name
-										})
-									}
+									if (form_item.value_split) {
+
+										const terms = item_name.split(form_item.value_split)
+										for (let k = 0; k < terms.length; k++) {
+
+											const term_name = terms[k].trim()
+											const found = ar_result.find(el => el.value===term_name)
+											if (!found && term_name.length > 0) {
+												ar_result.push({
+													label : term_name, 
+													value : term_name
+												})
+											}
+										}
+
+									}else{
+										
+										const found = ar_result.find(el => el.value===item_name)
+										if (!found && item_value.trim().length > 0) {
+											ar_result.push({
+												label : item_name, // item_name,
+												value : item_value // item.name
+											})
+										}
+
+									}//end if (q_splittable===true)
 								}
 							}
 
@@ -1066,6 +1089,7 @@ function form_factory() {
 
 		return sql_filter
 	}//end form_to_sql_filter
+
 
 
 

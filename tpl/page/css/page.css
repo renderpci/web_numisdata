@@ -961,6 +961,8 @@ nav ul {
 }
 #main .inner .bibliographic_reference {
   margin-top: 1em;
+  font-size: 13px;
+  line-height: 19px;
 }
 #main .inner .identify_coin_wrapper {
   margin-top: 1em;

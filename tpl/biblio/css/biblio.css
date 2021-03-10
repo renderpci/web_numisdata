@@ -118,11 +118,6 @@ section.result {
   border-radius: 3px;
   font-size: 0.8em;
 }
-.biblio_row_wrapper .transcription {
-  background-color: #f8f5f2;
-  padding: 0.5em;
-  border-radius: 8px;
-}
 .biblio_row_wrapper .transcription br {
   content: "";
   margin: 2em;
@@ -135,6 +130,19 @@ section.result {
   padding-left: 0.15em;
   padding-right: 0.15em;
   border-radius: 3px;
+}
+.biblio_row_wrapper .transcription .occurrence {
+  background-color: #faf7f3;
+  padding: 1em;
+  border-radius: 8px;
+  margin-top: 0.25em;
+}
+.biblio_row_wrapper .transcription .occurrence .page_number {
+  font-weight: 300;
+  color: #b7996d;
+}
+.biblio_row_wrapper .transcription .occurrence .item_transcription {
+  font-size: 0.85em;
 }
 .form-inline .form-row {
   display: flex;

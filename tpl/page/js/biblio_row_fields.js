@@ -452,15 +452,46 @@ var biblio_row_fields = {
 		
 		const self = this
 
-		const text = page.search_fragment_in_text(q, value, 510)
+		const fragment = new DocumentFragment()	
 
-		const transcription_node = (text && text.length>1)
-			? common.create_dom_element({
-				element_type	: "div",
-				class_name		: "info_value transcription",
-				inner_html		: text
-			  })
-			: null
+		for(let word in value) {
+
+			const items = value[word]
+			for (let i = 0; i < items.length; i++) {
+
+				const page_number	= items[i].page_number
+				const fragm			= items[i].fragm
+
+				const occurrence = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "occurrence",
+					parent			: fragment
+				})				
+
+				const page_number_node = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "page_number",
+					inner_html		: (tstring.page || 'Page') + ' ' + page_number,
+					parent			: occurrence
+				})
+
+				const fragm_node = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "item_transcription",
+					inner_html		: fragm,
+					parent			: occurrence
+				})
+			}			
+		}
+
+		// const text = page.search_fragment_in_text(q, value, 510)
+
+		const transcription_node = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "info_value transcription"			
+		})
+		transcription_node.appendChild(fragment)
+
 
 		return transcription_node
 	},//end transcription

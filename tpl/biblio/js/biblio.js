@@ -347,7 +347,7 @@ var biblio =  {
 		// Http request directly in javascript to the API is possible too..
 		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
 				if(SHOW_DEBUG===true) {
-					// console.log("[biblio.search_rows] get_json_data response:", response);
+					console.log("[biblio.search_rows] get_json_data response:", response);
 				}
 
 				container.style.opacity = "1"
@@ -508,9 +508,8 @@ var biblio =  {
 				}
 
 				// transcription
-				if (transcription_query && transcription_query.value.length>0 
-					&& biblio_object.transcription && biblio_object.transcription.length>0) {
-					const transcription_node = row_field.transcription(biblio_object.transcription, transcription_query.value)
+				if (biblio_object.transcription) {
+					const transcription_node = row_field.transcription(biblio_object.transcription)
 					if (transcription_node) {
 						biblio_row_wrapper.appendChild(transcription_node)
 					}					

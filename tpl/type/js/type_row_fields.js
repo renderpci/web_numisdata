@@ -98,7 +98,7 @@ var type_row_fields = {
 					parent 			: wrapper
 				})
 			}
-		
+
 		// legend_obverse_transcription
 			obverse_wrapper.appendChild(
 				self.default(item, "legend_obverse_transcription")

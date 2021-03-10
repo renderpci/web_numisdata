@@ -345,12 +345,17 @@ var biblio_row_fields = {
 								? biblio_object.title_secondary
 								: ""
 
+							const magazine_separator = (biblio_object.magazine)
+								? ", "
+								: ""
+
 							common.create_dom_element({
 								element_type 	: "div",
 								class_name 		: "info_value volume grey italic",
-								text_content 	: title_secondary,
+								text_content 	: title_secondary+magazine_separator,
 								parent 			: line
 							})
+
 						}
 
 				// // other_people_info : name and role other_people_name
@@ -381,13 +386,10 @@ var biblio_row_fields = {
 
 
 				if (biblio_object.magazine) {
-					const magazine_separator = (biblio_object.title_secondary)
-						? ", "
-						: ""
 					common.create_dom_element({
 						element_type 	: "div",
 						class_name 		: "info_value magazine grey italic",
-						text_content 	: magazine_separator+biblio_object.magazine,
+						text_content 	: biblio_object.magazine,
 						parent 			: line
 					})
 				}

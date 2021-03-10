@@ -387,7 +387,7 @@ var biblio_row_fields = {
 
 					const url_item = ar_url_data[i]
 
-					common.create_dom_element({
+					const link =common.create_dom_element({
 						element_type 	: "a",
 						class_name 		: "url_data",
 						title 			: url_item.title,
@@ -395,6 +395,7 @@ var biblio_row_fields = {
 						href 			: url_item.iri,
 						parent 			: line
 					})
+					link.target = '_blank'
 
 					if ( !(i%2) && i<ar_url_data_length && ar_url_data_length>1 ) {
 						common.create_dom_element({

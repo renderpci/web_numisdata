@@ -318,21 +318,20 @@ var catalog = {
 					self.activate_autocomplete(form_item);
 				}
 			})
-		
-		// period
+
+		// number
 			self.form.item_factory({
-				id			: "period",
-				name		: "period",
-				label		: tstring.period || "period",
-				q_column	: "p_period",
-				eq_in		: "%",
-				// q_table	: "ts_period",
-				is_term		: true,
+				id 			: "number",
+				name 		: "number",
+				q_column 	: "term",
+				q_table 	: "types",
+				label		: tstring.number || "number",
+				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
 					self.activate_autocomplete(form_item);
 				}
-			})
+			})		
 
 		// culture
 			self.form.item_factory({
@@ -526,20 +525,6 @@ var catalog = {
 				}
 			})
 		
-		// number
-			self.form.item_factory({
-				id 			: "number",
-				name 		: "number",
-				q_column 	: "term",
-				q_table 	: "types",
-				label		: tstring.number || "number",
-				is_term 	: false,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
-				}
-			})
-
 		// company (disabled by keynote note 09-03-2021)
 			// self.form.item_factory({
 			// 	id 			: "company",
@@ -578,6 +563,21 @@ var catalog = {
 				eq_out		: "%",
 				label		: tstring.equivalents || "equivalents",
 				is_term		: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.activate_autocomplete(form_item);
+				}
+			})
+
+		// period
+			self.form.item_factory({
+				id			: "period",
+				name		: "period",
+				label		: tstring.period || "period",
+				q_column	: "p_period",
+				eq_in		: "%",
+				// q_table	: "ts_period",
+				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
 					self.activate_autocomplete(form_item);

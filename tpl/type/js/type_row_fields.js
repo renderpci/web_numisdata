@@ -98,7 +98,7 @@ var type_row_fields = {
 					parent 			: wrapper
 				})
 			}
-		
+
 		// legend_obverse_transcription
 			obverse_wrapper.appendChild(
 				self.default(item, "legend_obverse_transcription")
@@ -167,7 +167,7 @@ var type_row_fields = {
 					return label +": "+ ar_final.join(" | ")
 				})
 			)
-		
+
 		// bibliography
 			const ar_references = item.bibliography_data
 				fragment.appendChild(
@@ -312,7 +312,7 @@ var type_row_fields = {
 
 				//const catalog_url = page_globals.__WEB_BASE_URL__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
 				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
-				
+
 				const prompt_label = common.create_dom_element({
 					element_type	: "a",
 					class_name		: "info_value underline-text",
@@ -544,7 +544,7 @@ var type_row_fields = {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: name + " golden-color",
-								inner_html		: ", "+(tstring.n || "nº") +" "+ identify_coin.number,
+								inner_html		: " "+ identify_coin.number,
 								parent			: line_collection
 							})
 						}
@@ -584,7 +584,7 @@ var type_row_fields = {
 							common.create_dom_element({
 								element_type	: "span",
 								class_name		: class_name+" golden-color",
-								inner_html		: ", "+(tstring.n || "nº") +" "+ data.number,
+								inner_html		: " "+ data.number,
 								parent			: line
 							})
 						}
@@ -1099,9 +1099,13 @@ var type_row_fields = {
 		// collection
 			if (data.collection && data.collection.length>0){
 
-				const collection_label = (data.number && data.number.length>0)
-					? data.collection + " (" + data.number + ")"
+				const collection_former = (data.former_collection.length>0)
+					? data.collection + " ("+data.former_collection+")"
 					: data.collection
+
+				const collection_label = (data.number && data.number.length>0)
+					? collection_former+ " "+ data.number
+					: collection_former
 
 				common.create_dom_element({
 					element_type	: "div",
@@ -1109,15 +1113,6 @@ var type_row_fields = {
 					inner_html		: collection_label,
 					parent			: wrapper
 				})
-
-				if (data.former_collection.length>0){
-					common.create_dom_element({
-						element_type	: "div",
-						class_name		: "",
-						inner_html		: "("+data.former_collection+")",
-						parent			: wrapper
-					})
-				}
 			}
 
 		// size. weight / dies / diameter
@@ -1199,7 +1194,7 @@ var type_row_fields = {
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
-							inner_html		: " "+(tstring.n || "nº") +" "+ data.number,
+							inner_html		: +" "+ data.number,
 							parent			: line
 						})
 					}

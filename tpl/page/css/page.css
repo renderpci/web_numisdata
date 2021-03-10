@@ -1391,11 +1391,11 @@ input[type=button].btn.button_download.unactive {
   vertical-align: text-bottom;
 }
 .legend_box.median {
-  font-size: 32px !important;
-  line-height: 32px;
+  font-size: 28px !important;
+  line-height: 28px;
 }
 .legend_box.median img {
-  height: 32px;
+  height: 28px;
 }
 .legend_box.big {
   font-size: 64px !important;

@@ -42,7 +42,7 @@ var mint = {
 				section_id : self.section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result[1]);				
+				console.log("--> set_up get_row_data API response:",response.result);				
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -67,7 +67,7 @@ var mint = {
 					if (mint_catalog.result) {
 						
 						const catMint = mint_catalog.result.find(el => el.term_table==='mints')
-						console.log(catMint.section_id)
+						
 						self.get_types_data({
 							section_id : catMint.section_id
 						})
@@ -226,9 +226,6 @@ var mint = {
 							//"children"	: "catalog"
 						}
 
-
-
-
 						// dedalo_get	: 'records',
 						// table		: 'catalog',
 						// db_name		: page_globals.WEB_DB,
@@ -245,8 +242,8 @@ var mint = {
 					}
 				})
 				.then(function(response){
-					const types_data = []
-					console.log(response)
+					
+					const types_data = []					
 					if (response.result && response.result.length>0) {
 						for (let i = 0; i < response.result.length; i++) {
 
@@ -388,8 +385,15 @@ var mint = {
 	*/
 	draw_row : function(options) {
 
-		const row_object	= options.ar_rows[0]
-		const container 	= options.target
+		// options
+			const row_object	= typeof options.ar_rows[0]!=="undefined" ? options.ar_rows[0] : null;
+			const container 	= options.target
+
+		// check row_object
+			if (!row_object) {
+				console.warn("Warning! draw_row row_object no found in options");
+				return null;
+			}
 
 		// fix row_object
 			self.row_object = row_object
@@ -1050,7 +1054,7 @@ var mint = {
 				}
 			}
 
-			console.log(map_data_clean)
+			
 			// draw points
 			self.map.parse_data_to_map(map_data_clean, null)
 			.then(function(){
@@ -1077,7 +1081,7 @@ var mint = {
 		const place_data = data.place_data
 
 		const sql_filter = "place_data='" + place_data + "'";
-		console.log (sql_filter)
+		
 			const ar_calls = []
 
 			ar_calls.push ({

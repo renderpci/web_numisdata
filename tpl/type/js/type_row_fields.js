@@ -385,7 +385,7 @@ var type_row_fields = {
 			for (let i = parents_ordered.length - 1; i >= 0; i--) {
 
 				if (parents_ordered[i].term_table === 'mints') {
-					console.log("parents_ordered[i]", parents_ordered[i]);
+					// console.log("parents_ordered[i]", parents_ordered[i]);
 					const mint_section_id = (parents_ordered[i].term_data)
 						? JSON.parse(parents_ordered[i].term_data)[0]
 						: ''
@@ -489,8 +489,6 @@ var type_row_fields = {
 		const identify_coin = item.ref_coins_union.find(item => item.section_id===identify_coin_id)
 
 		if (identify_coin) {
-
-			console.log("identify_coin:",identify_coin);
 
 			// uri
 				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id

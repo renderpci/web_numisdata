@@ -832,7 +832,37 @@ var page = {
 		setTimeout(function(){
 			image.src = hires
 		}, 100)
-	},//end load_hires	
+	},//end load_hires
+
+
+
+	/**
+	* SORT_ARRAY_BY_PROPERTY
+	* Sorts an array by a given property
+	*/
+	sort_array_by_property : function(array, property) {
+
+		const ar_ordered = array.sort(function (a, b) {
+			 return a[property].localeCompare(b[property]);
+		});
+
+		return ar_ordered
+	}, //end sort_array_by_property
+
+
+
+	/**
+	* FILTER_DROP_DOWN_LIST
+	* Filters drop down list items to show a filtered list depending on the filtering string
+	*/
+	filter_drop_down_list : function(array, filter_string) {
+		
+		return array.filter(function(el) {  
+			const el_normalized = el.value.normalize('NFD').replace(/[\u0300-\u036f]/g, "")     
+			const filtered = (el.value.toLowerCase().indexOf(filter_string.toLowerCase()) > -1) || (el_normalized.toLowerCase().indexOf(filter_string.toLowerCase()) > -1)
+			return filtered	
+		})
+	},//end filter_drop_down_list
 
 
 

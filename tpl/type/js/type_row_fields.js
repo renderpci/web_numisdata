@@ -92,12 +92,17 @@ var type_row_fields = {
 						style : 'median legend_obverse_box'
 					})
 				)
-			} else {
+			}else{
 				common.create_dom_element({
 					element_type 	: "div",
 					parent 			: wrapper
 				})
 			}
+		
+		// legend_obverse_transcription
+			obverse_wrapper.appendChild(
+				self.default(item, "legend_obverse_transcription")
+			)
 
 		// reverse_info_wrapper
 		const reverse_wrapper = common.create_dom_element({
@@ -128,6 +133,11 @@ var type_row_fields = {
 					})
 				)
 			}
+
+		// legend_reverse_transcription
+			reverse_wrapper.appendChild(
+				self.default(item, "legend_reverse_transcription")
+			)
 
 		// public_info
 			fragment.appendChild(

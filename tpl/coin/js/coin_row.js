@@ -15,7 +15,7 @@ var coin_row = {
 
 	draw_coin : function(row) {
 		if(SHOW_DEBUG===true) {
-			// console.log("-- draw_coin row:",row)
+			console.log("-- draw_coin row:",row)
 		}
 
 		const self = this
@@ -94,7 +94,7 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: "ID",
+						text_content	: "ID ",
 						parent			: group
 					})
 					common.create_dom_element({
@@ -120,26 +120,15 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.collection || "collection",
+						text_content	: tstring.collection || "Collection",
 						parent			: group
 					})
-
-
-					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=collection"+"&label="+row.collection+"&value="+row.collection;
-					const prompt_label = common.create_dom_element({
-						element_type	: "a",
-						class_name		: "value underline-text",
-						inner_html 		: row.collection,
-						href			: catalog_url,
-						parent 			: group
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "value",
+						inner_html		: row.collection,
+						parent			: group
 					})
-
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	class_name		: "value",
-					// 	inner_html		: row.collection,
-					// 	parent			: group
-					// })
 				}
 			// former_collection
 				if (row.former_collection && row.former_collection.length>0) {
@@ -150,7 +139,7 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.former_collection || "former_collection",
+						text_content	: tstring.former_collection || "Former collection",
 						parent			: group
 					})
 					common.create_dom_element({
@@ -160,87 +149,69 @@ var coin_row = {
 						parent			: group
 					})
 				}
-
-			function draw_auction(data, parent, prepend) {
-				if (data.name.length<1) return	
-				// line
-					const line = common.create_dom_element({
+			// number
+				if (row.number && row.number.length>0) {
+					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "line_full",
-						parent			: parent
-					})	
-				// name
-					if (data.name) {		
-						const group = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "group ref_auction",
-							parent			: line
-						})
-						const label = prepend + (tstring.auction || "ref_auction")
-						common.create_dom_element({
-							element_type	: "label",
-							text_content	: label,
-							parent			: group
-						})
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: "value",
-							inner_html		: data.name,
-							parent			: group
-						})
-					}					
-				// number
-					if (data.number) {
-						const group = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "group ref_auction_number",
-							parent			: line
-						})
-						common.create_dom_element({
-							element_type	: "label",
-							text_content	: tstring.number || "number", // auction_number
-							parent			: group
-						})
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: "value",
-							inner_html		: data.number,
-							parent			: group
-						})
-					}
-				// ref_auction_date
-					if (data.date) {
-						const group = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "group ref_auction_date",
-							parent			: line
-						})
-						common.create_dom_element({
-							element_type	: "label",
-							text_content	: tstring.date || "date", // auction_date
-							parent			: group
-						})
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: "value",
-							inner_html		: data.date,
-							parent			: group
-						})
-					}
-
-				return true
-			}
-			// ref_auction_group
-				if (row.ref_auction_group) {
-					for (let k = 0; k < row.ref_auction_group.length; k++) {
-						draw_auction(row.ref_auction_group[k], first_block, '')
-					}
+						class_name		: "group number",
+						parent			: first_block
+					})
+					common.create_dom_element({
+						element_type	: "label",
+						text_content	: tstring.number || "Number",
+						parent			: group
+					})
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "value",
+						inner_html		: row.number,
+						parent			: group
+					})
 				}
-			// ref_related_coin_auction_group
-				if (row.ref_related_coin_auction_group) {
-					for (let k = 0; k < row.ref_related_coin_auction_group.length; k++) {
-						draw_auction(row.ref_related_coin_auction_group[k], first_block, '= ')
-					}
+
+		// first_b_block (type)
+			const first_b_block = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "block_wrapper first_b_block",
+				parent			: fragment
+			})
+			// ref_auction
+				if (row.ref_auction && row.ref_auction.length>0) {
+					const group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group ref_auction",
+						parent			: first_b_block
+					})
+					common.create_dom_element({
+						element_type	: "label",
+						text_content	: tstring.ref_auction || "Auction",
+						parent			: group
+					})
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "value",
+						inner_html		: row.ref_auction,
+						parent			: group
+					})
+				}
+			// ref_auction_number
+				if (row.ref_auction_number && row.ref_auction_number.length>0) {
+					const group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group ref_auction_number",
+						parent			: first_b_block
+					})
+					common.create_dom_element({
+						element_type	: "label",
+						text_content	: tstring.ref_auction_number || "Number",
+						parent			: group
+					})
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "value",
+						inner_html		: row.ref_auction_number,
+						parent			: group
+					})
 				}
 
 
@@ -259,16 +230,20 @@ var coin_row = {
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.type || "type",
+						text_content	: tstring.type || "Type",
 						parent			: group
 					})
+						console.log("row.type_data[0]:",row.type_data[0]);
 					const mint		= typeof row.type_data[0]!=="undefined"
 						? row.type_data[0].mint
 						: null
-					const number	= typeof row.type_data[0]!=="undefined"
+					const mint_number = typeof row.type_data[0]!=="undefined"
+						? row.type_data[0].mint_number
+						: null
+					const type_number = typeof row.type_data[0]!=="undefined"
 						? row.type_data[0].number
 						: null
-					const value = common.clean_gaps((mint + " " + number), " | ", " | ") 
+					const value = common.clean_gaps((mint + " " + mint_number + " / " + type_number), " | ", " | ") 
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",
@@ -423,12 +398,17 @@ var coin_row = {
 						text_content	: tstring.legend_obverse || "legend_obverse",
 						parent			: group_legend_obverse
 					})					 
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: legend_obverse,
-						parent			: group_legend_obverse
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: legend_obverse,
+					// 	parent			: group_legend_obverse
+					// })
+					const legend_node = page.render_legend({
+						value : legend_obverse,
+						style : 'median legend_obverse_box'
 					})
+					group_legend_obverse.appendChild(legend_node)
 				}
 			// legend_reverse
 				const legend_reverse = typeof row.type_data[0]!=="undefined"
@@ -445,12 +425,72 @@ var coin_row = {
 						text_content	: tstring.legend_reverse || "legend_reverse",
 						parent			: group_legend_reverse
 					})					 
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: legend_reverse,
-						parent			: group_legend_reverse
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: legend_reverse,
+					// 	parent			: group_legend_reverse
+					// })
+					const legend_node = page.render_legend({
+						value : legend_reverse,
+						style : 'median legend_reverse_box'
 					})
+					group_legend_reverse.appendChild(legend_node)
+				}
+
+		// fifth_block (countermarks)
+			const fifth_block = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "block_wrapper fifth_block",
+				parent			: fragment
+			})
+			// countermark_obverse
+				if (row.countermark_obverse && row.countermark_obverse.length>0) {
+					const group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group countermark_obverse",
+						parent			: fifth_block
+					})
+					common.create_dom_element({
+						element_type	: "label",
+						text_content	: tstring.countermark_obverse || "countermark_obverse",
+						parent			: group
+					})
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: row.countermark_obverse,
+					// 	parent			: group
+					// })
+					const current_node = page.render_legend({
+						value : row.countermark_obverse,
+						style : 'median countermark_obverse_box'
+					})
+					group.appendChild(current_node)
+				}
+			// countermark_reverse
+				if (row.countermark_reverse && row.countermark_reverse.length>0) {
+					const group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group countermark_reverse",
+						parent			: fifth_block
+					})
+					common.create_dom_element({
+						element_type	: "label",
+						text_content	: tstring.countermark_reverse || "countermark_reverse",
+						parent			: group
+					})
+					// common.create_dom_element({
+					// 	element_type	: "span",
+					// 	class_name		: "value",
+					// 	inner_html		: row.countermark_reverse,
+					// 	parent			: group
+					// })
+					const current_node = page.render_legend({
+						value : row.countermark_reverse,
+						style : 'median countermark_reverse_box'
+					})
+					group.appendChild(current_node)
 				}
 
 		// fourth_block (measures)
@@ -535,51 +575,25 @@ var coin_row = {
 						parent			: group
 					})
 				}
-
-		// fifth_block (countermarks)
-			const fifth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper fifth_block",
-				parent			: fragment
-			})
-			// countermark_obverse
-				if (row.countermark_obverse && row.countermark_obverse.length>0) {
+			// find_type
+				if (row.find_type && row.find_type.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group countermark_obverse",
-						parent			: fifth_block
+						class_name		: "group find_type",
+						parent			: fourth_block
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.countermark_obverse || "countermark_obverse",
+						text_content	: tstring.find_type || "find_type",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "value",
-						inner_html		: row.countermark_obverse,
+						inner_html		: row.find_type,
 						parent			: group
 					})
-				}
-			// countermark_reverse
-				if (row.countermark_reverse && row.countermark_reverse.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group countermark_reverse",
-						parent			: fifth_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.countermark_reverse || "countermark_reverse",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.countermark_reverse,
-						parent			: group
-					})
-				}
+				}	
 
 		// sixth_block (hoard)
 			const sixth_block = common.create_dom_element({
@@ -612,26 +626,7 @@ var coin_row = {
 				element_type	: "div",
 				class_name		: "block_wrapper seventh_block",
 				parent			: fragment
-			})
-			// find_type
-				if (row.find_type && row.find_type.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group find_type",
-						parent			: seventh_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.find_type || "find_type",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.find_type,
-						parent			: group
-					})
-				}
+			})			
 			// findspot_place
 				if (row.findspot_place && row.findspot_place.length>0) {
 					const group = common.create_dom_element({
@@ -722,7 +717,6 @@ var coin_row = {
 						parent			: group
 					})
 				}
-
 			// other permanent uri
 				if (row.uri && row.uri.length>0) {					
 					for (let i = 0; i < row.uri.length; i++) {
@@ -798,20 +792,19 @@ var coin_row = {
 
 
 
-
-			// type
-				// fragment.appendChild(
-				// 	self.default("type", item.type, 'type', function(){
-				// 		const mint		= typeof item.type_data[0]!=="undefined"
-				// 			? item.type_data[0].mint
-				// 			: null
-				// 		const number	= (mint) 
-				// 			? mint + " " + item.type
-				// 			: item.type
-				// 		const value = common.clean_gaps(number, " | ", " | ") // , splitter=" | ", joinner=", "
-				// 		return value
-				// 	})
-				// )
+		// type
+			// fragment.appendChild(
+			// 	self.default("type", item.type, 'type', function(){
+			// 		const mint		= typeof item.type_data[0]!=="undefined"
+			// 			? item.type_data[0].mint
+			// 			: null
+			// 		const number	= (mint) 
+			// 			? mint + " " + item.type
+			// 			: item.type
+			// 		const value = common.clean_gaps(number, " | ", " | ") // , splitter=" | ", joinner=", "
+			// 		return value
+			// 	})
+			// )
 
 
 		// row_wrapper

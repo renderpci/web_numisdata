@@ -406,8 +406,10 @@ function form_factory() {
 						  c_group[c_group_op] = []
 
 					// escape html strings containing single quotes inside.
-					// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
-					const safe_value = form_item.q.replace(/(')/g, "''")
+					// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'					
+					const safe_value = (typeof form_item.q==='string' || form_item.q instanceof String)
+						? form_item.q.replace(/(')/g, "''")
+						: form_item.q // negative int numbers case like -375
 
 					// q element
 						const element = {

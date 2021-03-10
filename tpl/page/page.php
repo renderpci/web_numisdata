@@ -5,7 +5,7 @@
 	# base_links
 		// $base_links = common::get_base_links();
 		// define('BASE_LINKS', $base_links);
-	
+
 
 	# required classes
 		#include( __WEB_TEMPLATE_PATH__ . '/common/class.mht.php');
@@ -26,7 +26,7 @@
 	# js
 		// app_utils . web application useful es6 modules compatible with old browsers (Configure CodeKit to ES6 Bundle IIFE)
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app_utils-min.js';
-		
+
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/browser.min.js';
@@ -35,7 +35,7 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.poptrox.min.js';
 
-		
+
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page_render.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data.js';
@@ -47,7 +47,7 @@
 
 	# footer_html
 		$this->footer_html = '';
-		#$footer_template_map = new stdClass(); 
+		#$footer_template_map = new stdClass();
 		#	$footer_template_map->template = 'footer';
 
 		#$footer_info = ''; //tpl_common::get_footer_info();
@@ -80,7 +80,7 @@
 			};
 
 		// li drawer
-			$li_drawer = function($menu_element, $embed_html='') {				
+			$li_drawer = function($menu_element, $embed_html='') {
 				$html  = '';
 				$html .= PHP_EOL . '<li role="'.$menu_element->web_path.'">';
 				$web_path = $menu_element->web_path==='main_home' ? '' : $menu_element->web_path;
@@ -94,28 +94,26 @@
 		// menu_tree_html
 			$this->menu_tree_html = page::render_menu_tree_plain(WEB_MENU_PARENT, $menu_tree, $li_drawer, $ul_drawer, 'children');
 
-		
 
-	# content_html	
+
+	# content_html
 		$content_options = new stdClass();
 			$content_options->template_map 		= $template_map; // Defined in method page->render_page_html
 			$content_options->mode 				= $mode; // Defined in method page->render_page_html
 			$content_options->add_common_css 	= false;
 			$content_options->add_template_css 	= true;
 			$content_options->resolve_values 	= true;
-	
-		$content_html = $this->get_template_html($content_options);	
-	
+
+		$content_html = $this->get_template_html($content_options);
+
 
 	# page title
 		#if(isset($this->row->term)) {
 		#	$this->page_title = $this->row->term;
 		#}
 		$page_title = $this->get_page_title();
-	
-	
+
+
 	# build links css/js
 		$css_links 	= $this->get_header_links('css');
 		$js_links 	= $this->get_header_links('js', ['js_async' => 'defer']);
-
-

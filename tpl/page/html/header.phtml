@@ -7,12 +7,12 @@
 				<div class="pre_alert"></div>
 			<?php } ?>
 
-			<?php if ($this->area_name==='main_home') { ?>			
-				
-				<!-- Logo -->					
+			<?php if ($this->area_name==='main_home') { ?>
+
+				<!-- Logo -->
 					<div class="logo_big">
 						<img src="<?php echo __WEB_TEMPLATE_WEB__ ?>/assets/images/logo_mib_marron.svg" alt="" />
-					</div>				
+					</div>
 
 				<!-- Nav -->
 					<?php if (IS_PRODUCTION===false) { ?>
@@ -48,7 +48,7 @@
 						<span><?php echo tstring('work_in_progress'); // 'Work in progress. Provisional numbering. Not for citation' ?></span>
 					</div>
 
-			<?php } //if ($this->area_name==='main_home') { ?>			
+			<?php } //if ($this->area_name==='main_home') { ?>
 		</div>
 
 	</header>
@@ -56,12 +56,18 @@
 <!-- Menu -->
 	<?php if (IS_PRODUCTION===false) { ?>
 	<nav id="menu">
-		<div id="lang_globe" class="lang_globe" title="Switch lang"><i class="fa fa-globe"></i></div>
+
+
+
+		<div id="lang_globe" class="lang_globe" title="Switch lang">
+			<span><?php echo tstring('lang') ?? 'Languages'?></span>
+			<i class="fa fa-globe"></i>
+		</div>
 		<ul id="page_lang_selector" class="page_lang_selector hide">
 			<?php foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) { ?>
 				<li class="lang_item"><a href="?lang=<?php echo $lang ?>"><?php echo $lang_name ?></a></li>
 			<?php } ?>
-		</ul>		
+		</ul>
 		<h2><?php echo tstring('menu') ?></h2>
 		<?php echo $this->menu_tree_html ?>
 	</nav>

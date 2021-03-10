@@ -804,7 +804,7 @@ nav ul {
   background-image: url('../../assets/images/overlay_white.png');
 }
 #wrapper #main {
-  min-height: 50vh;
+  min-height: 80vh;
 }
 @media screen and (max-width: 736px) {
   #wrapper #main {

@@ -233,20 +233,52 @@ var biblio_row_fields = {
 							})
 						}
 
+					// // other_people_info : name and role other_people_name
+					// 	if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
+					// 		const other_people_name = biblio_object.other_people_name.split(" | ");
+					// 		const other_people_role = biblio_object.other_people_role.split(" | ")
+					//
+					// 		const role = typeof other_people_role[0]!=='undefined'
+					// 			? ', ('+other_people_role[0]+') '
+					// 			: ', '
+					//
+					// 		common.create_dom_element({
+					// 				element_type 	: "div",
+					// 				class_name 		: "info_value other_people_name grey",
+					// 				text_content 	: role,
+					// 				parent 			: line
+					// 			})
+					//
+					// 		const other_people_length = other_people_name.length
+					// 		for (let g = 0; g < other_people_length; g++) {
+					//
+					// 			const name = other_people_name[g]
+					//
+					// 			const text_content = (g!==0)
+					// 				? ", "+name
+					// 				: " "+name
+					//
+					// 			common.create_dom_element({
+					// 				element_type 	: "div",
+					// 				class_name 		: "info_value other_people_name grey",
+					// 				text_content 	: text_content,
+					// 				parent 			: line
+					// 			})
+					// 		}
+					// 	}
+					//
 
 					// other_people_info : name and role other_people_name
 						if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
 							const other_people_name = biblio_object.other_people_name.split(" | ");
 							const other_people_role = biblio_object.other_people_role.split(" | ")
 
-							const role = typeof other_people_role[0]!=='undefined'
-								? ', ('+other_people_role[0]+') '
-								: ', '
+							const particle_in = tstring.in || 'In'
 
 							common.create_dom_element({
-									element_type 	: "div",
+									element_type 	: "span",
 									class_name 		: "info_value other_people_name grey",
-									text_content 	: role,
+									text_content 	: particle_in,
 									parent 			: line
 								})
 
@@ -260,12 +292,23 @@ var biblio_row_fields = {
 									: " "+name
 
 								common.create_dom_element({
-									element_type 	: "div",
+									element_type 	: "span",
 									class_name 		: "info_value other_people_name grey",
 									text_content 	: text_content,
 									parent 			: line
 								})
 							}
+
+							const role = typeof other_people_role[0]!=='undefined'
+								? ' ('+other_people_role[0].toLowerCase()+'.): '
+								: ' '
+
+							common.create_dom_element({
+									element_type 	: "span",
+									class_name 		: "info_value other_people_name grey",
+									text_content 	: role,
+									parent 			: line
+								})
 						}
 
 				break;
@@ -289,6 +332,49 @@ var biblio_row_fields = {
 							inner_html 		: ' ' + biblio_object.serie,
 							parent 			: line
 						})
+					}
+
+				// other_people_info : name and role other_people_name
+					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
+						const other_people_name = biblio_object.other_people_name.split(" | ");
+						const other_people_role = biblio_object.other_people_role.split(" | ")
+
+						const particle_in = tstring.in || 'In'
+
+						common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: particle_in,
+								parent 			: line
+							})
+
+						const other_people_length = other_people_name.length
+						for (let g = 0; g < other_people_length; g++) {
+
+							const name = other_people_name[g]
+
+							const text_content = (g!==0)
+								? ", "+name
+								: " "+name
+
+							common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: text_content,
+								parent 			: line
+							})
+						}
+
+						const role = typeof other_people_role[0]!=='undefined'
+							? ' ('+other_people_role[0].toLowerCase()+'.): '
+							: ' '
+
+						common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: role,
+								parent 			: line
+							})
 					}
 
 					// title_colective
@@ -320,29 +406,29 @@ var biblio_row_fields = {
 							})
 						}
 
-				// other_people_info : name and role other_people_name
-					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-						const other_people_name = biblio_object.other_people_name.split(" | ");
-						const other_people_role = biblio_object.other_people_role.split(" | ")
-						for (let g = 0; g < other_people_name.length; g++) {
-
-							const name = other_people_name[g]
-							const role = typeof other_people_role[g]!=='undefined'
-								? ' ('+other_people_role[g]+')'
-								: ''
-
-							const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0))
-								? ", "+name + role
-								: name + role
-
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value other_people_name grey",
-								text_content 	: text_content,
-								parent 			: line
-							})
-						}
-					}
+				// // other_people_info : name and role other_people_name
+				// 	if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
+				// 		const other_people_name = biblio_object.other_people_name.split(" | ");
+				// 		const other_people_role = biblio_object.other_people_role.split(" | ")
+				// 		for (let g = 0; g < other_people_name.length; g++) {
+				//
+				// 			const name = other_people_name[g]
+				// 			const role = typeof other_people_role[g]!=='undefined'
+				// 				? ' ('+other_people_role[g]+')'
+				// 				: ''
+				//
+				// 			const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0))
+				// 				? ", "+name + role
+				// 				: name + role
+				//
+				// 			common.create_dom_element({
+				// 				element_type 	: "div",
+				// 				class_name 		: "info_value other_people_name grey",
+				// 				text_content 	: text_content,
+				// 				parent 			: line
+				// 			})
+				// 		}
+				// 	}
 
 				// physical_description
 					const text_content = (biblio_object.physical_description)

@@ -343,20 +343,20 @@ var biblio_row_fields = {
 							})
 					}
 
-					// title_colective
-						if (biblio_object.title_colective) {
-
-							const title_colective = (biblio_object.title_colective)
-								? biblio_object.title_colective
-								: ""
-
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value volume grey italic",
-								text_content 	: title_colective,
-								parent 			: line
-							})
-						}
+					// // title_colective
+					// 	if (biblio_object.title_colective) {
+					//
+					// 		const title_colective = (biblio_object.title_colective)
+					// 			? biblio_object.title_colective
+					// 			: ""
+					//
+					// 		common.create_dom_element({
+					// 			element_type 	: "div",
+					// 			class_name 		: "info_value volume grey italic",
+					// 			text_content 	: title_colective,
+					// 			parent 			: line
+					// 		})
+					// 	}
 					// title_secondary
 						if (biblio_object.title_secondary) {
 

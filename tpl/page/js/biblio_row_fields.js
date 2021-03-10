@@ -204,7 +204,7 @@ var biblio_row_fields = {
 					// 	})
 					// }
 					// title_colective
-console.log("title_colective--------", biblio_object.title_colective);
+
 						if (biblio_object.title_colective) {
 
 							const title_colective = (biblio_object.title_colective)

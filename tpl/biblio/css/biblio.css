@@ -159,8 +159,14 @@ section.result {
   flex-wrap: wrap;
 }
 .form-inline .form-row .form-group {
-  flex: 1 1 33.33%;
+  flex: 0 1 33.33%;
   align-self: baseline;
+}
+.form-inline .form-row .form-group.field_operators {
+  flex: 1 1 33.33%;
+}
+.form-inline .form-row .form-group.field_submit {
+  flex: 0 0 100%;
 }
 .form-inline .form-row .operators {
   padding-right: 2em;

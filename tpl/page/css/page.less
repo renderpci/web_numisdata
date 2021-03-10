@@ -680,7 +680,7 @@
 					}
 				}
 			}
-		.copyright {
+			.copyright {
 					justify-content: center;
 					align-items: baseline;
 				}
@@ -696,6 +696,21 @@
 					vertical-align: bottom;
 				}
 			}
+		}
+
+		// @media screen and (max-width: @movil_max_width) {
+			@media (max-width: @movil_max_width) {
+				.inner ul.copyright {
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: space-evenly;
+				}
+
+				.inner .copyright li {
+					line-height: 1;
+					line-height: inherit;
+					text-align: center;
+				}
 		}
 
 
@@ -1009,6 +1024,11 @@
 
 			&:first-of-type {
 				margin-right: 1em;
+			}
+		}
+		@media screen and (max-width: @movil_max_width) {
+			.export_container:first-of-type {
+				margin-right: unset;
 			}
 		}
 	}

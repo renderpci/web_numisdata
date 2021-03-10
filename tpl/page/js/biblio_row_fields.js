@@ -204,20 +204,20 @@ var biblio_row_fields = {
 					// 	})
 					// }
 					// title_colective
-
-						if (biblio_object.title_colective) {
-
-							const title_colective = (biblio_object.title_colective)
-								? biblio_object.title_colective
-								: ""
-
-							common.create_dom_element({
-								element_type 	: "div",
-								class_name 		: "info_value volume grey italic",
-								text_content 	: title_colective,
-								parent 			: line
-							})
-						}
+						//
+						// if (biblio_object.title_colective) {
+						//
+						// 	const title_colective = (biblio_object.title_colective)
+						// 		? biblio_object.title_colective
+						// 		: ""
+						//
+						// 	common.create_dom_element({
+						// 		element_type 	: "div",
+						// 		class_name 		: "info_value volume grey italic",
+						// 		text_content 	: title_colective,
+						// 		parent 			: line
+						// 	})
+						// }
 					// title_secondary
 						if (biblio_object.title_secondary) {
 
@@ -233,40 +233,6 @@ var biblio_row_fields = {
 							})
 						}
 
-					// // other_people_info : name and role other_people_name
-					// 	if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-					// 		const other_people_name = biblio_object.other_people_name.split(" | ");
-					// 		const other_people_role = biblio_object.other_people_role.split(" | ")
-					//
-					// 		const role = typeof other_people_role[0]!=='undefined'
-					// 			? ', ('+other_people_role[0]+') '
-					// 			: ', '
-					//
-					// 		common.create_dom_element({
-					// 				element_type 	: "div",
-					// 				class_name 		: "info_value other_people_name grey",
-					// 				text_content 	: role,
-					// 				parent 			: line
-					// 			})
-					//
-					// 		const other_people_length = other_people_name.length
-					// 		for (let g = 0; g < other_people_length; g++) {
-					//
-					// 			const name = other_people_name[g]
-					//
-					// 			const text_content = (g!==0)
-					// 				? ", "+name
-					// 				: " "+name
-					//
-					// 			common.create_dom_element({
-					// 				element_type 	: "div",
-					// 				class_name 		: "info_value other_people_name grey",
-					// 				text_content 	: text_content,
-					// 				parent 			: line
-					// 			})
-					// 		}
-					// 	}
-					//
 
 					// other_people_info : name and role other_people_name
 						if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
@@ -730,19 +696,19 @@ var biblio_row_fields = {
 					parent			: line
 				})
 
-			// title colective alt ref_publications_title_colective_alt	cursiva
-				const title_colective_alt_previous = (biblio_object.ref_publications_title_colective_alt)
-					? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>'
-					: null
-				const title_colective_alt = ( title_colective_alt_previous && biblio_object.ref_publications_place)
-					? title_colective_alt_previous +', '
-					: title_colective_alt_previous
-
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: title_colective_alt,
-					parent			: line
-				})
+			// // title colective alt ref_publications_title_colective_alt	cursiva
+			// 	const title_colective_alt_previous = (biblio_object.ref_publications_title_colective_alt)
+			// 		? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>'
+			// 		: null
+			// 	const title_colective_alt = ( title_colective_alt_previous && biblio_object.ref_publications_place)
+			// 		? title_colective_alt_previous +', '
+			// 		: title_colective_alt_previous
+			//
+			// 	common.create_dom_element({
+			// 		element_type	: "span",
+			// 		inner_html		: title_colective_alt,
+			// 		parent			: line
+			// 	})
 
 			// place
 				const place = (biblio_object.ref_publications_place)

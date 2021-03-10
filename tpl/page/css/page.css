@@ -1063,6 +1063,8 @@ nav ul {
 #footer {
   background-color: #333333;
   padding: 0;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
   color: #b7996d;
   opacity: 1;
   transition: opacity 0.35s ease-in-out;

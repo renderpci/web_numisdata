@@ -446,7 +446,9 @@ function form_factory() {
 						const value = form_item.q_selected[j]
 						// escape html strings containing single quotes inside.
 						// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
-						const safe_value = value.replace(/(')/g, "''")
+						const safe_value = (typeof value==='string' || value instanceof String)
+							? value.replace(/(')/g, "''")
+							: value
 
 						// item_value
 							const item_value =  (form_item.value_wrapper && form_item.value_wrapper.length>1) // like [""]

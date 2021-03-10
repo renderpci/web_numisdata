@@ -280,4 +280,42 @@
     padding: 0 !important;
   }
 }
+@media (max-width: 842px) {
+  .children_contanier {
+    margin-left: 0.5em;
+  }
+  .type_container {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: auto auto auto;
+    /* margin-bottom: 0.5em; */
+    margin-top: 0.5em;
+  }
+  .type_container .type_info {
+    grid-row-start: 3;
+    grid-column-start: 1;
+  }
+  .type_container .ref_type_equivalents {
+    grid-column-start: 1;
+    grid-row-start: 4;
+  }
+  .type_container .coins_images_container {
+    grid-column-start: 1;
+    grid-row-start: 1;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    display: grid;
+  }
+  .type_container .collection_auction {
+    font-size: 0.6em;
+    grid-column-start: 1;
+    grid-row-start: 2;
+    display: inline-flex;
+    text-align: center;
+    /* justify-items: center; */
+    /* align-items: center; */
+    justify-content: center;
+  }
+}
 /*# sourceMappingURL=catalog.css.map */

@@ -16,8 +16,8 @@
 /*
 	#wrapper {
 
-		height: 100vh;		
-		
+		height: 100vh;
+
 	}
 	*/
 section.result {
@@ -79,6 +79,7 @@ section.result {
 .biblio_row_wrapper .row_title {
   display: flex;
   flex-wrap: wrap;
+  white-space: break-spaces;
 }
 .biblio_row_wrapper .row_title .pdf {
   margin-left: 0.5em;
@@ -97,6 +98,7 @@ section.result {
 .biblio_row_wrapper .row_body {
   display: flex;
   flex-wrap: wrap;
+  white-space: break-spaces;
 }
 .biblio_row_wrapper .row_url {
   display: flex;
@@ -106,17 +108,25 @@ section.result {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
+.biblio_row_wrapper .descriptors a:last-child {
+  border: none;
+}
+.biblio_row_wrapper .descriptors a:first-child {
+  padding-left: 0;
+}
 .biblio_row_wrapper a.descriptors_link {
   display: inline-block;
   padding: 0.35em;
   padding-bottom: 0;
   padding-top: 0;
-  background-color: #be875a;
   margin: 0.25em;
   margin-left: 0;
-  color: #ffffff !important;
-  border-radius: 3px;
+  color: #be875a !important;
+  /* border-radius: 3px; */
+  border-right: 1px solid #be875a;
   font-size: 0.8em;
+  border-bottom: none;
+  font-variant: small-caps;
 }
 .biblio_row_wrapper .transcription {
   background-color: #f8f5f2;

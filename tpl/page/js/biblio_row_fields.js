@@ -285,7 +285,7 @@ var biblio_row_fields = {
 						common.create_dom_element({
 							element_type 	: "div",
 							class_name 		: "info_value serie grey",
-							text_content 	: ": " + biblio_object.serie,
+							inner_html 		: ' ' + biblio_object.serie,
 							parent 			: line
 						})
 					}
@@ -449,7 +449,7 @@ var biblio_row_fields = {
 
 
 	transcription : function(value, q){
-		
+
 		const self = this
 
 		const text = page.search_fragment_in_text(q, value, 510)

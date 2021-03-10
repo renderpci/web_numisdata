@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
 * BIBLIO
 *
@@ -12,10 +12,10 @@ class biblio {
 	* @return array $ar_result
 	*/
 	public static function search_biblio($request_options) {
-		
+
 		$options = new stdClass();
 			$options->ar_query	= [];
-			$options->limit		= 10;
+			$options->limit		= 20;
 			// pagination
 			$options->offset	= 0;
 			$options->count		= true;
@@ -39,7 +39,7 @@ class biblio {
 			foreach ($options->ar_query as $key => $value_obj) {
 
 				switch ($value_obj->name) {
-					
+
 					case 'publication_date':
 						preg_match("/^([0-9]{4})([-\/]([0-9]{1,2}))?([-\/]([0-9]{1,2}))?$/", $value_obj->value, $output_array);
 						$year  	= isset($output_array[1]) ? $output_array[1] : false;
@@ -48,11 +48,11 @@ class biblio {
 
 						if (isset($output_array[3]) && isset($output_array[5])) {
 							$month = $output_array[3];
-							$day   = $output_array[5];							
+							$day   = $output_array[5];
 						}else if (isset($output_array[3]) && !isset($output_array[5])) {
 							$month = $output_array[3];
-						}						
-						if (empty($year)) {							
+						}
+						if (empty($year)) {
 							debug_log(__METHOD__." Invalid date. Ignored! ".to_string($value_obj->value), 'DEBUG');
 							break;
 						}else{
@@ -75,8 +75,8 @@ class biblio {
 						$ar_filter[] = 'MATCH (`transcription`) AGAINST (\''.$value_obj->value.'\')';
 						break;
 
-					// case 'authors999':						
-					// 	$delimiter  = ' | ';						
+					// case 'authors999':
+					// 	$delimiter  = ' | ';
 					// 	$ar_authors = explode($delimiter, $value_obj->value);
 					// 	$ar_filter_authors = [];
 					// 	foreach ($ar_authors as $a_value) {
@@ -90,12 +90,12 @@ class biblio {
 						// scape
 						$value 		 = self::escape_value($value_obj->value);
 						$ar_filter[] = '`'.$value_obj->name."` LIKE '%".$value."%'";
-						
+
 						// if ($value_obj->name==='authors' && strpos($value_obj->value, ' | ')===false) {
 						// 	$use_union = true;
 						// }
 						break;
-				}			
+				}
 			}
 			$filter = implode(' '.$operator.' ', $ar_filter);
 		}
@@ -136,7 +136,7 @@ class biblio {
 			'authors_data' => 'other_people'
 		];
 
-		# Search		
+		# Search
 		$rows_options = new stdClass();
 			$rows_options->dedalo_get				= 'bibliography_rows'; //	'records';
 			$rows_options->table					= 'publications';
@@ -150,7 +150,7 @@ class biblio {
 			$rows_options->sql_filter				= $filter;
 			$rows_options->use_union				= $use_union ?? false;
 			$rows_options->resolve_portals_custom	= $portals_custom;
-		
+
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($rows_options);
 			// dump($web_data, ' web_data ++ '.to_string());
@@ -166,7 +166,7 @@ class biblio {
 
 	/**
 	* ESCAPE_VALUE
-	* @return 
+	* @return
 	*/
 	public static function escape_value($value) {
 

@@ -19,7 +19,7 @@ var biblio =  {
 		const form = document.getElementById("search_form")
 		if (form) {
 			const ar_form_inputs  	 = form.querySelectorAll("input.form-control")
-			const ar_form_inputs_len = ar_form_inputs.length		
+			const ar_form_inputs_len = ar_form_inputs.length
 			for (let i = 0; i < ar_form_inputs_len; i++) {
 
 				const item = ar_form_inputs[i]
@@ -27,27 +27,27 @@ var biblio =  {
 				const autocomplete = item.dataset.autocomplete
 					? JSON.parse(item.dataset.autocomplete)
 					: true
-		
+
 				// Activate autocomplete behabiour for each input
 					if (autocomplete===true) {
 						self.activate_autocomplete(ar_form_inputs[i])
-					}					
+					}
 
 				// Add event keyup to all inputs
 				//ar_form_inputs[i].addEventListener("keyup", function(e){
 				//	//self.search(form, null)
-				//},false)			
+				//},false)
 			}
 
 			// exec first default search without params
 				self.search_rows({
 					ar_query : [],
-					limit 	 : 10
+					limit 	 : 20
 				}) // First search
 
 		}else if (typeof biblio_section_id!=="undefined") {
 
-			// Defined in html file	
+			// Defined in html file
 				const ar_query		= []
 				const current_obj	= {
 						name 		: "section_id", // input.name,
@@ -63,7 +63,7 @@ var biblio =  {
 					limit 	 : 1
 				})
 		}
-		
+
 
 		return true
 	},//end set_up
@@ -74,17 +74,17 @@ var biblio =  {
 	* SET_VALUE
 	*/
 	set_value : function(object, value, real_value) {
-		
+
 		const container = document.getElementById(object.id + "_values")
 
-		// Check if already exists 
+		// Check if already exists
 			const inputs		= container.querySelectorAll(".input_values")
 			const inputs_length	= inputs.length
 			for (let i = inputs_length - 1; i >= 0; i--) {
 				if (value===inputs[i].value) return false;
 			}
 
-		// Create new line 
+		// Create new line
 			const line = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "line_value",
@@ -119,7 +119,7 @@ var biblio =  {
 					data_set		: object.dataset // Inherit dataset
 				})
 				input.value = value
-		
+
 
 		return true
 	},//end set_value
@@ -130,7 +130,7 @@ var biblio =  {
 	* ACTIVATE_AUTOCOMPLETE
 	*/
 	activate_autocomplete : function(element) {
-		
+
 		const self = this
 
 
@@ -139,7 +139,7 @@ var biblio =  {
 			delay		: 150,
 			minLength	: 0,
 			source		: function( request, response ) {
-				
+
 				const term  = request.term;
 
 				// // Cache
@@ -155,11 +155,11 @@ var biblio =  {
 						q_name			: element.dataset.q_name || null,
 						q_search		: element.dataset.q_search || element.dataset.q_name,
 						q_table			: element.dataset.q_table || null,
-						dd_relations	: element.dataset.dd_relations || null 
+						dd_relations	: element.dataset.dd_relations || null
 				}
 				if(SHOW_DEBUG===true) {
 					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars);
-				}				
+				}
 
 				common.get_json_data(trigger_url, trigger_vars).then(function(response_data) {
 					// if(SHOW_DEBUG===true) {
@@ -184,7 +184,7 @@ var biblio =  {
 				// prevent set selected value to autocomplete input
 				event.preventDefault();
 
-				/* MULTI 
+				/* MULTI
 				  var terms = split( this.value );
 		          // remove the current input
 		          terms.pop();
@@ -207,7 +207,7 @@ var biblio =  {
 				return false;
 			},
 			close: function( event, ui ) {
-				
+
 			},
 			change: function( event, ui ) {
 
@@ -223,13 +223,13 @@ var biblio =  {
 				// prevent set selected value to autocomplete input
 				//event.preventDefault();
 				//var term = $(this).val();
-				$(this).autocomplete('close')						
+				$(this).autocomplete('close')
 			}//end if ( event.keyCode === $.ui.keyCode.ENTER  )
 		})// bind
-		.focus(function() {	
+		.focus(function() {
 		    $(this).autocomplete('search', null)
 		})
-		.blur(function() {	
+		.blur(function() {
 			//$(element).autocomplete('close');
 		})
 
@@ -251,11 +251,11 @@ var biblio =  {
 		// ar_query
 			var ar_query 		= []
 			var ar_form_inputs  = form_obj.querySelectorAll("input.input_values, input.form-control")
-			var ar_input_len 	= ar_form_inputs.length		
+			var ar_input_len 	= ar_form_inputs.length
 			for (var i = 0; i < ar_input_len; i++) {
-				
+
 				const input = ar_form_inputs[i]
-				
+
 				if (input.value.length>0) {
 
 					// value
@@ -270,11 +270,11 @@ var biblio =  {
 							const ar_parts = input.dataset.q_name.split(' AS ')
 							// overwrite current_column
 							current_column = ar_parts[1]
-							if (current_column==="authors") {								
+							if (current_column==="authors") {
 								const regex = /\,/gi;
-								current_value = current_value.replace(regex, '');								
+								current_value = current_value.replace(regex, '');
 							}
-						}						
+						}
 
 					const current_obj = {
 						name 		: current_column, // input.dataset.q_name, // input.name,
@@ -282,10 +282,10 @@ var biblio =  {
 						search_mode : input.dataset.search,
 						table 		: input.dataset.q_table
 					}
-					
+
 					ar_query.push(current_obj)
 				}
-			}	
+			}
 			if(SHOW_DEBUG===true) {
 				// console.log("search.ar_query:", ar_query);
 			}
@@ -309,7 +309,7 @@ var biblio =  {
 
 		return response
 	},//end search
-	
+
 
 
 	/**
@@ -325,12 +325,12 @@ var biblio =  {
 
 		const container = document.getElementById("biblio_rows_list")
 			  container.style.opacity = "0.4"
-	
-		const trigger_url  = self.trigger_url		
+
+		const trigger_url  = self.trigger_url
 		const trigger_vars = {
 			mode		: "search_rows",
 			ar_query	: typeof(options.ar_query)!=="undefined" ? options.ar_query : null,
-			limit		: options.limit || 10,
+			limit		: options.limit || 20,
 			// pagination
 			offset		: options.offset || 0,
 			count		: options.count || false,
@@ -342,7 +342,7 @@ var biblio =  {
 		// debug
 			if(SHOW_DEBUG===true) {
 				// console.log("[biblio.search_rows] trigger_vars:",trigger_vars);
-			}	
+			}
 
 		// Http request directly in javascript to the API is possible too..
 		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
@@ -351,12 +351,12 @@ var biblio =  {
 				}
 
 				container.style.opacity = "1"
-				
+
 				if (!response) {
 					// Error on load data from trigger
 					console.warn("[biblio.search_rows] Error. Received response data is null");
 					return false
-				
+
 				}else{
 					// Success
 					return biblio.draw_rows({
@@ -409,14 +409,14 @@ var biblio =  {
 	* DRAW_ROWS
 	*/
 	draw_rows : function(options) {
-		
+
 		const self = this
-	
+
 		const ar_rows 		 = options.ar_rows || []
-		const ar_rows_length = ar_rows.length		
-		
+		const ar_rows_length = ar_rows.length
+
 		// clean container select and clean container div
-			const container = document.getElementById(options.target)	
+			const container = document.getElementById(options.target)
 			while (container.hasChildNodes()) {
 				container.removeChild(container.lastChild);
 			}
@@ -434,9 +434,9 @@ var biblio =  {
 				offset	: options.offset,
 				count	: ar_rows_length
 			}))
-			fragment.appendChild(pagination_container)			
-	
-		// sort rows 
+			fragment.appendChild(pagination_container)
+
+		// sort rows
 			const collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
 			ar_rows.sort( (a,b) => {
 					let order_a = a.autoria +" "+ a.fecha_publicacion
@@ -449,7 +449,7 @@ var biblio =  {
 		// self.search_options
 			const transcription_query = self.search_options.ar_query.find(function(el){
 				return el.name==="transcription"
-			}) || null			
+			}) || null
 
 		// rows build
 			for (let i = 0; i < ar_rows_length; i++) {
@@ -461,7 +461,7 @@ var biblio =  {
 
 					if(SHOW_DEBUG===true) {
 						// console.log("i biblio_object:", i, biblio_object);
-					}					
+					}
 
 					// for(var a in biblio_object) {
 					// 	if (!biblio_object[a] || biblio_object[a].length<1) {
@@ -471,10 +471,10 @@ var biblio =  {
 					// 	}
 					// }
 
-				// wrapper 
+				// wrapper
 					const biblio_row_wrapper = common.create_dom_element({
 						  element_type 	: "div",
-						  class_name 	: "biblio_row_wrapper",						  
+						  class_name 	: "biblio_row_wrapper",
 						  data_set 		: {
 						  	section_id 	: biblio_object.section_id
 						  },
@@ -487,12 +487,12 @@ var biblio =  {
 					row_field.biblio_object	= biblio_object
 					row_field.caller		= self
 
-				// author 
-					biblio_row_wrapper.appendChild( row_field.author() )					
-					
-				// publication_date 
+				// author
+					biblio_row_wrapper.appendChild( row_field.author() )
+
+				// publication_date
 					biblio_row_wrapper.appendChild( row_field.publication_date() )
-				
+
 				// row_title
 					biblio_row_wrapper.appendChild( row_field.row_title() )
 
@@ -512,9 +512,9 @@ var biblio =  {
 					const transcription_node = row_field.transcription(biblio_object.transcription)
 					if (transcription_node) {
 						biblio_row_wrapper.appendChild(transcription_node)
-					}					
-				}					
-				
+					}
+				}
+
 			}//end for (var i = 0; i < len; i++)
 
 		// pagination footer
@@ -530,7 +530,7 @@ var biblio =  {
 			}))
 			fragment.appendChild(pagination_container_bottom)
 
-		
+
 		// bulk fragment nodes to container
 			container.appendChild(fragment)
 
@@ -545,10 +545,10 @@ var biblio =  {
 	* Return a DocumentFragment with all pagination nodes
 	*/
 	draw_paginator : function(options) {
-		
+
 		const self = this
 
-		const pagination_fragment = new DocumentFragment();			
+		const pagination_fragment = new DocumentFragment();
 		// paginator (nav bar)
 			const paginator_node = paginator.get_full_paginator({
 				total  	: options.total,
@@ -563,7 +563,7 @@ var biblio =  {
 					// update search_options
 						self.search_options.offset = offset
 						self.search_options.total  = total
-					
+
 					// search (returns promise)
 						const search = self.search_rows(self.search_options)
 
@@ -585,7 +585,7 @@ var biblio =  {
 				class_name 		: "spacer",
 				parent 			: pagination_fragment
 			})
-		// totals (info about showed and total records)				
+		// totals (info about showed and total records)
 			const totals_node = paginator.get_totals_node({
 				total  	: options.total,
 				limit  	: options.limit,

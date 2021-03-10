@@ -10,14 +10,14 @@
 	/*
 	#wrapper {
 
-		height: 100vh;		
-		
+		height: 100vh;
+
 	}
 	*/
 
 
 
-// search_form 
+// search_form
 	section.form {
 		// background-color: #f5f5f5;
 	}
@@ -47,7 +47,7 @@
 				color: #E31A0A;
 			}
 		}
-			
+
 		input.input_values {
 			pointer-events:none;
 			border:none;
@@ -59,7 +59,7 @@
 			display: block;
 		}
 	}
-		
+
 
 
 
@@ -77,8 +77,6 @@
 		margin-bottom: 0.3em;
 		border-bottom: 1px solid #dedede;
 		padding-bottom: 0.3em;
-
-
 
 		div, h1 {
 			font-family: cambria;
@@ -129,6 +127,7 @@
 				// .randomColor(); background-color: @color;
 				display: flex;
 				flex-wrap: wrap;
+				white-space: break-spaces;
 
 				.title {
 					// margin: 0;
@@ -150,7 +149,7 @@
 						cursor: pointer;
 					}
 				}
-				
+
 			}//end row_title
 
 		// row_body
@@ -159,6 +158,7 @@
 				// .randomColor(); background-color: @color;
 				display: flex;
 				flex-wrap: wrap;
+				white-space: break-spaces;
 
 				&.book {
 					// background-color: #B5F792;
@@ -199,6 +199,12 @@
 
 			}//end row_url
 
+			.descriptors a:last-child{
+				border: none;
+			}
+			.descriptors a:first-child{
+				padding-left: 0;
+			}
 
 		// descriptors
 			a.descriptors_link {
@@ -206,18 +212,20 @@
 				padding: 0.35em;
 				padding-bottom: 0;
 				padding-top: 0;
-				background-color: #be875a;
 				margin: 0.25em;
 				margin-left: 0;
-				color: #ffffff !important;
-				border-radius: 3px;
-				font-size: 0.8em;			
+				color: #be875a !important;
+				/* border-radius: 3px; */
+				border-right: 1px solid #be875a;
+				font-size: 0.8em;
+				border-bottom: none;
+				font-variant: small-caps;
 			}
 
 
 		// transcription
 		.transcription {
-			
+
 
 			br {
 				content: "";
@@ -243,14 +251,14 @@
 				.page_number {
 					font-weight: 300;
 					// font-family: system-ui;
-					color: @color_gold_logo;					
+					color: @color_gold_logo;
 				}
 
 				.item_transcription {
 					font-size: 0.85em;
 				}
 			}
-		}	
+		}
 
 
 
@@ -291,13 +299,13 @@
 		// 		padding: 0;
 		// 		margin: 0;
 		// 	}
-		// }		
+		// }
 
 	}//end biblio_row_wrapper
 
 
 
-// form biblio 
+// form biblio
 	.form-inline {
 
 
@@ -349,5 +357,3 @@
 		background-color: #f9f9f9;
 		border: none !important;
 	}
-
-

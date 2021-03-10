@@ -1148,7 +1148,7 @@ var type_row_fields = {
 				const findspot = (data.findspot_place)
 					? data.findspot + " ("+data.findspot_place+")"
 					: data.findspot
-				label = (tstring.fiindspot || "Findspot")+": "
+				label = (tstring.findspot || "Findspot")+": "
 				ar_find.push( findspot )
 			}
 
@@ -1194,7 +1194,17 @@ var type_row_fields = {
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
-							inner_html		: +" "+ data.number,
+							inner_html		: ", "+ data.number,
+							parent			: line
+						})
+					}
+
+				// lot
+					if (data.lot) {
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: ", "+(tstring.lot || 'lot') +" "+ data.lot,
 							parent			: line
 						})
 					}
@@ -1203,11 +1213,14 @@ var type_row_fields = {
 			}
 			if (data.ref_auction_group) {
 				for (let i = 0; i < data.ref_auction_group.length; i++) {
+					data.ref_auction_group[i].lot = data.number
 					draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
 				}
 			}
+
 			if (data.ref_related_coin_auction_group) {
 				for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
+					data.ref_related_coin_auction_group[i].lot = data.number
 					draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
 				}
 			}

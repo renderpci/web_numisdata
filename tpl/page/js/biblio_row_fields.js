@@ -194,20 +194,21 @@ var biblio_row_fields = {
 							parent 			: line
 						})
 					}
-					// editor
-					if (biblio_object.editor) {
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value editor grey",
-							text_content 	: ": " + biblio_object.editor,
-							parent 			: line
-						})
-					}
+					// // editor
+					// if (biblio_object.editor) {
+					// 	common.create_dom_element({
+					// 		element_type 	: "div",
+					// 		class_name 		: "info_value editor grey",
+					// 		text_content 	: ": " + biblio_object.editor,
+					// 		parent 			: line
+					// 	})
+					// }
 					// title_colective
+console.log("title_colective--------", biblio_object.title_colective);
 						if (biblio_object.title_colective) {
 
 							const title_colective = (biblio_object.title_colective)
-								? ", "+biblio_object.title_colective
+								? biblio_object.title_colective
 								: ""
 
 							common.create_dom_element({
@@ -221,7 +222,7 @@ var biblio_row_fields = {
 						if (biblio_object.title_secondary) {
 
 							const title_secondary = (biblio_object.title_secondary)
-								? ", "+biblio_object.title_secondary
+								? biblio_object.title_secondary
 								: ""
 
 							common.create_dom_element({
@@ -294,7 +295,7 @@ var biblio_row_fields = {
 						if (biblio_object.title_colective) {
 
 							const title_colective = (biblio_object.title_colective)
-								? ", "+biblio_object.title_colective
+								? biblio_object.title_colective
 								: ""
 
 							common.create_dom_element({
@@ -308,7 +309,7 @@ var biblio_row_fields = {
 						if (biblio_object.title_secondary) {
 
 							const title_secondary = (biblio_object.title_secondary)
-								? ", "+biblio_object.title_secondary
+								? biblio_object.title_secondary
 								: ""
 
 							common.create_dom_element({
@@ -344,19 +345,17 @@ var biblio_row_fields = {
 					}
 
 				// physical_description
-					if (biblio_object.physical_description) {
+					const text_content = (biblio_object.physical_description)
+						? ", "+biblio_object.physical_description
+						: ""
 
-						const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0))
-							? ", "+biblio_object.physical_description
-							: biblio_object.physical_description
+					common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "info_value physical_description grey",
+						text_content 	: text_content,
+						parent 			: line
+					})
 
-						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value physical_description grey",
-							text_content 	: text_content,
-							parent 			: line
-						})
-					}
 
 				break;
 		}//end switch(typology_parsed)
@@ -452,7 +451,7 @@ var biblio_row_fields = {
 
 		const self = this
 
-		const fragment = new DocumentFragment()	
+		const fragment = new DocumentFragment()
 
 		for(let word in value) {
 
@@ -466,7 +465,7 @@ var biblio_row_fields = {
 					element_type	: "div",
 					class_name		: "occurrence",
 					parent			: fragment
-				})				
+				})
 
 				const page_number_node = common.create_dom_element({
 					element_type	: "div",
@@ -481,14 +480,14 @@ var biblio_row_fields = {
 					inner_html		: fragm,
 					parent			: occurrence
 				})
-			}			
+			}
 		}
 
 		// const text = page.search_fragment_in_text(q, value, 510)
 
 		const transcription_node = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "info_value transcription"			
+			class_name		: "info_value transcription"
 		})
 		transcription_node.appendChild(fragment)
 

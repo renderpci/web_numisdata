@@ -1115,6 +1115,18 @@ nav ul {
   height: 1.2em;
   vertical-align: bottom;
 }
+@media (max-width: 842px) {
+  #footer .inner ul.copyright {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+  #footer .inner .copyright li {
+    line-height: 1;
+    line-height: inherit;
+    text-align: center;
+  }
+}
 .hide {
   display: none !important;
 }
@@ -1328,6 +1340,11 @@ a.image_link img {
 .export_data_container .export_container:first-of-type {
   margin-right: 1em;
 }
+@media screen and (max-width: 842px) {
+  .export_data_container .export_container:first-of-type {
+    margin-right: unset;
+  }
+}
 input[type=button].btn.button_download {
   background-color: transparent;
   color: #be875a !important;
@@ -1354,49 +1371,44 @@ input[type=button].btn.button_download.unactive {
   pointer-events: none;
 }
 .legend_box {
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
+  white-space: nowrap;
   margin: 0;
   position: relative;
   color: #000000;
   font-weight: 400;
 }
-.legend_box img {
-  height: 100%;
-  position: relative;
+.legend_box span {
+  white-space: nowrap;
 }
 .legend_box.small {
   font-size: 16px !important;
   line-height: 16px;
-  height: 16px;
 }
 .legend_box.small img {
+  height: 16px;
   vertical-align: text-bottom;
 }
 .legend_box.median {
   font-size: 32px !important;
   line-height: 32px;
-  height: 32px;
-  top: -7px;
 }
 .legend_box.median img {
-  top: 7px;
+  height: 32px;
 }
 .legend_box.big {
   font-size: 64px !important;
   line-height: 64px;
-  height: 64px;
-  top: -15px;
 }
 .legend_box.big img {
-  top: 15px;
+  height: 64px;
 }
 .legend_box.huge {
   font-size: 128px !important;
   line-height: 128px;
-  height: 128px;
-  top: -30px;
 }
 .legend_box.huge img {
-  top: 30px;
+  height: 128px;
 }
 /*# sourceMappingURL=page.css.map */

@@ -186,14 +186,51 @@ var biblio_row_fields = {
 		switch(typology){
 
 			case 'book': // book
-					if (biblio_object.place) {
+
+				// other_people_info : name and role other_people_name
+					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
+						const other_people_name = biblio_object.other_people_name.split(" | ");
+						const other_people_role = biblio_object.other_people_role.split(" | ")
+
+						const particle_in = tstring.in || 'In'
+
 						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "info_value place grey",
-							text_content 	: biblio_object.place,
-							parent 			: line
-						})
+								element_type 	: "span",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: particle_in,
+								parent 			: line
+							})
+
+						const other_people_length = other_people_name.length
+						for (let g = 0; g < other_people_length; g++) {
+
+							const name = other_people_name[g]
+
+							const text_content = (g!==0)
+								? ", "+name
+								: " "+name
+
+							common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: text_content,
+								parent 			: line
+							})
+						}
+
+						const role = typeof other_people_role[0]!=='undefined'
+							? ' ('+other_people_role[0].toLowerCase()+'.): '
+							: ' '
+
+						common.create_dom_element({
+								element_type 	: "span",
+								class_name 		: "info_value other_people_name grey",
+								text_content 	: role,
+								parent 			: line
+							})
 					}
+
+
 					// // editor
 					// if (biblio_object.editor) {
 					// 	common.create_dom_element({
@@ -234,47 +271,18 @@ var biblio_row_fields = {
 						}
 
 
-					// other_people_info : name and role other_people_name
-						if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-							const other_people_name = biblio_object.other_people_name.split(" | ");
-							const other_people_role = biblio_object.other_people_role.split(" | ")
+						if (biblio_object.place) {
 
-							const particle_in = tstring.in || 'In'
-
-							common.create_dom_element({
-									element_type 	: "span",
-									class_name 		: "info_value other_people_name grey",
-									text_content 	: particle_in,
-									parent 			: line
-								})
-
-							const other_people_length = other_people_name.length
-							for (let g = 0; g < other_people_length; g++) {
-
-								const name = other_people_name[g]
-
-								const text_content = (g!==0)
-									? ", "+name
-									: " "+name
-
-								common.create_dom_element({
-									element_type 	: "span",
-									class_name 		: "info_value other_people_name grey",
-									text_content 	: text_content,
-									parent 			: line
-								})
-							}
-
-							const role = typeof other_people_role[0]!=='undefined'
-								? ' ('+other_people_role[0].toLowerCase()+'.): '
-								: ' '
+							const separator = (biblio_object.title_secondary)
+								? ", "
+								: ""
 
 							common.create_dom_element({
-									element_type 	: "span",
-									class_name 		: "info_value other_people_name grey",
-									text_content 	: role,
-									parent 			: line
-								})
+								element_type 	: "div",
+								class_name 		: "info_value place grey",
+								text_content 	: separator+biblio_object.place,
+								parent 			: line
+							})
 						}
 
 				break;
@@ -400,6 +408,15 @@ var biblio_row_fields = {
 						element_type 	: "div",
 						class_name 		: "info_value serie grey",
 						inner_html 		: ' ' + biblio_object.serie,
+						parent 			: line
+					})
+				}
+
+				if (biblio_object.place) {
+					common.create_dom_element({
+						element_type 	: "div",
+						class_name 		: "info_value place grey",
+						text_content 	: ", " + biblio_object.place,
 						parent 			: line
 					})
 				}

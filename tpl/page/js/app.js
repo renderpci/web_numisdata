@@ -18,4 +18,3 @@
 
 // app_utils. Note that we include here the MINIFIED version (!)
 	// @codekit-append "app_utils-min.js";
-

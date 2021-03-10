@@ -853,7 +853,7 @@ nav ul {
   height: 23em;
 }
 #header > .head_inner > a.logo {
-  border-bottom: #cccccc 6px solid;
+  border-bottom: #b93b3b 4px solid;
   background-color: #333333;
   background-image: url("../../assets/images/horse_logo.svg");
   background-size: 50%;
@@ -1063,13 +1063,10 @@ nav ul {
 #footer {
   background-color: #333333;
   padding: 0;
-  padding-top: 5em;
-  padding-bottom: 5em;
   color: #b7996d;
   opacity: 1;
   transition: opacity 0.35s ease-in-out;
   visibility: visible;
-  border-top: #cccccc 6px solid;
 }
 #footer.hidded {
   opacity: 0;
@@ -1104,7 +1101,13 @@ nav ul {
   filter: initial;
   opacity: 1;
 }
+#footer .inner .copyright {
+  justify-content: center;
+  align-items: baseline;
+}
 #footer .inner ul.copyright {
+  margin-top: 0.8em;
+  margin-bottom: 1em;
   opacity: 0.8;
   font-size: 0.9em;
 }

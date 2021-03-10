@@ -804,7 +804,7 @@ nav ul {
   background-image: url('../../assets/images/overlay_white.png');
 }
 #wrapper #main {
-  min-height: 50vh;
+  min-height: 80vh;
 }
 @media screen and (max-width: 736px) {
   #wrapper #main {
@@ -1065,6 +1065,8 @@ nav ul {
 #footer {
   background-color: #333333;
   padding: 0;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
   color: #b7996d;
   opacity: 1;
   transition: opacity 0.35s ease-in-out;

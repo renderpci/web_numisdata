@@ -386,7 +386,7 @@ console.log("title_colective--------", biblio_object.title_colective);
 
 					const url_item = ar_url_data[i]
 
-					common.create_dom_element({
+					const link =common.create_dom_element({
 						element_type 	: "a",
 						class_name 		: "url_data",
 						title 			: url_item.title,
@@ -394,6 +394,7 @@ console.log("title_colective--------", biblio_object.title_colective);
 						href 			: url_item.iri,
 						parent 			: line
 					})
+					link.target = '_blank'
 
 					if ( !(i%2) && i<ar_url_data_length && ar_url_data_length>1 ) {
 						common.create_dom_element({

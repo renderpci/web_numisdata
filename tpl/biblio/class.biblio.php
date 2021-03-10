@@ -106,34 +106,36 @@ class biblio {
 			debug_log(__METHOD__." filter ".to_string($filter), 'DEBUG');
 		}
 
-		$ar_fields = [
-			'section_id',
-			'lang',
-			'title',
-			'authors',
-			'authors_data',
-			'authors_count',
-			'author_main',
-			'author_others',
-			'publication_date',
-			'typology',
-			'magazine',
-			'serie',
-			'physical_description',
-			'title_secondary',
-			'authors_secondary',
-			'other_people',
-			'place',
-			'editor',
-			'url_data',
-			'pdf',
-			'pdf_uri',
-			'descriptors',
-			// 'volume',
-			'other_people_name',
-			'other_people_role',
-			'transcription'
-		];
+		// $ar_fields = [
+		// 	'section_id',
+		// 	'lang',
+		// 	'title',
+		// 	'authors',
+		// 	'authors_data',
+		// 	'authors_count',
+		// 	'author_main',
+		// 	'author_others',
+		// 	'publication_date',
+		// 	'typology',
+		// 	'magazine',
+		// 	'serie',
+		// 	'physical_description',
+		// 	'title_secondary',
+		// 	'title_colective',
+		// 	'authors_secondary',
+		// 	'other_people',
+		// 	'place',
+		// 	'editor',
+		// 	'url_data',
+		// 	'pdf',
+		// 	'pdf_uri',
+		// 	'descriptors',
+		// 	// 'volume',
+		// 	'other_people_name',
+		// 	'other_people_role',
+		// 	'transcription'
+		// ];
+		$ar_fields = ['*'];
 
 		$portals_custom = [
 			'authors_data' => 'other_people'

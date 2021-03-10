@@ -157,21 +157,23 @@ function search_distinct($json_data) {
 
 	// Group by column_name
 		$ar_group = [];
-		foreach ($web_data->result as $key => $row) {
-			if (isset($ar_group[$row->{$column_name}])) {
-				# Add section_id
-				$ar_group[$row->{$column_name}]->section_id[] = $row->section_id;
-				
-			}else{
+		if ($web_data->result) {		
+			foreach ($web_data->result as $key => $row) {
+				if (isset($ar_group[$row->{$column_name}])) {
+					# Add section_id
+					$ar_group[$row->{$column_name}]->section_id[] = $row->section_id;
+					
+				}else{
 
-				$element = new stdClass();
-					#$element->{$column_name}  = $row->{$column_name};
-					#$element->section_id = [$row->section_id];
-					$element->label = $row->{$column_name};
-					$element->value = [$row->section_id];
+					$element = new stdClass();
+						#$element->{$column_name}  = $row->{$column_name};
+						#$element->section_id = [$row->section_id];
+						$element->label = $row->{$column_name};
+						$element->value = [$row->section_id];
 
-				# Insert as new
-				$ar_group[$row->{$column_name}] = $element;
+					# Insert as new
+					$ar_group[$row->{$column_name}] = $element;
+				}
 			}
 		}
 		#dump($ar_group, ' ar_group ++ '.to_string());

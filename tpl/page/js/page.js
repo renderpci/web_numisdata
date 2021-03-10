@@ -840,84 +840,94 @@ var page = {
 	* SEARCH_FRAGMENT_IN_TEXT
 	* @return 
 	*/
-	search_fragment_in_text : function(q, value, limit) {
-		
-		function search(q, text) {
+		// search_fragment_in_text : function(q, value, limit) {
 			
-			if (q!=="") {
-				const re = new RegExp(q,"g"); // search for all instances
-				const newText = text.replace(re, `<mark>${q}</mark>`);
-				return newText
-			}
-			return text
-		}
+		// 	function search(q, text) {
+				
+		// 		if (q!=="") {
+		// 			const re		= new RegExp(q,"gi"); // search for all instances
+		// 			const newText	= text.replace(re, `<mark>${q}</mark>`);
+		// 			return newText
+		// 		}
+		// 		return text
+		// 	}
 
-		function truncate(text, limit, after) {
-			// Make sure an element and number of items to truncate is provided
-			if (!text || !limit) return;
+		// 	function truncate(text, limit, after) {
+		// 		// Make sure an element and number of items to truncate is provided
+		// 		if (!text || !limit) return;
 
-			// Get the inner content of the element
-			let content = text.trim();
+		// 		// Get the inner content of the element
+		// 		let content = text.trim();
 
-			// Convert the content into an array of words
-			// Remove any words above the limit
-			content = content.split(' ').slice(0, limit);
+		// 		// Convert the content into an array of words
+		// 		// Remove any words above the limit
+		// 		content = content.split(' ').slice(0, limit);
 
-			// Convert the array of words back into a string
-			// If there's content to add after it, add it
-			content = content.join(' ') + (after ? after : '');
+		// 		// Convert the array of words back into a string
+		// 		// If there's content to add after it, add it
+		// 		content = content.join(' ') + (after ? after : '');
 
-			return content
-		}
+		// 		return content
+		// 	}
 
-		// String.prototype.trunc = function(n) {
-		//   if (this.length <= n) {
-		//     return this;
-		//   }
-		//   var truncated = this.substr(0, n);
-		//   if (this.charAt(n) === ' ') {
-		//     return truncated;
-		//   }
-		//   return truncated.substr(0, truncated.lastIndexOf(' '));
-		// }
+		// 	// String.prototype.trunc = function(n) {
+		// 	//   if (this.length <= n) {
+		// 	//     return this;
+		// 	//   }
+		// 	//   var truncated = this.substr(0, n);
+		// 	//   if (this.charAt(n) === ' ') {
+		// 	//     return truncated;
+		// 	//   }
+		// 	//   return truncated.substr(0, truncated.lastIndexOf(' '));
+		// 	// }
 
 
-		// normalize breaks
-			value = value.replaceAll('<br />', '<br>');
+		// 	// normalize breaks
+		// 		value = value.replaceAll('<br />', '<br>');
 
-		// search q position
-			const position	= value.indexOf(q)
+		// 	// search q position
+		// 		// const value_ci	= value.toLowerCase()
+		// 		// const q_ci		= q.toLowerCase()
+		// 		// const position	= value_ci.indexOf(q_ci)
 
-		let text = ''
-		if (position!==-1) {
-			// trim text using position
+		// 	// remove accents from text
+		// 		const value_normalized	= value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+		// 		const q_normalized		= q.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+		// 		const position			= value_normalized.indexOf(q_normalized)
 
-			let _in		= position - (limit/2)
-			let _out	= position + (limit/2) + q.length
+		// 	let text = ''
+		// 	if (position!==-1) {
+		// 		// trim text using position
 
-			const text_slice = value.slice(_in, _out)
+		// 		let _in		= position - (limit/2)
+		// 		let _out	= position + (limit/2) + q.length
 
-			const first_space	= text_slice.indexOf(' ')
-			const last_space	= text_slice.lastIndexOf(' ')
+		// 		const text_slice = value.slice(_in, _out)
 
-			// cut text at first and last spaces
-			text = text_slice.slice(first_space, last_space)
+		// 		const first_space	= text_slice.indexOf(' ')
+		// 		const last_space	= text_slice.lastIndexOf(' ')
+
+		// 		// cut text at first and last spaces
+		// 		text = text_slice.slice(first_space, last_space)
+				
+		// 		// hilite the q word
+		// 		// text = search(q, text)
+
+		// 		const text_normalized	= text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+		// 		text = search(q_normalized, text)
+
+		// 		text = ".. " + text.trim() + " .."
+
+		// 	}else{
+		// 		// trim text freely
+
+		// 		// text = truncate(value, limit, null)
+		// 		text = ''
+		// 	}
 			
-			// hilite the q word
-			text = search(q, text)
 
-			text = ".. " + text.trim() + " .."
-
-		}else{
-			// trim text freely
-
-			// text = truncate(value, limit, null)
-			text = ''
-		}
-		
-
-		return text
-	},//end search_fragment_in_text
+		// 	return text
+		// },//end search_fragment_in_text
 
 
 

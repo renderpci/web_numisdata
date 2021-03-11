@@ -42,7 +42,8 @@ var mint = {
 				section_id : self.section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result);				
+				console.log("--> set_up get_row_data API response:",response.result);
+
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -66,12 +67,11 @@ var mint = {
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
 					if (mint_catalog.result) {
 						
-						const catMint = mint_catalog.result.find(el => el.term_table==='mints')
-						
+						const catMint = mint_catalog.result.find(el => el.term_table==='mints')						
 						self.get_types_data({
 							section_id : catMint.section_id
 						})
-						.then(function(result){
+						.then(function(result){							
 							self.draw_types({
 								target	: document.getElementById('types'),
 								ar_rows	: result
@@ -242,34 +242,39 @@ var mint = {
 					}
 				})
 				.then(function(response){
+					console.log("response:",response);
 					
 					const types_data = []					
 					if (response.result && response.result.length>0) {
+						
 						for (let i = 0; i < response.result.length; i++) {
 
 							const row = {
-								catalog			: 'MIB',
-								section_id		: response.result[i].section_id,
-								norder 			: response.result[i].norder,
-								term_data 		: response.result[i].term_data,
-								denomination	: response.result[i].ref_type_denomination,
-								term_table		: response.result[i].term_table,
-								term			: response.result[i].term,
-								parent 			: response.result[i].parent,
-								parents 		: response.result[i].parents,
-								children 		: response.result[i].children,
-								ref_coins_image_obverse 	: response.result[i].ref_coins_image_obverse,
-								ref_coins_image_reverse 	: response.result[i].ref_coins_image_reverse,
-								ref_type_averages_diameter 	: response.result[i].ref_type_averages_diameter,
-								ref_type_averages_weight 	: response.result[i].ref_type_averages_weight,
-								ref_type_material 			: response.result[i].ref_type_material,
-								ref_mint_number 			: response.result[i].ref_mint_number,
+								catalog						: 'MIB',
+								section_id					: response.result[i].section_id,
+								norder						: response.result[i].norder,
+								term_data					: response.result[i].term_data,
+								denomination				: response.result[i].ref_type_denomination,
+								term_table					: response.result[i].term_table,
+								term						: response.result[i].term,
+								parent						: response.result[i].parent,
+								parents						: response.result[i].parents,
+								children					: response.result[i].children,
+								ref_coins_image_obverse		: response.result[i].ref_coins_image_obverse,
+								ref_coins_image_reverse		: response.result[i].ref_coins_image_reverse,
+								ref_type_averages_diameter	: response.result[i].ref_type_averages_diameter,
+								ref_type_averages_weight	: response.result[i].ref_type_averages_weight,
+								ref_type_material			: response.result[i].ref_type_material,
+								ref_mint_number				: response.result[i].ref_mint_number,
 							}
 
 							types_data.push(row)
+
+							// response.result[i].catalog = 'MIB'
+							// types_data.push(response.result[i])
 						}
 					}
-					//console.log("--> get_types_data types_data:",types_data);
+					// console.log("--> get_types_data types_data:",types_data); return
 
 					const parsed_types_data = self.parse_types_data(types_data)
 
@@ -277,6 +282,7 @@ var mint = {
 				})
 		})
 	},//end get_types_data
+
 
 
 	//return an object with structure: period>group(if exists)>types>children(for subtypes)
@@ -289,6 +295,7 @@ var mint = {
 		//Get first data deep and put it to parsed array
 		var mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
 
+
 		for (let i=0;i<mint_parent_group.length;i++){
 			var currentObject = mint_parent_group[i]
 	 		currentObject.children = {}
@@ -298,8 +305,7 @@ var mint = {
 	 			parsedData.children.push(currentObject)
 	 		} else {
 	 			parsedData.children.push(currentObject)
-	 		}
-		 	
+	 		}		 	
 		}
 		
 		var period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
@@ -321,14 +327,15 @@ var mint = {
 			}
 		}
 
-		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_numismatic_group')
+		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table==='ts_numismatic_group')			
 
 		var finded = false; //set true if recursive function found seeked object
 
 		while (numismatic_parent_group.length>0){
+
 			for (let i=0;i<numismatic_parent_group.length;i++){
 				const currentNumisGroup = numismatic_parent_group[i]
-				console.log (currentNumisGroup.norder)
+				// console.log (currentNumisGroup.norder)
 				finded = false;
 				putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
 				if(finded){
@@ -343,13 +350,15 @@ var mint = {
 		while (types_parent_group.length>0){
 			for (let i=0;i<types_parent_group.length;i++){
 				const currentType = types_parent_group[i]
-				finded = false;
+				// finded = false; // PROVISIONAL REMOVE TO AVOID CRASH (!) 11-03-2021 PACO
 				putObjectinArray(parsedData.children,currentType,parsedData)
 				if(finded){
 					types_parent_group.splice(i,1)
 				}
 			}
 		}
+
+		// console.log("types_parent_group:",types_parent_group); return
 
 		//Recursive function that create a multidimensional array whith data hyerarchy
 		function putObjectinArray (arr,obj,item){

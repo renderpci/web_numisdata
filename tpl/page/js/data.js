@@ -134,6 +134,8 @@ page.parse_type_data = function(data) {
 	return row
 }//end parse_type_data
 
+
+
 page.parse_mint_data = function(data) {
 	const self = this
 
@@ -158,8 +160,9 @@ page.parse_mint_data = function(data) {
 	}
 
 	return row
-
 }
+
+
 
 page.parse_hoard_data = function(data) {
 	const self = this
@@ -185,8 +188,8 @@ page.parse_hoard_data = function(data) {
 	}
 
 	return row
-
 }
+
 
 
 /**
@@ -926,7 +929,7 @@ page.parse_ts_web = function(rows) {
 * Table ts_thematic, ts_technique, ts_onomastic, ts_material
 */
 page.parse_tree_data = function(ar_rows, hilite_terms) {
-		console.log("ar_rows:",ar_rows);
+	
 	const data = []
 
 	// sample 

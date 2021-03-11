@@ -959,20 +959,20 @@ var map = {
 						
 					// debug info
 						// if(SHOW_DEBUG===true) {
-							let t = ''
-							t +='-global_data_item types_list ('+info.types_list.length+'): ' + JSON.stringify(info.types_list, null, 2)
-							t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)							
-							t +='<br>-Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
-							t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
-							t +='<br>-Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
+						// 	let t = ''
+						// 	t +='-global_data_item types_list ('+info.types_list.length+'): ' + JSON.stringify(info.types_list, null, 2)
+						// 	t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)							
+						// 	t +='<br>-Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
+						// 	t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
+						// 	t +='<br>-Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
 							
-							const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
-							common.create_dom_element({
-								element_type	: "div",
-								class_name		: "debug_info " + debug_show,
-								inner_html		: t,
-								parent			: type_row_node
-							})
+						// 	const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
+						// 	common.create_dom_element({
+						// 		element_type	: "div",
+						// 		class_name		: "debug_info " + debug_show,
+						// 		inner_html		: t,
+						// 		parent			: type_row_node
+						// 	})
 						// }
 
 					// coins nodes

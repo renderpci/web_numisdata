@@ -15,13 +15,13 @@
 					</div>
 
 				<!-- Nav -->
-					<?php if (IS_PRODUCTION===false) { ?>
+					<?php #if (IS_PRODUCTION===false) { ?>
 					<nav>
 						<ul>
 							<li><a href="#menu">Menu</a></li>
 						</ul>
 					</nav>
-					<?php } ?>
+					<?php #} ?>
 
 			<?php }else{ ?>
 
@@ -35,13 +35,13 @@
 				</a>
 
 				<!-- Nav -->
-					<?php if (IS_PRODUCTION===false) { ?>
+					<?php #if (IS_PRODUCTION===false) { ?>
 					<nav>
 						<ul>
 							<li><a href="#menu"><?php echo tstring('menu') ?></a></li>
 						</ul>
 					</nav>
-					<?php } ?>
+					<?php #} ?>
 
 				<!-- Warning work in progress -->
 					<div class="header_warning"><img src="<?php echo __WEB_TEMPLATE_WEB__ ?>/assets/images/Work_In_Progress.png">
@@ -54,13 +54,10 @@
 	</header>
 
 <!-- Menu -->
-	<?php if (IS_PRODUCTION===false) { ?>
+	<?php #if (IS_PRODUCTION===false) { ?>
 	<nav id="menu">
-
-
-
 		<div id="lang_globe" class="lang_globe" title="Switch lang">
-			<span><?php echo tstring('lang') ?? 'Languages'?></span>
+			<span><?php echo tstring('lang');?></span>
 			<i class="fa fa-globe"></i>
 		</div>
 		<ul id="page_lang_selector" class="page_lang_selector hide">
@@ -71,7 +68,7 @@
 		<h2><?php echo tstring('menu') ?></h2>
 		<?php echo $this->menu_tree_html ?>
 	</nav>
-	<?php } ?>
+	<?php #} ?>
 
 <!-- lang switcher -->
 	<?php /*

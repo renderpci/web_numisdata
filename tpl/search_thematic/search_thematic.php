@@ -51,7 +51,7 @@
 				# SEARCH		
 				$options = new stdClass();
 					$options->dedalo_get	= 'thesaurus_search';
-					$options->table			= 'ts_northern_palaeohispanic,ts_south_palaeohispanic,ts_southern_palaeohispanic,ts_greek,ts_latin,ts_punic,ts_symbols,ts_countermarks';
+					$options->table			= 'ts_northern_palaeohispanic,ts_south_palaeohispanic,ts_southern_palaeohispanic,ts_greek,ts_latin,ts_punic,ts_symbols'; // ts_countermarks
 					$options->q				= $q;
 					$options->lang			= WEB_CURRENT_LANG_CODE;
 					$options->page_number	= $page_number;
@@ -82,10 +82,10 @@
 				// root level terms query
 					$options = new stdClass();
 						$options->dedalo_get 	= 'thesaurus_root_list';
-						$options->table  	 	= ['ts_northern_palaeohispanic','ts_south_palaeohispanic','ts_southern_palaeohispanic','ts_greek','ts_latin','ts_punic','ts_symbols','ts_countermarks'];
+						$options->table  	 	= ['ts_northern_palaeohispanic','ts_south_palaeohispanic','ts_southern_palaeohispanic','ts_greek','ts_latin','ts_punic','ts_symbols']; // ts_countermarks
 						$options->lang  	 	= WEB_CURRENT_LANG_CODE;
 						#$options->parents 	 	= 'hierarchy1_1,hierarchy1_245,hierarchy1_270';
-						$options->parents 	 	= ['hierarchy1_255','hierarchy1_257','hierarchy1_256','hierarchy1_253','hierarchy1_258','hierarchy1_254','hierarchy1_259','hierarchy1_260'];
+						$options->parents 	 	= ['hierarchy1_255','hierarchy1_257','hierarchy1_256','hierarchy1_253','hierarchy1_258','hierarchy1_254','hierarchy1_259']; // hierarchy1_260
 					#$rows_data 	 = json_web_data::get_data($options);
 					#$ar_ts_terms = $rows_data->result;
 						#dump($ar_ts_terms, ' ar_ts_terms ++ '.to_string(WEB_CURRENT_LANG_CODE)); #die();

@@ -42,7 +42,8 @@ var mint = {
 				section_id : self.section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result[1]);				
+				console.log("--> set_up get_row_data API response:",response.result);
+
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -52,6 +53,7 @@ var mint = {
 					})
 
 				// map draw. Init default map
+				if (mint.result[0].map) {
 					self.draw_map({
 						mint_map_data : JSON.parse(mint.result[0].map),
 						mint_popup_data : {
@@ -61,17 +63,17 @@ var mint = {
 						},
 						place_data : mint.result[0].place_data 
 					})
+				}
 
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
 					if (mint_catalog.result) {
 						
-						const catMint = mint_catalog.result.find(el => el.term_table==='mints')
-						console.log(catMint.section_id)
+						const catMint = mint_catalog.result.find(el => el.term_table==='mints')						
 						self.get_types_data({
 							section_id : catMint.section_id
 						})
-						.then(function(result){
+						.then(function(result){						
 							self.draw_types({
 								target	: document.getElementById('types'),
 								ar_rows	: result
@@ -139,7 +141,7 @@ var mint = {
 						'place_data',
 						'place',
 						'history',
-						'numismatic_comments',
+						// 'numismatic_comments',
 						'bibliography_data',
 						'map'
 					],
@@ -226,9 +228,6 @@ var mint = {
 							//"children"	: "catalog"
 						}
 
-
-
-
 						// dedalo_get	: 'records',
 						// table		: 'catalog',
 						// db_name		: page_globals.WEB_DB,
@@ -245,34 +244,39 @@ var mint = {
 					}
 				})
 				.then(function(response){
-					const types_data = []
-					console.log(response)
+					console.log("response:",response);
+					
+					const types_data = []					
 					if (response.result && response.result.length>0) {
+						
 						for (let i = 0; i < response.result.length; i++) {
 
 							const row = {
-								catalog			: 'MIB',
-								section_id		: response.result[i].section_id,
-								norder 			: response.result[i].norder,
-								term_data 		: response.result[i].term_data,
-								denomination	: response.result[i].ref_type_denomination,
-								term_table		: response.result[i].term_table,
-								term			: response.result[i].term,
-								parent 			: response.result[i].parent,
-								parents 		: response.result[i].parents,
-								children 		: response.result[i].children,
-								ref_coins_image_obverse 	: response.result[i].ref_coins_image_obverse,
-								ref_coins_image_reverse 	: response.result[i].ref_coins_image_reverse,
-								ref_type_averages_diameter 	: response.result[i].ref_type_averages_diameter,
-								ref_type_averages_weight 	: response.result[i].ref_type_averages_weight,
-								ref_type_material 			: response.result[i].ref_type_material,
-								ref_mint_number 			: response.result[i].ref_mint_number,
+								catalog						: 'MIB',
+								section_id					: response.result[i].section_id,
+								norder						: response.result[i].norder,
+								term_data					: response.result[i].term_data,
+								denomination				: response.result[i].ref_type_denomination,
+								term_table					: response.result[i].term_table,
+								term						: response.result[i].term,
+								parent						: response.result[i].parent,
+								parents						: response.result[i].parents,
+								children					: response.result[i].children,
+								ref_coins_image_obverse		: response.result[i].ref_coins_image_obverse,
+								ref_coins_image_reverse		: response.result[i].ref_coins_image_reverse,
+								ref_type_averages_diameter	: response.result[i].ref_type_averages_diameter,
+								ref_type_averages_weight	: response.result[i].ref_type_averages_weight,
+								ref_type_material			: response.result[i].ref_type_material,
+								ref_mint_number				: response.result[i].ref_mint_number,
 							}
 
 							types_data.push(row)
+
+							// response.result[i].catalog = 'MIB'
+							// types_data.push(response.result[i])
 						}
 					}
-					//console.log("--> get_types_data types_data:",types_data);
+					// console.log("--> get_types_data types_data:",types_data); return
 
 					const parsed_types_data = self.parse_types_data(types_data)
 
@@ -282,81 +286,151 @@ var mint = {
 	},//end get_types_data
 
 
+
 	//return an object with structure: period>group(if exists)>types>children(for subtypes)
 	parse_types_data : function (options){
-		var parsedData = []
+		let parsedData = []
+		parsedData.children = []
 		const data = options;
 
 		const rows_length = data.length
 
 		//Get first data deep and put it to parsed array
-		var mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
+		let mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
+
 
 		for (let i=0;i<mint_parent_group.length;i++){
-			var currentObject = mint_parent_group[i]
+			let currentObject = mint_parent_group[i]
 	 		currentObject.children = {}
 	 		currentObject.groups = []
-	 		if (parsedData.children == null){
-	 			parsedData.children = []
-	 			parsedData.children.push(currentObject)
-	 		} else {
-	 			parsedData.children.push(currentObject)
-	 		}
-		 	
+	 		parsedData.children.push(currentObject)		 	
 		}
+
+		let numis_group_objects = data.filter(obj => obj.term_table ===  'ts_numismatic_group')
+		let finded = false; //set true if recursive function found seeked object
+
+		//console.log(numis_group_objects[3])
+
+		while (numis_group_objects.length>0){
+			for (let i=0;i<numis_group_objects.length;i++){
+				const currentObj = numis_group_objects[i]
+				finded = false;
+				const parentsIds = JSON.parse(currentObj.parents)
+				for (let z=0;z<parentsIds.length;z++){	
+					putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
+					if(finded){
+						numis_group_objects.splice(i,1)
+						break
+					}
+				}
+			}
+		}
+
 		
-		var period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
+		let types_objects = data.filter(obj => (obj.term_table ===  'types' && obj.parent[0].term_table !==  'types'))	
+		finded = false; //set true if recursive function found seeked object
+
+		while (types_objects.length>0){
+			for (let i=0;i<types_objects.length;i++){
+				const currentObj = types_objects[i]
+				finded = false;
+				const parentsIds = JSON.parse(currentObj.parents)
+				for (let z=0;z<parentsIds.length;z++){
+					putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
+					if(finded){
+						types_objects.splice(i,1)
+						break
+					}
+				}
+			}
+		}
+
+		let subTypes_objects = data.filter(obj => obj.parent[0].term_table ===  'types')
+		finded = false; //set true if recursive function found seeked object
+
+		while (subTypes_objects.length>0){
+			for (let i=0;i<subTypes_objects.length;i++){
+				const currentObj = subTypes_objects[i]
+				finded = false;
+				const parentsIds = JSON.parse(currentObj.parents)
+				for (let z=0;z<parentsIds.length;z++){
+					putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
+					if(finded){
+						subTypes_objects.splice(i,1)
+						break
+					}
+				}
+			}
+		}
+
+
+
+
+		// let period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
 		
-		for (let i=0;i<period_parent_group.length;i++){
-			const currentObj = period_parent_group[i]
-			const currentObjParentId = currentObj.parent[0].section_id
+		// for (let i=0;i<period_parent_group.length;i++){
+		// 	const currentObj = period_parent_group[i]
+		// 	const currentObjParentId = currentObj.parent[0].section_id
 		
-			const parsedDataIndex = parsedData.children.findIndex(obj => obj.section_id == currentObjParentId)
+		// 	const parsedDataIndex = parsedData.children.findIndex(obj => obj.section_id == currentObjParentId)
 			
-			if (parsedDataIndex>-1){
-				var children = parsedData.children[parsedDataIndex].children 
-				if (children != null && children.length>0){
-					parsedData.children[parsedDataIndex].children.push(currentObj)
-				} else {
-					parsedData.children[parsedDataIndex].children = []
-					parsedData.children[parsedDataIndex].children .push(currentObj)
-				}
-			}
-		}
+		// 	if (parsedDataIndex>-1){
+		// 		let children = parsedData.children[parsedDataIndex].children 
+		// 		if (children != null && children.length>0){
+		// 			parsedData.children[parsedDataIndex].children.push(currentObj)
+		// 		} else {
+		// 			parsedData.children[parsedDataIndex].children = []
+		// 			parsedData.children[parsedDataIndex].children .push(currentObj)
+		// 		}
+		// 	}
+		// }
 
-		var numismatic_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_numismatic_group')
+		// let numismatic_parent_group = data.filter(obj => obj.parent[0].term_table==='ts_numismatic_group')			
 
-		var finded = false; //set true if recursive function found seeked object
+		// let finded = false; //set true if recursive function found seeked object
 
-		while (numismatic_parent_group.length>0){
-			for (let i=0;i<numismatic_parent_group.length;i++){
-				const currentNumisGroup = numismatic_parent_group[i]
-				console.log (currentNumisGroup.norder)
-				finded = false;
-				putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
-				if(finded){
-					numismatic_parent_group.splice(i,1)
-				}
-			}
-		}
+		// while (numismatic_parent_group.length>0){
 
-		var types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
-		finded = false;
+		// 	for (let i=0;i<numismatic_parent_group.length;i++){
+		// 		const currentNumisGroup = numismatic_parent_group[i]
+		// 		// console.log (currentNumisGroup.norder)
+		// 		finded = false;
+		// 		putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
+		// 		if(finded){
+		// 			numismatic_parent_group.splice(i,1)
+		// 		}
+		// 	}
+		// }
 
-		while (types_parent_group.length>0){
-			for (let i=0;i<types_parent_group.length;i++){
-				const currentType = types_parent_group[i]
-				finded = false;
-				putObjectinArray(parsedData.children,currentType,parsedData)
-				if(finded){
-					types_parent_group.splice(i,1)
-				}
-			}
-		}
+		// let types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
+		
+		
+		// let creators_parent_group = data.filter(obj => obj.parent[0].term_table ===  'creators')
+		// console.log(creators_parent_group)
+		
+
+		// finded = false;
+
+		// while (types_parent_group.length>0){
+		// 	for (let i=0;i<types_parent_group.length;i++){
+		// 		const currentType = types_parent_group[i]
+		// 		//finded = false; // PROVISIONAL REMOVE TO AVOID CRASH (!) 11-03-2021 PACO
+		// 		putObjectinArray(parsedData.children,currentType,parsedData)
+		// 		if(finded){
+		// 			types_parent_group.splice(i,1)
+		// 		} else {
+
+		// 		}
+		// 	}
+		// }
+
+		// console.log("types_parent_group:",types_parent_group); return
 
 		//Recursive function that create a multidimensional array whith data hyerarchy
-		function putObjectinArray (arr,obj,item){
-			if (item.section_id == obj.parent[0].section_id){
+		
+		function putObjectinArray (arr,obj,parentId,item){
+
+			if (item.section_id == parentId){
 				finded = true;
 				if (Array.isArray(item.children)){
 					item.children.push(obj)
@@ -366,18 +440,17 @@ var mint = {
 				}
 			}
 
-			if (!Array.isArray(arr)){
-				
+			if (!Array.isArray(arr)){	
 				return 
 			}
 
 			arr.forEach( function(item,index){
-			 	putObjectinArray(item.children,obj,item)
+			 	putObjectinArray(item.children,obj,parentId,item)
 			})
 
 		}
 
-		// console.log("parsedData:",parsedData);
+		console.log("parsedData:",parsedData);
 
 		return (parsedData);
 	},
@@ -388,8 +461,15 @@ var mint = {
 	*/
 	draw_row : function(options) {
 
-		const row_object	= options.ar_rows[0]
-		const container 	= options.target
+		// options
+			const row_object	= typeof options.ar_rows[0]!=="undefined" ? options.ar_rows[0] : null;
+			const container 	= options.target
+
+		// check row_object
+			if (!row_object) {
+				console.warn("Warning! draw_row row_object no found in options");
+				return null;
+			}
 
 		// fix row_object
 			self.row_object = row_object
@@ -485,20 +565,20 @@ var mint = {
 			}
 
 		// numismatic_comments
-			if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
+			// if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
-				const numismatic_comments = row_object.numismatic_comments
-				block_text_length += numismatic_comments.length;
+			// 	const numismatic_comments = row_object.numismatic_comments
+			// 	block_text_length += numismatic_comments.length;
 
-				const numismatic_comments_block = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_text_block",
-					inner_html		: numismatic_comments,
-					parent			: comments_wrap
-				})
+			// 	const numismatic_comments_block = common.create_dom_element({
+			// 		element_type	: "div",
+			// 		class_name		: "info_text_block",
+			// 		inner_html		: numismatic_comments,
+			// 		parent			: comments_wrap
+			// 	})
 
 				
-			}
+			// }
 
 			if (block_text_length > 220) {createExpandableBlock(comments_wrap,line);}
 
@@ -1050,7 +1130,7 @@ var mint = {
 				}
 			}
 
-			console.log(map_data_clean)
+			
 			// draw points
 			self.map.parse_data_to_map(map_data_clean, null)
 			.then(function(){
@@ -1077,7 +1157,7 @@ var mint = {
 		const place_data = data.place_data
 
 		const sql_filter = "place_data='" + place_data + "'";
-		console.log (sql_filter)
+		
 			const ar_calls = []
 
 			ar_calls.push ({

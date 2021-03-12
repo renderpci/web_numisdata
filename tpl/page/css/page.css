@@ -1415,4 +1415,9 @@ input[type=button].btn.button_download.unactive {
 .legend_box.huge img {
   height: 128px;
 }
+@media print {
+  .print_hide {
+    display: none !important;
+  }
+}
 /*# sourceMappingURL=page.css.map */

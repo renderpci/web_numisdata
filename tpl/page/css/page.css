@@ -1092,32 +1092,20 @@ nav ul {
   display: block;
   color: #ffffff !important;
 }
-#footer .inner ul.page_lang_selector {
-  margin-bottom: 4em;
-  display: none;
-}
-#footer .inner ul.logos > li {
-  filter: sepia(100%) saturate(0) brightness(50%);
-  opacity: 0.75;
-  transition: all 0.35s linear;
-}
-#footer .inner ul.logos > li:hover {
-  filter: initial;
-  opacity: 1;
-}
-#footer .inner .copyright {
+#footer .inner ul.copyright {
   justify-content: center;
   align-items: baseline;
-}
-#footer .inner ul.copyright {
   margin-top: 0.8em;
   margin-bottom: 1em;
   opacity: 0.8;
   font-size: 0.9em;
+  padding: 1em;
+  padding-bottom: 0;
+  padding-top: 0;
 }
 #footer .inner ul.copyright .logo_dedalo {
-  height: 1.2em;
-  vertical-align: bottom;
+  height: 1.15em;
+  vertical-align: text-bottom;
 }
 @media (max-width: 842px) {
   #footer .inner ul.copyright {

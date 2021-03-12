@@ -644,21 +644,25 @@
 				color: #ffffff !important;
 			}
 
-			// ul.logos {
+			ul.logos {
+				margin-top: 2em;
+				margin-bottom: 2em;
+				>li {
+					// filter: sepia(100%) saturate(0%) brightness(80%) hue-rotate(0deg);
+					// filter: sepia(100%) saturate(100%) brightness(71%) hue-rotate(-7deg);
+					filter: sepia(100%) saturate(0) brightness(50%);
+					opacity: 0.75;
+					transition: all 0.35s linear;
+					&:hover {
+						filter: initial;
+						opacity: 1;
+					}
 
-			// 	>li {
-			// 		// filter: sepia(100%) saturate(0%) brightness(80%) hue-rotate(0deg);
-			// 		// filter: sepia(100%) saturate(100%) brightness(71%) hue-rotate(-7deg);
-			// 		filter: sepia(100%) saturate(0) brightness(50%);
-			// 		opacity: 0.75;
-
-			// 		transition: all 0.35s linear;
-			// 		&:hover {
-			// 			filter: initial;
-			// 			opacity: 1;
-			// 		}
-			// 	}
-			// }
+					@media print {
+						filter: unset;
+					}
+				}
+			}
 			
 			ul.copyright {
 				justify-content: center;

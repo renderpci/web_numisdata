@@ -751,7 +751,6 @@ page.parse_publication = function(data) {
 
 
 
-
 /**
 * parse_map_global_data
 * @param object row | array rows
@@ -764,7 +763,7 @@ page.parse_map_global_data = function(ar_rows) {
 	try {
 
 		const ar_rows_length = ar_rows.length
-		for (let i = 0; i < ar_rows_length; i++) {
+		for (let i = 1; i < ar_rows_length; i++) {
 			
 			const row = ar_rows[i]
 

@@ -125,7 +125,7 @@ var map = {
 				body : request_body
 			})
 			.then((response)=>{
-				console.log("--- search_rows API response:", response);
+				// console.log("--- search_rows API response:", response);
 
 				if (response.result) {
 
@@ -954,7 +954,7 @@ var map = {
 						// console.log("type_row:",type_row);
 
 					// type node
-						const type_row_node = catalog_row_fields.draw_item(type_row)						
+						const type_row_node = catalog_row_fields.draw_item(type_row)
 						types_wrap.appendChild(type_row_node)
 						
 					// debug info
@@ -1040,7 +1040,6 @@ var map = {
 						parent			: fragment
 					})
 				}
-					console.log("global_data_item:",global_data_item);
 		}
 
 		return fragment

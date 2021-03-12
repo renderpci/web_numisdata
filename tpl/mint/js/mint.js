@@ -53,6 +53,7 @@ var mint = {
 					})
 
 				// map draw. Init default map
+				if (mint.result[0].map) {
 					self.draw_map({
 						mint_map_data : JSON.parse(mint.result[0].map),
 						mint_popup_data : {
@@ -62,6 +63,7 @@ var mint = {
 						},
 						place_data : mint.result[0].place_data 
 					})
+				}
 
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
@@ -139,7 +141,7 @@ var mint = {
 						'place_data',
 						'place',
 						'history',
-						'numismatic_comments',
+						// 'numismatic_comments',
 						'bibliography_data',
 						'map'
 					],
@@ -563,20 +565,20 @@ var mint = {
 			}
 
 		// numismatic_comments
-			if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
+			// if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
-				const numismatic_comments = row_object.numismatic_comments
-				block_text_length += numismatic_comments.length;
+			// 	const numismatic_comments = row_object.numismatic_comments
+			// 	block_text_length += numismatic_comments.length;
 
-				const numismatic_comments_block = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_text_block",
-					inner_html		: numismatic_comments,
-					parent			: comments_wrap
-				})
+			// 	const numismatic_comments_block = common.create_dom_element({
+			// 		element_type	: "div",
+			// 		class_name		: "info_text_block",
+			// 		inner_html		: numismatic_comments,
+			// 		parent			: comments_wrap
+			// 	})
 
 				
-			}
+			// }
 
 			if (block_text_length > 220) {createExpandableBlock(comments_wrap,line);}
 

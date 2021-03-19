@@ -311,7 +311,7 @@ var catalog = {
 				q_column	: "p_mint",
 				eq			: "LIKE",
 				eq_in		: "%",
-				// q_table	: "mints",
+				eq_out		: "%",
 				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {

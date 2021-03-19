@@ -751,7 +751,6 @@ page.parse_publication = function(data) {
 
 
 
-
 /**
 * parse_map_global_data
 * @param object row | array rows

@@ -1092,6 +1092,24 @@ nav ul {
   display: block;
   color: #ffffff !important;
 }
+#footer .inner ul.logos {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+#footer .inner ul.logos > li {
+  filter: sepia(100%) saturate(0) brightness(50%);
+  opacity: 0.75;
+  transition: all 0.35s linear;
+}
+#footer .inner ul.logos > li:hover {
+  filter: initial;
+  opacity: 1;
+}
+@media print {
+  #footer .inner ul.logos > li {
+    filter: unset;
+  }
+}
 #footer .inner ul.copyright {
   justify-content: center;
   align-items: baseline;

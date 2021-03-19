@@ -1113,11 +1113,12 @@ var mint = {
 
 			//hoards to map
 			const hoards_map_data = response.result[1].result;
-			if (hoards_map_data && hoards_map_data.length>0){
-			
+			if (hoards_map_data && hoards_map_data.length>0){	
 				for (let i=0;i<hoards_map_data.length;i++){
-					const hoard_map_data = JSON.parse(hoards_map_data[i].map)
-					const hoard_popup_data = parse_popup_data(hoard_map_data[i])
+						console.log("i:",i);
+						console.log(hoards_map_data)
+					const hoard_map_data = JSON.parse(hoards_map_data[i].map) || ""
+					const hoard_popup_data = parse_popup_data(hoards_map_data[i])
 
 					hoard_popup_data.type = {}
 					hoard_popup_data.type = "hoard"
@@ -1140,7 +1141,6 @@ var mint = {
 		})
 
 		function parse_popup_data(data){
-			
 			const popup_data = ({
 				section_id : data.section_id,
 				title 		: data.name,

@@ -745,50 +745,50 @@ var coin_row = {
 					}					
 				}
 
-		// tenth_block (bibliography)
-			const tenth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper tenth_block",
-				parent			: fragment
-			})
-			// bibliography
-				if (row.bibliography && row.bibliography.length>0) {
+		// tenth_block (bibliography) -- DESACTIVADA. POR REVISAR EL FORMATO !!! --- 
+			// const tenth_block = common.create_dom_element({
+			// 	element_type	: "div",
+			// 	class_name		: "block_wrapper tenth_block",
+			// 	parent			: fragment
+			// })
+			// // bibliography
+			// 	if (row.bibliography && row.bibliography.length>0) {
 
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.bibliography || "bibliography",
-						parent			: tenth_block
-					})
+			// 		common.create_dom_element({
+			// 			element_type	: "label",
+			// 			text_content	: tstring.bibliography || "bibliography",
+			// 			parent			: tenth_block
+			// 		})
 
-					for (let b = 0; b < row.bibliography.length; b++) {
+			// 		for (let b = 0; b < row.bibliography.length; b++) {
 						
-						const el = row.bibliography[b]
+			// 			const el = row.bibliography[b]
 
-						const ar = []
-						if (el.authors) ar.push(el.authors)
-						if (el.date) ar.push(el.date)
-						if (el.place) ar.push(el.place)
-						if (el.title) ar.push(el.title)
-						const text = ar.join('<br>').trim()
+			// 			const ar = []
+			// 			if (el.authors) ar.push(el.authors)
+			// 			if (el.date) ar.push(el.date)
+			// 			if (el.place) ar.push(el.place)
+			// 			if (el.title) ar.push(el.title)
+			// 			const text = ar.join('<br>').trim()
 
-						const group = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "group bibliography",
-							parent			: tenth_block
-						})
-						// common.create_dom_element({
-						// 	element_type	: "label",
-						// 	text_content	: tstring.bibliography || "bibliography",
-						// 	parent			: group
-						// })
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: "value",
-							inner_html		: text,
-							parent			: group
-						})
-					}						
-				}
+			// 			const group = common.create_dom_element({
+			// 				element_type	: "div",
+			// 				class_name		: "group bibliography",
+			// 				parent			: tenth_block
+			// 			})
+			// 			// common.create_dom_element({
+			// 			// 	element_type	: "label",
+			// 			// 	text_content	: tstring.bibliography || "bibliography",
+			// 			// 	parent			: group
+			// 			// })
+			// 			common.create_dom_element({
+			// 				element_type	: "span",
+			// 				class_name		: "value",
+			// 				inner_html		: text,
+			// 				parent			: group
+			// 			})
+			// 		}						
+			// 	}
 
 
 

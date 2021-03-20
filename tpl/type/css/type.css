@@ -52,8 +52,9 @@
   padding-right: 1em;
   margin-left: 0;
 }
-.result .row_wrapper .find_wrapper div:first-child {
+.result .row_wrapper .find_wrapper span:first-child {
   font-weight: bold;
+  color: #b7996d;
 }
 .result .row_wrapper .identify_coin_wrapper {
   align-content: space-between;

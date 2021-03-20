@@ -212,10 +212,21 @@ var type_row_fields = {
 				// exclude already showed items (identify images)
 				const data = item._coins_group.filter(el => el.typology_id!="1")
 				if (data.length>0) {
-					fragment.appendChild( self.label(item, "coins") )
-					fragment.appendChild(
-						self.items_list(item, "items_list", data)
-					)
+					// fragment.appendChild( self.label(item, "coins") )
+
+					const coins_label = self.label(item, "coins")
+					fragment.appendChild( coins_label )
+					const coins_container = self.items_list(item, "items_list", data)
+
+					coins_label.addEventListener("mouseup", (event) => {
+						event.preventDefault()
+						coins_container.classList.toggle("hide");
+					})
+
+					fragment.appendChild(coins_container)
+					// fragment.appendChild(
+					// 	self.items_list(item, "items_list", data)
+					// )
 				}
 			}
 
@@ -1346,7 +1357,6 @@ var type_row_fields = {
 			})
 
 		function draw_coin(data, container) {
-
 			// console.log("--draw_coin data:",data);
 
 			const wrapper = common.create_dom_element({
@@ -1456,6 +1466,18 @@ var type_row_fields = {
 			const hoards_solved			= []
 
 		// hoards
+			const hoard_label = self.label(item, tstring.hoards)
+			line.appendChild( hoard_label )
+			const hoard_container = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "hoard_container",
+				parent			: line
+			})
+			hoard_label.addEventListener("mouseup", (event) => {
+				event.preventDefault()
+				hoard_container.classList.toggle("hide");
+			})
+
 			const hoards_data			= item.ref_coins_hoard_data
 			const hoards_data_length	= hoards_data.length
 
@@ -1477,26 +1499,26 @@ var type_row_fields = {
 				const wrapper = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "find_wrapper hoard",
-					parent			: line
+					parent			: hoard_container
 				})
 
 				// title
 					common.create_dom_element({
-						element_type	: "div",
+						element_type	: "span",
 						inner_html		: " " + (hoard.name || "") + " (" + (hoard.place || "") + ") ",
 						parent			: wrapper
 					})
 				// items (ejemplares)
 					const items = common.create_dom_element({
-						element_type	: "div",
-						text_content	: " " + coins_length + " " + (tstring.items || "items") + " ",
+						element_type	: "span",
+						text_content	: " | ",
 						parent			: wrapper
 					})
 				// draw_coins
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "find_coins hoard",
-						parent			: line
+						class_name		: "find_coins hoard gallery",
+						parent			: hoard_container
 					})
 					const ar_coins = []
 					for (let j = 0; j < coins_length; j++) {
@@ -1511,7 +1533,7 @@ var type_row_fields = {
 					}
 
 					// replace text into the items
-					items.innerHTML = items.innerHTML + '('+ar_coins.length+')'
+					items.innerHTML = items.innerHTML + ar_coins.length +" "+ (tstring.of || "of") +" "+ coins_length +" "+ (tstring.coins || "coins")
 
 
 				// map data
@@ -1539,6 +1561,22 @@ var type_row_fields = {
 			const findspots_data		= item.ref_coins_findspots_data;
 			const findspots_data_length	= findspots_data.length
 
+			const findspots_label = self.label(item, tstring.findspots)
+			line.appendChild( findspots_label )
+
+
+			const findspots_container = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "findspots_container",
+				parent			: line
+			})
+
+			findspots_label.addEventListener("mouseup", (event) => {
+				event.preventDefault()
+				findspots_container.classList.toggle("hide");
+			})
+
+
 			for (let i = 0; i < findspots_data_length; i++) {
 
 				const findspot		= findspots_data[i]
@@ -1558,26 +1596,26 @@ var type_row_fields = {
 				const wrapper = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "find_wrapper findspot",
-					parent			: line
+					parent			: findspots_container
 				})
 
 				// title
 					common.create_dom_element({
-						element_type	: "div",
+						element_type	: "span",
 						inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
 						parent			: wrapper
 					})
 				// items (ejemplares)
 					const items = common.create_dom_element({
-						element_type	: "div",
-						text_content	: " " + coins_length + " " + (tstring.items || "items") + " ",
+						element_type	: "span",
+						text_content	: " | ",
 						parent			: wrapper
 					})
 				// draw_coins
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "find_coins findspot gallery",
-						parent			: line
+						parent			: findspots_container
 					})
 
 					const ar_coins = []
@@ -1609,7 +1647,7 @@ var type_row_fields = {
 					}
 
 				// replace text into the items
-					items.innerHTML = items.innerHTML + '('+ar_coins.length+')'
+					items.innerHTML = items.innerHTML + ar_coins.length +" "+ (tstring.of || "of") +" "+ coins_length +" "+ (tstring.coins || "coins")
 
 				// store already solved
 					findspots_solved.push(findspot.section_id)

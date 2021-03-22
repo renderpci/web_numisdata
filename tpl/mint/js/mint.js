@@ -44,7 +44,6 @@ var mint = {
 			.then(function(response){
 				console.log("--> set_up get_row_data API response:",response.result);
 
-
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
 					self.draw_row({
@@ -53,37 +52,45 @@ var mint = {
 					})
 
 				// map draw. Init default map
-				if (mint.result[0].map) {
-					self.draw_map({
-						mint_map_data : JSON.parse(mint.result[0].map),
-						mint_popup_data : {
-							section_id	: mint.result[0].section_id,
-							title		: mint.result[0].name,
-							description	: mint.result[0].history.trim()
-						},
-						place_data : mint.result[0].place_data 
-					})
-				}
+					// if (mint.result[0].map) {
+					// 	self.draw_map({
+					// 		mint_map_data : JSON.parse(mint.result[0].map),
+					// 		mint_popup_data : {
+					// 			section_id	: mint.result[0].section_id,
+					// 			title		: mint.result[0].name,
+					// 			description	: mint.result[0].history.trim()
+					// 		},
+					// 		place_data : mint.result[0].place_data 
+					// 	})
+					// }
 
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
 					if (mint_catalog.result) {
 						
 						const catMint = mint_catalog.result.find(el => el.term_table==='mints')						
-						self.get_types_data({
+						self.get_types_data2({
 							section_id : catMint.section_id
 						})
-						.then(function(result){						
-							self.draw_types({
-								target	: document.getElementById('types'),
-								ar_rows	: result
+						.then(function(result){					
+							// self.draw_types({
+							// 	target	: document.getElementById('types'),
+							// 	ar_rows	: result
+							// })
+							const types_node = self.draw_types2({
+								ar_rows			: result,
+								mint_section_id	: catMint.section_id
 							})
+							if (types_node) {
+								const target = document.getElementById('types')
+								target.appendChild(types_node)
+							}
 						})
 					}
 
 				// send event data_request_done (used by buttons download)
 					event_manager.publish('data_request_done', {
-						request_body		: null,
+						request_body        : null,
 						result				: {
 							mint			: mint.result,
 							mint_catalog	: mint_catalog.result
@@ -109,7 +116,6 @@ var mint = {
 
 		return true
 	},//end set_up
-
 
 
 
@@ -141,7 +147,6 @@ var mint = {
 						'place_data',
 						'place',
 						'history',
-						// 'numismatic_comments',
 						'bibliography_data',
 						'map'
 					],
@@ -157,14 +162,14 @@ var mint = {
 			ar_calls.push({
 				id		: "mint_catalog",
 				options	: {
-					dedalo_get				: 'records',
-					table					: 'catalog',
-					db_name					: page_globals.WEB_DB,
-					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['section_id','term','term_table'],
-					count					: false,
-					limit					: 0,
-					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"
+					dedalo_get	: 'records',
+					table		: 'catalog',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields	: ['section_id','term','term_table'],
+					count		: false,
+					limit		: 0,
+					sql_filter	: "term_data='[\"" + parseInt(section_id) + "\"]'"
 				}
 			})
 
@@ -197,6 +202,101 @@ var mint = {
 
 		return js_promise
 	},//end get_row_data
+
+
+
+	/**
+	* GET_TYPES_DATA2
+	* @return 
+	*/
+	get_types_data2 : function(options) {
+
+		const self = this
+
+		const section_id = options.section_id
+				
+		return new Promise(function(resolve){
+
+			// request
+			const request_body = {
+				dedalo_get	: 'records',
+				table		: 'catalog',
+				ar_fields	: ['*'],
+				lang		: page_globals.WEB_CURRENT_LANG_CODE,
+				sql_filter	: "section_id = " + parseInt(section_id),
+				limit		: 0,
+				group		: null,
+				count		: false,
+				order		: 'norder ASC',
+				process_result	: {
+					fn 		: 'process_result::add_parents_and_children_recursive',
+					columns : [{name : "parents"}]
+				}
+			}
+			data_manager.request({
+				body : request_body
+			})
+			.then(function(response){
+				// console.log("++++++++++++ request_body:",request_body);
+				console.log("get_types_data2 API response:",response);
+
+				const parsed_data = response.result
+					? page.parse_catalog_data(response.result)
+					: null
+				
+				resolve(parsed_data)
+			})
+		})
+	},//end get_types_data2
+
+
+
+	/**
+	* DRAW_TYPES2
+	* @return 
+	*/
+	draw_types2 : function(options) {
+		
+		const self = this
+
+		// options
+			const ar_rows			= options.ar_rows
+			const mint_section_id	= options.mint_section_id
+		
+		// create all nodes. Add in parallel to fragment and ar_nodes
+			const fragment = new DocumentFragment()	
+			const ar_nodes = []
+			for (let i = 0; i < ar_rows.length; i++) {
+				if (ar_rows[i].section_id==mint_section_id) continue; // exclude self mint
+				// if (ar_rows[i].term_table==='ts_numismatic_group') continue;
+					console.log("ar_rows[i]:",ar_rows[i]);
+				const node = mint_row.draw_type_item(ar_rows[i])
+				if (node) {
+					ar_nodes.push(node)
+					fragment.appendChild(node)
+				}
+			}
+
+		// hierarchize nodes. 
+		// (!) Note that changes in ar_nodes items are propagated to fragment becase the nodes are shared for both
+			for (let i = 0; i < ar_nodes.length; i++) {
+				const node = ar_nodes[i]				
+				if (node.parent) {
+					const parent_node = ar_nodes.find(function(el){
+						return el.section_id==node.parent
+					})
+						// console.log("parent_node:",parent_node);
+					if (parent_node && parent_node.container) {
+							// console.log("placed node:",node);
+						parent_node.container.appendChild(node)
+					}
+				}else{
+					console.log("node:",node);
+				}
+			}
+
+		return fragment
+	},//end draw_types2
 
 
 

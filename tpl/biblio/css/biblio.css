@@ -96,7 +96,6 @@ section.result {
   cursor: pointer;
 }
 .biblio_row_wrapper .row_body {
-  display: flex;
   flex-wrap: wrap;
   white-space: break-spaces;
 }

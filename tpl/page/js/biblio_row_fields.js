@@ -358,7 +358,7 @@ var biblio_row_fields = {
 								: ""
 
 							common.create_dom_element({
-								element_type 	: "div",
+								element_type 	: "span",
 								class_name 		: "info_value volume grey italic",
 								text_content 	: title_secondary+magazine_separator,
 								parent 			: line
@@ -395,7 +395,7 @@ var biblio_row_fields = {
 
 				if (biblio_object.magazine) {
 					common.create_dom_element({
-						element_type 	: "div",
+						element_type 	: "span",
 						class_name 		: "info_value magazine grey italic",
 						text_content 	: biblio_object.magazine,
 						parent 			: line
@@ -404,34 +404,45 @@ var biblio_row_fields = {
 
 			// serie
 				if (biblio_object.serie) {
+					const separator = (line.children.length > 0)
+					? ' '
+					: ''
+
 					common.create_dom_element({
-						element_type 	: "div",
+						element_type 	: "span",
 						class_name 		: "info_value serie grey",
-						inner_html 		: ' ' + biblio_object.serie,
+						inner_html 		: separator + biblio_object.serie,
 						parent 			: line
 					})
 				}
 
 				if (biblio_object.place) {
+					const separator = (line.children.length > 0)
+					? ", "
+					: ""
+
 					common.create_dom_element({
-						element_type 	: "div",
+						element_type 	: "span",
 						class_name 		: "info_value place grey",
-						text_content 	: ", " + biblio_object.place,
+						text_content 	: separator + biblio_object.place,
 						parent 			: line
 					})
 				}
 
 				// physical_description
-					const text_content = (biblio_object.physical_description)
-						? ", "+biblio_object.physical_description
-						: ""
+
+				if (biblio_object.physical_description) {
+					const separator = (line.children.length > 0)
+					? ", "
+					: ""
 
 					common.create_dom_element({
-						element_type 	: "div",
+						element_type 	: "span",
 						class_name 		: "info_value physical_description grey",
-						text_content 	: text_content,
+						text_content 	: separator + biblio_object.physical_description,
 						parent 			: line
 					})
+				}
 
 
 				break;

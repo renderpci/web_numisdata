@@ -26,34 +26,36 @@
   display: inline-block;
   margin-left: 0.5em;
 }
-.result .period_label {
-  font-weight: 600;
-}
-.result #types {
+.result #types99 {
   margin-top: 1em;
 }
-.result #types > .type_row {
+.result #types99 .term_line {
+  background-color: #f8556c;
+  width: 100%;
+}
+.result #types99 > .type_row {
   display: table;
   width: 100%;
   border-bottom: 1px solid #ccc;
   padding-bottom: 0.5em;
   margin-bottom: 0.5em;
 }
-.result #types > .type_row > span {
+.result #types99 > .type_row > span {
   padding-right: 1em;
 }
-.result #types > .type_row .equivalents {
+.result #types99 > .type_row .equivalents {
   display: block;
 }
-.result #types .ts_numismatic_group {
+.result #types99 .ts_numismatic_group {
   padding-left: 1em;
   cursor: pointer;
 }
-.result #types .ts_period {
+.result #types99 .ts_period {
   cursor: pointer;
   margin-top: 1em;
+  font-weight: 600;
 }
-.result #types .arrow {
+.result #types99 .arrow {
   background: url(../../assets/images/arrow.svg) no-repeat bottom left;
   background-size: contain;
   display: inline-block;
@@ -63,95 +65,169 @@
   margin-left: 1em;
   vertical-align: middle;
 }
-.result #types .types_container {
+.result #types99 .types_container {
   display: flex;
   flex-wrap: wrap;
   padding-left: 2em;
 }
-.result #types .types_container .row_node {
+.result #types99 .types_container .row_node {
   padding-left: 2em;
 }
-.result #types .types_container .type_wrap {
+.result #types99 .types_container .type_wrap {
   width: 32%;
   padding: 1em;
 }
 @media screen and (max-width: 980px) {
-  .result #types .types_container .type_wrap {
+  .result #types99 .types_container .type_wrap {
     width: 50%;
   }
 }
 @media screen and (max-width: 736px) {
-  .result #types .types_container .type_wrap {
+  .result #types99 .types_container .type_wrap {
     width: 100%;
   }
 }
-.result #types .types_container .type_wrap .type_info {
+.result #types99 .types_container .type_wrap .type_info {
   font-size: 72%;
   margin: 0;
 }
 @media screen and (max-width: 980px) {
-  .result #types .types_container .type_wrap .type_info {
+  .result #types99 .types_container .type_wrap .type_info {
     font-size: 90%;
   }
 }
 @media screen and (max-width: 736px) {
-  .result #types .types_container .type_wrap .type_info {
+  .result #types99 .types_container .type_wrap .type_info {
     font-size: 120%;
   }
 }
 @media screen and (max-width: 1600px) {
 }
 @media screen and (max-width: 736px) {
-  .result #types .types_container .type_wrap .info_wrap a {
+  .result #types99 .types_container .type_wrap .info_wrap a {
     font-size: 100% !important ;
   }
 }
-.result #types .types_container .type_wrap img {
+.result #types99 .types_container .type_wrap img {
   object-fit: contain;
   width: 50%;
 }
-.result #types .types_container .type_wrap .type_number p {
+.result #types99 .types_container .type_wrap .type_number p {
   margin: 0;
   height: 2em;
 }
-.result #types .types_container .type_wrap .type_number .type_label {
+.result #types99 .types_container .type_wrap .type_number .type_label {
   border: none;
   font-weight: bold;
   display: inline-block;
   text-decoration: none;
 }
 @media screen and (max-width: 980px) {
-  .result #types .types_container .type_wrap .type_number .type_label {
+  .result #types99 .types_container .type_wrap .type_number .type_label {
     font-size: 90%;
   }
 }
 @media screen and (max-width: 736px) {
-  .result #types .types_container .type_wrap .type_number .type_label {
+  .result #types99 .types_container .type_wrap .type_number .type_label {
     font-size: 120%;
   }
 }
-.result #types .types_container .type_wrap .type_number .subType_label {
+.result #types99 .types_container .type_wrap .type_number .subType_label {
   border: none;
   border-top: 1px solid #e3e3e3;
   display: block;
   height: 2em;
 }
 @media screen and (max-width: 980px) {
-  .result #types .types_container .type_wrap .type_number .subType_label {
+  .result #types99 .types_container .type_wrap .type_number .subType_label {
     font-size: 90%;
   }
 }
 @media screen and (max-width: 736px) {
-  .result #types .types_container .type_wrap .type_number .subType_label {
+  .result #types99 .types_container .type_wrap .type_number .subType_label {
     font-size: 120%;
   }
 }
-.result #types .types_container .type_wrap .type_number .subType_number {
+.result #types99 .types_container .type_wrap .type_number .subType_number {
   margin-left: -1em;
   margin-right: -1em;
   padding-left: 1em;
 }
-.result #types .types_container .type_wrap:nth-child(3n) {
+.result #types99 .types_container .type_wrap:nth-child(3n) {
   border-right: none;
+}
+.result #types .item_wrapper {
+  padding-left: 2em;
+}
+.result #types .item_wrapper .term_line {
+  padding-left: 1em;
+}
+.result #types .item_wrapper .type_group {
+  width: 100%;
+}
+.result #types .item_wrapper .ts_period {
+  font-weight: 600;
+}
+.result #types .item_wrapper .bold {
+  font-weight: 600;
+}
+.result #types .item_wrapper .unit {
+  display: inline-grid;
+  width: 33.33%;
+}
+.result #types .item_wrapper .type_wrap {
+  width: 100%;
+  padding: 1em;
+  padding-top: 0;
+  display: grid;
+}
+.result #types .item_wrapper .type_wrap .type_number {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.result #types .item_wrapper .type_wrap .type_number > a {
+  font-weight: 600;
+}
+.result #types .item_wrapper .type_wrap .type_number > a .keyword {
+  font-weight: 300;
+}
+.result #types .item_wrapper .type_wrap .type_label {
+  border: none;
+  font-weight: bold;
+  display: inline-block;
+  text-decoration: none;
+}
+@media screen and (max-width: 980px) {
+  .result #types .item_wrapper .type_wrap .type_label {
+    font-size: 90%;
+  }
+}
+@media screen and (max-width: 736px) {
+  .result #types .item_wrapper .type_wrap .type_label {
+    font-size: 120%;
+  }
+}
+.result #types .item_wrapper .type_wrap img {
+  object-fit: contain;
+  width: 50%;
+  height: 100%;
+  height: 8.25em;
+}
+.result #types .item_wrapper .type_wrap .type_info {
+  font-size: 72%;
+  margin: 0;
+  text-align: center;
+}
+@media screen and (max-width: 980px) {
+  .result #types .item_wrapper .type_wrap .type_info {
+    font-size: 90%;
+  }
+}
+@media screen and (max-width: 736px) {
+  .result #types .item_wrapper .type_wrap .type_info {
+    font-size: 120%;
+  }
 }
 /*# sourceMappingURL=mint.css.map */

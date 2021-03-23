@@ -326,13 +326,15 @@ var catalog_row_fields = {
 					break;
 
 				case "ref_type_averages_weight":
-					const weight	= item[name].toFixed(2).replace(/\.?0+$/, "");
-					current_value	= weight.replace('.',',') + ' g'
+					// const weight	= item[name].toFixed(2).replace(/\.?0+$/, "");
+					// current_value	= weight.replace('.',',') + ' g'
+					current_value = page.render_weight_value(item)
 					break;
 
 				case "ref_type_averages_diameter":
-					const diameter	= item[name].toFixed(2).replace(/\.?0+$/, "");
-					current_value	= diameter.replace('.',',') + ' mm'
+					// const diameter	= item[name].toFixed(2).replace(/\.?0+$/, "");
+					// current_value	= diameter.replace('.',',') + ' mm'
+					current_value = page.render_diameter_value(item)
 					break;
 
 				case "ref_type_equivalents":
@@ -341,34 +343,35 @@ var catalog_row_fields = {
 					break;
 
 				case "term":
-					const mint_number = (item.ref_mint_number)
-						? item.ref_mint_number+'/'
-						: ''
-					if (item.term_section_id && !item.children) {
+					// const mint_number = (item.ref_mint_number)
+					// 	? item.ref_mint_number+'/'
+					// 	: ''
+					// if (item.term_section_id && !item.children) {
 
-						const ar		= item[name].split(", ")
-						const c_name	= ar[0]
-						const keyword	= (typeof ar[1]==="undefined")
-							? ''
-							: (function(){
-								const clean = []
-								for (let i = 1; i < ar.length; i++) {
-									clean.push(ar[i])
-								}
-								return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
-							})()						
+					// 	const ar		= item[name].split(", ")
+					// 	const c_name	= ar[0]
+					// 	const keyword	= (typeof ar[1]==="undefined")
+					// 		? ''
+					// 		: (function(){
+					// 			const clean = []
+					// 			for (let i = 1; i < ar.length; i++) {
+					// 				clean.push(ar[i])
+					// 			}
+					// 			return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
+					// 		})()						
 
-						const a_term = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "a_term",
-							href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
-							target			: "_blank",
-							inner_html		: "MIB " + mint_number + c_name + keyword
-						})
-						current_value = a_term.outerHTML
-					}else{
-						current_value = "MIB " + mint_number + item[name]
-					}
+					// 	const a_term = common.create_dom_element({
+					// 		element_type	: "a",
+					// 		class_name		: "a_term",
+					// 		href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + item.term_section_id,
+					// 		target			: "_blank",
+					// 		inner_html		: "MIB " + mint_number + c_name + keyword
+					// 	})
+					// 	current_value = a_term.outerHTML
+					// }else{
+					// 	current_value = "MIB " + mint_number + item[name]
+					// }
+					current_value = page.render_type_label(item)
 					break;
 
 				default:

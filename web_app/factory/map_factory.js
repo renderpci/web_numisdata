@@ -228,6 +228,7 @@ function map_factory() {
 	* PARSE_DATA_TO_MAP
 	*/
 	this.parse_data_to_map = function(data, caller_mode) {
+		// console.log("parse_data_to_map data:",data);
 
 		const self = this
 
@@ -375,7 +376,7 @@ function map_factory() {
 					// self.current_group = L.layerGroup(ar_markers)
 					// self.current_group.addTo(self.map)
 					const cluster_markers = L.markerClusterGroup({
-						spiderfyOnMaxZoom	:  true,
+						spiderfyOnMaxZoom	: true,
 						showCoverageOnHover	: false,
 						zoomToBoundsOnClick	: true,
 						maxClusterRadius	: 30,

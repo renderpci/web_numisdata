@@ -139,7 +139,7 @@ var map = {
 						const map_points = self.current_map_global_data.filter(function(el){return el.item!==null}).map(function(el){
 							return el.item
 						})
-
+					
 					// initial map with all points without filters
 						self.map_factory_instance.parse_data_to_map(map_points)
 						.then(function(){

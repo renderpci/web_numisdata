@@ -28,7 +28,6 @@ var mint = {
 			self.export_data_container	= options.export_data_container
 			self.section_id				= options.section_id
 
-
 		// export_data_buttons added once
 			const export_data_buttons = page.render_export_data_buttons()
 			self.export_data_container.appendChild(export_data_buttons)
@@ -44,7 +43,6 @@ var mint = {
 			.then(function(response){
 				console.log("--> set_up get_row_data API response:",response.result);
 
-
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
 					self.draw_row({
@@ -52,38 +50,55 @@ var mint = {
 						ar_rows	: mint.result
 					})
 
-				// map draw. Init default map
-				if (mint.result[0].map) {
-					self.draw_map({
-						mint_map_data : JSON.parse(mint.result[0].map),
-						mint_popup_data : {
-							section_id	: mint.result[0].section_id,
-							title		: mint.result[0].name,
-							description	: mint.result[0].history.trim()
-						},
-						place_data : mint.result[0].place_data 
-					})
-				}
+				// map draw
+					if (typeof mint.result[0]!=="undefined") {
+
+						const mint_data = page.parse_mint_data(mint.result[0])						
+						if (mint_data.georef_geojson) {
+							self.draw_map({
+								mint_map_data	: mint_data.georef_geojson,
+								mint_popup_data	: {
+									section_id	: mint_data.section_id,
+									title		: mint_data.name,
+									description	: mint_data.history.trim()
+								},
+								place_data		: mint_data.place_data 
+							})
+						}
+					}
 
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
-					if (mint_catalog.result) {
-						
-						const catMint = mint_catalog.result.find(el => el.term_table==='mints')						
-						self.get_types_data({
-							section_id : catMint.section_id
-						})
-						.then(function(result){						
-							self.draw_types({
-								target	: document.getElementById('types'),
-								ar_rows	: result
+					if (mint_catalog.result) {						
+						const _mint_catalog = mint_catalog.result.find(el => el.term_table==='mints')
+						if (_mint_catalog && _mint_catalog.section_id) {
+							self.get_types_data2({
+								section_id : _mint_catalog.section_id
 							})
-						})
+							.then(function(result){
+								// self.draw_types({
+								// 	target	: document.getElementById('types'),
+								// 	ar_rows	: result
+								// })
+								const types_node = self.draw_types2({
+									ar_rows			: result,
+									mint_section_id	: _mint_catalog.section_id
+								})
+								if (types_node) {
+									const target = document.getElementById('types')
+									target.appendChild(types_node)
+									page.activate_images_gallery(target)
+								}
+							})
+						}else{
+							console.warn("Ignored invalid _mint_catalog:",_mint_catalog);
+							console.warn("mint_catalog:",mint_catalog);
+						}
 					}
 
 				// send event data_request_done (used by buttons download)
 					event_manager.publish('data_request_done', {
-						request_body		: null,
+						request_body        : null,
 						result				: {
 							mint			: mint.result,
 							mint_catalog	: mint_catalog.result
@@ -112,10 +127,9 @@ var mint = {
 
 
 
-
 	/**
 	* GET_ROW_DATA
-	*
+	* Get dabase mint row from table mints and catalog
 	*/
 	get_row_data : function(options) {
 
@@ -141,9 +155,9 @@ var mint = {
 						'place_data',
 						'place',
 						'history',
-						// 'numismatic_comments',
 						'bibliography_data',
-						'map'
+						'map',
+						'georef_geojson'
 					],
 					sql_filter				: "section_id = " + parseInt(section_id),
 					count					: false,
@@ -157,14 +171,14 @@ var mint = {
 			ar_calls.push({
 				id		: "mint_catalog",
 				options	: {
-					dedalo_get				: 'records',
-					table					: 'catalog',
-					db_name					: page_globals.WEB_DB,
-					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['section_id','term','term_table'],
-					count					: false,
-					limit					: 0,
-					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]'"
+					dedalo_get	: 'records',
+					table		: 'catalog',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields	: ['section_id','term','term_table'],
+					count		: false,
+					limit		: 0,
+					sql_filter	: "term_data='[\"" + parseInt(section_id) + "\"]'"
 				}
 			})
 
@@ -201,259 +215,385 @@ var mint = {
 
 
 	/**
-	* GET_types_DATA
-	*
+	* GET_TYPES_DATA2
+	* @return 
 	*/
-	get_types_data : function(options) {
+	get_types_data2 : function(options) {
 
 		const self = this
 
 		const section_id = options.section_id
-		
+				
 		return new Promise(function(resolve){
+
 			// request
-				const js_promise = data_manager.request({
-					body : {
-						dedalo_get	: 'records',
-						table		: 'catalog',
-						db_name		: page_globals.WEB_DB,
-						lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						ar_fields	: ['section_id','norder','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_type_material','ref_mint_number'],
-						count		: false,
-						limit		: 0,
-						order		: "norder ASC",
-						sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
-						resolve_portals_custom	: {
-							"parent" : "catalog" 
-							//"children"	: "catalog"
-						}
+			const request_body = {
+				dedalo_get	: 'records',
+				table		: 'catalog',
+				ar_fields	: ['*'],
+				lang		: page_globals.WEB_CURRENT_LANG_CODE,
+				sql_filter	: "section_id = " + parseInt(section_id),
+				limit		: 0,
+				group		: null,
+				count		: false,
+				order		: 'norder ASC',
+				process_result	: {
+					fn 		: 'process_result::add_parents_and_children_recursive',
+					columns : [{name : "parents"}]
+				}
+			}
+			data_manager.request({
+				body : request_body
+			})
+			.then(function(response){
+				// console.log("++++++++++++ request_body:",request_body);
+				// console.log("get_types_data2 API response:",response);
 
-						// dedalo_get	: 'records',
-						// table		: 'catalog',
-						// db_name		: page_globals.WEB_DB,
-						// lang		: page_globals.WEB_CURRENT_LANG_CODE,
-						// ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
-						// count		: false,
-						// limit		: 0,
-						// order		: 'norder ASC',
-						// sql_filter	: "(term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
-						// process_result	: {
-						// 	fn 		: 'process_result::add_parents_and_children_recursive',
-						// 	columns : [{name : "parents"}]
-						// }
-					}
-				})
-				.then(function(response){
-					console.log("response:",response);
-					
-					const types_data = []					
-					if (response.result && response.result.length>0) {
-						
-						for (let i = 0; i < response.result.length; i++) {
-
-							const row = {
-								catalog						: 'MIB',
-								section_id					: response.result[i].section_id,
-								norder						: response.result[i].norder,
-								term_data					: response.result[i].term_data,
-								denomination				: response.result[i].ref_type_denomination,
-								term_table					: response.result[i].term_table,
-								term						: response.result[i].term,
-								parent						: response.result[i].parent,
-								parents						: response.result[i].parents,
-								children					: response.result[i].children,
-								ref_coins_image_obverse		: response.result[i].ref_coins_image_obverse,
-								ref_coins_image_reverse		: response.result[i].ref_coins_image_reverse,
-								ref_type_averages_diameter	: response.result[i].ref_type_averages_diameter,
-								ref_type_averages_weight	: response.result[i].ref_type_averages_weight,
-								ref_type_material			: response.result[i].ref_type_material,
-								ref_mint_number				: response.result[i].ref_mint_number,
-							}
-
-							types_data.push(row)
-
-							// response.result[i].catalog = 'MIB'
-							// types_data.push(response.result[i])
-						}
-					}
-					// console.log("--> get_types_data types_data:",types_data); return
-
-					const parsed_types_data = self.parse_types_data(types_data)
-
-					resolve(parsed_types_data)
-				})
+				const parsed_data = response.result
+					? page.parse_catalog_data(response.result)
+					: null
+				
+				resolve(parsed_data)
+			})
 		})
-	},//end get_types_data
+	},//end get_types_data2
+
+
+
+	/**
+	* DRAW_TYPES2
+	* @return 
+	*/
+	draw_types2 : function(options) {
+		
+		const self = this
+
+		// options
+			const ar_rows			= options.ar_rows
+			const mint_section_id	= options.mint_section_id
+
+
+		const fragment = new DocumentFragment()	
+		
+		// label
+			const typesLabel = tstring.coin_production || "Coin production"
+			const lineSeparator = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_line separator",
+				parent 			: fragment
+			})
+			common.create_dom_element({
+				element_type 	: "label",
+				class_name 		: "big_label",
+				text_content 	: typesLabel,
+				parent 			: lineSeparator
+			})
+		
+		// create all nodes. Add in parallel to fragment and ar_nodes
+			// const fragment = new DocumentFragment()	
+			const ar_nodes = []
+			for (let i = 0; i < ar_rows.length; i++) {
+				
+				const row = ar_rows[i]
+
+				// exclude self mint
+					if (row.section_id==mint_section_id) continue; 
+
+				// exclude non mint children (to parents)
+					const is_mint_child = row.parents
+						? row.parents.find(el => el===mint_section_id)
+						: false
+					if (!is_mint_child) {
+						console.log("Excluded row:",row);
+						continue;
+					}
+						
+				// append
+					const node = mint_row.draw_type_item(row)
+					if (node) {
+						ar_nodes.push(node)
+						fragment.appendChild(node)
+					}
+			}
+
+		// hierarchize nodes. 
+		// (!) Note that changes in ar_nodes items are propagated to fragment becase the nodes are shared for both
+			for (let i = 0; i < ar_nodes.length; i++) {
+				const node = ar_nodes[i]				
+				if (node.parent) {
+					const parent_node = ar_nodes.find(function(el){
+						return el.section_id==node.parent
+					})
+						// console.log("parent_node:",parent_node);
+					if (parent_node && parent_node.container) {
+							// console.log("placed node:",node);
+						parent_node.container.appendChild(node)
+					}
+				}else{
+					console.log("node without parent:",node);
+				}
+			}
+
+		return fragment
+	},//end draw_types2
+
+
+
+	/**
+	* GET_TYPES_DATA
+	*
+	*/
+		// get_types_data : function(options) {
+
+		// 	const self = this
+
+		// 	const section_id = options.section_id
+			
+		// 	return new Promise(function(resolve){
+		// 		// request
+		// 			const js_promise = data_manager.request({
+		// 				body : {
+		// 					dedalo_get	: 'records',
+		// 					table		: 'catalog',
+		// 					db_name		: page_globals.WEB_DB,
+		// 					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 					ar_fields	: ['section_id','norder','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_type_material','ref_mint_number'],
+		// 					count		: false,
+		// 					limit		: 0,
+		// 					order		: "norder ASC",
+		// 					sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
+		// 					resolve_portals_custom	: {
+		// 						"parent" : "catalog" 
+		// 						//"children"	: "catalog"
+		// 					}
+
+		// 					// dedalo_get	: 'records',
+		// 					// table		: 'catalog',
+		// 					// db_name		: page_globals.WEB_DB,
+		// 					// lang		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 					// ar_fields	: ['section_id','term_data','ref_type_denomination','term','term_table','parent','parents','children','ref_coins_image_obverse','ref_coins_image_reverse','ref_type_averages_diameter','ref_type_averages_weight','ref_mint_number'],
+		// 					// count		: false,
+		// 					// limit		: 0,
+		// 					// order		: 'norder ASC',
+		// 					// sql_filter	: "(term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
+		// 					// process_result	: {
+		// 					// 	fn 		: 'process_result::add_parents_and_children_recursive',
+		// 					// 	columns : [{name : "parents"}]
+		// 					// }
+		// 				}
+		// 			})
+		// 			.then(function(response){
+		// 				console.log("response:",response);
+						
+		// 				const types_data = []					
+		// 				if (response.result && response.result.length>0) {
+							
+		// 					for (let i = 0; i < response.result.length; i++) {
+
+		// 						const row = {
+		// 							catalog						: 'MIB',
+		// 							section_id					: response.result[i].section_id,
+		// 							norder						: response.result[i].norder,
+		// 							term_data					: response.result[i].term_data,
+		// 							denomination				: response.result[i].ref_type_denomination,
+		// 							term_table					: response.result[i].term_table,
+		// 							term						: response.result[i].term,
+		// 							parent						: response.result[i].parent,
+		// 							parents						: response.result[i].parents,
+		// 							children					: response.result[i].children,
+		// 							ref_coins_image_obverse		: response.result[i].ref_coins_image_obverse,
+		// 							ref_coins_image_reverse		: response.result[i].ref_coins_image_reverse,
+		// 							ref_type_averages_diameter	: response.result[i].ref_type_averages_diameter,
+		// 							ref_type_averages_weight	: response.result[i].ref_type_averages_weight,
+		// 							ref_type_material			: response.result[i].ref_type_material,
+		// 							ref_mint_number				: response.result[i].ref_mint_number,
+		// 						}
+
+		// 						types_data.push(row)
+
+		// 						// response.result[i].catalog = 'MIB'
+		// 						// types_data.push(response.result[i])
+		// 					}
+		// 				}
+		// 				// console.log("--> get_types_data types_data:",types_data); return
+
+		// 				const parsed_types_data = self.parse_types_data(types_data)
+
+		// 				resolve(parsed_types_data)
+		// 			})
+		// 	})
+		// },//end get_types_data
 
 
 
 	//return an object with structure: period>group(if exists)>types>children(for subtypes)
-	parse_types_data : function (options){
-		let parsedData = []
-		parsedData.children = []
-		const data = options;
+		// parse_types_data : function (options){
+		// 	let parsedData = []
+		// 	parsedData.children = []
+		// 	const data = options;
 
-		const rows_length = data.length
+		// 	const rows_length = data.length
 
-		//Get first data deep and put it to parsed array
-		let mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
-
-
-		for (let i=0;i<mint_parent_group.length;i++){
-			let currentObject = mint_parent_group[i]
-	 		currentObject.children = {}
-	 		currentObject.groups = []
-	 		parsedData.children.push(currentObject)		 	
-		}
-
-		let numis_group_objects = data.filter(obj => obj.term_table ===  'ts_numismatic_group')
-		let finded = false; //set true if recursive function found seeked object
-
-		//console.log(numis_group_objects[3])
-
-		while (numis_group_objects.length>0){
-			for (let i=0;i<numis_group_objects.length;i++){
-				const currentObj = numis_group_objects[i]
-				finded = false;
-				const parentsIds = JSON.parse(currentObj.parents)
-				for (let z=0;z<parentsIds.length;z++){	
-					putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
-					if(finded){
-						numis_group_objects.splice(i,1)
-						break
-					}
-				}
-			}
-		}
-
-		
-		let types_objects = data.filter(obj => (obj.term_table ===  'types' && obj.parent[0].term_table !==  'types'))	
-		finded = false; //set true if recursive function found seeked object
-
-		while (types_objects.length>0){
-			for (let i=0;i<types_objects.length;i++){
-				const currentObj = types_objects[i]
-				finded = false;
-				const parentsIds = JSON.parse(currentObj.parents)
-				for (let z=0;z<parentsIds.length;z++){
-					putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
-					if(finded){
-						types_objects.splice(i,1)
-						break
-					}
-				}
-			}
-		}
-
-		let subTypes_objects = data.filter(obj => obj.parent[0].term_table ===  'types')
-		finded = false; //set true if recursive function found seeked object
-
-		while (subTypes_objects.length>0){
-			for (let i=0;i<subTypes_objects.length;i++){
-				const currentObj = subTypes_objects[i]
-				finded = false;
-				const parentsIds = JSON.parse(currentObj.parents)
-				for (let z=0;z<parentsIds.length;z++){
-					putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
-					if(finded){
-						subTypes_objects.splice(i,1)
-						break
-					}
-				}
-			}
-		}
+		// 	//Get first data deep and put it to parsed array
+		// 	let mint_parent_group = data.filter(obj => obj.parent[0].term_table ===  'mints')
 
 
+		// 	for (let i=0;i<mint_parent_group.length;i++){
+		// 		let currentObject = mint_parent_group[i]
+		//  		currentObject.children = {}
+		//  		currentObject.groups = []
+		//  		parsedData.children.push(currentObject)		 	
+		// 	}
 
+		// 	let numis_group_objects = data.filter(obj => obj.term_table ===  'ts_numismatic_group')
+		// 	let finded = false; //set true if recursive function found seeked object
 
-		// let period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
-		
-		// for (let i=0;i<period_parent_group.length;i++){
-		// 	const currentObj = period_parent_group[i]
-		// 	const currentObjParentId = currentObj.parent[0].section_id
-		
-		// 	const parsedDataIndex = parsedData.children.findIndex(obj => obj.section_id == currentObjParentId)
+		// 	//console.log(numis_group_objects[3])
+
+		// 	while (numis_group_objects.length>0){
+		// 		for (let i=0;i<numis_group_objects.length;i++){
+		// 			const currentObj = numis_group_objects[i]
+		// 			finded = false;
+		// 			const parentsIds = JSON.parse(currentObj.parents)
+		// 			for (let z=0;z<parentsIds.length;z++){	
+		// 				putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
+		// 				if(finded){
+		// 					numis_group_objects.splice(i,1)
+		// 					break
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+
 			
-		// 	if (parsedDataIndex>-1){
-		// 		let children = parsedData.children[parsedDataIndex].children 
-		// 		if (children != null && children.length>0){
-		// 			parsedData.children[parsedDataIndex].children.push(currentObj)
-		// 		} else {
-		// 			parsedData.children[parsedDataIndex].children = []
-		// 			parsedData.children[parsedDataIndex].children .push(currentObj)
+		// 	let types_objects = data.filter(obj => (obj.term_table ===  'types' && obj.parent[0].term_table !==  'types'))	
+		// 	finded = false; //set true if recursive function found seeked object
+
+		// 	while (types_objects.length>0){
+		// 		for (let i=0;i<types_objects.length;i++){
+		// 			const currentObj = types_objects[i]
+		// 			finded = false;
+		// 			const parentsIds = JSON.parse(currentObj.parents)
+		// 			for (let z=0;z<parentsIds.length;z++){
+		// 				putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
+		// 				if(finded){
+		// 					types_objects.splice(i,1)
+		// 					break
+		// 				}
+		// 			}
 		// 		}
 		// 	}
-		// }
 
-		// let numismatic_parent_group = data.filter(obj => obj.parent[0].term_table==='ts_numismatic_group')			
+		// 	let subTypes_objects = data.filter(obj => obj.parent[0].term_table ===  'types')
+		// 	finded = false; //set true if recursive function found seeked object
 
-		// let finded = false; //set true if recursive function found seeked object
-
-		// while (numismatic_parent_group.length>0){
-
-		// 	for (let i=0;i<numismatic_parent_group.length;i++){
-		// 		const currentNumisGroup = numismatic_parent_group[i]
-		// 		// console.log (currentNumisGroup.norder)
-		// 		finded = false;
-		// 		putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
-		// 		if(finded){
-		// 			numismatic_parent_group.splice(i,1)
+		// 	while (subTypes_objects.length>0){
+		// 		for (let i=0;i<subTypes_objects.length;i++){
+		// 			const currentObj = subTypes_objects[i]
+		// 			finded = false;
+		// 			const parentsIds = JSON.parse(currentObj.parents)
+		// 			for (let z=0;z<parentsIds.length;z++){
+		// 				putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
+		// 				if(finded){
+		// 					subTypes_objects.splice(i,1)
+		// 					break
+		// 				}
+		// 			}
 		// 		}
 		// 	}
-		// }
 
-		// let types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
-		
-		
-		// let creators_parent_group = data.filter(obj => obj.parent[0].term_table ===  'creators')
-		// console.log(creators_parent_group)
-		
 
-		// finded = false;
 
-		// while (types_parent_group.length>0){
-		// 	for (let i=0;i<types_parent_group.length;i++){
-		// 		const currentType = types_parent_group[i]
-		// 		//finded = false; // PROVISIONAL REMOVE TO AVOID CRASH (!) 11-03-2021 PACO
-		// 		putObjectinArray(parsedData.children,currentType,parsedData)
-		// 		if(finded){
-		// 			types_parent_group.splice(i,1)
-		// 		} else {
 
+		// 	// let period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
+			
+		// 	// for (let i=0;i<period_parent_group.length;i++){
+		// 	// 	const currentObj = period_parent_group[i]
+		// 	// 	const currentObjParentId = currentObj.parent[0].section_id
+			
+		// 	// 	const parsedDataIndex = parsedData.children.findIndex(obj => obj.section_id == currentObjParentId)
+				
+		// 	// 	if (parsedDataIndex>-1){
+		// 	// 		let children = parsedData.children[parsedDataIndex].children 
+		// 	// 		if (children != null && children.length>0){
+		// 	// 			parsedData.children[parsedDataIndex].children.push(currentObj)
+		// 	// 		} else {
+		// 	// 			parsedData.children[parsedDataIndex].children = []
+		// 	// 			parsedData.children[parsedDataIndex].children .push(currentObj)
+		// 	// 		}
+		// 	// 	}
+		// 	// }
+
+		// 	// let numismatic_parent_group = data.filter(obj => obj.parent[0].term_table==='ts_numismatic_group')			
+
+		// 	// let finded = false; //set true if recursive function found seeked object
+
+		// 	// while (numismatic_parent_group.length>0){
+
+		// 	// 	for (let i=0;i<numismatic_parent_group.length;i++){
+		// 	// 		const currentNumisGroup = numismatic_parent_group[i]
+		// 	// 		// console.log (currentNumisGroup.norder)
+		// 	// 		finded = false;
+		// 	// 		putObjectinArray(parsedData.children,currentNumisGroup,parsedData)
+		// 	// 		if(finded){
+		// 	// 			numismatic_parent_group.splice(i,1)
+		// 	// 		}
+		// 	// 	}
+		// 	// }
+
+		// 	// let types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
+			
+			
+		// 	// let creators_parent_group = data.filter(obj => obj.parent[0].term_table ===  'creators')
+		// 	// console.log(creators_parent_group)
+			
+
+		// 	// finded = false;
+
+		// 	// while (types_parent_group.length>0){
+		// 	// 	for (let i=0;i<types_parent_group.length;i++){
+		// 	// 		const currentType = types_parent_group[i]
+		// 	// 		//finded = false; // PROVISIONAL REMOVE TO AVOID CRASH (!) 11-03-2021 PACO
+		// 	// 		putObjectinArray(parsedData.children,currentType,parsedData)
+		// 	// 		if(finded){
+		// 	// 			types_parent_group.splice(i,1)
+		// 	// 		} else {
+
+		// 	// 		}
+		// 	// 	}
+		// 	// }
+
+		// 	// console.log("types_parent_group:",types_parent_group); return
+
+		// 	//Recursive function that create a multidimensional array whith data hyerarchy
+			
+		// 	function putObjectinArray (arr,obj,parentId,item){
+
+		// 		if (item.section_id == parentId){
+		// 			finded = true;
+		// 			if (Array.isArray(item.children)){
+		// 				item.children.push(obj)
+		// 			} else {
+		// 				item.children = []
+		// 				item.children.push(obj)
+		// 			}
 		// 		}
+
+		// 		if (!Array.isArray(arr)){	
+		// 			return 
+		// 		}
+
+		// 		arr.forEach( function(item,index){
+		// 		 	putObjectinArray(item.children,obj,parentId,item)
+		// 		})
+
 		// 	}
-		// }
 
-		// console.log("types_parent_group:",types_parent_group); return
+		// 	console.log("parsedData:",parsedData);
 
-		//Recursive function that create a multidimensional array whith data hyerarchy
-		
-		function putObjectinArray (arr,obj,parentId,item){
+		// 	return (parsedData);
+		// },//end parse_types_data
 
-			if (item.section_id == parentId){
-				finded = true;
-				if (Array.isArray(item.children)){
-					item.children.push(obj)
-				} else {
-					item.children = []
-					item.children.push(obj)
-				}
-			}
-
-			if (!Array.isArray(arr)){	
-				return 
-			}
-
-			arr.forEach( function(item,index){
-			 	putObjectinArray(item.children,obj,parentId,item)
-			})
-
-		}
-
-		console.log("parsedData:",parsedData);
-
-		return (parsedData);
-	},
 
 
 	/**
@@ -509,14 +649,11 @@ var mint = {
 		// name & place
 			if (row_object.name && row_object.name.length>0) {
 
-
-
 				const lineTittleWrap = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "line-tittle-wrap",
 					parent 			: line
 				})
-
 		
 				let name = row_object.name
 				
@@ -525,8 +662,7 @@ var mint = {
 					class_name 		: "line-tittle golden-color",
 					text_content 	: name,
 					parent 			: lineTittleWrap
-				})
-			
+				})			
 
 			// place
 				if (row_object.place && row_object.place.length>0) {
@@ -667,395 +803,402 @@ var mint = {
 			})
 		}
 
+
+		return true
 	},//end draw_row
+
+
 
 	/**
 	* DRAW_TYPES
 	*/
-	draw_types : function(options) {
-		
-		const self = this
-
-		// options
-			const full_ar_rows	= options.ar_rows
-			const container		= options.target
-
-		let arrDeep = 0
-		let isFirstElement = false
-		
-		if (full_ar_rows.children && full_ar_rows.children.length>0){
-
-			const ar_rows		 = full_ar_rows.children
-			const ar_rows_length = ar_rows.length
+		// draw_types : function(options) {
 			
-			// clean container div
-			while (container.hasChildNodes()) {
-				container.removeChild(container.lastChild);
-			}
+		// 	const self = this
 
-			const fragment = new DocumentFragment();
+		// 	// options
+		// 		const full_ar_rows	= options.ar_rows
+		// 		const container		= options.target
 
-			// label
-				const typesLabel = tstring.coin_production || "Coin production"
-				const lineSeparator = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "info_line separator",
-					parent 			: fragment
-				})
-				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "big_label",
-					text_content 	: typesLabel,
-					parent 			: lineSeparator
-				})
+		// 	let arrDeep = 0
+		// 	let isFirstElement = false
+			
+		// 	if (full_ar_rows.children && full_ar_rows.children.length>0){
 
-			// rows
-			for (let i = 0; i < ar_rows_length; i++) {
-
-				const row_object = ar_rows[i]
-
-				// section_id
-					if (dedalo_logged===true) {
-
-						const link = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "section_id go_to_dedalo",
-							text_content	: row_object.section_id,
-							href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
-							parent			: fragment
-						})
-						link.setAttribute('target', '_blank');
-					}
-
-				const children_container = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "children_container",
-					parent 			: fragment
-				})
-
-				const period_label = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "ts_period period_label",
-					text_content 	: row_object.term,
-					parent 			: children_container
-				})
-
-				common.create_dom_element ({
-					element_type 	: "div",
-					class_name		: "arrow",
-					parent 			: period_label
-				})
-
-				//PERIOD wrap
-				const row_period = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "row_node ts_period period_wrap hide",
-					parent 			: children_container
-				})
-
-				const types_container = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "types_container hide deep:",
-					parent 			: row_period
-				})
-
-				// row_line
-				const row_line = common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "type_row",
-					parent 			: fragment
-				})
-
-				createFolderedGroup(period_label,row_period)
-				createFolderedGroup(period_label,types_container)
+		// 		const ar_rows		 = full_ar_rows.children
+		// 		const ar_rows_length = ar_rows.length
 				
+		// 		// clean container div
+		// 		while (container.hasChildNodes()) {
+		// 			container.removeChild(container.lastChild);
+		// 		}
 
-				if (row_object.children != null){
-					//if has children call recursive function that get all children hierarchy one by one
-					recursiveChildrenSearch(row_object.children,null,row_period)
-				}
+		// 		const fragment = new DocumentFragment();
 
-			}//end for (let i = 0; i < ar_rows_length; i++)
+		// 		// label
+		// 			const typesLabel = tstring.coin_production || "Coin production"
+		// 			const lineSeparator = common.create_dom_element({
+		// 				element_type	: "div",
+		// 				class_name		: "info_line separator",
+		// 				parent 			: fragment
+		// 			})
+		// 			common.create_dom_element({
+		// 				element_type 	: "label",
+		// 				class_name 		: "big_label",
+		// 				text_content 	: typesLabel,
+		// 				parent 			: lineSeparator
+		// 			})
 
-				
-			function recursiveChildrenSearch (arr,item,container){
-				
-				if (item != null){
-					createNewItem(item,container);
+		// 		// rows
+		// 		for (let i = 0; i < ar_rows_length; i++) {
 
-					if (item.children != null){
-						item.children.sort(function(a,b){
-							//sort every hierarchy level
-							if (parseInt(a.norder) > parseInt(b.norder)){
-								return 1
-							}
-							if (parseInt(a.norder) < parseInt(b.norder)){
-								return -1
-							}
-							return 0
-						})
-					}
+		// 			const row_object = ar_rows[i]
+
+		// 			// section_id
+		// 				if (dedalo_logged===true) {
+
+		// 					const link = common.create_dom_element({
+		// 						element_type	: "a",
+		// 						class_name		: "section_id go_to_dedalo",
+		// 						text_content	: row_object.section_id,
+		// 						href			: '/dedalo/lib/dedalo/main/?t=numisdata3&id=' + row_object.section_id,
+		// 						parent			: fragment
+		// 					})
+		// 					link.setAttribute('target', '_blank');
+		// 				}
+
+		// 			const children_container = common.create_dom_element({
+		// 				element_type	: "div",
+		// 				class_name		: "children_container",
+		// 				parent 			: fragment
+		// 			})
+
+		// 			const period_label = common.create_dom_element({
+		// 				element_type	: "div",
+		// 				class_name		: "ts_period period_label",
+		// 				text_content 	: row_object.term,
+		// 				parent 			: children_container
+		// 			})
+
+		// 			common.create_dom_element ({
+		// 				element_type 	: "div",
+		// 				class_name		: "arrow",
+		// 				parent 			: period_label
+		// 			})
+
+		// 			//PERIOD wrap
+		// 			const row_period = common.create_dom_element({
+		// 				element_type	: "div",
+		// 				class_name		: "row_node ts_period period_wrap hide",
+		// 				parent 			: children_container
+		// 			})
+
+		// 			const types_container = common.create_dom_element({
+		// 				element_type	: "div",
+		// 				class_name		: "types_container hide deep:",
+		// 				parent 			: row_period
+		// 			})
+
+		// 			// row_line
+		// 			const row_line = common.create_dom_element({
+		// 				element_type 	: "div",
+		// 				class_name 		: "type_row",
+		// 				parent 			: fragment
+		// 			})
+
+		// 			createFolderedGroup(period_label,row_period)
+		// 			createFolderedGroup(period_label,types_container)
 					
-				}
 
-				if (!Array.isArray(arr)){
-					return 
-				} else{
-					//save current hierarchy level
-					arrDeep +=1
-				}
+		// 			if (row_object.children != null){
+		// 				//if has children call recursive function that get all children hierarchy one by one
+		// 				recursiveChildrenSearch(row_object.children,null,row_period)
+		// 			}
 
-				for (let i=0;i<arr.length;i++){
-					recursiveChildrenSearch(arr[i].children,arr[i],container)
-					if (arr.length-1 == (i)){
-						//save current hierarchy level
-						arrDeep -=1
-					}
-				}
-			}
+		// 		}//end for (let i = 0; i < ar_rows_length; i++)
 
-			function createNewItem (item,container){
-				//if has numismatics groups
-				var currentContainer = container
-
-				if (item.term_table === 'ts_numismatic_group'){
-					if (arrDeep>1){
-						const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
-						currentContainer = deepEl[deepEl.length-1]
-					} 
-					//Create a numismatic group
-					//GROUP wrap
-					const classDeep = "row_node hide deep:"+arrDeep
 					
-					const children_container = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "children_container",
-						parent 			: currentContainer
-					})
-
-					const children_label = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "ts_numismatic_group",
-						text_content 	: item.term,
-						parent 			: children_container
-					})
-
-					common.create_dom_element ({
-						element_type 	: "div",
-						class_name		: "arrow",
-						parent 			: children_label
-					})
-
-					const types_container = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "types_container hide deep:"+arrDeep,
-						parent 			: children_container
-					})
-
-					const row_group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "row_node hide deep:"+arrDeep,
-						parent 			: children_container
-					})
-
-					createFolderedGroup(children_label,row_group)
-					createFolderedGroup(children_label,types_container)
-
-
-				} else if (item.term_table === 'types') {
+		// 		function recursiveChildrenSearch (arr,item,container){
 					
-					//create a type element
-					if (item.children != null && item.children.length>0){
-						//if is a type and not a subtype mark variable but don't draw anything
-						isFirstElement = true
-					} else{//if is a subtype
+		// 			if (item != null){
+		// 				createNewItem(item,container);
 
-							//try to get a type container created yet
-							let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
-							let newArrDeep = arrDeep
-
-							//if previously didn't found, search up in hierarchy until find the last types container
-							while (deepEl.length==0 && newArrDeep>1){
-								newArrDeep = newArrDeep-1
-								deepEl = container.getElementsByClassName("types_container deep:"+(newArrDeep-1).toString())
-							}
-
-							currentContainer = deepEl[deepEl.length-1]
+		// 				if (item.children != null){
+		// 					item.children.sort(function(a,b){
+		// 						//sort every hierarchy level
+		// 						if (parseInt(a.norder) > parseInt(b.norder)){
+		// 							return 1
+		// 						}
+		// 						if (parseInt(a.norder) < parseInt(b.norder)){
+		// 							return -1
+		// 						}
+		// 						return 0
+		// 					})
+		// 				}
 						
+		// 			}
 
-						if (currentContainer == null){
-							let deepEl = container.getElementsByClassName("types_container")
-							currentContainer = deepEl[deepEl.length-1]
-						}
+		// 			if (!Array.isArray(arr)){
+		// 				return 
+		// 			} else{
+		// 				//save current hierarchy level
+		// 				arrDeep +=1
+		// 			}
 
-						let isSubtype = false
-						if (item.parent[0].term_table === 'types'){
-							isSubtype = true
-						}
+		// 			for (let i=0;i<arr.length;i++){
+		// 				recursiveChildrenSearch(arr[i].children,arr[i],container)
+		// 				if (arr.length-1 == (i)){
+		// 					//save current hierarchy level
+		// 					arrDeep -=1
+		// 				}
+		// 			}
+		// 		}
 
-						const types_block = create_type_element(item,isSubtype)
-						currentContainer.appendChild(types_block)
-						isFirstElement = false
-					}
-				}
+		// 		function createNewItem (item,container){
+		// 			//if has numismatics groups
+		// 			var currentContainer = container
+
+		// 			if (item.term_table === 'ts_numismatic_group'){
+		// 				if (arrDeep>1){
+		// 					const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
+		// 					currentContainer = deepEl[deepEl.length-1]
+		// 				} 
+		// 				//Create a numismatic group
+		// 				//GROUP wrap
+		// 				const classDeep = "row_node hide deep:"+arrDeep
+						
+		// 				const children_container = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "children_container",
+		// 					parent 			: currentContainer
+		// 				})
+
+		// 				const children_label = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "ts_numismatic_group",
+		// 					text_content 	: item.term,
+		// 					parent 			: children_container
+		// 				})
+
+		// 				common.create_dom_element ({
+		// 					element_type 	: "div",
+		// 					class_name		: "arrow",
+		// 					parent 			: children_label
+		// 				})
+
+		// 				const types_container = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "types_container hide deep:"+arrDeep,
+		// 					parent 			: children_container
+		// 				})
+
+		// 				const row_group = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "row_node hide deep:"+arrDeep,
+		// 					parent 			: children_container
+		// 				})
+
+		// 				createFolderedGroup(children_label,row_group)
+		// 				createFolderedGroup(children_label,types_container)
 
 
-				function create_type_element(data,isSubtype){
+		// 			} else if (item.term_table === 'types') {
+						
+		// 				//create a type element
+		// 				if (item.children != null && item.children.length>0){
+		// 					//if is a type and not a subtype mark variable but don't draw anything
+		// 					isFirstElement = true
+		// 				} else{//if is a subtype
 
-					const parentSubType = data.parent[0]
-					const type_row = data;
+		// 						//try to get a type container created yet
+		// 						let deepEl = container.getElementsByClassName("types_container deep:"+(arrDeep-1).toString())
+		// 						let newArrDeep = arrDeep
 
-					// let type_row_term = ""
-					const type_row_term = (type_row.term.indexOf(",") == -1)
-						? type_row.term
-						: type_row.term.slice(0,type_row.term.indexOf(","))
+		// 						//if previously didn't found, search up in hierarchy until find the last types container
+		// 						while (deepEl.length==0 && newArrDeep>1){
+		// 							newArrDeep = newArrDeep-1
+		// 							deepEl = container.getElementsByClassName("types_container deep:"+(newArrDeep-1).toString())
+		// 						}
 
-					const mint_number = (type_row.ref_mint_number)
-						? type_row.ref_mint_number+'/'
-						: ''
+		// 						currentContainer = deepEl[deepEl.length-1]
+							
 
-					let type_number = ""
-					let subType_number = ""
-					let SubTypeClass = ""
-					let type_href = ""
-					let subType_href = ""
+		// 					if (currentContainer == null){
+		// 						let deepEl = container.getElementsByClassName("types_container")
+		// 						currentContainer = deepEl[deepEl.length-1]
+		// 					}
 
-					if (type_row.term_data != null){
-						const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
-						type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
-						subType_href = type_href
-					} else {
-						isSubtype = true
-					}
+		// 					let isSubtype = false
+		// 					if (item.parent[0].term_table === 'types'){
+		// 						isSubtype = true
+		// 					}
 
-					if (!isSubtype) {
-						type_number = "MIB "+mint_number+type_row_term
-					} else {
-						subType_number = "MIB "+mint_number+type_row_term
-						SubTypeClass = "subType_number"
-						if (isFirstElement){
-							type_href = ""
-							let parent_term = ""
-							parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.term.indexOf(","))
-							type_number =  "MIB "+parent_term
-						}
-					}
+		// 					const types_block = create_type_element(item,isSubtype)
+		// 					currentContainer.appendChild(types_block)
+		// 					isFirstElement = false
+		// 				}
+		// 			}
 
-					//Type wrap
-					const row_type = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "type_wrap"
-					})
 
-					const number_wrap = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "type_number",
-						parent 			: row_type
-					})
+		// 			function create_type_element(data,isSubtype){
 
-					common.create_dom_element({
-						element_type	: "a",
-						inner_html  	: type_number,
-						class_name		: "type_label",
-						href 			: type_href,
-						parent 			: number_wrap
-					})
+		// 				const parentSubType = data.parent[0]
+		// 				const type_row = data;
 
-					common.create_dom_element({
-						element_type	: "a",
-						inner_html 	    : subType_number,
-						class_name		: "subType_label "+SubTypeClass,
-						href 			: subType_href,
-						parent 			: number_wrap
-					})
+		// 				// let type_row_term = ""
+		// 				const type_row_term = (type_row.term.indexOf(",") == -1)
+		// 					? type_row.term
+		// 					: type_row.term.slice(0,type_row.term.indexOf(","))
 
-					const img_wrap = common.create_dom_element({
-						element_type 	: "div",
-						class_name 		: "types_img gallery",
-						parent 			: row_type
-					})
+		// 				const mint_number = (type_row.ref_mint_number)
+		// 					? type_row.ref_mint_number+'/'
+		// 					: ''
 
-					const img_link_ob = common.create_dom_element({
-						element_type 	: "a",
-						class_name		: "image_link",
-						href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-						parent 			: img_wrap,
-					})
+		// 				let type_number = ""
+		// 				let subType_number = ""
+		// 				let SubTypeClass = ""
+		// 				let type_href = ""
+		// 				let subType_href = ""
 
-					common.create_dom_element({
-						element_type	: "img",
-						src 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
-						parent 			: img_link_ob
-					}).loading="lazy"
+		// 				if (type_row.term_data != null){
+		// 					const type_section_id = type_row.term_data.replace(/[\["\]]/g, '')
+		// 					type_href = page_globals.__WEB_ROOT_WEB__ + '/type/' + type_section_id
+		// 					subType_href = type_href
+		// 				} else {
+		// 					isSubtype = true
+		// 				}
 
-					const img_link_re = common.create_dom_element({
-						element_type 	: "a",
-						class_name		: "image_link",
-						href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-						parent 			: img_wrap,
-					})
+		// 				if (!isSubtype) {
+		// 					type_number = "MIB "+mint_number+type_row_term
+		// 				} else {
+		// 					subType_number = "MIB "+mint_number+type_row_term
+		// 					SubTypeClass = "subType_number"
+		// 					if (isFirstElement){
+		// 						type_href = ""
+		// 						let parent_term = ""
+		// 						parentSubType.term.indexOf(",") == -1 ? parent_term = parentSubType.term : parent_term = parentSubType.term.slice(0,parentSubType.term.indexOf(","))
+		// 						type_number =  "MIB "+parent_term
+		// 					}
+		// 				}
 
-					common.create_dom_element({
-						element_type	: "img",
-						src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
-						parent 			: img_link_re
-					}).loading="lazy"
+		// 				//Type wrap
+		// 				const row_type = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "type_wrap"
+		// 				})
 
-					const info_wrap = common.create_dom_element({
-						element_type 	: "div",
-						class_name 		: "info_wrap",
-						parent 			: row_type
-					})
+		// 				const number_wrap = common.create_dom_element({
+		// 					element_type	: "div",
+		// 					class_name		: "type_number",
+		// 					parent 			: row_type
+		// 				})
 
-					const type_info = [
-						type_row.ref_type_material,
-						type_row.denomination,
-						type_row.ref_type_averages_weight+"g",
-						type_row.ref_type_averages_diameter+"mm"
-					]
+		// 				common.create_dom_element({
+		// 					element_type	: "a",
+		// 					inner_html  	: type_number,
+		// 					class_name		: "type_label",
+		// 					href 			: type_href,
+		// 					parent 			: number_wrap
+		// 				})
 
-					common.create_dom_element ({
-						element_type 	: "p",
-						class_name 		: "type_info",
-						text_content 	: type_info.join(' | '),
-						parent 			: info_wrap
-					})
+		// 				common.create_dom_element({
+		// 					element_type	: "a",
+		// 					inner_html 	    : subType_number,
+		// 					class_name		: "subType_label "+SubTypeClass,
+		// 					href 			: subType_href,
+		// 					parent 			: number_wrap
+		// 				})
 
-					page.activate_images_gallery(img_wrap)
+		// 				const img_wrap = common.create_dom_element({
+		// 					element_type 	: "div",
+		// 					class_name 		: "types_img gallery",
+		// 					parent 			: row_type
+		// 				})
 
-					return row_type
-				}
+		// 				const img_link_ob = common.create_dom_element({
+		// 					element_type 	: "a",
+		// 					class_name		: "image_link",
+		// 					href 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
+		// 					parent 			: img_wrap,
+		// 				})
 
-			}
+		// 				common.create_dom_element({
+		// 					element_type	: "img",
+		// 					src 			: common.local_to_remote_path(type_row.ref_coins_image_obverse),
+		// 					parent 			: img_link_ob
+		// 				}).loading="lazy"
 
-			// container final add
-			container.appendChild(fragment)
-			
+		// 				const img_link_re = common.create_dom_element({
+		// 					element_type 	: "a",
+		// 					class_name		: "image_link",
+		// 					href 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
+		// 					parent 			: img_wrap,
+		// 				})
 
-			function createFolderedGroup(label,row_group) {
+		// 				common.create_dom_element({
+		// 					element_type	: "img",
+		// 					src 			: common.local_to_remote_path(type_row.ref_coins_image_reverse),
+		// 					parent 			: img_link_re
+		// 				}).loading="lazy"
 
-				const label_arrow = label.firstElementChild;
+		// 				const info_wrap = common.create_dom_element({
+		// 					element_type 	: "div",
+		// 					class_name 		: "info_wrap",
+		// 					parent 			: row_type
+		// 				})
 
-				label.addEventListener("click",function(){
-					if (row_group.classList.contains("hide")){
-						row_group.classList.remove ("hide");
-						label_arrow.style.transform = "rotate(90deg)";
-					} else {
-						row_group.classList.add("hide");
-						label_arrow.style.transform = "rotate(0deg)";
-					}
-				})
-			}
+		// 				const type_info = [
+		// 					type_row.ref_type_material,
+		// 					type_row.denomination,
+		// 					type_row.ref_type_averages_weight+"g",
+		// 					type_row.ref_type_averages_diameter+"mm"
+		// 				]
 
-		} else {
-			// const types_container = document.getElementById('types')
-			// if (types_container) {
-			// 	types_container.remove()
-			// }
-			container.remove()
-		}
+		// 				common.create_dom_element ({
+		// 					element_type 	: "p",
+		// 					class_name 		: "type_info",
+		// 					text_content 	: type_info.join(' | '),
+		// 					parent 			: info_wrap
+		// 				})
 
-	},//end draw_types
+		// 				page.activate_images_gallery(img_wrap)
+
+		// 				return row_type
+		// 			}
+
+		// 		}
+
+		// 		// container final add
+		// 		container.appendChild(fragment)
+				
+
+		// 		function createFolderedGroup(label,row_group) {
+
+		// 			const label_arrow = label.firstElementChild;
+
+		// 			label.addEventListener("click",function(){
+		// 				if (row_group.classList.contains("hide")){
+		// 					row_group.classList.remove ("hide");
+		// 					label_arrow.style.transform = "rotate(90deg)";
+		// 				} else {
+		// 					row_group.classList.add("hide");
+		// 					label_arrow.style.transform = "rotate(0deg)";
+		// 				}
+		// 			})
+		// 		}
+
+		// 	} else {
+		// 		// const types_container = document.getElementById('types')
+		// 		// if (types_container) {
+		// 		// 	types_container.remove()
+		// 		// }
+		// 		container.remove()
+		// 	}
+
+
+		// 	return true
+		// },//end draw_types
+
 
 	
 	/**
@@ -1066,96 +1209,100 @@ var mint = {
 		const self = this
 
 		// options
-		const mint_map_data		= options.mint_map_data
-		const mint_popup_data	= options.mint_popup_data
-		const place_data = options.place_data
-
+			const mint_map_data		= options.mint_map_data
+			const mint_popup_data	= options.mint_popup_data
+			const place_data		= options.place_data
+		
 
 		self.get_place_data({
 			place_data : place_data
-		}).then(function(response){
+		})
+		.then(function(response){			
+			// console.log("draw_map get_place_data: ",response);
 
-			// console.log (mint_popup_data);
-
-			const map_position	= mint_map_data
-			const container		= document.getElementById("map_container")
+			const container	= document.getElementById("map_container")
 
 			self.map = self.map || new map_factory() // creates / get existing instance of map
 			self.map.init({
 				map_container	: container,
-				map_position	: map_position,
+				map_position	: null,
 				popup_builder	: page.map_popup_builder,
 				popup_options	: page.maps_config.popup_options,
 				source_maps		: page.maps_config.source_maps,
 				legend			: page.render_map_legend
-			})
+			})			
 
-			var map_data_clean = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
+			const map_data_poitns = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
 			
-			//findspots to map
-			const findspots_map_data = response.result[0].result;
-			if (findspots_map_data && findspots_map_data.length>0){
-			
-				for (let i=0;i<findspots_map_data.length;i++){
-					const findspot_map_data = JSON.parse(findspots_map_data[i].map)
-					const findspot_popup_data = parse_popup_data(findspots_map_data[i])
+			// findspots to map
+				const findspots_map_data = response.result[0].result;
+				if (findspots_map_data && findspots_map_data.length>0){
+				
+					for (let i=0;i<findspots_map_data.length;i++){
+						
+						const findspot_map_data		= JSON.parse(findspots_map_data[i].georef_geojson)
+						const findspot_popup_data	= parse_popup_data(findspots_map_data[i])
 
-					findspot_popup_data.type = {}
-					findspot_popup_data.type = "findspot"
+						findspot_popup_data.type = {}
+						findspot_popup_data.type = "findspot"
 
-					const findspot_map_data_clean = self.map_data(findspot_map_data,findspot_popup_data)
-					
-					// console.log(findspot_popup_data)
+						const findspot_map_data_poitns = self.map_data(findspot_map_data,findspot_popup_data)
+						
+						console.log("--findspot_popup_data",findspot_popup_data)
 
-					map_data_clean.push(findspot_map_data_clean[0])
+						map_data_poitns.push(findspot_map_data_poitns[0])
+					}
 				}
-			}
 
-			//hoards to map
-			const hoards_map_data = response.result[1].result;
-			if (hoards_map_data && hoards_map_data.length>0){	
-				for (let i=0;i<hoards_map_data.length;i++){
-						console.log("i:",i);
-						console.log(hoards_map_data)
-					const hoard_map_data = JSON.parse(hoards_map_data[i].map) || ""
-					const hoard_popup_data = parse_popup_data(hoards_map_data[i])
+			// hoards to map
+				const hoards_map_data = response.result[1].result;
+				if (hoards_map_data && hoards_map_data.length>0){	
+					for (let i=0;i<hoards_map_data.length;i++){						
+						
+						const hoard_map_data	= JSON.parse(hoards_map_data[i].georef_geojson) || ""
+						const hoard_popup_data	= parse_popup_data(hoards_map_data[i])
 
-					hoard_popup_data.type = {}
-					hoard_popup_data.type = "hoard"
+						hoard_popup_data.type = {}
+						hoard_popup_data.type = "hoard"
 
-					const hoard_map_data_clean = self.map_data(hoard_map_data,hoard_popup_data)
-					
-					console.log(hoard_map_data_clean)
+						const hoard_map_data_poitns = self.map_data(hoard_map_data,hoard_popup_data)
+						
+						console.log("--hoard_map_data_poitns",hoard_map_data_poitns)
 
-					map_data_clean.push(hoard_map_data_clean[0])
+						map_data_poitns.push(hoard_map_data_poitns[0])
+					}
 				}
-			}
-
 			
 			// draw points
-			self.map.parse_data_to_map(map_data_clean, null)
-			.then(function(){
-				container.classList.remove("hide_opacity")
-			})
-	
+					console.log("map_data_poitns:",map_data_poitns);
+				self.map.parse_data_to_map(map_data_poitns, null)
+				.then(function(){
+					container.classList.remove("hide_opacity")
+				})
 		})
 
 		function parse_popup_data(data){
-			const popup_data = ({
-				section_id : data.section_id,
-				title 		: data.name,
-				description : ""
-			})
-
+			const popup_data = {
+				section_id	: data.section_id,
+				title		: data.name,
+				description	: ""
+			}
 			return popup_data;
 		}
 		
+		return true
 	},//end draw_map
 
+
+
+	/**
+	* GET_PLACE_DATA
+	* Search findspots and hoards data with same place_data
+	*/
 	get_place_data : function(data){
-
-		const place_data = data.place_data
-
+		
+		const place_data = JSON.stringify(data.place_data)
+		
 		const sql_filter = "place_data='" + place_data + "'";
 		
 			const ar_calls = []
@@ -1180,7 +1327,7 @@ var mint = {
 					table					: 'hoards',
 					db_name					: page_globals.WEB_DB,
 					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['section_id','place_data','name','map'],
+					ar_fields				: ['*'],
 					count					: false,
 					sql_filter				: sql_filter
 				}
@@ -1194,7 +1341,8 @@ var mint = {
 			})
 			
 			return js_promise
-	},
+	},//end get_place_data
+
 
 
 	/**
@@ -1202,40 +1350,46 @@ var mint = {
 	* @return array data
 	*/
 	map_data : function(data, popup_data) {
-
-		// console.log("MAP_DATA: ",popup_data)	
+		// console.log("map_data data: ", data)	
+		
 		const self = this
-
-		// console.log("--map_data data:",data);
-		var markerIcon = page.maps_config.markers.mint
-
-		if (popup_data.type != null && popup_data.type === 'findspot'){
-			markerIcon = page.maps_config.markers.findspot
-		} else if (popup_data.type != null && popup_data.type === 'hoard'){
-			markerIcon = page.maps_config.markers.hoard
-		}
+		
+		const markerIcon = (function(){
+			switch(popup_data.type) {
+				case 'findspot':
+					return page.maps_config.markers.findspot
+					break;
+				case 'hoard':
+					return page.maps_config.markers.hoard
+					break;
+				default:
+					return page.maps_config.markers.mint
+					break;
+			}
+		})()	
 
 		const ar_data = Array.isArray(data)
 			? data
 			: [data]
 
-		const data_clean = []
+		const map_points = []
 		for (let i = 0; i < ar_data.length; i++) {
 
+			const geojson = [ar_data[i]]
+
 			const item = {
-				lat			: ar_data[i].lat,
-				lon			: ar_data[i].lon,
+				lat			: null,
+				lon			: null,
+				geojson		: geojson,
 				marker_icon	: markerIcon,
 				data		: popup_data
 			}
-			data_clean.push(item)
+			map_points.push(item)
 		}
+		// console.log("--map_data map_points:",map_points);
 
-		// console.log("--map_data data_clean:",data_clean);
-
-		return data_clean
+		return map_points
 	},//end map_data
-
 
 
 

@@ -56,6 +56,8 @@ var mints =  {
 		return true
 	},//end set_up
 
+
+
 	/**
 	* RENDER_FORM
 	*/
@@ -149,6 +151,8 @@ var mints =  {
 
 		return self.form.node
 	},//end render_form
+
+
 
 	/**
 	* FORM_SUBMIT

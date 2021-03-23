@@ -285,3 +285,70 @@ page.render_legend = function(options) {
 
 	return legend_node
 };//end render_legend
+
+
+
+/**
+* RENDER_TYPE_LABEL
+* @return 
+*/
+page.render_type_label = function(row) {
+
+	let current_value
+	
+	const mint_number = (row.ref_mint_number)
+		? row.ref_mint_number+'/'
+		: ''
+	if (row.term_section_id && !row.children) {
+
+		const ar		= row.term.split(", ")
+		const c_name	= ar[0]
+		const keyword	= (typeof ar[1]==="undefined")
+			? ''
+			: (function(){
+				const clean = []
+				for (let i = 1; i < ar.length; i++) {
+					clean.push(ar[i])
+				}
+				return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
+			})()						
+
+		const a_term = common.create_dom_element({
+			element_type	: "a",
+			class_name		: "a_term",
+			href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + row.term_section_id,
+			target			: "_blank",
+			title			: "MIB " + mint_number + c_name + (ar.join(", ").trim()),
+			inner_html		: "MIB " + mint_number + c_name + keyword
+		})
+		current_value = a_term.outerHTML
+	}else{
+		current_value = "MIB " + mint_number + row.term
+	}
+
+	return current_value
+};//end render_type_label
+
+
+
+/**
+* RENDER_WEIGHT_VALUE
+* @return 
+*/
+page.render_weight_value = function(row) {
+	const weight = row.ref_type_averages_weight.toFixed(2).replace(/\.?0+$/, "");
+	return weight.replace('.',',') + ' g'
+};//end render_weight_value
+
+
+
+/**
+* RENDER_DIAMETER_VALUE
+* @return 
+*/
+page.render_diameter_value = function(row) {
+	const diameter = row.ref_type_averages_diameter.toFixed(2).replace(/\.?0+$/, "");
+	return diameter.replace('.',',') + ' mm'
+};//end render_diameter_value
+
+

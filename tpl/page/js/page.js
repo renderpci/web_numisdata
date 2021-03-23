@@ -29,7 +29,7 @@ var page = {
 					options	: {
 						maxZoom: 11
 					},
-					default	: true
+					default	: true			
 				},
 				{
 					name	: "OSM",
@@ -45,7 +45,8 @@ var page = {
 					// url	: 'https://api.maptiler.com/maps/9512807c-ffd5-4ee0-9781-c354711d15e5/style.json?key=udlBrEEE2SPm1In5dCNb', // vector grey
 					options	: {
 						maxZoom	: 20
-					}
+					},
+					default	: false
 				},
 				{
 					name	: "ARCGIS",

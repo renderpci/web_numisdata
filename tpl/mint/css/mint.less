@@ -32,9 +32,9 @@
 		}
 	}
 
-	.period_label {
-		font-weight: 600;
-	}
+	// .period_label {
+	// 	font-weight: 600;
+	// }
 
 	// map
 	.map_container {
@@ -53,7 +53,7 @@
 	}
 
 	// mint types list
-	#types {
+	#types99 {
 		// background-color: #3d3d3d;
 		//padding: 1em;
 		// color: white;	
@@ -61,6 +61,11 @@
 		margin-top: 1em;
 		//border-radius: 0.25em;
 		//border: 1px solid #cccccc;
+
+		.term_line {
+			background-color: #f8556c;
+			width: 100%;
+		}
 
 		>.type_row {
 			display: table;
@@ -83,9 +88,9 @@
 		}
 
 		.ts_period {
-			cursor: pointer;
-			
-			margin-top:1em;
+			cursor: pointer;			
+			margin-top: 1em;
+			font-weight: 600;
 		}
 
 		.arrow {
@@ -207,8 +212,120 @@
 				border-right: none;
 			}
 		}
+	}
 
 
+
+	// types v2
+	#types {
+		// background-color: #e6eafc;
+
+		.info_line.separator {
+			margin-bottom: 1.25em;
+		}
+
+		.item_wrapper {
+			padding-left: 2em;
+
+
+			.term_line {				
+				// border-bottom: 1px solid #9fa2af;
+				padding-left: 1em;
+			}
+
+			.type_item {
+
+			}
+
+			.container {
+				
+			}
+
+			.type_group {				
+				// background-color: aquamarine;
+				width: 100%;
+			}
+
+			.ts_period {
+				font-weight: 600;
+			}
+
+			.padding_left {
+				// padding-left: 1em;				
+			}
+
+			.bold {
+				font-weight: 600;
+			}			
+
+			.unit {
+				// background-color: #87e21d;
+				display: inline-grid;
+				width: 33.33%;
+			}
+
+			.type_wrap {
+				width: 100%;
+				padding: 1em;
+				padding-top: 0;
+				display: grid;
+
+				.type_number {					
+					width: 100%;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+
+					>a {						
+						font-weight: 600;
+
+						.keyword {
+							font-weight: 300;
+						}
+					}					
+				}
+
+				.type_label {
+					border: none;
+					font-weight: bold;
+					display: inline-block;
+					text-decoration: none;					
+
+					@media screen and (max-width: 980px){
+						font-size: 90%;
+					}
+
+					@media screen and (max-width: 736px){
+						font-size: 120%;
+					}
+
+				}
+
+				img {
+					object-fit: contain;
+					width: 50%;
+					height: 100%;
+					height: 8.25em;
+				}
+
+				.type_info {
+					font-size: 72%;
+					margin: 0;
+					text-align: center;
+
+					@media screen and (max-width: 980px){
+						font-size: 90%;
+					}
+
+					@media screen and (max-width: 736px){
+						font-size: 120%;
+					}
+				}
+			}
+
+		}//end .item_wrapper 
+
+		
 	}
 
 }

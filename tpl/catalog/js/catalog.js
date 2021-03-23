@@ -311,7 +311,7 @@ var catalog = {
 				q_column	: "p_mint",
 				eq			: "LIKE",
 				eq_in		: "%",
-				// q_table	: "mints",
+				eq_out		: "%",
 				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
@@ -1614,6 +1614,7 @@ var catalog = {
 					body : request_body
 				})
 				.then((response)=>{
+					// console.log("++++++++++++ request_body:",request_body);
 					console.log("--- search_rows API response:",response);
 
 					// data parsed

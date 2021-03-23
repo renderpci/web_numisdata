@@ -136,7 +136,11 @@ page.parse_type_data = function(data) {
 
 
 
+/**
+* PARSE_MINT_DATA
+*/
 page.parse_mint_data = function(data) {
+	
 	const self = this
 
 	// array case
@@ -159,11 +163,26 @@ page.parse_mint_data = function(data) {
 		return row
 	}
 
+	row.georef_geojson = row.georef_geojson
+		? JSON.parse(row.georef_geojson)
+		: null
+
+	row.map = row.map
+		? JSON.parse(row.map)
+		: null
+
+	row.place_data = row.place_data
+		? JSON.parse(row.place_data)
+		: null
+
 	return row
-}
+}//end parse_mint_data
 
 
 
+/**
+* PARSE_HOARD_DATA
+*/
 page.parse_hoard_data = function(data) {
 	const self = this
 
@@ -188,7 +207,7 @@ page.parse_hoard_data = function(data) {
 	}
 
 	return row
-}
+}//end parse_hoard_data
 
 
 

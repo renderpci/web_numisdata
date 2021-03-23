@@ -1614,6 +1614,7 @@ var catalog = {
 					body : request_body
 				})
 				.then((response)=>{
+					// console.log("++++++++++++ request_body:",request_body);
 					console.log("--- search_rows API response:",response);
 
 					// data parsed

@@ -156,6 +156,9 @@
 .result #types99 .types_container .type_wrap:nth-child(3n) {
   border-right: none;
 }
+.result #types .info_line.separator {
+  margin-bottom: 1.25em;
+}
 .result #types .item_wrapper {
   padding-left: 2em;
 }

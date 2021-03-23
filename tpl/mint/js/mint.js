@@ -69,27 +69,31 @@ var mint = {
 
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
-					if (mint_catalog.result) {
-						
-						const _mint_catalog = mint_catalog.result.find(el => el.term_table==='mints')						
-						self.get_types_data2({
-							section_id : _mint_catalog.section_id
-						})
-						.then(function(result){
-							// self.draw_types({
-							// 	target	: document.getElementById('types'),
-							// 	ar_rows	: result
-							// })
-							const types_node = self.draw_types2({
-								ar_rows			: result,
-								mint_section_id	: _mint_catalog.section_id
+					if (mint_catalog.result) {						
+						const _mint_catalog = mint_catalog.result.find(el => el.term_table==='mints')
+						if (_mint_catalog && _mint_catalog.section_id) {
+							self.get_types_data2({
+								section_id : _mint_catalog.section_id
 							})
-							if (types_node) {
-								const target = document.getElementById('types')
-								target.appendChild(types_node)
-								page.activate_images_gallery(target)
-							}
-						})
+							.then(function(result){
+								// self.draw_types({
+								// 	target	: document.getElementById('types'),
+								// 	ar_rows	: result
+								// })
+								const types_node = self.draw_types2({
+									ar_rows			: result,
+									mint_section_id	: _mint_catalog.section_id
+								})
+								if (types_node) {
+									const target = document.getElementById('types')
+									target.appendChild(types_node)
+									page.activate_images_gallery(target)
+								}
+							})
+						}else{
+							console.warn("Ignored invalid _mint_catalog:",_mint_catalog);
+							console.warn("mint_catalog:",mint_catalog);
+						}
 					}
 
 				// send event data_request_done (used by buttons download)
@@ -267,9 +271,26 @@ var mint = {
 		// options
 			const ar_rows			= options.ar_rows
 			const mint_section_id	= options.mint_section_id
+
+
+		const fragment = new DocumentFragment()	
+		
+		// label
+			const typesLabel = tstring.coin_production || "Coin production"
+			const lineSeparator = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_line separator",
+				parent 			: fragment
+			})
+			common.create_dom_element({
+				element_type 	: "label",
+				class_name 		: "big_label",
+				text_content 	: typesLabel,
+				parent 			: lineSeparator
+			})
 		
 		// create all nodes. Add in parallel to fragment and ar_nodes
-			const fragment = new DocumentFragment()	
+			// const fragment = new DocumentFragment()	
 			const ar_nodes = []
 			for (let i = 0; i < ar_rows.length; i++) {
 				

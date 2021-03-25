@@ -26,7 +26,8 @@ var biblio_row_fields = {
 			: "article"
 
 		return typology_label
-	},
+	},//end get_typology
+
 
 
 	author : function() {
@@ -586,254 +587,257 @@ var biblio_row_fields = {
 
 
 
-	row_bibliography : function(){
+	render_row_bibliography : function(row){
 
-			var biblio_object = this.biblio_object
+		const self = this
 
-			// pages: "59"
-			// publications_data: "[\"16022\"]"
-			// ref_publications_authors: "Martínez Chico David"
-			// ref_publications_date: "2016"
-			// ref_publications_editor: null
-			// ref_publications_magazine: "Gaceta Numismática"
-			// ref_publications_place: null
-			// ref_publications_title: "Sextante inédito para la ceca sevillana de Lastigi"
-			// ref_publications_url: null
-			// reference: "1"
-			// section_id: "25604"
-			// sheet: ""
+		// let biblio_object = this.biblio_object
+		let biblio_object = row
 
-			const publication_url = biblio_object.ref_publications_url
+		// pages: "59"
+		// publications_data: "[\"16022\"]"
+		// ref_publications_authors: "Martínez Chico David"
+		// ref_publications_date: "2016"
+		// ref_publications_editor: null
+		// ref_publications_magazine: "Gaceta Numismática"
+		// ref_publications_place: null
+		// ref_publications_title: "Sextante inédito para la ceca sevillana de Lastigi"
+		// ref_publications_url: null
+		// reference: "1"
+		// section_id: "25604"
+		// sheet: ""
 
-			//check in url if has a Zenon reference for parsing
-			if (publication_url != null && publication_url.includes("/Record/")){
-				biblio_object = parse_zenon_bibliography(biblio_object);
-			}
+		const publication_url = biblio_object.ref_publications_url
 
-			// line
-				const line = common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "info_line row_title"
-				})
+		//check in url if has a Zenon reference for parsing
+		if (publication_url != null && publication_url.includes("/Record/")){
+			biblio_object = parse_zenon_bibliography(biblio_object);
+		}
 
-			// authors
-				const authors = (biblio_object.ref_publications_authors)
-					? biblio_object.ref_publications_authors.replace(/ \| /g,'; ')
-					: ""
+		// line
+			const line = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "info_line row_title"
+			})
 
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: authors,
-					parent			: line
-				})
+		// authors
+			const authors = (biblio_object.ref_publications_authors)
+				? biblio_object.ref_publications_authors.replace(/ \| /g,'; ')
+				: ""
 
-			// date
-				const date = (biblio_object.ref_publications_date)
-					? " ("+biblio_object.ref_publications_date + "): "
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: date,
-					parent			: line
-				})
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: authors,
+				parent			: line
+			})
 
-
-			// title if book italics 1, 4, if not regular
-			// ref_publications_typology
-
-				const title = (biblio_object.ref_publications_title)
-					? biblio_object.ref_publications_title + ". "
-					: ""
-				const format_title = (biblio_object.ref_publications_typology === "[\"1\"]" || biblio_object.ref_publications_typology === "[\"4\"]")
-					? "<em>" + title + "</em>"
-					: title
-
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: format_title,
-					parent			: line
-				})
-
-			// magazine in italics
-				const magazine = (biblio_object.ref_publications_magazine)
-					? "<em>"+biblio_object.ref_publications_magazine + " </em>"
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: magazine,
-					parent			: line
-				})
+		// date
+			const date = (biblio_object.ref_publications_date)
+				? " ("+biblio_object.ref_publications_date + "): "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: date,
+				parent			: line
+			})
 
 
-			// magazine number ref_publications_magazine_number	regular
-				const magazine_number = (biblio_object.ref_publications_magazine_number)
-					? " " +biblio_object.ref_publications_magazine_number
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: magazine_number,
-					parent			: line
-				})
+		// title if book italics 1, 4, if not regular
+		// ref_publications_typology
+
+			const title = (biblio_object.ref_publications_title)
+				? biblio_object.ref_publications_title + ". "
+				: ""
+			const format_title = (biblio_object.ref_publications_typology === "[\"1\"]" || biblio_object.ref_publications_typology === "[\"4\"]")
+				? "<em>" + title + "</em>"
+				: title
+
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: format_title,
+				parent			: line
+			})
+
+		// magazine in italics
+			const magazine = (biblio_object.ref_publications_magazine)
+				? "<em>"+biblio_object.ref_publications_magazine + " </em>"
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: magazine,
+				parent			: line
+			})
 
 
-			// other_people_info : name and role other_people_name
-				if (biblio_object.ref_publications_other_people_name && biblio_object.ref_publications_other_people_name.length>0) {
-					const other_people_name = biblio_object.ref_publications_other_people_name.split(" | ");
-					const other_people_role = biblio_object.ref_publications_other_people_role.split(" | ")
-
-					const particle_in = tstring.in || 'In'
-
-					common.create_dom_element({
-							element_type 	: "span",
-							text_content 	: particle_in,
-							parent 			: line
-						})
-
-					const other_people_length = other_people_name.length
-					for (let g = 0; g < other_people_length; g++) {
-
-						const name = other_people_name[g]
-
-						const text_content = (g!==0)
-							? ", "+name
-							: " "+name
-
-						common.create_dom_element({
-							element_type 	: "span",
-							text_content 	: text_content,
-							parent 			: line
-						})
-					}
-
-					const role = typeof other_people_role[0]!=='undefined'
-						? ' ('+other_people_role[0].toLowerCase()+'.): '
-						: ' '
-
-					common.create_dom_element({
-							element_type 	: "span",
-							text_content 	: role,
-							parent 			: line
-						})
-				}
+		// magazine number ref_publications_magazine_number	regular
+			const magazine_number = (biblio_object.ref_publications_magazine_number)
+				? " " +biblio_object.ref_publications_magazine_number
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: magazine_number,
+				parent			: line
+			})
 
 
+		// other_people_info : name and role other_people_name
+			if (biblio_object.ref_publications_other_people_name && biblio_object.ref_publications_other_people_name.length>0) {
+				const other_people_name = biblio_object.ref_publications_other_people_name.split(" | ");
+				const other_people_role = biblio_object.ref_publications_other_people_role.split(" | ")
 
-			// title colective ref_publications_title_colective	cursiva
-				const title_colective_previous = (biblio_object.ref_publications_title_colective)
-					? '<em>' +biblio_object.ref_publications_title_colective + '</em>'
-					: null
-				const title_colective = ( title_colective_previous && biblio_object.ref_publications_place)
-					? title_colective_previous +', '
-					: title_colective_previous
+				const particle_in = tstring.in || 'In'
 
 				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: title_colective,
-					parent			: line
-				})
-
-			// // title colective alt ref_publications_title_colective_alt	cursiva
-			// 	const title_colective_alt_previous = (biblio_object.ref_publications_title_colective_alt)
-			// 		? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>'
-			// 		: null
-			// 	const title_colective_alt = ( title_colective_alt_previous && biblio_object.ref_publications_place)
-			// 		? title_colective_alt_previous +', '
-			// 		: title_colective_alt_previous
-			//
-			// 	common.create_dom_element({
-			// 		element_type	: "span",
-			// 		inner_html		: title_colective_alt,
-			// 		parent			: line
-			// 	})
-
-			// place
-				const place = (biblio_object.ref_publications_place)
-					? " " +biblio_object.ref_publications_place
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: place,
-					parent			: line
-				})
-
-			// pages
-				const pages = (biblio_object.pages)
-					? ", p. " +biblio_object.pages
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: pages,
-					parent			: line
-				})
-
-			// sheet
-				const sheet = (biblio_object.sheet)
-					? ", "+ biblio_object.sheet
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: sheet,
-					parent			: line
-				})
-
-			// reference
-				const reference = (biblio_object.reference)
-					? ", n. " +biblio_object.reference
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: reference,
-					parent			: line
-				})
-
-			// final point
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: '.',
-					parent			: line
+						element_type 	: "span",
+						text_content 	: particle_in,
+						parent 			: line
 					})
 
-			// URI
-				const url_title = (biblio_object.ref_publications_url)
-					?  biblio_object.ref_publications_url.split(", ")[0]
-					: ''
+				const other_people_length = other_people_name.length
+				for (let g = 0; g < other_people_length; g++) {
 
-				const url = (biblio_object.ref_publications_url)
-					? biblio_object.ref_publications_url.split(", ")[1]
-					: ''
+					const name = other_people_name[g]
 
-				const link = (url)
-					? " | <a href=\"" + url +"\">"+url_title+" </a> "
-					: ""
-				common.create_dom_element({
-					element_type	: "span",
-					inner_html		: link,
-					parent			: line
-				})
+					const text_content = (g!==0)
+						? ", "+name
+						: " "+name
 
-			//parse bibliography data with Zenon references for extract only the first one
-			function parse_zenon_bibliography(data){
-				const biblio_data = data
-				const biblio_data_length = biblio_data.length;
-
-				for (const property in biblio_data){
-					if (typeof biblio_data[property] !== 'string') continue
-
-					if (biblio_data[property] != null && biblio_data[property].includes(" # ")){
-						biblio_data[property] = biblio_data[property].split(" # ")[0]
-
-						//erase Zenon word of url string
-						// if (property === "ref_publications_url") {
-						// 	biblio_data[property] = biblio_data[property].split(", ")[1]
-						// }
-					}
+					common.create_dom_element({
+						element_type 	: "span",
+						text_content 	: text_content,
+						parent 			: line
+					})
 				}
 
-				return biblio_data;
+				const role = typeof other_people_role[0]!=='undefined'
+					? ' ('+other_people_role[0].toLowerCase()+'.): '
+					: ' '
+
+				common.create_dom_element({
+						element_type 	: "span",
+						text_content 	: role,
+						parent 			: line
+					})
 			}
 
-			return line
-		},//end bibliography
+
+
+		// title colective ref_publications_title_colective	cursiva
+			const title_colective_previous = (biblio_object.ref_publications_title_colective)
+				? '<em>' +biblio_object.ref_publications_title_colective + '</em>'
+				: null
+			const title_colective = ( title_colective_previous && biblio_object.ref_publications_place)
+				? title_colective_previous +', '
+				: title_colective_previous
+
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: title_colective,
+				parent			: line
+			})
+
+		// // title colective alt ref_publications_title_colective_alt	cursiva
+		// 	const title_colective_alt_previous = (biblio_object.ref_publications_title_colective_alt)
+		// 		? ' <em>' +biblio_object.ref_publications_title_colective_alt + '</em>'
+		// 		: null
+		// 	const title_colective_alt = ( title_colective_alt_previous && biblio_object.ref_publications_place)
+		// 		? title_colective_alt_previous +', '
+		// 		: title_colective_alt_previous
+		//
+		// 	common.create_dom_element({
+		// 		element_type	: "span",
+		// 		inner_html		: title_colective_alt,
+		// 		parent			: line
+		// 	})
+
+		// place
+			const place = (biblio_object.ref_publications_place)
+				? " " +biblio_object.ref_publications_place
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: place,
+				parent			: line
+			})
+
+		// pages
+			const pages = (biblio_object.pages)
+				? ", p. " +biblio_object.pages
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: pages,
+				parent			: line
+			})
+
+		// sheet
+			const sheet = (biblio_object.sheet)
+				? ", "+ biblio_object.sheet
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: sheet,
+				parent			: line
+			})
+
+		// reference
+			const reference = (biblio_object.reference)
+				? ", n. " +biblio_object.reference
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: reference,
+				parent			: line
+			})
+
+		// final point
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: '.',
+				parent			: line
+				})
+
+		// URI
+			const url_title = (biblio_object.ref_publications_url)
+				?  biblio_object.ref_publications_url.split(", ")[0]
+				: ''
+
+			const url = (biblio_object.ref_publications_url)
+				? biblio_object.ref_publications_url.split(", ")[1]
+				: ''
+
+			const link = (url)
+				? " | <a href=\"" + url +"\">"+url_title+" </a> "
+				: ""
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: link,
+				parent			: line
+			})
+
+		//parse bibliography data with Zenon references for extract only the first one
+		function parse_zenon_bibliography(data){
+			const biblio_data = data
+			const biblio_data_length = biblio_data.length;
+
+			for (const property in biblio_data){
+				if (typeof biblio_data[property] !== 'string') continue
+
+				if (biblio_data[property] != null && biblio_data[property].includes(" # ")){
+					biblio_data[property] = biblio_data[property].split(" # ")[0]
+
+					//erase Zenon word of url string
+					// if (property === "ref_publications_url") {
+					// 	biblio_data[property] = biblio_data[property].split(", ")[1]
+					// }
+				}
+			}
+
+			return biblio_data;
+		}
+
+		return line
+	},//end render_row_bibliography
 
 
 

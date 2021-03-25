@@ -1299,34 +1299,21 @@ var type_row_fields = {
 
 		const self = this
 
+		const bib_fragment = new DocumentFragment;
+		
 		const ref_biblio		= data
 		const ref_biblio_length	= ref_biblio ? ref_biblio.length : 0
-
-		// row_field set
-		const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
-
-		const bib_fragment = new DocumentFragment;
-
 		for (let i = 0; i < ref_biblio_length; i++) {
 
-			const current_biblio_object = ref_biblio[i]
-
-			// if (typeof current_biblio_object !== 'object') {
-			// 	console.log("Ignored not resolved biblio row:",current_biblio_object);
-			// 	continue
-			// }
+			// build full ref biblio node
+			const biblio_row_node = biblio_row_fields.render_row_bibliography(ref_biblio[i])
 
 			const biblio_row_wrapper = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "bibliographic_reference",
 				parent			: bib_fragment
 			})
-
-			// config
-				row_field.biblio_object	= current_biblio_object
-
-			// row_bibliography
-				biblio_row_wrapper.appendChild( row_field.row_bibliography() )
+			biblio_row_wrapper.appendChild(biblio_row_node)
 		}
 
 		return bib_fragment
@@ -2163,6 +2150,7 @@ var type_row_fields = {
 	},//end typology_name
 
 
+
 	//CREATE A FLOAT PROMPT WHIT DESCRIPTION AND RELATED LINKS
 	// params:
 	// 	item: OBJECT item info
@@ -2249,7 +2237,7 @@ var type_row_fields = {
 				float_prompt.classList.add("hide");
 			})
 		}
-	}
+	}//end create_float_prompt
 
 
 

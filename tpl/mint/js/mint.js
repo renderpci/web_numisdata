@@ -162,7 +162,7 @@ var mint = {
 					sql_filter				: "section_id = " + parseInt(section_id),
 					count					: false,
 					resolve_portals_custom	: {
-						"bibliography_data" : "bibliographic_references"
+						bibliography_data : 'bibliographic_references'
 					}
 				}
 			})
@@ -729,40 +729,30 @@ var mint = {
 				//create the tittle block inside a red background
 				common.create_dom_element({
 					element_type	: "label",
-					class_name 		: "big_label",
+					class_name		: "big_label",
 					text_content	: tstring.bibliographic_references || "Bibliographic references",
 					parent			: lineSeparator
 				})
-
-				const ref_biblio		= row_object.bibliography_data
-				const ref_biblio_length	= ref_biblio.length
-
-				// row_field set
-				const row_field = biblio_row_fields // placed in 'page/js/biblio_row_fields.js'
-
+				
 				const bibliography_block = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_text_block",
 					parent			: line
 				})
+					console.log("row_object.bibliography_data:",row_object.bibliography_data);
+				const ref_biblio		= row_object.bibliography_data
+				const ref_biblio_length	= ref_biblio.length
+				for (let i = 0; i < ref_biblio_length; i++) {
 
-
-				for (var i = 0; i < ref_biblio_length; i++) {
+					// build full ref biblio node
+					const biblio_row_node = biblio_row_fields.render_row_bibliography(ref_biblio[i])
 
 					const biblio_row_wrapper = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "bibliographic_reference",
 						parent			: bibliography_block
 					})
-
-					const current_biblio_object = ref_biblio[i]
-					row_field.biblio_object = current_biblio_object
-
-					const biblio_row = row_field.row_bibliography()
-
-
-					biblio_row_wrapper.appendChild(biblio_row)
-
+					biblio_row_wrapper.appendChild(biblio_row_node)
 				}
 
 				createExpandableBlock(bibliography_block,line);

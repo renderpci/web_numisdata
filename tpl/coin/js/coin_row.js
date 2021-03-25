@@ -233,7 +233,7 @@ var coin_row = {
 						text_content	: tstring.type || "Type",
 						parent			: group
 					})
-						console.log("row.type_data[0]:",row.type_data[0]);
+					
 					const mint		= typeof row.type_data[0]!=="undefined"
 						? row.type_data[0].mint
 						: null
@@ -397,13 +397,7 @@ var coin_row = {
 						element_type	: "label",
 						text_content	: tstring.legend_obverse || "legend_obverse",
 						parent			: group_legend_obverse
-					})					 
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	class_name		: "value",
-					// 	inner_html		: legend_obverse,
-					// 	parent			: group_legend_obverse
-					// })
+					})
 					const legend_node = page.render_legend({
 						value : legend_obverse,
 						style : 'median legend_obverse_box'
@@ -424,13 +418,7 @@ var coin_row = {
 						element_type	: "label",
 						text_content	: tstring.legend_reverse || "legend_reverse",
 						parent			: group_legend_reverse
-					})					 
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	class_name		: "value",
-					// 	inner_html		: legend_reverse,
-					// 	parent			: group_legend_reverse
-					// })
+					})
 					const legend_node = page.render_legend({
 						value : legend_reverse,
 						style : 'median legend_reverse_box'
@@ -456,12 +444,6 @@ var coin_row = {
 						text_content	: tstring.countermark_obverse || "countermark_obverse",
 						parent			: group
 					})
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	class_name		: "value",
-					// 	inner_html		: row.countermark_obverse,
-					// 	parent			: group
-					// })
 					const current_node = page.render_legend({
 						value : row.countermark_obverse,
 						style : 'median countermark_obverse_box'
@@ -480,12 +462,6 @@ var coin_row = {
 						text_content	: tstring.countermark_reverse || "countermark_reverse",
 						parent			: group
 					})
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	class_name		: "value",
-					// 	inner_html		: row.countermark_reverse,
-					// 	parent			: group
-					// })
 					const current_node = page.render_legend({
 						value : row.countermark_reverse,
 						style : 'median countermark_reverse_box'
@@ -746,49 +722,70 @@ var coin_row = {
 				}
 
 		// tenth_block (bibliography) -- DESACTIVADA. POR REVISAR EL FORMATO !!! --- 
-			// const tenth_block = common.create_dom_element({
-			// 	element_type	: "div",
-			// 	class_name		: "block_wrapper tenth_block",
-			// 	parent			: fragment
-			// })
-			// // bibliography
-			// 	if (row.bibliography && row.bibliography.length>0) {
+			const tenth_block = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "block_wrapper tenth_block",
+				parent			: fragment
+			})
+			// bibliography
+				if (row.bibliography_data && row.bibliography_data.length>0) {
 
-			// 		common.create_dom_element({
-			// 			element_type	: "label",
-			// 			text_content	: tstring.bibliography || "bibliography",
-			// 			parent			: tenth_block
-			// 		})
+					const group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group bibliography",
+						parent			: tenth_block
+					})
 
-			// 		for (let b = 0; b < row.bibliography.length; b++) {
+					common.create_dom_element({
+						element_type	: "label",
+						text_content	: tstring.bibliography || "bibliography",
+						parent			: group
+					})				
+
+					const ref_biblio		= row.bibliography_data
+					const ref_biblio_length	= ref_biblio.length
+					for (let i = 0; i < ref_biblio_length; i++) {
+
+						// build full ref biblio node
+						const biblio_row_node = biblio_row_fields.render_row_bibliography(ref_biblio[i])
+
+						const biblio_row_wrapper = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "bibliographic_reference",
+							parent			: group
+						})
+						biblio_row_wrapper.appendChild(biblio_row_node)
+					}
+
+					// for (let b = 0; b < row.bibliography.length; b++) {
 						
-			// 			const el = row.bibliography[b]
+					// 	const el = row.bibliography[b]
 
-			// 			const ar = []
-			// 			if (el.authors) ar.push(el.authors)
-			// 			if (el.date) ar.push(el.date)
-			// 			if (el.place) ar.push(el.place)
-			// 			if (el.title) ar.push(el.title)
-			// 			const text = ar.join('<br>').trim()
+					// 	const ar = []
+					// 	if (el.authors) ar.push(el.authors)
+					// 	if (el.date) ar.push(el.date)
+					// 	if (el.place) ar.push(el.place)
+					// 	if (el.title) ar.push(el.title)
+					// 	const text = ar.join('<br>').trim()
 
-			// 			const group = common.create_dom_element({
-			// 				element_type	: "div",
-			// 				class_name		: "group bibliography",
-			// 				parent			: tenth_block
-			// 			})
-			// 			// common.create_dom_element({
-			// 			// 	element_type	: "label",
-			// 			// 	text_content	: tstring.bibliography || "bibliography",
-			// 			// 	parent			: group
-			// 			// })
-			// 			common.create_dom_element({
-			// 				element_type	: "span",
-			// 				class_name		: "value",
-			// 				inner_html		: text,
-			// 				parent			: group
-			// 			})
-			// 		}						
-			// 	}
+					// 	const group = common.create_dom_element({
+					// 		element_type	: "div",
+					// 		class_name		: "group bibliography",
+					// 		parent			: tenth_block
+					// 	})
+					// 	// common.create_dom_element({
+					// 	// 	element_type	: "label",
+					// 	// 	text_content	: tstring.bibliography || "bibliography",
+					// 	// 	parent			: group
+					// 	// })
+					// 	common.create_dom_element({
+					// 		element_type	: "span",
+					// 		class_name		: "value",
+					// 		inner_html		: text,
+					// 		parent			: group
+					// 	})
+					// }
+				}
 
 
 

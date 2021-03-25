@@ -121,7 +121,7 @@ var coin = {
 				body : request_body
 			})
 			.then(function(api_response){
-	
+					console.log("api_response:",api_response);
 				// parse server data
 					const data = page.parse_coin_data(api_response.result)
 

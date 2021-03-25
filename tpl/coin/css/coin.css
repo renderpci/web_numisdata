@@ -114,10 +114,9 @@
 .result #row_detail .block_wrapper .group.bibliography {
   display: block;
   line-height: 1.2em;
-  padding-left: 0.25em;
 }
-.result #row_detail .block_wrapper .group.bibliography span {
-  padding: 0;
+.result #row_detail .block_wrapper .group.bibliography .bibliographic_reference {
+  padding-left: 0.5em;
 }
 .result #row_detail .block_wrapper .value img {
   height: 1.2em;

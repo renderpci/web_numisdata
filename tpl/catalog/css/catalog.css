@@ -13,6 +13,9 @@
 .button_icon_simple:hover {
   opacity: 1;
 }
+#wrapper .inner {
+  padding: 0;
+}
 .rows_list {
   position: relative;
   min-height: 42vh;
@@ -20,6 +23,9 @@
 }
 .rows_list span {
   margin-right: 1em;
+}
+.rows_list .descriptions span {
+  margin-right: 1.5em;
 }
 .rows_list .spinner_svg {
   position: absolute;
@@ -258,10 +264,15 @@
 }
 .type_container {
   display: inline-grid;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: auto 40%;
   grid-template-rows: auto auto;
   margin-bottom: 0.5em;
   margin-top: 0.5em;
+}
+@media screen and (max-width: 1280px) {
+  .type_container {
+    grid-template-columns: auto 50%;
+  }
 }
 .types {
   display: grid;

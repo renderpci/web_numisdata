@@ -1343,8 +1343,8 @@ var type_row_fields = {
 				parent			: line
 			})
 
-		function draw_coin(data, container) {
-			// console.log("--draw_coin data:",data);
+		function draw_coin_inside(data, container) {
+			// console.log("--draw_coin_inside data:",data);
 
 			const wrapper = common.create_dom_element({
 				element_type	: "div",
@@ -1444,7 +1444,7 @@ var type_row_fields = {
 							self.draw_bibliographic_reference(ar_references)
 						)
 
-		}//end draw_coin
+		}//end draw_coin_inside
 
 
 		// map, global array with all map data and cache for resolve section_id
@@ -1501,7 +1501,7 @@ var type_row_fields = {
 						text_content	: " | ",
 						parent			: wrapper
 					})
-				// draw_coins
+				// draw coins inside
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "find_coins hoard gallery",
@@ -1514,7 +1514,7 @@ var type_row_fields = {
 							// console.log("item.coin_references:",item.coin_references);
 							// console.log("current_coin:",current_coin, coin_section_id);
 						if (current_coin) {
-							draw_coin(current_coin, typology_coins)
+							draw_coin_inside(current_coin, typology_coins)
 							ar_coins.push(coin_section_id)
 						}
 					}
@@ -1598,7 +1598,7 @@ var type_row_fields = {
 						text_content	: " | ",
 						parent			: wrapper
 					})
-				// draw_coins
+				// draw coin inside
 					const typology_coins = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "find_coins findspot gallery",
@@ -1612,7 +1612,7 @@ var type_row_fields = {
 							// console.log("item.coin_references:",item.coin_references);
 							// console.log("current_coin:",current_coin, coin_section_id);
 						if (current_coin) {
-							draw_coin(current_coin, typology_coins)
+							draw_coin_inside(current_coin, typology_coins)
 							ar_coins.push(coin_section_id)
 						}
 					}

@@ -41,21 +41,22 @@ var coin = {
 						if (target) {
 
 							// row . Note data is an array of one row, already parsed
-							const row = data[0];
+								const row = data[0];
 
-							self.draw_row({
-								target	: target,
-								row		: row
-							})
-							.then(function(){
-								
-								// activate images gallery light box
-									const images_gallery_container = target.querySelector('.gallery')
-									page.activate_images_gallery(images_gallery_container)
+							// render row nodes 
+								self.render_row({
+									target	: target,
+									row		: row
+								})
+								.then(function(){
+									
+									// activate images gallery light box
+										const images_gallery_container = target.querySelector('.gallery')
+										page.activate_images_gallery(images_gallery_container)
 
-								// show export buttons
-									self.export_data_container.classList.remove('hide')
-							})
+									// show export buttons
+										self.export_data_container.classList.remove('hide')
+								})
 						}		
 					})
 			}else{
@@ -121,11 +122,12 @@ var coin = {
 				body : request_body
 			})
 			.then(function(api_response){
-					console.log("api_response:",api_response);
+				console.log("--> coins get_row_data api_response:", api_response);
+				
 				// parse server data
 					const data = page.parse_coin_data(api_response.result)
 
-				// send event data_request_done (used by buttons download)
+				// send event data_request_done (used by download buttons)
 					event_manager.publish('data_request_done', {
 						request_body		: request_body,
 						result				: data,
@@ -140,9 +142,9 @@ var coin = {
 
 
 	/**
-	* DRAW_ROW
+	* RENDER_ROW
 	*/
-	draw_row : function(options) {
+	render_row : function(options) {
 
 		const self = this
 
@@ -174,7 +176,7 @@ var coin = {
 
 			resolve(container)
 		})
-	},//end draw_row
+	},//end render_row
 
 
 	

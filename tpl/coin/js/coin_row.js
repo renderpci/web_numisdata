@@ -79,185 +79,298 @@ var coin_row = {
 					})
 				}
 
+		// info_container
+			const info_container = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_container",
+				parent 			: fragment
+			})
+
 		// id_block
 			const id_block = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "block_wrapper id_block",
-				parent			: fragment
+				class_name		: "group block_wrapper",
+				parent			: info_container
 			})
 			// ID
 				if (row.section_id && row.section_id.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group id",
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels",
+						text_content	: "ID ",
 						parent			: id_block
 					})
 					common.create_dom_element({
-						element_type	: "label",
-						text_content	: "ID ",
-						parent			: group
-					})
-					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value strong",
+						class_name		: "rigth-values",
 						inner_html		: row.section_id,
-						parent			: group
+						parent			: id_block
 					})
 				}
 		
-		// first_block
+		// COLLECTION - FORMER - NUMBER
 			const first_block = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "block_wrapper first_block",
-				parent			: fragment
-			})			
-			// collection
-				if (row.collection && row.collection.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group collection",
-						parent			: first_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.collection || "Collection",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.collection,
-						parent			: group
-					})
-				}
-			// former_collection
-				if (row.former_collection && row.former_collection.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group former_collection",
-						parent			: first_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.former_collection || "Former collection",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.former_collection,
-						parent			: group
-					})
-				}
-			// number
-				if (row.number && row.number.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group number",
-						parent			: first_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.number || "Number",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.number,
-						parent			: group
-					})
+				class_name		: "group block_wrapper",
+				parent			: info_container
+			})
+
+			let infoLabels = ""
+			let infoValues = ""
+
+			if (row.collection && row.collection.length>0) {
+				infoLabels = tstring.collection || "Collection"
+				infoValues += row.collection 
+			}
+
+			if (row.former_collection && row.former_collection.length>0) {
+				if (infoLabels != ""){
+					infoLabels += " | "
+					infoValues += " | "
 				}
 
-		// first_b_block (type)
-			const first_b_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper first_b_block",
-				parent			: fragment
+				infoLabels += tstring.former_collection || "Former collection"
+				infoValues += row.former_collection	
+			}
+
+			if (row.number && row.number.length>0) {
+				if (infoLabels != ""){
+					infoLabels += " | "
+					infoValues += " | "
+				}
+				infoLabels += tstring.number || "Number"
+				infoValues += row.number
+			}
+
+			common.create_dom_element({
+				element_type	: "label",
+				class_name		: "left-labels",
+				text_content	: infoLabels,
+				parent			: first_block
 			})
-			// ref_auction
+
+			common.create_dom_element({
+				element_type	: "span",
+				class_name		: "rigth-values",
+				inner_html		: infoValues,
+				parent			: first_block
+			})
+			
+			// // collection
+
+			// 	if (row.collection && row.collection.length>0) {
+			// 		const group = common.create_dom_element({
+			// 			element_type	: "div",
+			// 			class_name		: "group collection",
+			// 			parent			: first_block
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "label",
+			// 			text_content	: tstring.collection || "Collection",
+			// 			parent			: group
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "span",
+			// 			class_name		: "value",
+			// 			inner_html		: row.collection,
+			// 			parent			: group
+			// 		})
+			// 	}
+			// // former_collection
+			// 	if (row.former_collection && row.former_collection.length>0) {
+			// 		const group = common.create_dom_element({
+			// 			element_type	: "div",
+			// 			class_name		: "group former_collection",
+			// 			parent			: first_block
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "label",
+			// 			text_content	: tstring.former_collection || "Former collection",
+			// 			parent			: group
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "span",
+			// 			class_name		: "value",
+			// 			inner_html		: row.former_collection,
+			// 			parent			: group
+			// 		})
+			// 	}
+			// // number
+			// 	if (row.number && row.number.length>0) {
+			// 		const group = common.create_dom_element({
+			// 			element_type	: "div",
+			// 			class_name		: "group number",
+			// 			parent			: first_block
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "label",
+			// 			text_content	: tstring.number || "Number",
+			// 			parent			: group
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "span",
+			// 			class_name		: "value",
+			// 			inner_html		: row.number,
+			// 			parent			: group
+			// 		})
+			// 	}
+
+
+		//AUCTION
 				if (row.ref_auction && row.ref_auction.length>0) {
-					const group = common.create_dom_element({
+					let auctionLabels =  tstring.auction || "Auction"
+					let auctionValues = row.ref_auction
+				
+
+					if (row.ref_auction_number && row.ref_auction_number.length>0) {
+						auctionLabels += " | " + tstring.number || "Number"
+						auctionValues += " | " + row.ref_auction_number
+					}
+
+					const block_wrapper = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group ref_auction",
-						parent			: first_b_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
-						text_content	: tstring.ref_auction || "Auction",
-						parent			: group
+						class_name		: "left-labels",
+						text_content	: auctionLabels,
+						parent			: block_wrapper
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.ref_auction,
-						parent			: group
+						class_name		: "rigth-values",
+						inner_html		: auctionValues,
+						parent			: block_wrapper
 					})
-				}
-			// ref_auction_number
-				if (row.ref_auction_number && row.ref_auction_number.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group ref_auction_number",
-						parent			: first_b_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.ref_auction_number || "Number",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.ref_auction_number,
-						parent			: group
-					})
+
 				}
 
+			// 	if (row.ref_auction && row.ref_auction.length>0) {
+			// 		const block_wrapper = common.create_dom_element({
+			// 			element_type	: "div",
+			// 			class_name		: "group block_wrapper",
+			// 			parent			: info_container
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "label",
+			// 			class_name		: "left-labels",
+			// 			text_content	: tstring.auction || "Auction",
+			// 			parent			: block_wrapper
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "span",
+			// 			class_name		: "rigth-values",
+			// 			inner_html		: row.ref_auction,
+			// 			parent			: block_wrapper
+			// 		})
+			// 	}
 
-		// second_block (type)
-			const second_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper second_block",
-				parent			: fragment
-			})
-			// type
-				if (row.type && row.type.length>0) {
-					const group = common.create_dom_element({
+			// // ref_auction_number
+			// 	if (row.ref_auction_number && row.ref_auction_number.length>0) {
+			// 		const block_wrapper = common.create_dom_element({
+			// 			element_type	: "div",
+			// 			class_name		: "group block_wrapper",
+			// 			parent			: info_container
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "label",
+			// 			class_name		: "left-labels",
+			// 			text_content	: tstring.auction_number || "Number",
+			// 			parent			: block_wrapper
+			// 		})
+			// 		common.create_dom_element({
+			// 			element_type	: "span",
+			// 			class_name		: "value",
+			// 			class_name		: "rigth-values",
+			// 			inner_html		: row.ref_auction_number,
+			// 			parent			: block_wrapper
+			// 		})
+			// 	}
+
+		// MINT + MINT NUMBER + TYPE
+
+			let typeLabels = ""
+			let typeValues = ""
+
+			if (row.mint && row.mint.length>0){
+				typeLabels = tstring.mint || "Mint"
+				typeValues = row.mint
+			}
+
+			if (row.mint_number && row.mint_number>0){
+				if (typeLabels != ""){
+					typeLabels += " | "
+					typeValues += " | "
+				}
+				typeLabels += tstring.number || "Number"
+				typeValues += row.mint_number
+			}
+
+			if (row.type && row.type.length>0) {
+				if (typeLabels != ""){
+					typeLabels += " | "
+					typeValues += " | "
+				}
+				typeLabels += tstring.type || "Type"
+
+				// const mint		= typeof row.type_data[0]!=="undefined"
+				// 	? row.type_data[0].mint
+				// 	: null
+				// const mint_number = typeof row.type_data[0]!=="undefined"
+				// 	? row.type_data[0].mint_number
+				// 	: null
+				const type_number = typeof row.type_data[0]!=="undefined"
+					? row.type_data[0].number
+					: null
+
+				//const typeValue = common.clean_gaps((mint + " " + mint_number + " / " + type_number), " | ", " | ") 
+				typeValues += type_number
+			}
+
+			if (row.type && row.type.length>0) {
+				const group = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "group block_wrapper",
+					parent			: info_container
+				})
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: typeLabels,
+					parent			: group
+				})
+				
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: typeValues,
+					parent			: group
+				})
+			}	
+
+		// OBVERSE
+			common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group type",
-						parent			: second_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.type || "Type",
-						parent			: group
-					})
-					
-					const mint		= typeof row.type_data[0]!=="undefined"
-						? row.type_data[0].mint
-						: null
-					const mint_number = typeof row.type_data[0]!=="undefined"
-						? row.type_data[0].mint_number
-						: null
-					const type_number = typeof row.type_data[0]!=="undefined"
-						? row.type_data[0].number
-						: null
-					const value = common.clean_gaps((mint + " " + mint_number + " / " + type_number), " | ", " | ") 
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: value,
-						parent			: group
-					})
-				}	
-
-		// third_block (design)
-			const third_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper third_block block",
-				parent			: fragment
+						class_name		: "group block_wrapper",
+						parent			: info_container
 			})
+
+
+			const group_design_obverse = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group block_wrapper",
+						parent			: info_container
+			})
+
+			common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels section-label",
+						text_content	: tstring.obverse || "Obverse",
+						parent			: group_design_obverse
+			})
+
 			// design_obverse
 				const design_obverse = typeof row.type_data[0]!=="undefined"
 					? row.type_data[0].design_obverse
@@ -265,11 +378,12 @@ var coin_row = {
 				if (design_obverse && design_obverse.length>0) {
 					const group_design_obverse = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group design_obverse",
-						parent			: third_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})				
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.design_obverse || "design_obverse",
 						parent			: group_design_obverse
 					})
@@ -277,24 +391,112 @@ var coin_row = {
 					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_obverse"+"&label="+design_obverse+"&value="+design_obverse;
 					const prompt_label = common.create_dom_element({
 						element_type	: "a",
-						class_name		: "value underline-text",
+						class_name		: "rigth-values",
 						inner_html 		: design_obverse,
 						href			: catalog_url,
 						parent 			: group_design_obverse
 					})
 				}
-			// design_reverse
+
+		// 
+			// symbol_obverse
+				const symbol_obverse = typeof row.type_data[0]!=="undefined"
+					? row.type_data[0].symbol_obverse
+					: null
+				if (symbol_obverse && symbol_obverse.length>0) {
+					const group_symbol_obverse = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group block_wrapper",
+						parent			: info_container
+					})				
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels",
+						text_content	: tstring.symbol_obverse || "symbol_obverse",
+						parent			: group_symbol_obverse
+					})	
+
+					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=symbol_obverse"+"&label="+symbol_obverse+"&value="+symbol_obverse;
+					const prompt_label = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "rigth-values",
+						inner_html 		: symbol_obverse,
+						href			: catalog_url,
+						parent 			: group_symbol_obverse
+					})					
+				}
+
+			// legend_obverse
+				const legend_obverse = typeof row.type_data[0]!=="undefined"
+					? row.type_data[0].legend_obverse
+					: null
+				if (legend_obverse && legend_obverse.length>0) {
+					const group_legend_obverse = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group block_wrapper",
+						parent			: info_container
+					})				
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels",
+						text_content	: tstring.legend_obverse || "legend_obverse",
+						parent			: group_legend_obverse
+					})
+					const legend_node = page.render_legend({
+						value : legend_obverse,
+						style : 'median legend_obverse_box rigth-values'
+					})
+					group_legend_obverse.appendChild(legend_node)
+				}
+
+			// countermark_obverse
+				if (row.countermark_obverse && row.countermark_obverse.length>0) {
+					const group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group block_wrapper",
+						parent			: info_container
+					})
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels",
+						text_content	: tstring.countermark_obverse || "countermark_obverse",
+						parent			: group
+					})
+					const current_node = page.render_legend({
+						value : row.countermark_obverse,
+						style : 'median countermark_obverse_box rigth-values'
+					})
+					group.appendChild(current_node)
+				}
+			
+		//REVERSE
+
+			const group_design_reverse = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group block_wrapper",
+						parent			: info_container
+			})
+
+			common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels section-label",
+						text_content	: tstring.reverse || "Reverse",
+						parent			: group_design_reverse
+			})
+
+		// design_reverse
 				const design_reverse = typeof row.type_data[0]!=="undefined"
 					? row.type_data[0].design_reverse
 					: null
 				if (design_reverse && design_reverse.length>0) {
 					const group_design_reverse = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group design_reverse",
-						parent			: third_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})				
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.design_reverse || "design_reverse",
 						parent			: group_design_reverse
 					})					 
@@ -302,7 +504,7 @@ var coin_row = {
 					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_reverse"+"&label="+design_reverse+"&value="+design_reverse;
 					const prompt_label = common.create_dom_element({
 						element_type	: "a",
-						class_name		: "value underline-text",
+						class_name		: "rigth-values",
 						inner_html 		: design_reverse,
 						href			: catalog_url,
 						parent 			: group_design_reverse
@@ -314,182 +516,99 @@ var coin_row = {
 					// 	inner_html		: design_reverse,
 					// 	parent			: group_design_reverse
 					// })
-				}			
-
-		// third_block_2 (design)
-			const third_block_2 = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper third_block_2 block",
-				parent			: fragment
-			})
-			// symbol_obverse
-				const symbol_obverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].symbol_obverse
-					: null
-				if (symbol_obverse && symbol_obverse.length>0) {
-					const group_symbol_obverse = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group symbol_obverse",
-						parent			: third_block_2
-					})				
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.symbol_obverse || "symbol_obverse",
-						parent			: group_symbol_obverse
-					})	
-
-					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=symbol_obverse"+"&label="+symbol_obverse+"&value="+symbol_obverse;
-					const prompt_label = common.create_dom_element({
-						element_type	: "a",
-						class_name		: "value underline-text",
-						inner_html 		: symbol_obverse,
-						href			: catalog_url,
-						parent 			: group_symbol_obverse
-					})
-									 
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	class_name		: "value",
-					// 	inner_html		: symbol_obverse,
-					// 	parent			: group_symbol_obverse
-					// })
 				}
-			// symbol_reverse
+
+				// symbol_reverse
 				const symbol_reverse = typeof row.type_data[0]!=="undefined"
 					? row.type_data[0].symbol_reverse
 					: null
 				if (symbol_reverse && symbol_reverse.length>0) {
 					const group_symbol_reverse = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group symbol_reverse",
-						parent			: third_block_2
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})				
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.symbol_reverse || "symbol_reverse",
 						parent			: group_symbol_reverse
 					})					 
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: symbol_reverse,
 						parent			: group_symbol_reverse
 					})
 				}
-			
-		// third_block_3 (design)
-			const third_block_3 = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper third_block_3 block",
-				parent			: fragment
-			})
-			// legend_obverse
-				const legend_obverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].legend_obverse
-					: null
-				if (legend_obverse && legend_obverse.length>0) {
-					const group_legend_obverse = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group legend_obverse",
-						parent			: third_block_3
-					})				
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.legend_obverse || "legend_obverse",
-						parent			: group_legend_obverse
-					})
-					const legend_node = page.render_legend({
-						value : legend_obverse,
-						style : 'median legend_obverse_box'
-					})
-					group_legend_obverse.appendChild(legend_node)
-				}
-			// legend_reverse
+
+				// legend_reverse
 				const legend_reverse = typeof row.type_data[0]!=="undefined"
 					? row.type_data[0].legend_reverse
 					: null
 				if (legend_reverse && legend_reverse.length>0) {
 					const group_legend_reverse = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group legend_reverse",
-						parent			: third_block_3
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})				
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.legend_reverse || "legend_reverse",
 						parent			: group_legend_reverse
 					})
 					const legend_node = page.render_legend({
 						value : legend_reverse,
-						style : 'median legend_reverse_box'
+						style : 'median legend_reverse_box rigth-values'
 					})
 					group_legend_reverse.appendChild(legend_node)
 				}
 
-		// fifth_block (countermarks)
-			const fifth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper fifth_block",
-				parent			: fragment
-			})
-			// countermark_obverse
-				if (row.countermark_obverse && row.countermark_obverse.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group countermark_obverse",
-						parent			: fifth_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.countermark_obverse || "countermark_obverse",
-						parent			: group
-					})
-					const current_node = page.render_legend({
-						value : row.countermark_obverse,
-						style : 'median countermark_obverse_box'
-					})
-					group.appendChild(current_node)
-				}
-			// countermark_reverse
+				// countermark_reverse
 				if (row.countermark_reverse && row.countermark_reverse.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group countermark_reverse",
+						class_name		: "group block_wrapper",
 						parent			: fifth_block
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.countermark_reverse || "countermark_reverse",
 						parent			: group
 					})
 					const current_node = page.render_legend({
 						value : row.countermark_reverse,
-						style : 'median countermark_reverse_box'
+						style : 'median countermark_reverse_box rigth-values'
 					})
 					group.appendChild(current_node)
 				}
 
-		// fourth_block (measures)
-			const fourth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper fourth_block",
-				parent			: fragment
+		// MEASURES
+
+			common.create_dom_element({
+						element_type	: "div",
+						class_name		: "group block_wrapper",
+						parent			: info_container
 			})
+
 			// weight
 				if (row.weight && row.weight.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group weight",
-						parent			: fourth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.weight || "weight",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.weight+" g",
 						parent			: group
 					})
@@ -498,17 +617,18 @@ var coin_row = {
 				if (row.diameter && row.diameter.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group diameter",
-						parent			: fourth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.diameter || "diameter",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.diameter+" mm",
 						parent			: group
 					})
@@ -517,17 +637,18 @@ var coin_row = {
 				if (row.dies && row.dies.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group dies",
-						parent			: fourth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.dies || "dies",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.dies,
 						parent			: group
 					})
@@ -536,88 +657,83 @@ var coin_row = {
 				if (row.technique && row.technique.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group technique",
-						parent			: fourth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.technique || "technique",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.technique,
 						parent			: group
 					})
 				}
-			// find_type
-				if (row.find_type && row.find_type.length>0) {
-					const group = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group find_type",
-						parent			: fourth_block
-					})
-					common.create_dom_element({
-						element_type	: "label",
-						text_content	: tstring.find_type || "find_type",
-						parent			: group
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.find_type,
-						parent			: group
-					})
-				}	
 
-		// sixth_block (hoard)
-			const sixth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper sixth_block",
-				parent			: fragment
-			})
-			// hoard
+
+		//FIND TYPE
+			if (row.find_type && row.find_type.length>0) {
+				const group = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "group block_wrapper",
+					parent			: info_container
+				})
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.find_type || "find_type",
+					parent			: group
+				})
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.find_type,
+					parent			: group
+				})
+			}	
+
+		// HOARD
 				if (row.hoard && row.hoard.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group hoard",
-						parent			: sixth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.hoard || "hoard",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.hoard,
 						parent			: group
 					})
 				}
 
-		// seventh_block (finds)
-			const seventh_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper seventh_block",
-				parent			: fragment
-			})			
+		// FINDS	
 			// findspot_place
 				if (row.findspot_place && row.findspot_place.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group findspot_place",
-						parent			: seventh_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.findspot_place || "findspot_place",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.findspot_place,
 						parent			: group
 					})
@@ -626,118 +742,118 @@ var coin_row = {
 				if (row.find_date && row.find_date.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group find_date",
-						parent			: seventh_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.find_date || "find_date",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.find_date,
 						parent			: group
 					})
 				}
 
-		// eighth_block (info)
-			const eighth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper eighth_block",
-				parent			: fragment
-			})
-			// public_info
+		// PUBLIC INFO
 				if (row.public_info && row.public_info.length>1 && row.public_info!=='<br data-mce-bogus="1">') {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group public_info",
-						parent			: eighth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.public_info || "public_info",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
+						class_name		: "rigth-values",
 						inner_html		: row.public_info,
 						parent			: group
 					})
 				}
 
-		// nineth_block (URI)
-			const nineth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper nineth_block",
-				parent			: fragment
-			})
-			// uri
+		// URI
+				const uri = row.mib_uri
+				const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> </a> '
 				if (row.mib_uri && row.mib_uri.length>0) {
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group uri",
-						parent			: nineth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.uri || "uri",
 						parent			: group
 					})
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "value",
-						inner_html		: row.mib_uri,
+						class_name		: "rigth-values",
+						inner_html		: uri_text,
 						parent			: group
 					})
 				}
+
 			// other permanent uri
 				if (row.uri && row.uri.length>0) {					
 					for (let i = 0; i < row.uri.length; i++) {
-						
-						const el = row.uri[i]
+
+						const currentUri = row.uri[i]
+						const currentUri_text	= '<a class="icon_link info_value" target="_blank" href="' +currentUri+ '"> </a> '
+
+						//const el = row.uri[i]
 					
 						const group = common.create_dom_element({
 							element_type	: "div",
-							class_name		: "group uri",
-							parent			: nineth_block
+							class_name		: "group block_wrapper",
+							parent			: info_container
 						})
 
 						common.create_dom_element({
 							element_type	: "label",
+							class_name		: "left-labels",
 							text_content	: (tstring.uri || "uri") + " " + el.label,
 							parent			: group
 						})
+
 						common.create_dom_element({
-							element_type	: "a",
-							href			: el.value,
-							target			: "_blank",
-							class_name		: "value",
-							inner_html		: el.value,
+							element_type	: "span",
+							class_name		: "rigth-values",
+							inner_html		: currentUri_text,
 							parent			: group
 						})
+						// common.create_dom_element({
+						// 	element_type	: "a",
+						// 	href			: el.value,
+						// 	target			: "_blank",
+						// 	class_name		: "rigth-values",
+						// 	inner_html		: el.value,
+						// 	parent			: group
+						// })
 					}					
 				}
 
-		// tenth_block (bibliography) -- DESACTIVADA. POR REVISAR EL FORMATO !!! --- 
-			const tenth_block = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "block_wrapper tenth_block",
-				parent			: fragment
-			})
-			// bibliography
+		// BIBLIOGRAPHY -- DESACTIVADA. POR REVISAR EL FORMATO !!! --- 
 				if (row.bibliography_data && row.bibliography_data.length>0) {
 
 					const group = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "group bibliography",
-						parent			: tenth_block
+						class_name		: "group block_wrapper",
+						parent			: info_container
 					})
 
 					common.create_dom_element({
 						element_type	: "label",
+						class_name		: "left-labels",
 						text_content	: tstring.bibliography || "bibliography",
 						parent			: group
 					})				
@@ -751,7 +867,7 @@ var coin_row = {
 
 						const biblio_row_wrapper = common.create_dom_element({
 							element_type	: "div",
-							class_name		: "bibliographic_reference",
+							class_name		: "rigth-values",
 							parent			: group
 						})
 						biblio_row_wrapper.appendChild(biblio_row_node)

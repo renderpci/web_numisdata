@@ -34,11 +34,12 @@
 .result #row_detail a.underline-text {
   margin-top: -0.1em;
 }
+.result #row_detail .row_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
 .result #row_detail .identify_images_wrapper {
-  float: left;
-  display: grid;
-  padding-right: 3em;
-  margin-right: 1em;
+  width: 30%;
 }
 .result #row_detail .identify_images_wrapper > a.image_link > img {
   height: 12em;
@@ -59,10 +60,35 @@
     display: flex;
   }
 }
+.result #row_detail .info_container {
+  width: 70%;
+}
+.result #row_detail .info_container .left-labels {
+  width: 35%;
+  text-align: right;
+  margin-right: 0.5em;
+}
+.result #row_detail .info_container .rigth-values {
+  width: 65%;
+  text-align: left;
+  margin-left: 0.5em;
+}
+.result #row_detail .info_container .section-label {
+  font-weight: bold;
+  color: #585858;
+}
 .result #row_detail .block_wrapper {
   display: flex;
   flex-wrap: wrap;
+  flex-flow: row;
+  height: 2.5em;
   margin: 0;
+}
+.result #row_detail .block_wrapper a {
+  border-bottom: none;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
 }
 .result #row_detail .block_wrapper.block {
   display: grid;

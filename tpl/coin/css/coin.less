@@ -37,6 +37,11 @@
 		.row_wrapper {
 			display: flex;
 			flex-wrap: wrap;
+			flex-flow: column;
+
+			@media screen and (min-width: 960px){
+				flex-flow: row;
+			}
 		}
 
 		.identify_images_wrapper {
@@ -44,21 +49,30 @@
 			//display: grid;
 			//padding-right: 3em;
 			//margin-right: 1em;
-			width: 30%;
+			width: 100%;
+			flex-flow: row;
+			display: flex;
+			@media screen and (min-width: 960px){
+				flex-flow: column;
+				width: 30%;
+			}
 			//border-right: 1px solid #cccccc;
 
-			>a.image_link {		
+			>a.image_link {	
+
+				height: auto;
+				text-align: center;
 
 				>img {
 					// height: calc(50vh - 12em);
 					height: 12em;
-					display: block;
+					//display: block;
 					margin: 1em;
 					margin-top: 0;
 					margin-right: 0;
 					object-fit: contain;
-
-					@media screen and (max-width: 736px){
+					background-position: center;
+					@media screen and (max-width: 960px){
 						width: 100%;
 					}
 				}
@@ -73,7 +87,17 @@
 		}
 
 		.info_container {
-			width: 70%;
+			width: 100%;
+
+			@media screen and (min-width: 960px){
+				flex-flow: column;
+				width: 70%;
+			}
+
+			.design-group{
+				width: 100%;
+				margin: 1.5em 0;
+			}
 
 			.left-labels {
 				width: 35%;
@@ -90,6 +114,7 @@
 			.section-label{
 				font-weight: bold;
 				color: #585858;
+				padding-right: 1em;
 			}
 
 		}
@@ -97,11 +122,10 @@
 		.block_wrapper {
 			@_height : 1.2em;
 			display: flex;
-			flex-wrap: wrap;
+			//flex-wrap: wrap;
 			flex-flow: row;
-			height: 2.5em;
+			margin: 0.3em 0;
 			// background-color: #a9fed5;		
-			margin: 0;
 
 			a{
 				border-bottom:none;

@@ -350,25 +350,26 @@ var coin_row = {
 				})
 			}	
 
-		// OBVERSE
-			common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group block_wrapper",
-						parent			: info_container
+		//DESIGN GROUP
+			const design_group = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "design-group",
+				parent			: info_container
 			})
 
+		// OBVERSE
 
 			const group_design_obverse = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "group block_wrapper",
-						parent			: info_container
+				element_type	: "div",
+				class_name		: "group block_wrapper",
+				parent			: design_group
 			})
 
 			common.create_dom_element({
-						element_type	: "label",
-						class_name		: "left-labels section-label",
-						text_content	: tstring.obverse || "Obverse",
-						parent			: group_design_obverse
+				element_type	: "label",
+				class_name		: "left-labels section-label",
+				text_content	: tstring.obverse || "Obverse",
+				parent			: group_design_obverse
 			})
 
 			// design_obverse
@@ -379,7 +380,7 @@ var coin_row = {
 					const group_design_obverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})				
 					common.create_dom_element({
 						element_type	: "label",
@@ -407,7 +408,7 @@ var coin_row = {
 					const group_symbol_obverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})				
 					common.create_dom_element({
 						element_type	: "label",
@@ -434,7 +435,7 @@ var coin_row = {
 					const group_legend_obverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})				
 					common.create_dom_element({
 						element_type	: "label",
@@ -454,7 +455,7 @@ var coin_row = {
 					const group = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})
 					common.create_dom_element({
 						element_type	: "label",
@@ -474,7 +475,7 @@ var coin_row = {
 			const group_design_reverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 			})
 
 			common.create_dom_element({
@@ -492,7 +493,7 @@ var coin_row = {
 					const group_design_reverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})				
 					common.create_dom_element({
 						element_type	: "label",
@@ -526,7 +527,7 @@ var coin_row = {
 					const group_symbol_reverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})				
 					common.create_dom_element({
 						element_type	: "label",
@@ -550,7 +551,7 @@ var coin_row = {
 					const group_legend_reverse = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
-						parent			: info_container
+						parent			: design_group
 					})				
 					common.create_dom_element({
 						element_type	: "label",
@@ -584,6 +585,11 @@ var coin_row = {
 					})
 					group.appendChild(current_node)
 				}
+
+			//If no design info remove desing wrapper
+			if (design_group.getElementsByClassName("rigth-values").length==0){
+				design_group.remove();
+			}
 
 		// MEASURES
 

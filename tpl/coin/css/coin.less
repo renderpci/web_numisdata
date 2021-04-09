@@ -160,6 +160,61 @@
 				// }
 			}
 
+			.labels-group {
+				width: 35%;
+				display: flex;
+				flex-flow: row;
+				justify-content: flex-end;
+				margin-bottom: 1em;
+
+				@media screen and (max-width: 736px){
+					flex-flow: column;
+
+					.separator{
+						display: none;
+					}
+				}
+
+				.left-labels{
+					width: auto;
+					color: #585858;
+					font-weight: normal;
+					opacity: 0.5;
+					font-size: 1em;
+					margin-bottom: 0;
+				}
+			}
+
+			.values-group {
+				width: 65%;
+				display: flex;
+				flex-flow: row;
+				margin-bottom: 1em;
+
+				@media screen and (max-width: 736px){
+					flex-flow: column;
+
+					.separator{
+						display: none;
+					}
+				}
+				.rigth-values{
+					width: auto;
+					margin-bottom: 0;
+				}
+			}
+
+			.vertical-group {
+				width: 65%;
+				display: flex;
+				flex-flow: column;
+
+				.sub-vertical-group{
+					width: 100%;
+					margin-bottom: 0.5em;
+				}
+			}
+
 			.group {
 				display: flex;
 				flex-wrap: wrap;

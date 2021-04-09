@@ -115,205 +115,353 @@ var coin_row = {
 				parent			: info_container
 			})
 
-			let infoLabels = ""
-			let infoValues = ""
+			const labels_group = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "labels-group",
+				parent			: first_block
+			})
+
+			const values_group = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "values-group",
+				parent			: first_block
+			})
+
+			let currentData = false;
 
 			if (row.collection && row.collection.length>0) {
-				infoLabels = tstring.collection || "Collection"
-				infoValues += row.collection 
+				currentData = true;
+
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.collection || "Collection",
+					parent			: labels_group
+				})
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.collection,
+					parent			: values_group
+				})
 			}
 
 			if (row.former_collection && row.former_collection.length>0) {
-				if (infoLabels != ""){
-					infoLabels += " | "
-					infoValues += " | "
+				
+				if (currentData) {
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels separator",
+						text_content	: " | ",
+						parent			: labels_group
+					})
+
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values separator",
+						inner_html		: " | ",
+						parent			: values_group
+					})
 				}
 
-				infoLabels += tstring.former_collection || "Former collection"
-				infoValues += row.former_collection	
+
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.former_collection || "Former collection",
+					parent			: labels_group
+				})
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.former_collection,
+					parent			: values_group
+				})
+				
 			}
 
 			if (row.number && row.number.length>0) {
-				if (infoLabels != ""){
-					infoLabels += " | "
-					infoValues += " | "
+				if (currentData) {
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels separator",
+						text_content	: " | ",
+						parent			: labels_group
+					})
+
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values separator",
+						inner_html		: " | ",
+						parent			: values_group
+					})
 				}
-				infoLabels += tstring.number || "Number"
-				infoValues += row.number
+
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.number || "Number",
+					parent			: labels_group
+				})
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.number,
+					parent			: values_group
+				})
+
+			}
+			
+		//Auctions
+
+			if (row.ref_auction_group && row.ref_auction_group.length>0) {
+
+				for (let i=0;i<row.ref_auction_group.length;i++){
+					
+					if (row.ref_auction_group[i].name.length>0){
+
+						const auctions_first_block = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "group block_wrapper",
+							parent			: info_container
+						})
+
+						const auctions_labels_group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "labels-group",
+							parent			: auctions_first_block
+						})
+
+						const auctions_values_group = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "values-group",
+							parent			: auctions_first_block
+						})
+
+						common.create_dom_element({
+							element_type	: "label",
+							class_name		: "left-labels",
+							text_content	: tstring.auction || "Auction",
+							parent			: auctions_labels_group
+						})
+					
+
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "rigth-values",
+							inner_html		: row.ref_auction_group[i].name,
+							parent			: auctions_values_group
+						})
+					
+
+						if (row.ref_auction_group[i].number && row.ref_auction_group[i].number.length>0) {
+
+							common.create_dom_element({
+								element_type	: "label",
+								class_name		: "left-labels separator",
+								text_content	: " | ",
+								parent			: auctions_labels_group
+							})
+
+							common.create_dom_element({
+								element_type	: "label",
+								class_name		: "left-labels",
+								text_content	: tstring.number || "Number",
+								parent			: auctions_labels_group
+							})
+
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: "rigth-values separator",
+								inner_html		: " | ",
+								parent			: auctions_values_group
+							})
+
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: "rigth-values",
+								inner_html		: row.ref_auction_group[i].number,
+								parent			: auctions_values_group
+							})
+						}
+					}
+				}
 			}
 
-			common.create_dom_element({
-				element_type	: "label",
-				class_name		: "left-labels",
-				text_content	: infoLabels,
-				parent			: first_block
-			})
+		//equivalents auctions
 
-			common.create_dom_element({
-				element_type	: "span",
-				class_name		: "rigth-values",
-				inner_html		: infoValues,
-				parent			: first_block
-			})
-			
-			// // collection
+		if (row.ref_related_coin_auction_group && row.ref_related_coin_auction_group.length>0) {
+			for (let i=0;i<row.ref_related_coin_auction_group.length;i++){
+					
+				if (row.ref_related_coin_auction_group[i].name.length>0){
 
-			// 	if (row.collection && row.collection.length>0) {
-			// 		const group = common.create_dom_element({
-			// 			element_type	: "div",
-			// 			class_name		: "group collection",
-			// 			parent			: first_block
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "label",
-			// 			text_content	: tstring.collection || "Collection",
-			// 			parent			: group
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "span",
-			// 			class_name		: "value",
-			// 			inner_html		: row.collection,
-			// 			parent			: group
-			// 		})
-			// 	}
-			// // former_collection
-			// 	if (row.former_collection && row.former_collection.length>0) {
-			// 		const group = common.create_dom_element({
-			// 			element_type	: "div",
-			// 			class_name		: "group former_collection",
-			// 			parent			: first_block
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "label",
-			// 			text_content	: tstring.former_collection || "Former collection",
-			// 			parent			: group
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "span",
-			// 			class_name		: "value",
-			// 			inner_html		: row.former_collection,
-			// 			parent			: group
-			// 		})
-			// 	}
-			// // number
-			// 	if (row.number && row.number.length>0) {
-			// 		const group = common.create_dom_element({
-			// 			element_type	: "div",
-			// 			class_name		: "group number",
-			// 			parent			: first_block
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "label",
-			// 			text_content	: tstring.number || "Number",
-			// 			parent			: group
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "span",
-			// 			class_name		: "value",
-			// 			inner_html		: row.number,
-			// 			parent			: group
-			// 		})
-			// 	}
-
-
-		//AUCTION
-				if (row.ref_auction && row.ref_auction.length>0) {
-					let auctionLabels =  tstring.auction || "Auction"
-					let auctionValues = row.ref_auction
-				
-
-					if (row.ref_auction_number && row.ref_auction_number.length>0) {
-						auctionLabels += " | " + tstring.number || "Number"
-						auctionValues += " | " + row.ref_auction_number
-					}
-
-					const block_wrapper = common.create_dom_element({
+					const auctions_first_block = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "group block_wrapper",
 						parent			: info_container
 					})
+
+					const auctions_labels_group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "labels-group",
+						parent			: auctions_first_block
+					})
+
+					const auctions_values_group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "values-group",
+						parent			: auctions_first_block
+					})
+
 					common.create_dom_element({
 						element_type	: "label",
 						class_name		: "left-labels",
-						text_content	: auctionLabels,
-						parent			: block_wrapper
+						text_content	: "=",
+						parent			: auctions_labels_group
 					})
+				
+
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "rigth-values",
-						inner_html		: auctionValues,
-						parent			: block_wrapper
+						inner_html		: row.ref_related_coin_auction_group[i].name,
+						parent			: auctions_values_group
 					})
+
+					if (row.ref_related_coin_auction_group[i].number && row.ref_related_coin_auction_group[i].number.length>0) {
+
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "rigth-values separator",
+							inner_html		: " | ",
+							parent			: auctions_values_group
+						})
+
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "rigth-values",
+							inner_html		: row.ref_related_coin_auction_group[i].number,
+							parent			: auctions_values_group
+						})
+					}
 
 				}
 
-			// 	if (row.ref_auction && row.ref_auction.length>0) {
-			// 		const block_wrapper = common.create_dom_element({
-			// 			element_type	: "div",
-			// 			class_name		: "group block_wrapper",
-			// 			parent			: info_container
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "label",
-			// 			class_name		: "left-labels",
-			// 			text_content	: tstring.auction || "Auction",
-			// 			parent			: block_wrapper
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "span",
-			// 			class_name		: "rigth-values",
-			// 			inner_html		: row.ref_auction,
-			// 			parent			: block_wrapper
-			// 		})
-			// 	}
-
-			// // ref_auction_number
-			// 	if (row.ref_auction_number && row.ref_auction_number.length>0) {
-			// 		const block_wrapper = common.create_dom_element({
-			// 			element_type	: "div",
-			// 			class_name		: "group block_wrapper",
-			// 			parent			: info_container
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "label",
-			// 			class_name		: "left-labels",
-			// 			text_content	: tstring.auction_number || "Number",
-			// 			parent			: block_wrapper
-			// 		})
-			// 		common.create_dom_element({
-			// 			element_type	: "span",
-			// 			class_name		: "value",
-			// 			class_name		: "rigth-values",
-			// 			inner_html		: row.ref_auction_number,
-			// 			parent			: block_wrapper
-			// 		})
-			// 	}
+			}
+		}
 
 		// MINT + MINT NUMBER + TYPE
 
-			let typeLabels = ""
-			let typeValues = ""
+			const mint_block = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "group block_wrapper",
+				parent			: info_container
+			})
+
+			const mint_labels_group = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "labels-group",
+				parent			: mint_block
+			})
+
+			const mint_values_group = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "values-group",
+				parent			: mint_block
+			})
+
+			currentData = false;
 
 			if (row.mint && row.mint.length>0){
-				typeLabels = tstring.mint || "Mint"
-				typeValues = row.mint
+				currentData = true;
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.mint || "Mint",
+					parent			: mint_labels_group
+				})
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.mint,
+					parent			: mint_values_group
+				})
 			}
 
 			if (row.mint_number && row.mint_number>0){
-				if (typeLabels != ""){
-					typeLabels += " | "
-					typeValues += " | "
+				if (currentData) {
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels separator",
+						text_content	: " | ",
+						parent			: mint_labels_group
+					})
+
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values separator",
+						inner_html		: " | ",
+						parent			: mint_values_group
+					})
 				}
-				typeLabels += tstring.number || "Number"
-				typeValues += row.mint_number
+
+
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.number || "Number",
+					parent			: mint_labels_group
+				})
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.mint_number,
+					parent			: mint_values_group
+				})
 			}
 
 			if (row.type && row.type.length>0) {
-				if (typeLabels != ""){
-					typeLabels += " | "
-					typeValues += " | "
+				if (currentData) {
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels separator",
+						text_content	: " | ",
+						parent			: mint_labels_group
+					})
+
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values separator",
+						inner_html		: " | ",
+						parent			: mint_values_group
+					})
 				}
-				typeLabels += tstring.type || "Type"
+
+
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.type || "Type",
+					parent			: mint_labels_group
+				})
+
+				
+				const type_number = typeof row.type_data[0]!=="undefined"
+					? row.type_data[0].number
+					: null
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: type_number,
+					parent			: mint_values_group
+				})
+
 
 				// const mint		= typeof row.type_data[0]!=="undefined"
 				// 	? row.type_data[0].mint
@@ -321,34 +469,8 @@ var coin_row = {
 				// const mint_number = typeof row.type_data[0]!=="undefined"
 				// 	? row.type_data[0].mint_number
 				// 	: null
-				const type_number = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].number
-					: null
-
-				//const typeValue = common.clean_gaps((mint + " " + mint_number + " / " + type_number), " | ", " | ") 
-				typeValues += type_number
-			}
-
-			if (row.type && row.type.length>0) {
-				const group = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "group block_wrapper",
-					parent			: info_container
-				})
-				common.create_dom_element({
-					element_type	: "label",
-					class_name		: "left-labels",
-					text_content	: typeLabels,
-					parent			: group
-				})
 				
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "rigth-values",
-					inner_html		: typeValues,
-					parent			: group
-				})
-			}	
+			}
 
 		//DESIGN GROUP
 			const design_group = common.create_dom_element({
@@ -862,7 +984,13 @@ var coin_row = {
 						class_name		: "left-labels",
 						text_content	: tstring.bibliography || "bibliography",
 						parent			: group
-					})				
+					})	
+
+					const bibliography_group = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "vertical-group",
+						parent			: group
+					})		
 
 					const ref_biblio		= row.bibliography_data
 					const ref_biblio_length	= ref_biblio.length
@@ -873,8 +1001,8 @@ var coin_row = {
 
 						const biblio_row_wrapper = common.create_dom_element({
 							element_type	: "div",
-							class_name		: "rigth-values",
-							parent			: group
+							class_name		: "rigth-values sub-vertical-group",
+							parent			: bibliography_group
 						})
 						biblio_row_wrapper.appendChild(biblio_row_node)
 					}

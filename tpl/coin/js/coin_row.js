@@ -936,9 +936,11 @@ var coin_row = {
 					for (let i = 0; i < row.uri.length; i++) {
 
 						const currentUri = row.uri[i]
-						const currentUri_text	= '<a class="icon_link info_value" target="_blank" href="' +currentUri+ '"> </a> '
+						const currentUri_text	= '<a class="icon_link info_value" target="_blank" href="' +currentUri.value+ '"> </a> '
 
 						//const el = row.uri[i]
+
+						console.log(currentUri_text)
 					
 						const group = common.create_dom_element({
 							element_type	: "div",
@@ -949,7 +951,7 @@ var coin_row = {
 						common.create_dom_element({
 							element_type	: "label",
 							class_name		: "left-labels",
-							text_content	: (tstring.uri || "uri") + " " + el.label,
+							text_content	: (tstring.uri || "uri") + " " + currentUri.label,
 							parent			: group
 						})
 

@@ -48,9 +48,9 @@ var type_row_fields = {
 			)
 
 		// identify_coin
-			fragment.appendChild(
-				self.identify_coin(item, "identify_coin")
-			)
+			// fragment.appendChild(
+			// 	self.identify_coin(item, "identify_coin")
+			// )
 
 		// id_line
 			fragment.appendChild(
@@ -156,17 +156,37 @@ var type_row_fields = {
 				})
 			)
 		// related_types : "MIB | 03a<br>MIB | 15b"
-			fragment.appendChild(
-				self.default(item, "related_types", function(value){
-					const label		= tstring.related_types || "Related types"
-					const beats 	= page.split_data(value, "<br>")
-					const ar_final 	= []
-					for (let i = 0; i < beats.length; i++) {
-						ar_final.push( beats[i].replace(/ \| /g, ' ') )
-					}
-					return label +": "+ ar_final.join(" | ")
+			if(item.related_types){
+				const related_types 		= item.related_types
+				const related_types_data 	= JSON.parse(item.related_types_data)
+
+				const label		= tstring.related_types || "Related types"
+				const beats 	= page.split_data(related_types, "<br>")
+				const ar_final 	= []
+				for (let i = 0; i < beats.length; i++) {
+					const related_label = beats[i].replace(/ \| /g, ' ')
+					const related_id 	= (related_types_data)
+						? (related_types_data[i])
+							? related_types_data[i]
+							: false
+						: false
+					const url		= page_globals.__WEB_ROOT_WEB__ + "/type/" + related_id
+					// const full_url	= page_globals.__WEB_BASE_URL__ + url
+					const current_related_typo = (related_id)
+						? "<a href=\"" + url + "\">" +  related_label + "</a>"
+						: related_label
+					ar_final.push( current_related_typo )
+				}
+
+				const related_types_node = common.create_dom_element({
+					element_type	: "span",
+					class_name		: "info_value related_types",
+					inner_html 		: label +": "+ ar_final.join(" | "),
+					parent 			: fragment
 				})
-			)
+			}
+
+
 
 		// bibliography
 			const ar_references = item.bibliography_data
@@ -482,150 +502,150 @@ var type_row_fields = {
 
 	identify_coin : function(item, name) {
 
-		const self = this
+		// const self = this
+		//
+		// // line
+		// 	const line = common.create_dom_element({
+		// 		element_type	: "div",
+		// 		class_name		: "info_line inline " + name
+		// 	})
+		//
+		// const ar_str_coins = page.split_data(item.ref_coins, ' | ')
+		//
+		// const ar_coins = []
+		// for (var i = 0; i < ar_str_coins.length; i++) {
+		// 	ar_coins.push(JSON.parse(ar_str_coins[i]))
+		// }
+		// const identify_coin_id = ar_coins[0][0]
+		// const identify_coin = item.ref_coins_union.find(item => item.section_id===identify_coin_id)
 
-		// line
-			const line = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "info_line inline " + name
-			})
+		// if (identify_coin) {
 
-		const ar_str_coins = page.split_data(item.ref_coins, ' | ')
-
-		const ar_coins = []
-		for (var i = 0; i < ar_str_coins.length; i++) {
-			ar_coins.push(JSON.parse(ar_str_coins[i]))
-		}
-		const identify_coin_id = ar_coins[0][0]
-		const identify_coin = item.ref_coins_union.find(item => item.section_id===identify_coin_id)
-
-		if (identify_coin) {
-
-			// uri
-				const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
-				const full_url	= page_globals.__WEB_BASE_URL__ + uri
-				const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> URI </a> '
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "",
-					inner_html		: uri_text,
-					parent			: line
-				})
-
-			// collection uri
-
-				if (identify_coin.uri && identify_coin.uri.length>0) {
-					for (let i = 0; i < identify_coin.uri.length; i++) {
-
-						const el = identify_coin.uri[i]
-						const label	= el.label || "URI"
-						const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
-
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: "",
-							inner_html		: uri_text,
-							parent			: line
-						})
-
-					}
-				}
-
-
-
-			// collection
-				if (identify_coin.collection.length>0){
-
-					// line
-						const line_collection = common.create_dom_element({
-							element_type	: "span",
-							class_name		: "info_value",
-							parent			: line
-						})
-
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: name + " golden-color",
-							inner_html		: identify_coin.collection,
-							parent			: line_collection
-						})
-					// number
-						if (identify_coin.number.length>0){
-
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: name + " golden-color",
-								inner_html		: " "+ identify_coin.number,
-								parent			: line_collection
-							})
-						}
-				}
+			// // uri
+			// 	const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + identify_coin_id
+			// 	const full_url	= page_globals.__WEB_BASE_URL__ + uri
+			// 	const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> URI </a> '
+			// 	common.create_dom_element({
+			// 		element_type	: "span",
+			// 		class_name		: "",
+			// 		inner_html		: uri_text,
+			// 		parent			: line
+			// 	})
+			//
+			// // collection uri
+			//
+			// 	if (identify_coin.uri && identify_coin.uri.length>0) {
+			// 		for (let i = 0; i < identify_coin.uri.length; i++) {
+			//
+			// 			const el = identify_coin.uri[i]
+			// 			const label	= el.label || "URI"
+			// 			const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
+			//
+			// 			common.create_dom_element({
+			// 				element_type	: "span",
+			// 				class_name		: "",
+			// 				inner_html		: uri_text,
+			// 				parent			: line
+			// 			})
+			//
+			// 		}
+			// 	}
 
 
-			// auction
-				function draw_auction(data, parent, class_name, prepend) {
 
-					if (data.name.length<1) return
-					// line
-						const line = common.create_dom_element({
-							element_type	: "span",
-							class_name		: "info_value",
-							parent			: parent
-						})
-					// name
-						if (data.name) {
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: class_name+ " golden-color",
-								inner_html		: prepend + data.name,
-								parent			: line
-							})
-						}
-					// ref_auction_date
-						if (data.date) {
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: class_name+" golden-color",
-								inner_html		: " | " + data.date,
-								parent			: line
-							})
-						}
-					// number
-						if (data.number) {
-							common.create_dom_element({
-								element_type	: "span",
-								class_name		: class_name+" golden-color",
-								inner_html		: " "+ data.number,
-								parent			: line
-							})
-						}
+			// // collection
+			// 	if (identify_coin.collection.length>0){
+			//
+			// 		// line
+			// 			const line_collection = common.create_dom_element({
+			// 				element_type	: "span",
+			// 				class_name		: "info_value",
+			// 				parent			: line
+			// 			})
+			//
+			// 			common.create_dom_element({
+			// 				element_type	: "span",
+			// 				class_name		: name + " golden-color",
+			// 				inner_html		: identify_coin.collection,
+			// 				parent			: line_collection
+			// 			})
+			// 		// number
+			// 			if (identify_coin.number.length>0){
+			//
+			// 				common.create_dom_element({
+			// 					element_type	: "span",
+			// 					class_name		: name + " golden-color",
+			// 					inner_html		: " "+ identify_coin.number,
+			// 					parent			: line_collection
+			// 				})
+			// 			}
+			// 	}
 
-					return true
-				}
 
-				if (identify_coin.ref_auction_group) {
-					for (let i = 0; i < identify_coin.ref_auction_group.length; i++) {
-						draw_auction(identify_coin.ref_auction_group[i], line, name, '')
-					}
-				}
-				if (identify_coin.ref_related_coin_auction_group) {
-					for (let i = 0; i < identify_coin.ref_related_coin_auction_group.length; i++) {
-
-						draw_auction(identify_coin.ref_related_coin_auction_group[i], line, name, '= ')
-					}
-				}
-
-				// public_info
-					if (identify_coin.public_info && identify_coin.public_info.length>0){
-						// const label = (tstring.public_info || "Public_info")+": ";
-
-						common.create_dom_element({
-						element_type	: "div",
-						class_name		: "",
-						inner_html		: identify_coin.public_info,
-						parent			: line
-					})
-				}
+			// // auction
+			// 	function draw_auction(data, parent, class_name, prepend) {
+			//
+			// 		if (data.name.length<1) return
+			// 		// line
+			// 			const line = common.create_dom_element({
+			// 				element_type	: "span",
+			// 				class_name		: "info_value",
+			// 				parent			: parent
+			// 			})
+			// 		// name
+			// 			if (data.name) {
+			// 				common.create_dom_element({
+			// 					element_type	: "span",
+			// 					class_name		: class_name+ " golden-color",
+			// 					inner_html		: prepend + data.name,
+			// 					parent			: line
+			// 				})
+			// 			}
+			// 		// ref_auction_date
+			// 			if (data.date) {
+			// 				common.create_dom_element({
+			// 					element_type	: "span",
+			// 					class_name		: class_name+" golden-color",
+			// 					inner_html		: " | " + data.date,
+			// 					parent			: line
+			// 				})
+			// 			}
+			// 		// number
+			// 			if (data.number) {
+			// 				common.create_dom_element({
+			// 					element_type	: "span",
+			// 					class_name		: class_name+" golden-color",
+			// 					inner_html		: " "+ data.number,
+			// 					parent			: line
+			// 				})
+			// 			}
+			//
+			// 		return true
+			// 	}
+			//
+			// 	if (identify_coin.ref_auction_group) {
+			// 		for (let i = 0; i < identify_coin.ref_auction_group.length; i++) {
+			// 			draw_auction(identify_coin.ref_auction_group[i], line, name, '')
+			// 		}
+			// 	}
+			// 	if (identify_coin.ref_related_coin_auction_group) {
+			// 		for (let i = 0; i < identify_coin.ref_related_coin_auction_group.length; i++) {
+			//
+			// 			draw_auction(identify_coin.ref_related_coin_auction_group[i], line, name, '= ')
+			// 		}
+			// 	}
+			//
+			// 	// public_info
+			// 		if (identify_coin.public_info && identify_coin.public_info.length>0){
+			// 			// const label = (tstring.public_info || "Public_info")+": ";
+			//
+			// 			common.create_dom_element({
+			// 			element_type	: "div",
+			// 			class_name		: "",
+			// 			inner_html		: identify_coin.public_info,
+			// 			parent			: line
+			// 		})
+			// 	}
 				// // auction name
 				// 	common.create_dom_element({
 				// 		element_type 	: "span",
@@ -662,30 +682,30 @@ var type_row_fields = {
 				// 	}
 
 			// size_text. weight / dies / diameter
-				const ar_beats = []
-				if (identify_coin.weight && identify_coin.weight.length>0) {
-					ar_beats.push( identify_coin.weight.replace('.', ',') + " g" )
-				}
+			// 	const ar_beats = []
+			// 	if (identify_coin.weight && identify_coin.weight.length>0) {
+			// 		ar_beats.push( identify_coin.weight.replace('.', ',') + " g" )
+			// 	}
+			//
+			// 	if (identify_coin.diameter && identify_coin.diameter.length>0) {
+			// 		ar_beats.push( identify_coin.diameter.replace('.', ',') + " mm" )
+			// 	}
+			// 	if (identify_coin.dies && identify_coin.dies.length>0) {
+			// 		ar_beats.push( identify_coin.dies + " h" )
+			// 	}
+			// 	const size_text = ar_beats.join("; ")
+			//
+			// common.create_dom_element({
+			// 	element_type 	: "span",
+			// 	class_name 		: name,
+			// 	text_content 	: " ("+size_text+")",
+			// 	parent 			: line
+			// })
+		// }
 
-				if (identify_coin.diameter && identify_coin.diameter.length>0) {
-					ar_beats.push( identify_coin.diameter.replace('.', ',') + " mm" )
-				}
-				if (identify_coin.dies && identify_coin.dies.length>0) {
-					ar_beats.push( identify_coin.dies + " h" )
-				}
-				const size_text = ar_beats.join("; ")
 
-			common.create_dom_element({
-				element_type 	: "span",
-				class_name 		: name,
-				text_content 	: " ("+size_text+")",
-				parent 			: line
-			})
-		}
-
-
-		return line
-	},//end image
+		// return line
+	},//end identify_coin
 
 
 
@@ -1300,7 +1320,7 @@ var type_row_fields = {
 		const self = this
 
 		const bib_fragment = new DocumentFragment;
-		
+
 		const ref_biblio		= data
 		const ref_biblio_length	= ref_biblio ? ref_biblio.length : 0
 		for (let i = 0; i < ref_biblio_length; i++) {
@@ -1453,191 +1473,194 @@ var type_row_fields = {
 			const hoards_solved			= []
 
 		// hoards
-			const hoard_label = self.label(item, tstring.hoards)
-			line.appendChild( hoard_label )
-			const hoard_container = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "hoard_container",
-				parent			: line
-			})
-			hoard_label.addEventListener("mouseup", (event) => {
-				event.preventDefault()
-				hoard_container.classList.toggle("hide");
-			})
-
 			const hoards_data			= item.ref_coins_hoard_data
 			const hoards_data_length	= hoards_data.length
 
-			for (let i = 0; i < hoards_data_length; i++) {
-
-				const hoard			= hoards_data[i]
-				const coins			= JSON.parse(hoard.coins) || []
-				const coins_length	= coins.length
-
-				if (coins_length<1) {
-					console.warn("! Skipped hoard without zero coins :", hoards_data);
-					continue;
-				}
-
-				if (hoards_solved.find(section_id => section_id===hoard.section_id)) {
-					continue;
-				}
-
-				const wrapper = common.create_dom_element({
+			if (hoards_data_length) {
+				const hoard_label = self.label(item, tstring.hoards)
+				line.appendChild( hoard_label )
+				const hoard_container = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "find_wrapper hoard",
-					parent			: hoard_container
+					class_name		: "hoard_container",
+					parent			: line
+				})
+				hoard_label.addEventListener("mouseup", (event) => {
+					event.preventDefault()
+					hoard_container.classList.toggle("hide");
 				})
 
-				// title
-					common.create_dom_element({
-						element_type	: "span",
-						inner_html		: " " + (hoard.name || "") + " (" + (hoard.place || "") + ") ",
-						parent			: wrapper
-					})
-				// items (ejemplares)
-					const items = common.create_dom_element({
-						element_type	: "span",
-						text_content	: " | ",
-						parent			: wrapper
-					})
-				// draw coins inside
-					const typology_coins = common.create_dom_element({
+
+				for (let i = 0; i < hoards_data_length; i++) {
+
+					const hoard			= hoards_data[i]
+					const coins			= JSON.parse(hoard.coins) || []
+					const coins_length	= coins.length
+
+					if (coins_length<1) {
+						console.warn("! Skipped hoard without zero coins :", hoards_data);
+						continue;
+					}
+
+					if (hoards_solved.find(section_id => section_id===hoard.section_id)) {
+						continue;
+					}
+
+					const wrapper = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "find_coins hoard gallery",
+						class_name		: "find_wrapper hoard",
 						parent			: hoard_container
 					})
-					const ar_coins = []
-					for (let j = 0; j < coins_length; j++) {
-						const coin_section_id	= coins[j];
-						const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
-							// console.log("item.coin_references:",item.coin_references);
-							// console.log("current_coin:",current_coin, coin_section_id);
-						if (current_coin) {
-							draw_coin_inside(current_coin, typology_coins)
-							ar_coins.push(coin_section_id)
-						}
-					}
 
-					// replace text into the items
-					items.innerHTML = items.innerHTML + ar_coins.length +" "+ (tstring.of || "of") +" "+ coins_length +" "+ (tstring.coins || "coins")
-
-
-				// map data
-					const hoard_data_map = JSON.parse(hoard.map)
-					if (hoard_data_map) {
-						map_data.push({
-							section_id	: hoard.section_id,
-							name		: hoard.name,
-							place		: hoard.place,
-							georef		: hoard.georef,
-							data		: hoard_data_map,
-							items		: ar_coins.length,
-							total_items	: coins_length,
-							type		: 'hoard',
-							marker_icon	: page.maps_config.markers.hoard
+					// title
+						common.create_dom_element({
+							element_type	: "span",
+							inner_html		: " " + (hoard.name || "") + " (" + (hoard.place || "") + ") ",
+							parent			: wrapper
 						})
-					}
+					// items (ejemplares)
+						const items = common.create_dom_element({
+							element_type	: "span",
+							text_content	: " | ",
+							parent			: wrapper
+						})
+					// draw coins inside
+						const typology_coins = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "find_coins hoard gallery",
+							parent			: hoard_container
+						})
+						const ar_coins = []
+						for (let j = 0; j < coins_length; j++) {
+							const coin_section_id	= coins[j];
+							const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
+								// console.log("item.coin_references:",item.coin_references);
+								// console.log("current_coin:",current_coin, coin_section_id);
+							if (current_coin) {
+								draw_coin_inside(current_coin, typology_coins)
+								ar_coins.push(coin_section_id)
+							}
+						}
+
+						// replace text into the items
+						items.innerHTML = items.innerHTML + ar_coins.length +" "+ (tstring.of || "of") +" "+ coins_length +" "+ (tstring.coins || "coins")
 
 
-				// store already solved
-					hoards_solved.push(hoard.section_id)
-			}
+					// map data
+						const hoard_data_map = JSON.parse(hoard.map)
+						if (hoard_data_map) {
+							map_data.push({
+								section_id	: hoard.section_id,
+								name		: hoard.name,
+								place		: hoard.place,
+								georef		: hoard.georef,
+								data		: hoard_data_map,
+								items		: ar_coins.length,
+								total_items	: coins_length,
+								type		: 'hoard',
+								marker_icon	: page.maps_config.markers.hoard
+							})
+						}
+
+					// store already solved
+						hoards_solved.push(hoard.section_id)
+				}// end for
+			}// end if
 
 		// findspots
 			const findspots_data		= item.ref_coins_findspots_data;
 			const findspots_data_length	= findspots_data.length
 
-			const findspots_label = self.label(item, tstring.findspots)
-			line.appendChild( findspots_label )
+			if(findspots_data_length){
+				const findspots_label = self.label(item, tstring.findspots)
+				line.appendChild( findspots_label )
 
 
-			const findspots_container = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "findspots_container",
-				parent			: line
-			})
-
-			findspots_label.addEventListener("mouseup", (event) => {
-				event.preventDefault()
-				findspots_container.classList.toggle("hide");
-			})
-
-
-			for (let i = 0; i < findspots_data_length; i++) {
-
-				const findspot		= findspots_data[i]
-				const coins			= JSON.parse(findspot.coins) || []
-				const coins_length	= coins.length
-
-				if (coins_length<1) {
-					console.warn("! Skipped findspot without zero coins :", findspots_data);
-					continue;
-				}
-
-				if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
-					continue;
-				}
-
-
-				const wrapper = common.create_dom_element({
+				const findspots_container = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "find_wrapper findspot",
-					parent			: findspots_container
+					class_name		: "findspots_container",
+					parent			: line
 				})
 
-				// title
-					common.create_dom_element({
-						element_type	: "span",
-						inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
-						parent			: wrapper
-					})
-				// items (ejemplares)
-					const items = common.create_dom_element({
-						element_type	: "span",
-						text_content	: " | ",
-						parent			: wrapper
-					})
-				// draw coin inside
-					const typology_coins = common.create_dom_element({
+				findspots_label.addEventListener("mouseup", (event) => {
+					event.preventDefault()
+					findspots_container.classList.toggle("hide");
+				})
+
+				for (let i = 0; i < findspots_data_length; i++) {
+
+					const findspot		= findspots_data[i]
+					const coins			= JSON.parse(findspot.coins) || []
+					const coins_length	= coins.length
+
+					if (coins_length<1) {
+						console.warn("! Skipped findspot without zero coins :", findspots_data);
+						continue;
+					}
+
+					if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
+						continue;
+					}
+
+
+					const wrapper = common.create_dom_element({
 						element_type	: "div",
-						class_name		: "find_coins findspot gallery",
+						class_name		: "find_wrapper findspot",
 						parent			: findspots_container
 					})
 
-					const ar_coins = []
-					for (let j = 0; j < coins_length; j++) {
-						const coin_section_id	= coins[j];
-						const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
-							// console.log("item.coin_references:",item.coin_references);
-							// console.log("current_coin:",current_coin, coin_section_id);
-						if (current_coin) {
-							draw_coin_inside(current_coin, typology_coins)
-							ar_coins.push(coin_section_id)
-						}
-					}
-
-					// map data
-					const findspot_data_map = JSON.parse(findspot.map)
-					if (findspot_data_map) {
-						map_data.push({
-							section_id	: findspot.section_id,
-							name		: findspot.name,
-							place		: findspot.place,
-							georef		: findspot.georef,
-							data		: findspot_data_map,
-							items 		: ar_coins.length,
-							total_items : coins_length,
-							type 		: 'findspot',
-							marker_icon	: page.maps_config.markers.findspot
+					// title
+						common.create_dom_element({
+							element_type	: "span",
+							inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
+							parent			: wrapper
 						})
-					}
+					// items (ejemplares)
+						const items = common.create_dom_element({
+							element_type	: "span",
+							text_content	: " | ",
+							parent			: wrapper
+						})
+					// draw coin inside
+						const typology_coins = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "find_coins findspot gallery",
+							parent			: findspots_container
+						})
 
-				// replace text into the items
-					items.innerHTML = items.innerHTML + ar_coins.length +" "+ (tstring.of || "of") +" "+ coins_length +" "+ (tstring.coins || "coins")
+						const ar_coins = []
+						for (let j = 0; j < coins_length; j++) {
+							const coin_section_id	= coins[j];
+							const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
+								// console.log("item.coin_references:",item.coin_references);
+								// console.log("current_coin:",current_coin, coin_section_id);
+							if (current_coin) {
+								draw_coin_inside(current_coin, typology_coins)
+								ar_coins.push(coin_section_id)
+							}
+						}
 
-				// store already solved
-					findspots_solved.push(findspot.section_id)
+						// map data
+						const findspot_data_map = JSON.parse(findspot.map)
+						if (findspot_data_map) {
+							map_data.push({
+								section_id	: findspot.section_id,
+								name		: findspot.name,
+								place		: findspot.place,
+								georef		: findspot.georef,
+								data		: findspot_data_map,
+								items 		: ar_coins.length,
+								total_items : coins_length,
+								type 		: 'findspot',
+								marker_icon	: page.maps_config.markers.findspot
+							})
+						}
+
+					// replace text into the items
+						items.innerHTML = items.innerHTML + ar_coins.length +" "+ (tstring.of || "of") +" "+ coins_length +" "+ (tstring.coins || "coins")
+
+					// store already solved
+						findspots_solved.push(findspot.section_id)
+				}
 			}
 
 		// draw map

@@ -88,6 +88,10 @@
 .result .row_wrapper .info_value {
   padding-right: 0.25em;
 }
+.result .row_wrapper .info_value img {
+  height: 1em;
+  vertical-align: text-bottom;
+}
 .result .row_wrapper .design_obverse,
 .result .row_wrapper .symbol_obverse,
 .result .row_wrapper .design_reverse,

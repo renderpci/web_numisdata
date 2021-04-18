@@ -17,7 +17,7 @@ var catalog = {
 
 	// form_items
 	// form_items : [],
- 
+
 	// form factory instance
 	form : null,
 
@@ -31,10 +31,10 @@ var catalog = {
 	* SET_UP
 	*/
 	set_up : function(options) {
-	
+
 		const self = this
 
-		// options			
+		// options
 			const global_search			= options.global_search
 			const item_type				= options.item_type
 			const label					= options.label
@@ -47,7 +47,7 @@ var catalog = {
 			self.rows_list_container	= rows_list_container
 			self.export_data_container	= export_data_container
 			self.form_items_container	= form_items_container
-				
+
 		// load mints list
 			// self.load_mint_list().then(function(response){
 
@@ -92,10 +92,10 @@ var catalog = {
 			// 				return filter_value
 			// 			}
 			// 		})
-				
+
 			// 	container.appendChild(select)
 			// })
-		
+
 		// load periods list
 			// self.load_period_list().then(function(response){
 
@@ -144,7 +144,7 @@ var catalog = {
 
 			// 	container.appendChild(select)
 			// })
-				
+
 		// load material list
 			// self.load_material_list().then(function(response){
 
@@ -161,8 +161,8 @@ var catalog = {
 			// 				// filter
 			// 					const filter_value = {
 			// 						"OR": []
-			// 					}							
-							
+			// 					}
+
 			// 				// parents
 			// 					const parents = item.parents ? JSON.parse(item.parents) : null
 			// 					if (parents) {
@@ -197,9 +197,9 @@ var catalog = {
 			// })
 
 		// form
-			const form_node = self.render_form()		
+			const form_node = self.render_form()
 			self.form_items_container.appendChild(form_node)
-			
+
 		// first search
 			if (global_search && global_search.length>1) {
 
@@ -210,7 +210,7 @@ var catalog = {
 
 				// submit form
 				self.form_submit(form_node)
-			
+
 			}else if(item_type.length>1){
 
 				// console.log("item_type", item_type);
@@ -219,7 +219,7 @@ var catalog = {
 
 				// add value as user selected
 				self.form.add_selected_value(self.form.form_items[item_type], label, value)
-				
+
 				// submit form
 				self.form_submit(form_node)
 
@@ -252,13 +252,13 @@ var catalog = {
 
 		// form_factory instance
 			self.form = self.form || new form_factory()
-		
+
 		const form_row = common.create_dom_element({
 			element_type	: "div",
 			class_name 		: "form-row fields",
 			parent 			: fragment
 		})
-		
+
 
 		// global_search
 			const global_search = self.form.item_factory({
@@ -281,7 +281,7 @@ var catalog = {
 						parent			: node_input.parentNode
 					})
 
-					let operators_info 
+					let operators_info
 					button_info.addEventListener('click', function(event) {
 						event.stopPropagation()
 						if (operators_info) {
@@ -302,7 +302,7 @@ var catalog = {
 					})
 				}
 			})
-		
+
 		// mint
 			self.form.item_factory({
 				id			: "mint",
@@ -325,13 +325,13 @@ var catalog = {
 				name 		: "number",
 				q_column 	: "term",
 				q_table 	: "types",
-				label		: tstring.number || "number",
+				label		: tstring.number_key || "Number & Key",
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
 					self.activate_autocomplete(form_item);
 				}
-			})		
+			})
 
 		// culture
 			self.form.item_factory({
@@ -524,7 +524,7 @@ var catalog = {
 					self.activate_autocomplete(form_item);
 				}
 			})
-		
+
 		// company (disabled by keynote note 09-03-2021)
 			// self.form.item_factory({
 			// 	id 			: "company",
@@ -606,7 +606,7 @@ var catalog = {
 			// 		const range_slider_value_out	= node_input.parentNode.querySelector('#range_slider_out')
 
 			// 		function set_up_slider() {
-						
+
 			// 			// compute range years
 			// 			self.get_catalog_range_years()
 			// 			.then(function(range_data){
@@ -690,13 +690,13 @@ var catalog = {
 			// fragment.appendChild( forms.build_operators_node() )
 			const operators_node = self.form.build_operators_node()
 			fragment.appendChild( operators_node )
-		
+
 		// form
 			const form = common.create_dom_element({
 				element_type	: "form",
 				id 				: "search_form",
 				class_name 		: "form-inline"
-			})			
+			})
 			form.appendChild(fragment)
 
 
@@ -711,7 +711,7 @@ var catalog = {
 	* @return promise
 	*/
 		// load_mint_list : function() {
-			
+
 		// 	const js_promise = data_manager.request({
 		// 		body : {
 		// 			dedalo_get 	: 'records',
@@ -736,7 +736,7 @@ var catalog = {
 	* @return promise
 	*/
 		// load_period_list : function() {
-			
+
 		// 	const js_promise = data_manager.request({
 		// 		body : {
 		// 			dedalo_get 	: 'records',
@@ -761,7 +761,7 @@ var catalog = {
 	* @return promise
 	*/
 		// load_material_list : async function() {
-			
+
 		// 	// search base . Gets list of values for real table like 'materials'
 		// 		const search_base = await data_manager.request({
 		// 			body : {
@@ -775,7 +775,7 @@ var catalog = {
 		// 				sql_filter  : ''
 		// 			}
 		// 		})
-			
+
 		// 	// search secondary. Gets main table matches
 		// 		const search_secondary = await data_manager.request({
 		// 			body : {
@@ -793,7 +793,7 @@ var catalog = {
 		// 	// add to search_base the secondary results
 		// 		const ar_mix = search_base.result.map(item => {
 
-		// 			const types = search_secondary.result.filter( el => el.ref_type_material_data==="[\"" + item.section_id +"\"]" )			
+		// 			const types = search_secondary.result.filter( el => el.ref_type_material_data==="[\"" + item.section_id +"\"]" )
 		// 			item.types  = types.map(el => el.section_id)
 
 		// 			return item
@@ -821,7 +821,7 @@ var catalog = {
 		// 	const data 			  	= options.data
 		// 	const term_table		= options.term_table
 		// 	const options_default	= options.default || [{section_id:'0',name:"Select option"}]
-			
+
 		// 	const fragment = new DocumentFragment()
 
 		// 	// prepend empty option
@@ -830,17 +830,17 @@ var catalog = {
 		// 	// iterate option
 		// 		const elements_length = elements.length
 		// 		for (let i = 0; i < elements_length; i++) {
-					
+
 		// 			const item = elements[i]
 
-		// 			const filter_value = options.filter(item)				
+		// 			const filter_value = options.filter(item)
 
 		// 			common.create_dom_element({
 		// 				element_type	: 'option',
 		// 				value 			: JSON.stringify(filter_value),
 		// 				text_content 	: item.name,
 		// 				parent 			: fragment
-		// 			})		
+		// 			})
 		// 		}
 
 		// 	// select node
@@ -860,17 +860,17 @@ var catalog = {
 		// 				const container = document.querySelector("#rows_list")
 		// 				while (container.hasChildNodes()) {
 		// 					container.removeChild(container.lastChild);
-		// 				}					
+		// 				}
 		// 				page.add_spinner(container)
 
 		// 			// search
 		// 				const filter = JSON.parse(value)
 
-		// 				// fix global_filter value (!)						
+		// 				// fix global_filter value (!)
 		// 					self.filters[filter_id] = filter
 		// 						console.log("self.filters:",self.filters);
 
-		// 				const search_promise = self.search_rows({						
+		// 				const search_promise = self.search_rows({
 		// 					limit	: 0
 		// 				})
 
@@ -926,7 +926,7 @@ var catalog = {
 		// 			if (index > -1) {
 		// 				// remove array element
 		// 				form_item.q_selected.splice(index, 1);
-						
+
 		// 				// remove dom node
 		// 				this.parentNode.remove()
 
@@ -934,10 +934,10 @@ var catalog = {
 		// 				if(SHOW_DEBUG===true) {
 		// 					console.log("form_item.q_selected removed value:",value,form_item.q_selected);
 		// 				}
-		// 			}			
+		// 			}
 		// 		})
 
-		// 	// label 
+		// 	// label
 		// 		const value_label = common.create_dom_element({
 		// 			element_type	: "span",
 		// 			class_name		: "value_label",
@@ -945,7 +945,7 @@ var catalog = {
 		// 			parent			: line
 		// 		})
 
-		// 	// input 
+		// 	// input
 		// 		const input = common.create_dom_element({
 		// 			element_type	: "input",
 		// 			class_name		: "input_values",
@@ -964,7 +964,7 @@ var catalog = {
 		// 	return true
 		// },//end add_selected_value
 
-	
+
 
 	/**
 	* ACTIVATE_AUTOCOMPLETE
@@ -979,7 +979,7 @@ var catalog = {
 		})
 
 		// moved to common form_factory
-			// // define current_form_item in this scope 
+			// // define current_form_item in this scope
 			// // to allow acces from different places
 			// let current_form_item
 
@@ -1014,11 +1014,11 @@ var catalog = {
 			// 			}
 			// 		},
 
-			// 		_renderItem: function( ul, item) {					
+			// 		_renderItem: function( ul, item) {
 
 			// 			var final_label = item.label
 
-			// 			// remove empty values when separator is present						
+			// 			// remove empty values when separator is present
 			// 				var ar_parts 	= final_label.split(' | ')
 			// 				var ar_clean 	= []
 			// 				for (var i = 0; i < ar_parts.length; i++) {
@@ -1046,9 +1046,9 @@ var catalog = {
 			// 	minLength	: 0,
 			// 	html		: true,
 			// 	source		: function( request, response ) {
-					
+
 			// 		const term = request.term
-					
+
 			// 		// current_form_item = self.form_items[element.id]
 			// 		// (!) fix selected form_item (needed to access from select)
 			// 		current_form_item = self.form.form_items[form_item.node_input.id]
@@ -1056,7 +1056,7 @@ var catalog = {
 			// 		const field		= current_form_item.q_name // Like 'mint'
 			// 		const q_column	= current_form_item.q_column // Like 'term'
 
-			// 		// filter build 
+			// 		// filter build
 			// 			const op 	 = "AND"
 			// 			const filter = {}
 			// 				  filter[op] = []
@@ -1081,7 +1081,7 @@ var catalog = {
 			// 				// 	})
 			// 				// }
 
-			// 			// cross filter. Add other selected values to the filter to create a interactive filter					
+			// 			// cross filter. Add other selected values to the filter to create a interactive filter
 			// 				const c_op		= "OR"
 			// 				const c_filter	= {}
 			// 					  c_filter[c_op] = []
@@ -1103,9 +1103,9 @@ var catalog = {
 			// 					// q_selected. Values from user already selected values
 			// 						if (form_item.q_selected.length>0) {
 			// 							for (let k = 0; k < form_item.q_selected.length; k++) {
-											
+
 			// 								const value = form_item.q_selected[k]
-											
+
 			// 								c_filter[c_op].push({
 			// 									field	: form_item.q_column,
 			// 									value	: (form_item.is_term===true) ? `'%"${value}"%'` : `'${value}'`,
@@ -1128,7 +1128,7 @@ var catalog = {
 			// 						return;
 			// 					}
 			// 				}
-						
+
 			// 			// search
 			// 				self.search_rows({
 			// 					filter		: filter,
@@ -1137,19 +1137,19 @@ var catalog = {
 			// 					order		: "name ASC" // "term ASC"
 			// 				})
 			// 				.then((api_response) => { // return results in standard format (label, value)
-									
+
 			// 					const ar_result	= []
 			// 					const len		= api_response.result.length
 			// 					for (let i = 0; i < len; i++) {
-									
+
 			// 						const item = api_response.result[i]
 
 			// 						const current_ar_value = (item.name.indexOf("[\"")===0)
 			// 							? JSON.parse(item.name)
 			// 							: [item.name]
-									
+
 			// 						for (let j = 0; j < current_ar_value.length; j++) {
-									
+
 			// 							const item_name = current_ar_value[j]
 			// 							// const item_name = item.name.replace(/[\["|"\]]/g, '')
 
@@ -1165,7 +1165,7 @@ var catalog = {
 
 			// 					// parse result
 			// 						function parse_result(ar_result, term) {
-										
+
 			// 							return ar_result.map(function(item){
 			// 								item.label	= item.label.replace(/<br>/g," ")
 			// 								item.label	= page.parse_legend_svg(item.label)
@@ -1176,7 +1176,7 @@ var catalog = {
 			// 							// for (let i = 0; i < ar_result.length; i++) {
 
 			// 							// 	const all_values = []
-											
+
 			// 							// 	const current = ar_result[i].label
 
 			// 							// 	const ar_br = current.split("<br>");
@@ -1188,9 +1188,9 @@ var catalog = {
 			// 							// 	// for (let k = 0; k < ar_bar.length; k++) {
 			// 							// 	// 	all_values.push(ar_bar[k])
 			// 							// 	// }
-												
+
 			// 							// 	for (let j = 0; j < all_values.length; j++) {
-												
+
 			// 							// 		const value = all_values[j].trim();
 
 			// 							// 		if (ar_final.indexOf(value)===-1) {
@@ -1205,7 +1205,7 @@ var catalog = {
 			// 							// 			}else{
 			// 							// 				find = true
 			// 							// 			}
-													
+
 			// 							// 			if (find) {
 			// 							// 				ar_final.push(value)
 			// 							// 			}
@@ -1216,7 +1216,7 @@ var catalog = {
 			// 							// // sort
 			// 							// 	ar_final.sort()
 
-										
+
 			// 							// return ar_final
 			// 						}
 			// 						const ar_result_final = parse_result(ar_result, term)
@@ -1226,7 +1226,7 @@ var catalog = {
 			// 						if (filter[op].length===1) {
 			// 							cache[ term ] = ar_result_final
 			// 						}
-								
+
 			// 					// debug
 			// 						if(SHOW_DEBUG===true) {
 			// 							// console.log("--- autocomplete api_response:",api_response);
@@ -1234,17 +1234,17 @@ var catalog = {
 			// 						}
 
 			// 					response(ar_result_final)
-			// 				})				
+			// 				})
 			// 	},
 			// 	// When a option is selected in list
 			// 	select: function( event, ui ) {
 			// 		// prevent set selected value to autocomplete input
-			// 		event.preventDefault();		
+			// 		event.preventDefault();
 
 			// 		// self.set_value(this, ui.item.label, ui.item.value)
 			// 		// self.add_selected_value(current_form_item, ui.item.label, ui.item.value)
-			// 		self.form.add_selected_value(current_form_item, ui.item.label, ui.item.value)				
-					
+			// 		self.form.add_selected_value(current_form_item, ui.item.label, ui.item.value)
+
 			// 		// reset input value
 			// 		this.value = ''
 
@@ -1285,7 +1285,7 @@ var catalog = {
 
 			// return true
 	},//end activate_autocomplete
-	
+
 
 
 	/**
@@ -1293,14 +1293,14 @@ var catalog = {
 	* Form submit launch search
 	*/
 	form_submit : function(form_obj) {
-		
+
 		const self = this
 
 		const form_items = self.form.form_items
 
 		const container_rows_list	= self.rows_list_container //	div_result.querySelector("#rows_list")
 		const div_result			= container_rows_list.parentNode // document.querySelector(".result")
-		
+
 		// spinner add
 			// page.add_spinner(div_result)
 			const spinner = common.create_dom_element({
@@ -1314,10 +1314,10 @@ var catalog = {
 			for (let [id, form_item] of Object.entries(form_items)) {
 				if (form_item.is_term===true) ar_is_term.push(form_item)
 			}
-		
+
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
-			
+
 			const current_group = []
 
 			const group_op = (form_item.is_term===true) ? "OR" : "AND"
@@ -1354,14 +1354,14 @@ var catalog = {
 
 					// add basic group
 						group[group_op].push(c_group)
-					
+
 					// is_term
 						// const t_group_op = 'AND'
 						// const t_group = {}
 						// 	  t_group[t_group_op] = []
 
 						// if (form_item.is_term===true) {
-							
+
 						// 	const element = {
 						// 		field	: 'parents_text',
 						// 		value	: `'%${form_item.q}%'`,
@@ -1369,14 +1369,14 @@ var catalog = {
 						// 		debug_name 	: form_item.name
 						// 	}
 						// 	t_group[t_group_op].push(element)
-						
+
 						// }else{
 
 						// 	for (let g = 0; g < ar_is_term.length; g++) {
 						// 		const is_term_item = ar_is_term[g]
 
 						// 		if (is_term_item.q.length<1) continue
-								
+
 						// 		const element = {
 						// 			field	: 'parents_text',
 						// 			value	: `'%${is_term_item.q}%'`,
@@ -1386,17 +1386,17 @@ var catalog = {
 						// 		t_group[t_group_op].push(element)
 						// 	}
 						// }
-						
+
 						// if (t_group[t_group_op].length>0) {
 						// 	group[group_op].push(t_group)
-						// }										
+						// }
 				}
 
 			// q_selected values
 				if (form_item.q_selected.length>0) {
 
 					for (let j = 0; j < form_item.q_selected.length; j++) {
-						
+
 						// value
 							const value = form_item.q_selected[j]
 
@@ -1427,14 +1427,14 @@ var catalog = {
 
 							// 	c_group[c_group_op].push(element_table)
 							// }
-							
+
 						group[group_op].push(c_group)
 					}
 				}
 
 			if (group[group_op].length>0) {
 				ar_query_elements.push(group)
-			}			
+			}
 		}
 
 		// debug
@@ -1469,10 +1469,10 @@ var catalog = {
 		// operators value
 			const operators_value = form_obj.querySelector('input[name="operators"]:checked').value;
 				// console.log("operators_value:",operators_value);
-			
+
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
-			
+
 		// search rows exec against API
 			const js_promise = self.search_rows({
 				filter			: filter,
@@ -1486,13 +1486,13 @@ var catalog = {
 				// if(SHOW_DEBUG===true) {
 					// console.log("--- form_submit response:", parsed_data)
 				// }
-	
+
 				// draw
 					// clean container_rows_list and add_spinner
 						while (container_rows_list.hasChildNodes()) {
 							container_rows_list.removeChild(container_rows_list.lastChild);
 						}
-						container_rows_list.classList.remove("loading")							
+						container_rows_list.classList.remove("loading")
 						// page.remove_spinner(div_result)
 						spinner.remove()
 
@@ -1511,7 +1511,7 @@ var catalog = {
 							// 	}
 							self.export_data_container.classList.remove("hide")
 						})
-			})		
+			})
 
 
 		return js_promise
@@ -1544,14 +1544,14 @@ var catalog = {
 				const parse_sql_filter = function(filter){
 
 					if (filter) {
-						
+
 						const op		= Object.keys(filter)[0]
 						const ar_query	= filter[op]
-						
+
 						const ar_filter = []
 						const ar_query_length = ar_query.length
 						for (let i = 0; i < ar_query_length; i++) {
-							
+
 							const item = ar_query[i]
 
 							const item_op = Object.keys(item)[0]
@@ -1561,7 +1561,7 @@ var catalog = {
 								ar_filter.push(current_filter_line)
 								continue;
 							}
-							
+
 							// const filter_line = (item.field.indexOf("AS")!==-1)
 							// 	? "" +item.field+""  +" "+ item.op +" "+ item.value
 							// 	: "`"+item.field+"`" +" "+ item.op +" "+ item.value
@@ -1572,7 +1572,7 @@ var catalog = {
 							}else{
 								filter_line = (item.field.indexOf("AS")!==-1)
 									? "" +item.field+""  +" "+ item.op +" "+ item.value
-									: "`"+item.field+"`" +" "+ item.op +" "+ item.value	
+									: "`"+item.field+"`" +" "+ item.op +" "+ item.value
 							}
 
 							ar_filter.push(filter_line)
@@ -1596,7 +1596,7 @@ var catalog = {
 					console.log("--- search_rows parsed sql_filter:")
 					console.log(sql_filter)
 				}
-			
+
 			// request
 				const request_body = {
 					dedalo_get		: 'records',
@@ -1639,7 +1639,7 @@ var catalog = {
 	*/
 	draw_rows : function(options) {
 		// console.log("draw_rows options:",options);
-		
+
 		const self = this
 
 		// options
@@ -1647,7 +1647,7 @@ var catalog = {
 			const ar_rows	= options.ar_rows || []
 
 		return new Promise(function(resolve){
-			
+
 			// pagination vars
 				const total		= self.search_options.total
 				const limit		= self.search_options.limit
@@ -1663,7 +1663,7 @@ var catalog = {
 					while (container.hasChildNodes()) {
 						container.removeChild(container.lastChild);
 					}
-					
+
 					const node_no_results_found = common.create_dom_element({
 						element_type	: 'div',
 						class_name		: "no_results_found",
@@ -1672,7 +1672,7 @@ var catalog = {
 					})
 
 					// scrool to head again
-						window.scrollTo(0, 0);					
+						window.scrollTo(0, 0);
 
 					resolve(container)
 					return false
@@ -1704,13 +1704,13 @@ var catalog = {
 					const unique_parent = ar_parent.find(item => item.section_id===parent)
 					if(typeof unique_parent==='undefined'){
 						ar_parent.push(mint_parent)
-					}					
+					}
 				}
 				// create the nodes with the unique parents: ar_parents
 				for (let i = 0; i < ar_parent.length; i++) {
 					const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
-				}		
-							
+				}
+
 				// sort rows
 					// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
 					// ar_rows.sort( (a,b) => {
@@ -1727,7 +1727,7 @@ var catalog = {
 			render_nodes()
 			.then(fragment => {
 
-				
+
 				while (container.hasChildNodes()) {
 					container.removeChild(container.lastChild);
 				}
@@ -1738,8 +1738,8 @@ var catalog = {
 				// activate images lightbox
 					setTimeout(function(){
 						const images_gallery_containers = container
-						page.activate_images_gallery(images_gallery_containers, true)	
-					}, 600)				
+						page.activate_images_gallery(images_gallery_containers, true)
+					}, 600)
 
 				resolve(container)
 			})
@@ -1791,7 +1791,7 @@ var catalog = {
 						const children_node = row_node.querySelector('.children_contanier')
 						children_node.classList.toggle("hide")
 					}
-					
+
 				}, false);
 			}
 		}
@@ -1813,7 +1813,7 @@ var catalog = {
 
 		// fix and set rows to catalog_row_fields
 			catalog_row_fields.ar_rows = ar_rows
-		
+
 		// catalog_row_fields set
 			const node = catalog_row_fields.draw_item(row_object)
 
@@ -1824,14 +1824,14 @@ var catalog = {
 
 	/**
 	* GET_CATALOG_RANGE_YEARS
-	* @return 
+	* @return
 	*/
 	get_catalog_range_years : function() {
 
 		const self = this
 
 		return new Promise(function(resolve){
-		
+
 			const ar_fields = ['id','section_id','MIN(ref_date_in + 0) AS min','MAX(ref_date_in + 0) AS max']
 
 			const request_body = {
@@ -1840,11 +1840,11 @@ var catalog = {
 				lang			: page_globals.WEB_CURRENT_LANG_CODE,
 				table			: 'catalog',
 				ar_fields		: ar_fields,
-				limit			: 0,			
+				limit			: 0,
 				count			: false,
 				offset			: 0,
 				order			: 'id ASC'
-			}			
+			}
 			data_manager.request({
 				body : request_body
 			})
@@ -1853,7 +1853,7 @@ var catalog = {
 
 				let min = 0
 				let max = 0
-				if (api_response.result) {					
+				if (api_response.result) {
 					for (let i = 0; i < api_response.result.length; i++) {
 						const row = api_response.result[i]
 						const current_min = parseInt(row.min)

@@ -73,7 +73,9 @@
     "more": "More",
     "next": "Next",
     "notes": "Notes",
-    "number": "Number & Key",
+    "number": "Number",
+    "number_abv": "nº",
+    "number_key": "Number & Key",
     "obverse": "Obverse",
     "of": "of",
     "operator": "Operator",
@@ -117,6 +119,5 @@
     "uri": "URI",
     "volume": "Volume",
     "weight": "Weight",
-    "work_in_progress": "Work in progress. Provisional numbering. Not for citation",
-    "number_abv": "nº"
+    "work_in_progress": "Work in progress. Provisional numbering. Not for citation"
 }

@@ -210,7 +210,7 @@ function form_factory() {
 						if (label_node && node_input.value.length===0) {
 							label_node.remove()
 							label_node = null
-						}						
+						}
 					})
 					form_item.node_input = node_input
 					break;
@@ -256,7 +256,7 @@ function form_factory() {
 			parent 			: group
 		})
 		radio1.setAttribute("name","operators")
-		radio1.setAttribute("value","OR")
+		radio1.setAttribute("value","$or")
 		const radio1_label = common.create_dom_element({
 			element_type	: "label",
 			text_content 	: tstring["or"] || "or",
@@ -272,7 +272,7 @@ function form_factory() {
 			parent 			: group
 		})
 		radio2.setAttribute("name","operators")
-		radio2.setAttribute("value","AND")
+		radio2.setAttribute("value","$and")
 		radio2.setAttribute("checked","checked")
 		const radio2_label = common.create_dom_element({
 			element_type	: "label",
@@ -394,19 +394,19 @@ function form_factory() {
 
 			const current_group = []
 
-			const group_op = (form_item.is_term===true) ? "OR" : "AND"
+			const group_op = (form_item.is_term===true) ? "$or" : "$and"
 			const group = {}
 				  group[group_op] = []
 
 			// q value or sql_filter
 				if ( (form_item.q.length!==0 && form_item.q!=='*') || form_item.sql_filter ) {
 
-					const c_group_op = 'AND'
+					const c_group_op = '$and'
 					const c_group = {}
 						  c_group[c_group_op] = []
 
 					// escape html strings containing single quotes inside.
-					// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'					
+					// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
 					const safe_value = (typeof form_item.q==='string' || form_item.q instanceof String)
 						? form_item.q.replace(/(')/g, "''")
 						: form_item.q // negative int numbers case like -375
@@ -455,7 +455,7 @@ function form_factory() {
 								? form_item.value_wrapper[0] + safe_value + form_item.value_wrapper[1]
 								: safe_value
 
-						const c_group_op = "AND"
+						const c_group_op = "$and"
 						const c_group = {}
 							  c_group[c_group_op] = []
 
@@ -507,7 +507,7 @@ function form_factory() {
 			const input_operators = self.node.querySelector('input[name="operators"]')
 			const operators_value = input_operators
 				? self.node.querySelector('input[name="operators"]:checked').value
-				: "AND";
+				: "$and";
 
 		// filter object
 			const filter = {}
@@ -542,7 +542,7 @@ function form_factory() {
 					const item = ar_query[i]
 
 					const item_op = Object.keys(item)[0]
-					if(item_op==="AND" || item_op==="OR") {
+					if(item_op==="$and" || item_op==="$or") {
 
 						// recursion
 						const current_filter_line = "" + self.parse_sql_filter(item, group) + ""
@@ -581,7 +581,13 @@ function form_factory() {
 						}
 				}
 
-				return ar_filter.join(" "+op+" ")
+				const boolean_op = (op === '$and')
+					? 'AND'
+					: (op === '$or')
+						? 'OR'
+						: null
+
+				return ar_filter.join(" "+boolean_op+" ")
 			  })()
 			: null
 
@@ -749,7 +755,7 @@ function form_factory() {
 				const q_column	= form_item.q_column // Like 'term'
 
 				// filter build
-					const op 	 = "AND"
+					const op 	 = "$and"
 					const filter = {}
 						  filter[op] = []
 
@@ -775,7 +781,7 @@ function form_factory() {
 
 					// cross filter. Add other selected values to the filter to create a interactive filter
 						if (cross_filter) {
-							const c_op		= "OR"
+							const c_op		= "$or"
 							const c_filter	= {}
 								  c_filter[c_op] = []
 							for (let [id, current_form_item] of Object.entries(self.form_items)) {
@@ -853,17 +859,17 @@ function form_factory() {
 						})
 						.then((api_response) => { // return results in standard format (label, value)
 							// console.log("-->autocomplete api_response:", api_response);
-							
+
 							const ar_result	= []
 
 							const result	= api_response.result
-							const len		= api_response.result.length							
-							
+							const len		= api_response.result.length
+
 							for (let i = 0; i < len; i++) {
 
 								const item = api_response.result[i]
 
-								if (!item.name || item.name.length<1) { continue; }							
+								if (!item.name || item.name.length<1) { continue; }
 
 								const current_ar_value = (item.name.indexOf("[\"")===0)
 									? JSON.parse(item.name)
@@ -884,14 +890,14 @@ function form_factory() {
 											const found = ar_result.find(el => el.value===term_name)
 											if (!found && term_name.length > 0) {
 												ar_result.push({
-													label : term_name, 
+													label : term_name,
 													value : term_name
 												})
 											}
 										}
 
 									}else{
-										
+
 										const found = ar_result.find(el => el.value===item_name)
 										if (!found && item_value.trim().length > 0) {
 											ar_result.push({

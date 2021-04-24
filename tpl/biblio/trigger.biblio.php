@@ -4,14 +4,14 @@
 */
 # CONFIG
 	$start_time=microtime(1);
-	require(dirname(dirname(__FILE__)) . '/config/config.php');	
+	require(dirname(dirname(__FILE__)) . '/config/config.php');
 	require_once(dirname(dirname(__FILE__)) .'/biblio/class.biblio.php');
-	
+
 	define('TEMPORAL_CHARS', '<i>.</i>');
 
 # TRIGGER_MANAGER. Add trigger_manager to receive and parse requested data
 	common::trigger_manager();
-	
+
 
 
 /**
@@ -38,7 +38,7 @@ function search_rows($json_data) {
 		}
 
 	// ar_query_safe
-		if (!empty($ar_query)) {			
+		if (!empty($ar_query)) {
 			$ar_query_safe = array_map(function($item){
 				// remove temporal added chars
 				$item->value = str_replace(TEMPORAL_CHARS, '', $item->value); // needed fot jquery autocomplete (grrrrr)
@@ -48,9 +48,14 @@ function search_rows($json_data) {
 			}, $ar_query);
 		}else{
 			$ar_query_safe = $ar_query;
-		}		
-		// dump($ar_query_safe, ' ar_query_safe ++ '.to_string());	
+		}
+		// dump($ar_query_safe, ' ar_query_safe ++ '.to_string());
 
+		$boolean_operator = ($operator==='$and')
+			? 'AND'
+			: (($operator==='$or')
+				? 'OR'
+				: null);
 	// search
 		$search_options = new stdClass();
 			$search_options->ar_query 	= $ar_query;
@@ -60,7 +65,7 @@ function search_rows($json_data) {
 			$search_options->count 		= $count;
 			#$search_options->total 	= $total;
 			$search_options->order 		= $order;
-			$search_options->operator 	= $operator;
+			$search_options->operator 	= $boolean_operator;
 
 		// exec search method
 			$result = biblio::search_biblio($search_options);
@@ -119,13 +124,13 @@ function search_distinct($json_data) {
 	// q
 		$q = biblio::escape_value($q);
 
-	
+
 	// safe_q_name_select
 		$safe_q_name_select = (stripos($q_name, ' AS ')!==false)
 			? $q_name
 			: '`'.$q_name.'`'; // default
 
-	// safe_q_name		
+	// safe_q_name
 		if(stripos($q_name, ' AS ')!==false) {
 			$ar_parts = explode(' AS ', $q_name);
 			#$safe_q_name = $ar_parts[0];
@@ -149,20 +154,20 @@ function search_distinct($json_data) {
 			if (!empty($dd_relations)) {
 				$options->sql_filter .= PHP_EOL.'AND dd_relations LIKE \'%"'.$dd_relations.'"%\'';
 			}
-			
-		
+
+
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($options);
 			#dump($web_data, ' web_data ++ '.to_string());
 
 	// Group by column_name
 		$ar_group = [];
-		if ($web_data->result) {		
+		if ($web_data->result) {
 			foreach ($web_data->result as $key => $row) {
 				if (isset($ar_group[$row->{$column_name}])) {
 					# Add section_id
 					$ar_group[$row->{$column_name}]->section_id[] = $row->section_id;
-					
+
 				}else{
 
 					$element = new stdClass();
@@ -187,7 +192,7 @@ function search_distinct($json_data) {
 		}
 		usort($ar_group, 'cmp');
 		// usort($ar_group, function($a, $b) {return strcmp($a->label, $b->label);});
-		
+
 
 
 	// response ok
@@ -208,5 +213,3 @@ function search_distinct($json_data) {
 
 	return (object)$response;
 }//end search_distinct
-
-

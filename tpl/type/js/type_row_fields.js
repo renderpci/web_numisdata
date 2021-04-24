@@ -1273,6 +1273,8 @@ var type_row_fields = {
 				class_name		: "references",
 				parent			: wrapper
 			})
+
+			console.log("data--------", data);
 			const ar_references = data.bibliography_data
 			if (ar_references && ar_references.length>0 && typeof ar_references[0]==='object') {
 				const biblio_node = self.draw_bibliographic_reference(ar_references)

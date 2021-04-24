@@ -1320,14 +1320,14 @@ var catalog = {
 
 			const current_group = []
 
-			const group_op = (form_item.is_term===true) ? "OR" : "AND"
+			const group_op = (form_item.is_term===true) ? "$or" : "$and"
 			const group = {}
 				  group[group_op] = []
 
 			// q value
 				if (form_item.q.length>0) {
 
-					const c_group_op = 'AND'
+					const c_group_op = '$and'
 					const c_group = {}
 						  c_group[c_group_op] = []
 
@@ -1404,7 +1404,7 @@ var catalog = {
 							// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
 							const safe_value = value.replace(/(')/g, "''")
 
-						const c_group_op = "AND"
+						const c_group_op = "$and"
 						const c_group = {}
 							  c_group[c_group_op] = []
 
@@ -1440,7 +1440,7 @@ var catalog = {
 		// debug
 			if(SHOW_DEBUG===true) {
 				// console.log("self.form_items:",self.form_items);
-				// console.log("ar_query_elements:",ar_query_elements);
+				console.log("ar_query_elements:",ar_query_elements);
 			}
 
 		// empty form case
@@ -1555,7 +1555,7 @@ var catalog = {
 							const item = ar_query[i]
 
 							const item_op = Object.keys(item)[0]
-							if(item_op==="AND" || item_op==="OR") {
+							if(item_op==="$and" || item_op==="$or") {
 
 								const current_filter_line = "" + parse_sql_filter(item) + ""
 								ar_filter.push(current_filter_line)
@@ -1582,7 +1582,14 @@ var catalog = {
 									group.push(item.group)
 								}
 						}
-						return ar_filter.join(" "+op+" ")
+
+						const boolean_op = (op === '$and')
+							? 'AND'
+							: (op === '$or')
+								? 'OR'
+								: null
+
+						return ar_filter.join(" "+boolean_op+" ")
 					}
 
 					return null

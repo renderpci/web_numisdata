@@ -182,7 +182,7 @@ var biblio =  {
 								const found = result_final.find(el => el.value===term_name)
 								if (!found && term_name.length > 0) {
 									result_final.push({
-										label : term_name, 
+										label : term_name,
 										value : term_name
 									})
 								}
@@ -192,7 +192,7 @@ var biblio =  {
 						const ar_ordered_result	= page.sort_array_by_property(result_final, "value")
 						const ar_filtered_result= (term.length!=0) ? page.filter_drop_down_list(ar_ordered_result, term) : ar_ordered_result
 						const ar_drow_down_list	= ar_filtered_result.slice(0,30)
-	
+
 						// replace
 						result_final = ar_drow_down_list
 
@@ -204,7 +204,7 @@ var biblio =  {
 						})
 
 					}else{
-															
+
 						result_final = response_data.result
 					}
 
@@ -371,7 +371,7 @@ var biblio =  {
 			count		: options.count || false,
 			total		: options.total || false,
 			order		: options.order || 'section_id ASC',
-			operator	: options.operator || 'OR'
+			operator	: options.operator || '$or'
 		}
 
 		// debug

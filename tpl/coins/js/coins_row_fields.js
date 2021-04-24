@@ -18,9 +18,9 @@ var coins_row_fields = {
 	draw_item : function(row) {
 
 		const self = this
-		
+
 		const fragment = new DocumentFragment()
-		
+
 		// wrapper
 			const type_wrapper = common.create_dom_element({
 				element_type	: "div",
@@ -41,7 +41,7 @@ var coins_row_fields = {
 				element_type 	: "div",
 				class_name		: "info_container",
 				parent 			: wrapper
-			})	
+			})
 
 			//type
 
@@ -49,7 +49,7 @@ var coins_row_fields = {
 
 				const type = row.type
 				const type_id = JSON.parse(row.type_data[0])
-				console.log(row.type_data[0])
+
 				const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_id
 				const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
 
@@ -92,7 +92,7 @@ var coins_row_fields = {
 					parent 			: data_cont
 				})
 			}
-			
+
 			//mint
 			const mint_line = common.create_dom_element({
 				element_type	: "div",
@@ -124,7 +124,7 @@ var coins_row_fields = {
 			})
 
 			//ID
-			
+
 			common.create_dom_element({
 				element_type	: "span",
 				inner_html  	: " | ID: "+row.section_id,
@@ -183,7 +183,7 @@ var coins_row_fields = {
 			//countermark obverse
 
 			if (row.countermark_obverse) {
-				
+
 				contuermarks_wrapper.appendChild(
 					page.render_legend({
 						value : row.countermark_obverse,
@@ -203,7 +203,7 @@ var coins_row_fields = {
 
 			//countermark reverse
 			if (row.countermark_reverse) {
-				
+
 				contuermarks_wrapper.appendChild(
 					page.render_legend({
 						value : row.countermark_reverse,
@@ -238,19 +238,19 @@ var coins_row_fields = {
 			var hoard_line = ""
 
 			if (row.hoard && row.hoard.length>0){
-				hoard_line = row.hoard		
+				hoard_line = row.hoard
 			}
 
 			//findspot place
 			if (row.findspot_place && row.findspot_place.length>0){
-				hoard_line === "" 
+				hoard_line === ""
 					? hoard_line = row.findspot_place
 					: hoard_line += " | "+row.findspot_place
 			}
 
 			//findspot date
 			if (row.find_date && row.find_date.length>0){
-				hoard_line === "" 
+				hoard_line === ""
 					? hoard_line = row.find_date
 					: hoard_line += " | "+row.find_date
 			}
@@ -276,7 +276,7 @@ var coins_row_fields = {
 
 
 
-		//IMAGE BLOCK	
+		//IMAGE BLOCK
 			const image_container = common.create_dom_element({
 				element_type 	: "div",
 				class_name		: "img_container",
@@ -299,8 +299,8 @@ var coins_row_fields = {
 				parent			: img_link_ob
 			})
 			image_obverse.hires = row.image_obverse
-			image_obverse.addEventListener("load", page.load_hires)			
-		
+			image_obverse.addEventListener("load", page.load_hires)
+
 		// image_reverse
 
 			const img_link_re = common.create_dom_element({
@@ -329,7 +329,7 @@ var coins_row_fields = {
 		return fragment
 	}//end draw_item
 
-		
+
 
 
 }//end coins_row_fields

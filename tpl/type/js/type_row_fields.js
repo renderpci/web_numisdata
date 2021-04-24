@@ -1503,7 +1503,7 @@ var type_row_fields = {
 						continue;
 					}
 
-					if (hoards_solved.find(section_id => section_id===hoard.section_id)) {
+					if (hoards_solved.find(section_id => section_id==hoard.section_id)) {
 						continue;
 					}
 
@@ -1599,7 +1599,7 @@ var type_row_fields = {
 						continue;
 					}
 
-					if (findspots_solved.find(section_id => section_id===findspot.section_id)) {
+					if (findspots_solved.find(section_id => section_id==findspot.section_id)) {
 						continue;
 					}
 

@@ -1701,14 +1701,14 @@ var catalog = {
 						? ar_mints[i].parent[0]
 						: null
 					const mint_parent = parent
-						? ar_rows.find(item => item.section_id===parent)
+						? ar_rows.find(item => item.section_id==parent)
 						: null
 					if(!mint_parent){
 						console.warn("mint don't have public parent:",ar_mints[i]);
 						continue
 					}
 					// check if the parent is inside the ar_aprents, if not push inside else nothing
-					const unique_parent = ar_parent.find(item => item.section_id===parent)
+					const unique_parent = ar_parent.find(item => item.section_id==parent)
 					if(typeof unique_parent==='undefined'){
 						ar_parent.push(mint_parent)
 					}
@@ -1781,7 +1781,7 @@ var catalog = {
 
 		const self = this
 
-		const row_object 	= ar_rows.find(item => item.section_id===section_id)
+		const row_object 	= ar_rows.find(item => item.section_id==section_id)
 		if (row_object) {
 			const row_node 	= self.render_rows(row_object, ar_rows)
 			parent_node.appendChild( row_node )

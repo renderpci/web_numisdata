@@ -690,17 +690,17 @@ var map = {
 			switch(map_row.table) {
 				case 'mints':
 					found_coins = coin_rows.filter(function(el){
-						return '["'+map_row.ref_section_id+'"]'===el.mint_data
+						return '["'+map_row.ref_section_id+'"]'==el.mint_data
 					})
 					break;
 				case 'hoards':
 					found_coins = coin_rows.filter(function(el){
-						return '["'+map_row.ref_section_id+'"]'===el.hoard_data
+						return '["'+map_row.ref_section_id+'"]'==el.hoard_data
 					})
 					break;
 				case 'findspots':
 					found_coins = coin_rows.filter(function(el){
-						return '["'+map_row.ref_section_id+'"]'===el.findspot_data
+						return '["'+map_row.ref_section_id+'"]'==el.findspot_data
 					})
 					break;
 			}
@@ -762,7 +762,7 @@ var map = {
 
 			// mint-findspot-hoard row data
 				const global_data_item = self.current_map_global_data.find(function(el){
-					return el.section_id===item.term_id
+					return el.section_id==item.term_id
 				})
 				if (!global_data_item || !global_data_item.types_list || global_data_item.types_list.length<1) {
 					console.warn("Ignored invalid item. Not found item or item.types_list in global_data! ", item.name, item);
@@ -935,7 +935,7 @@ var map = {
 				for (let i = coin_references.length - 1; i >= 0; i--) {
 					const coin_section_id = coin_references[i]
 					const found_coin_row = coins_rows.find(function(el){
-						return el.section_id===coin_section_id
+						return el.section_id==coin_section_id
 					})
 					if (found_coin_row) {
 						ar_found_coin_row.push(found_coin_row)

@@ -718,7 +718,7 @@ class page {
 			}
 
 			$item = array_find($menu_tree_rows, function($el) use($section_id){
-				return $el->section_id===$section_id;
+				return $el->section_id==$section_id;
 			});
 			if ($item && $item->menu==='yes') {
 				$found_child_with_active_menu = true;

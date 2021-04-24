@@ -220,7 +220,7 @@ span.form_input_label {
   left: 0;
   bottom: -1px;
   z-index: 999;
-  background-color: rgb(255 255 255 / 78%);
+  background-color: rgba(255, 255, 255, 0.78);
   padding: 0.5em;
   padding-bottom: 0.25em;
   padding-top: 0.25em;
@@ -721,6 +721,12 @@ body {
   letter-spacing: 0.5px;
   font-weight: 200;
 }
+a {
+  color: #b7996d;
+}
+a:hover {
+  color: #80461f !important;
+}
 .content p strong {
   font-size: 1.25em;
 }
@@ -878,7 +884,7 @@ nav ul {
   font-variant: small-caps;
   letter-spacing: 0.065em;
   font-size: 2.25em;
-  color: #B7996D;
+  color: #b7996d;
   padding-left: 0.5em;
 }
 @media screen and (max-width: 736px) {
@@ -1306,8 +1312,7 @@ a.image_link img {
   padding-left: 0;
   padding-top: 0;
   font-weight: 600;
-  color: #b7996d;
-  font-size: 1.2em;
+  @color _gold_logo font-size: 1.2em;
 }
 .search_icon {
   height: 1em;

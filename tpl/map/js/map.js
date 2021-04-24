@@ -25,7 +25,7 @@ var map = {
 
 		// current_map_global_data. Current filtered records from table 'map_global'
 		current_map_global_data : null,
-		
+
 		// global_data (direct rows from ddbb)
 		global_data : null,
 
@@ -49,7 +49,7 @@ var map = {
 	set_up : function(options) {
 		if(SHOW_DEBUG===true) {
 			// console.log("--> map set_up options:",options);
-		}		
+		}
 
 		const self = this
 
@@ -72,7 +72,7 @@ var map = {
 					url		: '//dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
 					options	: {
 						maxZoom: 11
-					}					
+					}
 				},
 				{
 					name	: "OSM",
@@ -139,7 +139,7 @@ var map = {
 						const map_points = self.current_map_global_data.filter(function(el){return el.item!==null}).map(function(el){
 							return el.item
 						})
-					
+
 					// initial map with all points without filters
 						self.map_factory_instance.parse_data_to_map(map_points)
 						.then(function(){
@@ -164,7 +164,7 @@ var map = {
 			show_search_button.addEventListener("mousedown", function(){
 
 				let new_showing_search
-				if (self.map_config.showing_search===true) {					
+				if (self.map_config.showing_search===true) {
 					form_node.classList.add("hide")
 					new_showing_search = false
 				}else{
@@ -190,7 +190,7 @@ var map = {
 					? options.item.group[0]
 					: null
 				if (selected_element) {
-					
+
 					// clean container
 						while (self.rows_container.hasChildNodes()) {
 							self.rows_container.removeChild(self.rows_container.lastChild);
@@ -201,7 +201,7 @@ var map = {
 							class_name		: "spinner",
 							parent			: self.rows_container
 						})
-					
+
 					// render related types list
 						self.load_map_selection_info(selected_element)
 						.then(function(response){
@@ -222,13 +222,13 @@ var map = {
 										const images_gallery_containers = self.rows_container
 										page.activate_images_gallery(images_gallery_containers, true)
 									},600)
-									
+
 
 							}else{
 								// page.remove_spinner(self.rows_container)
 								spinner.remove()
 							}
-							
+
 
 							// scroll map at top
 								self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
@@ -247,12 +247,12 @@ var map = {
 	/**
 	* SET_CONFIG
 	* @param options object (optional)
-	* @return 
+	* @return
 	*/
 	set_config : function(options) {
 
 		const self = this
-		
+
 		// cookie
 		const map_config = localStorage.getItem('map_config');
 		if (map_config) {
@@ -274,7 +274,7 @@ var map = {
 				self.map_config[key] = options[key]
 			}
 			localStorage.setItem('map_config', JSON.stringify(self.map_config));
-		}		
+		}
 		// console.log("--> self.map_config [final]:", self.map_config);
 
 		return self.map_config
@@ -290,7 +290,7 @@ var map = {
 		const self = this
 
 		const fragment = new DocumentFragment()
-		
+
 		const form_row = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "form-row fields",
@@ -301,8 +301,8 @@ var map = {
 			element_type	: "div",
 			class_name		: "golden-separator",
 			parent			: form_row
-		})		
-		
+		})
+
 		// section_id
 			self.form.item_factory({
 				id			: "section_id",
@@ -463,7 +463,7 @@ var map = {
 					const range_slider_value_out	= node_input.parentNode.querySelector('#range_slider_out')
 
 					function set_up_slider() {
-						
+
 						// compute range years
 						self.get_range_years()
 						.then(function(range_data){
@@ -519,7 +519,7 @@ var map = {
 					}
 
 					// initial_map_loaded event (triggered on initial map data is ready)
-					event_manager.subscribe('initial_map_loaded', set_up_slider)									
+					event_manager.subscribe('initial_map_loaded', set_up_slider)
 				}
 			})
 
@@ -546,7 +546,7 @@ var map = {
 			// fragment.appendChild( forms.build_operators_node() )
 			const operators_node = self.form.build_operators_node()
 			fragment.appendChild( operators_node )
-		
+
 
 		// form_node
 			self.form.node = common.create_dom_element({
@@ -556,7 +556,7 @@ var map = {
 			})
 			self.form.node.appendChild(fragment)
 
-		
+
 		return self.form.node
 	},//end render_form
 
@@ -568,7 +568,7 @@ var map = {
 	form_submit : function() {
 
 		const self = this
-		
+
 		const form_node = self.form.node
 		if (!form_node) {
 			return new Promise(function(resolve){
@@ -593,10 +593,10 @@ var map = {
 		return new Promise(function(resolve){
 
 			const ar_fields = ['section_id','mint_data','hoard_data','findspot_data','type_data']
-			
+
 			// sql_filter
 				const filter = self.form.build_filter()
-				
+
 				// parse_sql_filter
 				const group			= []
 				const parsed_filter	= self.form.parse_sql_filter(filter, group)
@@ -606,7 +606,7 @@ var map = {
 				if(SHOW_DEBUG===true) {
 					console.log("-> coins form_submit filter:",filter);
 					console.log("-> coins form_submit sql_filter:",sql_filter);
-				}					
+				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
 				// 		// loading ends
@@ -615,7 +615,7 @@ var map = {
 				// 		resolve(false)
 				// 	})
 				// }
-			
+
 			data_manager.request({
 				body : {
 					dedalo_get		: 'records',
@@ -631,7 +631,7 @@ var map = {
 				}
 			})
 			.then(function(api_response){
-				console.log("--------------- form_submit api_response:",api_response); 
+				console.log("--------------- form_submit api_response:",api_response);
 
 				if (api_response.result) {
 
@@ -670,22 +670,22 @@ var map = {
 	/**
 	* DISTRIBUTE_coins
 	* Re-built the map_global_data using given coins
-	* @return 
+	* @return
 	*/
 	distribute_coins : function(coin_rows) {
-		
+
 		const self = this
 
 		if (!coin_rows) {
 			return false
 		}
-		
+
 		const new_map_global_data = []
 		const master_map_global_data_len = self.master_map_global_data.length
 		for (let i = 0; i < master_map_global_data_len; i++) {
 
 			const map_row = self.master_map_global_data[i]
-			
+
 			let found_coins = []
 			switch(map_row.table) {
 				case 'mints':
@@ -704,7 +704,7 @@ var map = {
 					})
 					break;
 			}
-			
+
 			if (found_coins.length<1) continue; // ignore
 
 			// coins_list
@@ -731,7 +731,7 @@ var map = {
 					  new_row.types_list = types_list
 
 				const coins_list_total = new_row.coins_list ? new_row.coins_list.length : 0;
-				const types_list_total = new_row.types_list ? new_row.types_list.length : 0;	
+				const types_list_total = new_row.types_list ? new_row.types_list.length : 0;
 					console.log("new_row:",new_row);
 				// item data update
 					const description = (tstring.coins || 'Coins') + ' ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ' ' + types_list_total
@@ -752,26 +752,26 @@ var map = {
 
 	/**
 	* LOAD_MAP_SELECTION_INFO
-	* @return 
+	* @return
 	*/
 	load_map_selection_info : function(item) {
 
 		const self = this
 
-		return new Promise(function(resolve){				
+		return new Promise(function(resolve){
 
 			// mint-findspot-hoard row data
 				const global_data_item = self.current_map_global_data.find(function(el){
 					return el.section_id===item.term_id
 				})
 				if (!global_data_item || !global_data_item.types_list || global_data_item.types_list.length<1) {
-					console.warn("Ignored invalid item. Not found item or item.types_list in global_data! ", item.name, item);					
+					console.warn("Ignored invalid item. Not found item or item.types_list in global_data! ", item.name, item);
 					resolve(false)
 					return false;
 				}
 				const coins_list	= global_data_item.coins_list
 				const types_list	= global_data_item.types_list
-			
+
 			const ar_calls = []
 
 			// search types in catalog using types list
@@ -781,7 +781,7 @@ var map = {
 				const sql_filter = 'term_table=\'types\' AND term_data IN(' + ar_type_id.join(",") + ') AND coin_references IS NOT NULL'
 
 				const catalog_ar_fields = ['*']
-				
+
 				const catalog_request_options = {
 					dedalo_get	: 'records',
 					db_name		: page_globals.WEB_DB,
@@ -798,7 +798,7 @@ var map = {
 					id		: 'catalog_request',
 					options	: catalog_request_options
 				})
-				
+
 			// search coins
 				const coins_request_options = {
 					dedalo_get	: 'records',
@@ -810,7 +810,10 @@ var map = {
 					limit		: 0,
 					count		: false,
 					offset		: 0,
-					order		: null
+					order		: null,
+					resolve_portals_custom	: {
+						"bibliography_data"				: "bibliographic_references"
+					}
 				}
 				ar_calls.push({
 					id		: 'coins_request',
@@ -824,14 +827,14 @@ var map = {
 						ar_calls	: ar_calls
 					}
 				})
-				.then((api_response)=>{				
+				.then((api_response)=>{
 					console.log("-> load_map_selection_info api_response:", api_response);
 
 					const catalog_response = api_response.result.find(function(el){
 						return el.id==='catalog_request'
 					})
 					const types_rows = page.parse_catalog_data(catalog_response.result)
-					
+
 					const coins_response = api_response.result.find(function(el){
 						return el.id==='coins_request'
 					})
@@ -853,8 +856,8 @@ var map = {
 								}
 							},
 							export_data_parser	: page.export_parse_map_data
-						})	
-					
+						})
+
 					resolve({
 						global_data_item	: global_data_item,
 						types_rows			: types_rows,
@@ -875,7 +878,7 @@ var map = {
 	* @return DOM node
 	*/
 	render_types_list : function(options) {
-		
+
 		const global_data_item	= options.global_data_item
 		const types_rows		= options.types_rows
 		const coins_rows		= options.coins_rows
@@ -927,7 +930,7 @@ var map = {
 			function cross_coins(coins_rows, coin_references) {
 				// console.log("coins_rows:",coins_rows);
 				// console.log("coin_references:",coin_references);
-				
+
 				const ar_found_coin_row = []
 				for (let i = coin_references.length - 1; i >= 0; i--) {
 					const coin_section_id = coin_references[i]
@@ -956,16 +959,16 @@ var map = {
 					// type node
 						const type_row_node = catalog_row_fields.draw_item(type_row)
 						types_wrap.appendChild(type_row_node)
-						
+
 					// debug info
 						// if(SHOW_DEBUG===true) {
 						// 	let t = ''
 						// 	t +='-global_data_item types_list ('+info.types_list.length+'): ' + JSON.stringify(info.types_list, null, 2)
-						// 	t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)							
+						// 	t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)
 						// 	t +='<br>-Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
-						// 	t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) ) 
+						// 	t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) )
 						// 	t +='<br>-Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
-							
+
 						// 	const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
 						// 	common.create_dom_element({
 						// 		element_type	: "div",
@@ -1031,7 +1034,7 @@ var map = {
 			// debug info
 				if(SHOW_DEBUG===true) {
 					let t = 'found types '+ JSON.stringify(types_rows, null, 2)
-					t +='<br>found coins '+ JSON.stringify(coins_rows.map(el=>el.section_id), null, 2)				
+					t +='<br>found coins '+ JSON.stringify(coins_rows.map(el=>el.section_id), null, 2)
 					t += '<br>map_global <pre>' + JSON.stringify(global_data_item, null, 3) + '</pre>'
 					const info = common.create_dom_element({
 						element_type	: "div",
@@ -1049,14 +1052,14 @@ var map = {
 
 	/**
 	* GET_RANGE_YEARS
-	* @return 
+	* @return
 	*/
 	get_range_years : function() {
 
 		const self = this
 
 		return new Promise(function(resolve){
-		
+
 			const ar_fields = ['id','section_id','MIN(date_in + 0) AS min','MAX(date_in + 0) AS max']
 
 			const request_body = {
@@ -1065,11 +1068,11 @@ var map = {
 				lang			: page_globals.WEB_CURRENT_LANG_CODE,
 				table			: 'coins',
 				ar_fields		: ar_fields,
-				limit			: 0,			
+				limit			: 0,
 				count			: false,
 				offset			: 0,
 				order			: 'id ASC'
-			}			
+			}
 			data_manager.request({
 				body : request_body
 			})
@@ -1078,7 +1081,7 @@ var map = {
 
 				let min = 0
 				let max = 0
-				if (api_response.result) {					
+				if (api_response.result) {
 					for (let i = 0; i < api_response.result.length; i++) {
 						const row = api_response.result[i]
 						const current_min = parseInt(row.min)
@@ -1101,7 +1104,7 @@ var map = {
 			})
 		})
 	},//end get_range_years
-	
 
-	
+
+
 }//end coins

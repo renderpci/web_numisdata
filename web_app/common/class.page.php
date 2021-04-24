@@ -1689,7 +1689,7 @@ class page {
 	
 		// filter menu tree for parent $term_id (and include root parent when is $term_id)
 			$items = array_filter($menu_elements,function($item) use($term_id) {
-				return ($item->parent===$term_id); //  || ($term_id===WEB_MENU_PARENT && $item->term_id===WEB_MENU_PARENT)
+				return ($item->parent==$term_id); //  || ($term_id===WEB_MENU_PARENT && $item->term_id===WEB_MENU_PARENT)
 			});
 
 		// sort by norder asc

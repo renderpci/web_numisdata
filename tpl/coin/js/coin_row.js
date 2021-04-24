@@ -202,16 +202,16 @@ var coin_row = {
 
 		// MINT + MINT NUMBER + TYPE
 			//label
-			const label_mint 		= tstring.mint || "Mint"
-			const label_number 		= tstring.number_abv || "nº"
+			// const label_mint 		= tstring.mint || "Mint"
+			// const label_number 		= tstring.number_abv || "nº"
 			const label_type_name 	= tstring.type || "Type"
 
 			const label_type = label_type_name
-								+ ': '+ label_mint.toLowerCase()
-								+' + '+label_number.toLowerCase()
-								+ ' ' +label_mint.toLowerCase()
-								+ ' / ' +label_number.toLowerCase()
-								+' ' +label_type_name.toLowerCase();
+								// + ': '+ label_mint.toLowerCase()
+								// +' + '+label_number.toLowerCase()
+								// + ' ' +label_mint.toLowerCase()
+								// + ' / ' +label_number.toLowerCase()
+								// +' ' +label_type_name.toLowerCase();
 			//value
 			const mint = (row.mint)
 				? row.mint

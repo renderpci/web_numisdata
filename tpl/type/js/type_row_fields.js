@@ -1259,10 +1259,10 @@ var type_row_fields = {
 		// public_info
 			if (data.public_info && data.public_info.length>0){
 
-				const label = (tstring.public_info || "Public_info") + ": "
+				// const label = (tstring.public_info || "Public_info") + ": "
 				common.create_dom_element({
 					element_type	: "div",
-					inner_html		: label + data.public_info,
+					inner_html		: data.public_info, //label + data.public_info,
 					parent			: wrapper
 				})
 			}

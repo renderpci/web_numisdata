@@ -301,7 +301,7 @@ var mint = {
 
 				// exclude non mint children (to parents)
 					const is_mint_child = row.parents
-						? row.parents.find(el => el===mint_section_id)
+						? row.parents.find(el => el==mint_section_id)
 						: false
 					if (!is_mint_child) {
 						console.log("Excluded row:",row);

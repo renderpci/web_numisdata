@@ -33,9 +33,9 @@ var mint = {
 			self.export_data_container.appendChild(export_data_buttons)
 			self.export_data_container.classList.add('hide')
 
-		
+
 		if (self.section_id) {
-			
+
 			// search by section_id
 			self.get_row_data({
 				section_id : self.section_id
@@ -45,31 +45,32 @@ var mint = {
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
+					const mint_data = page.parse_mint_data(mint.result[0])
+
 					self.draw_row({
 						target	: document.getElementById('row_detail'),
-						ar_rows	: mint.result
+						ar_rows	: [mint_data]
 					})
 
 				// map draw
 					if (typeof mint.result[0]!=="undefined") {
 
-						const mint_data = page.parse_mint_data(mint.result[0])						
 						if (mint_data.georef_geojson) {
 							self.draw_map({
 								mint_map_data	: mint_data.georef_geojson,
 								mint_popup_data	: {
 									section_id	: mint_data.section_id,
 									title		: mint_data.name,
-									description	: mint_data.history.trim()
+									description	: mint_data.public_info.trim()
 								},
-								place_data		: mint_data.place_data 
+								place_data		: mint_data.place_data
 							})
 						}
 					}
 
 				// types draw
 					const mint_catalog = response.result.find( el => el.id==='mint_catalog')
-					if (mint_catalog.result) {						
+					if (mint_catalog.result) {
 						const _mint_catalog = mint_catalog.result.find(el => el.term_table==='mints')
 						if (_mint_catalog && _mint_catalog.section_id) {
 							self.get_types_data2({
@@ -154,9 +155,12 @@ var mint = {
 						'name',
 						'place_data',
 						'place',
-						'history',
+						'public_info',
 						'bibliography_data',
 						'map',
+						'uri',
+						'indexation',
+						'indexation_data',
 						'georef_geojson'
 					],
 					sql_filter				: "section_id = " + parseInt(section_id),
@@ -216,14 +220,14 @@ var mint = {
 
 	/**
 	* GET_TYPES_DATA2
-	* @return 
+	* @return
 	*/
 	get_types_data2 : function(options) {
 
 		const self = this
 
 		const section_id = options.section_id
-				
+
 		return new Promise(function(resolve){
 
 			// request
@@ -252,7 +256,7 @@ var mint = {
 				const parsed_data = response.result
 					? page.parse_catalog_data(response.result)
 					: null
-				
+
 				resolve(parsed_data)
 			})
 		})
@@ -262,10 +266,10 @@ var mint = {
 
 	/**
 	* DRAW_TYPES2
-	* @return 
+	* @return
 	*/
 	draw_types2 : function(options) {
-		
+
 		const self = this
 
 		// options
@@ -273,8 +277,8 @@ var mint = {
 			const mint_section_id	= options.mint_section_id
 
 
-		const fragment = new DocumentFragment()	
-		
+		const fragment = new DocumentFragment()
+
 		// label
 			const typesLabel = tstring.coin_production || "Coin production"
 			const lineSeparator = common.create_dom_element({
@@ -288,16 +292,16 @@ var mint = {
 				text_content 	: typesLabel,
 				parent 			: lineSeparator
 			})
-		
+
 		// create all nodes. Add in parallel to fragment and ar_nodes
-			// const fragment = new DocumentFragment()	
+			// const fragment = new DocumentFragment()
 			const ar_nodes = []
 			for (let i = 0; i < ar_rows.length; i++) {
-				
+
 				const row = ar_rows[i]
 
 				// exclude self mint
-					if (row.section_id==mint_section_id) continue; 
+					if (row.section_id==mint_section_id) continue;
 
 				// exclude non mint children (to parents)
 					const is_mint_child = row.parents
@@ -307,7 +311,7 @@ var mint = {
 						console.log("Excluded row:",row);
 						continue;
 					}
-						
+
 				// append
 					const node = mint_row.draw_type_item(row)
 					if (node) {
@@ -316,10 +320,10 @@ var mint = {
 					}
 			}
 
-		// hierarchize nodes. 
+		// hierarchize nodes.
 		// (!) Note that changes in ar_nodes items are propagated to fragment becase the nodes are shared for both
 			for (let i = 0; i < ar_nodes.length; i++) {
-				const node = ar_nodes[i]				
+				const node = ar_nodes[i]
 				if (node.parent) {
 					const parent_node = ar_nodes.find(function(el){
 						return el.section_id==node.parent
@@ -348,7 +352,7 @@ var mint = {
 		// 	const self = this
 
 		// 	const section_id = options.section_id
-			
+
 		// 	return new Promise(function(resolve){
 		// 		// request
 		// 			const js_promise = data_manager.request({
@@ -363,7 +367,7 @@ var mint = {
 		// 					order		: "norder ASC",
 		// 					sql_filter	: "(term_table='types' OR term_table='ts_numismatic_group' OR term_table='ts_period') AND parents LIKE '%\"" + parseInt(section_id) + "\"%'",
 		// 					resolve_portals_custom	: {
-		// 						"parent" : "catalog" 
+		// 						"parent" : "catalog"
 		// 						//"children"	: "catalog"
 		// 					}
 
@@ -384,10 +388,10 @@ var mint = {
 		// 			})
 		// 			.then(function(response){
 		// 				console.log("response:",response);
-						
-		// 				const types_data = []					
+
+		// 				const types_data = []
 		// 				if (response.result && response.result.length>0) {
-							
+
 		// 					for (let i = 0; i < response.result.length; i++) {
 
 		// 						const row = {
@@ -442,7 +446,7 @@ var mint = {
 		// 		let currentObject = mint_parent_group[i]
 		//  		currentObject.children = {}
 		//  		currentObject.groups = []
-		//  		parsedData.children.push(currentObject)		 	
+		//  		parsedData.children.push(currentObject)
 		// 	}
 
 		// 	let numis_group_objects = data.filter(obj => obj.term_table ===  'ts_numismatic_group')
@@ -455,7 +459,7 @@ var mint = {
 		// 			const currentObj = numis_group_objects[i]
 		// 			finded = false;
 		// 			const parentsIds = JSON.parse(currentObj.parents)
-		// 			for (let z=0;z<parentsIds.length;z++){	
+		// 			for (let z=0;z<parentsIds.length;z++){
 		// 				putObjectinArray(parsedData.children,currentObj,parentsIds[z],parsedData)
 		// 				if(finded){
 		// 					numis_group_objects.splice(i,1)
@@ -465,8 +469,8 @@ var mint = {
 		// 		}
 		// 	}
 
-			
-		// 	let types_objects = data.filter(obj => (obj.term_table ===  'types' && obj.parent[0].term_table !==  'types'))	
+
+		// 	let types_objects = data.filter(obj => (obj.term_table ===  'types' && obj.parent[0].term_table !==  'types'))
 		// 	finded = false; //set true if recursive function found seeked object
 
 		// 	while (types_objects.length>0){
@@ -506,15 +510,15 @@ var mint = {
 
 
 		// 	// let period_parent_group = data.filter(obj => obj.parent[0].term_table ===  'ts_period')
-			
+
 		// 	// for (let i=0;i<period_parent_group.length;i++){
 		// 	// 	const currentObj = period_parent_group[i]
 		// 	// 	const currentObjParentId = currentObj.parent[0].section_id
-			
+
 		// 	// 	const parsedDataIndex = parsedData.children.findIndex(obj => obj.section_id == currentObjParentId)
-				
+
 		// 	// 	if (parsedDataIndex>-1){
-		// 	// 		let children = parsedData.children[parsedDataIndex].children 
+		// 	// 		let children = parsedData.children[parsedDataIndex].children
 		// 	// 		if (children != null && children.length>0){
 		// 	// 			parsedData.children[parsedDataIndex].children.push(currentObj)
 		// 	// 		} else {
@@ -524,7 +528,7 @@ var mint = {
 		// 	// 	}
 		// 	// }
 
-		// 	// let numismatic_parent_group = data.filter(obj => obj.parent[0].term_table==='ts_numismatic_group')			
+		// 	// let numismatic_parent_group = data.filter(obj => obj.parent[0].term_table==='ts_numismatic_group')
 
 		// 	// let finded = false; //set true if recursive function found seeked object
 
@@ -542,11 +546,11 @@ var mint = {
 		// 	// }
 
 		// 	// let types_parent_group = data.filter(obj => obj.parent[0].term_table ===  'types')
-			
-			
+
+
 		// 	// let creators_parent_group = data.filter(obj => obj.parent[0].term_table ===  'creators')
 		// 	// console.log(creators_parent_group)
-			
+
 
 		// 	// finded = false;
 
@@ -566,7 +570,7 @@ var mint = {
 		// 	// console.log("types_parent_group:",types_parent_group); return
 
 		// 	//Recursive function that create a multidimensional array whith data hyerarchy
-			
+
 		// 	function putObjectinArray (arr,obj,parentId,item){
 
 		// 		if (item.section_id == parentId){
@@ -579,8 +583,8 @@ var mint = {
 		// 			}
 		// 		}
 
-		// 		if (!Array.isArray(arr)){	
-		// 			return 
+		// 		if (!Array.isArray(arr)){
+		// 			return
 		// 		}
 
 		// 		arr.forEach( function(item,index){
@@ -654,15 +658,15 @@ var mint = {
 					class_name		: "line-tittle-wrap",
 					parent 			: line
 				})
-		
+
 				let name = row_object.name
-				
+
 				common.create_dom_element({
 					element_type 	: "div",
 					class_name 		: "line-tittle golden-color",
 					text_content 	: name,
 					parent 			: lineTittleWrap
-				})			
+				})
 
 			// place
 				if (row_object.place && row_object.place.length>0) {
@@ -686,20 +690,19 @@ var mint = {
 
 			let block_text_length = 0; //save block text length to create expandable block if necessary
 
-		// history
-			if (row_object.history && row_object.history.length>0) {
+		// public_info
+			if (row_object.public_info && row_object.public_info.length>0) {
 
-				const history = row_object.history
-				block_text_length += history.length;
+				const public_info = row_object.public_info
+				block_text_length += public_info.length;
 
-				const history_block = common.create_dom_element({
+				const public_info_block = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_text_block",
-					inner_html		: history,
+					inner_html		: public_info,
 					parent			: comments_wrap
 				})
 			}
-
 		// numismatic_comments
 			// if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
 
@@ -713,7 +716,7 @@ var mint = {
 			// 		parent			: comments_wrap
 			// 	})
 
-				
+
 			// }
 
 			if (block_text_length > 220) {createExpandableBlock(comments_wrap,line);}
@@ -733,7 +736,7 @@ var mint = {
 					text_content	: tstring.bibliographic_references || "Bibliographic references",
 					parent			: lineSeparator
 				})
-				
+
 				const bibliography_block = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_text_block",
@@ -757,6 +760,32 @@ var mint = {
 
 				createExpandableBlock(bibliography_block,line);
 			}
+
+			// other permanent uri
+				if (row_object.uri && row_object.uri.length>0) {
+
+					//create the graphical red line that divide blocks
+					// const lineSeparator = common.create_dom_element({
+					// 	element_type	: "div",
+					// 	class_name		: "info_line separator",
+					// 	parent 			: line
+					// })
+					for (let i = 0; i < row_object.uri.length; i++) {
+
+						const el = row_object.uri[i]
+						const label	= el.label || "URI"
+						const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
+
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "",
+							inner_html		: uri_text,
+							parent			: line
+						})
+
+					}
+				}
+
 
 
 		// container final add
@@ -803,7 +832,7 @@ var mint = {
 	* DRAW_TYPES
 	*/
 		// draw_types : function(options) {
-			
+
 		// 	const self = this
 
 		// 	// options
@@ -812,12 +841,12 @@ var mint = {
 
 		// 	let arrDeep = 0
 		// 	let isFirstElement = false
-			
+
 		// 	if (full_ar_rows.children && full_ar_rows.children.length>0){
 
 		// 		const ar_rows		 = full_ar_rows.children
 		// 		const ar_rows_length = ar_rows.length
-				
+
 		// 		// clean container div
 		// 		while (container.hasChildNodes()) {
 		// 			container.removeChild(container.lastChild);
@@ -898,7 +927,7 @@ var mint = {
 
 		// 			createFolderedGroup(period_label,row_period)
 		// 			createFolderedGroup(period_label,types_container)
-					
+
 
 		// 			if (row_object.children != null){
 		// 				//if has children call recursive function that get all children hierarchy one by one
@@ -907,9 +936,9 @@ var mint = {
 
 		// 		}//end for (let i = 0; i < ar_rows_length; i++)
 
-					
+
 		// 		function recursiveChildrenSearch (arr,item,container){
-					
+
 		// 			if (item != null){
 		// 				createNewItem(item,container);
 
@@ -925,11 +954,11 @@ var mint = {
 		// 						return 0
 		// 					})
 		// 				}
-						
+
 		// 			}
 
 		// 			if (!Array.isArray(arr)){
-		// 				return 
+		// 				return
 		// 			} else{
 		// 				//save current hierarchy level
 		// 				arrDeep +=1
@@ -952,11 +981,11 @@ var mint = {
 		// 				if (arrDeep>1){
 		// 					const deepEl = container.getElementsByClassName("row_node deep:"+(arrDeep-1).toString())
 		// 					currentContainer = deepEl[deepEl.length-1]
-		// 				} 
+		// 				}
 		// 				//Create a numismatic group
 		// 				//GROUP wrap
 		// 				const classDeep = "row_node hide deep:"+arrDeep
-						
+
 		// 				const children_container = common.create_dom_element({
 		// 					element_type	: "div",
 		// 					class_name		: "children_container",
@@ -993,7 +1022,7 @@ var mint = {
 
 
 		// 			} else if (item.term_table === 'types') {
-						
+
 		// 				//create a type element
 		// 				if (item.children != null && item.children.length>0){
 		// 					//if is a type and not a subtype mark variable but don't draw anything
@@ -1011,7 +1040,7 @@ var mint = {
 		// 						}
 
 		// 						currentContainer = deepEl[deepEl.length-1]
-							
+
 
 		// 					if (currentContainer == null){
 		// 						let deepEl = container.getElementsByClassName("types_container")
@@ -1160,7 +1189,7 @@ var mint = {
 
 		// 		// container final add
 		// 		container.appendChild(fragment)
-				
+
 
 		// 		function createFolderedGroup(label,row_group) {
 
@@ -1190,7 +1219,7 @@ var mint = {
 		// },//end draw_types
 
 
-	
+
 	/**
 	* DRAW_MAP
 	*/
@@ -1202,12 +1231,12 @@ var mint = {
 			const mint_map_data		= options.mint_map_data
 			const mint_popup_data	= options.mint_popup_data
 			const place_data		= options.place_data
-		
+
 
 		self.get_place_data({
 			place_data : place_data
 		})
-		.then(function(response){			
+		.then(function(response){
 			// console.log("draw_map get_place_data: ",response);
 
 			const container	= document.getElementById("map_container")
@@ -1220,16 +1249,16 @@ var mint = {
 				popup_options	: page.maps_config.popup_options,
 				source_maps		: page.maps_config.source_maps,
 				legend			: page.render_map_legend
-			})			
+			})
 
 			const map_data_poitns = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
-			
+
 			// findspots to map
 				const findspots_map_data = response.result[0].result;
 				if (findspots_map_data && findspots_map_data.length>0){
-				
+
 					for (let i=0;i<findspots_map_data.length;i++){
-						
+
 						const findspot_map_data		= JSON.parse(findspots_map_data[i].georef_geojson)
 						const findspot_popup_data	= parse_popup_data(findspots_map_data[i])
 
@@ -1237,7 +1266,7 @@ var mint = {
 						findspot_popup_data.type = "findspot"
 
 						const findspot_map_data_poitns = self.map_data(findspot_map_data,findspot_popup_data)
-						
+
 						console.log("--findspot_popup_data",findspot_popup_data)
 
 						map_data_poitns.push(findspot_map_data_poitns[0])
@@ -1246,9 +1275,9 @@ var mint = {
 
 			// hoards to map
 				const hoards_map_data = response.result[1].result;
-				if (hoards_map_data && hoards_map_data.length>0){	
-					for (let i=0;i<hoards_map_data.length;i++){						
-						
+				if (hoards_map_data && hoards_map_data.length>0){
+					for (let i=0;i<hoards_map_data.length;i++){
+
 						const hoard_map_data	= JSON.parse(hoards_map_data[i].georef_geojson) || ""
 						const hoard_popup_data	= parse_popup_data(hoards_map_data[i])
 
@@ -1256,13 +1285,13 @@ var mint = {
 						hoard_popup_data.type = "hoard"
 
 						const hoard_map_data_poitns = self.map_data(hoard_map_data,hoard_popup_data)
-						
+
 						console.log("--hoard_map_data_poitns",hoard_map_data_poitns)
 
 						map_data_poitns.push(hoard_map_data_poitns[0])
 					}
 				}
-			
+
 			// draw points
 					console.log("map_data_poitns:",map_data_poitns);
 				self.map.parse_data_to_map(map_data_poitns, null)
@@ -1279,7 +1308,7 @@ var mint = {
 			}
 			return popup_data;
 		}
-		
+
 		return true
 	},//end draw_map
 
@@ -1290,11 +1319,11 @@ var mint = {
 	* Search findspots and hoards data with same place_data
 	*/
 	get_place_data : function(data){
-		
+
 		const place_data = JSON.stringify(data.place_data)
-		
+
 		const sql_filter = "place_data='" + place_data + "'";
-		
+
 			const ar_calls = []
 
 			ar_calls.push ({
@@ -1329,7 +1358,7 @@ var mint = {
 					ar_calls 	: ar_calls
 				}
 			})
-			
+
 			return js_promise
 	},//end get_place_data
 
@@ -1340,10 +1369,10 @@ var mint = {
 	* @return array data
 	*/
 	map_data : function(data, popup_data) {
-		// console.log("map_data data: ", data)	
-		
+		// console.log("map_data data: ", data)
+
 		const self = this
-		
+
 		const markerIcon = (function(){
 			switch(popup_data.type) {
 				case 'findspot':
@@ -1356,7 +1385,7 @@ var mint = {
 					return page.maps_config.markers.mint
 					break;
 			}
-		})()	
+		})()
 
 		const ar_data = Array.isArray(data)
 			? data

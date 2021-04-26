@@ -109,6 +109,16 @@
   margin-bottom: 1em;
   line-height: 1.4em;
 }
+.result .row_wrapper .countermarks_wrapper {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+.result .row_wrapper .countermark_obverse {
+  grid-column: 1;
+}
+.result .row_wrapper .countermark_reverse {
+  grid-column: 2;
+}
 .result .row_wrapper .equivalents {
   font-size: 0.8em;
 }

@@ -1259,11 +1259,52 @@ var type_row_fields = {
 		// public_info
 			if (data.public_info && data.public_info.length>0){
 
-				const label = (tstring.public_info || "Public_info") + ": "
+				// const label = (tstring.public_info || "Public_info") + ": "
 				common.create_dom_element({
 					element_type	: "div",
-					inner_html		: label + data.public_info,
+					inner_html		: data.public_info, //label + data.public_info,
 					parent			: wrapper
+				})
+			}
+
+		// technique
+			if (data.technique && data.technique.length>0){
+
+				const label = (tstring.technique || "Technique") + ": "
+				common.create_dom_element({
+					element_type	: "div",
+					inner_html		: label + data.technique,
+					parent			: wrapper
+				})
+			}
+
+
+
+		// countermarks
+			const countermarks = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "countermarks_wrapper",
+				parent			: wrapper
+			})
+
+		// countermark_obverse
+			if (data.countermark_obverse && data.countermark_obverse.length>0){
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "countermark_obverse",
+					inner_html		: data.countermark_obverse,
+					parent			: countermarks
+				})
+			}
+		// countermark_reverse
+			if (data.countermark_reverse && data.countermark_reverse.length>0){
+
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "countermark_reverse",
+					inner_html		: data.countermark_reverse,
+					parent			: countermarks
 				})
 			}
 
@@ -1274,7 +1315,7 @@ var type_row_fields = {
 				parent			: wrapper
 			})
 
-			console.log("data--------", data);
+			
 			const ar_references = data.bibliography_data
 			if (ar_references && ar_references.length>0 && typeof ar_references[0]==='object') {
 				const biblio_node = self.draw_bibliographic_reference(ar_references)

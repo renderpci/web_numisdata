@@ -48,8 +48,6 @@ var catalog = {
 			self.export_data_container	= export_data_container
 			self.form_items_container	= form_items_container
 
-		// load mints list
-			// self.load_mint_list().then(function(response){
 
 			// 	// mints selector
 			// 		const select = self.draw_select({
@@ -233,6 +231,27 @@ var catalog = {
 					// 		ar_rows : response.result
 					// 	})
 					// })
+			}else{
+				// load mints list
+					self.load_mint_list().then(function(response){
+						const mint = response.result[Math.floor(Math.random() * response.result.length)];
+
+						// form_factory instance
+						 const custom_form = new form_factory()
+						 const mint_item = custom_form.item_factory({
+							id			: "mint",
+							name		: "mint",
+							label		: tstring.mint || "mint",
+							q_column	: "p_mint",
+							eq			: "LIKE",
+							eq_in		: "",
+							eq_out		: "",
+							q  			: mint.name,
+							is_term		: true
+						})
+						// console.log("custom_form.form_items", [a]);
+						self.form_submit(form_node, [mint_item])
+					})
 			}
 
 
@@ -710,24 +729,24 @@ var catalog = {
 	* LOAD_MINT_LIST
 	* @return promise
 	*/
-		// load_mint_list : function() {
+		load_mint_list : function() {
 
-		// 	const js_promise = data_manager.request({
-		// 		body : {
-		// 			dedalo_get 	: 'records',
-		// 			table 		: 'catalog',
-		// 			ar_fields 	: ['section_id','term AS name','parents'],
-		// 			// sql_fullselect : 'DISTINCT term, '
-		// 			lang 		: page_globals.WEB_CURRENT_LANG_CODE,
-		// 			limit 		: 0,
-		// 			count 		: false,
-		// 			order 		: 'term ASC',
-		// 			sql_filter  : 'term_table=\'mints\''
-		// 		}
-		// 	})
+			const js_promise = data_manager.request({
+				body : {
+					dedalo_get 	: 'records',
+					table 		: 'catalog',
+					ar_fields 	: ['section_id','term AS name','parents'],
+					// sql_fullselect : 'DISTINCT term, '
+					lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+					limit 		: 0,
+					count 		: false,
+					order 		: 'term ASC',
+					sql_filter  : 'term_table=\'mints\''
+				}
+			})
 
-		// 	return js_promise
-		// },//end load_mint_list
+			return js_promise
+		},//end load_mint_list
 
 
 
@@ -1292,11 +1311,11 @@ var catalog = {
 	* FORM_SUBMIT
 	* Form submit launch search
 	*/
-	form_submit : function(form_obj) {
+	form_submit : function(form_obj, custom_form_items) {
 
 		const self = this
 
-		const form_items = self.form.form_items
+		const form_items = custom_form_items || self.form.form_items
 
 		const container_rows_list	= self.rows_list_container //	div_result.querySelector("#rows_list")
 		const div_result			= container_rows_list.parentNode // document.querySelector(".result")

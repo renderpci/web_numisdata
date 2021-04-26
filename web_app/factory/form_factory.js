@@ -46,7 +46,7 @@ function form_factory() {
 	* Every form input has a js object representation
 	*/
 	this.build_form_item = function(options) {
-
+		
 		// console.log("options.eq_in:", typeof options.eq_in, options.name);
 		// console.log("options.eq_out:", typeof options.eq_out, options.name);
 

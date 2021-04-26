@@ -66,13 +66,13 @@ var mints =  {
 		const self = this
 
 		const fragment = new DocumentFragment()
-		
+
 		const form_row = common.create_dom_element({
 			element_type	: "div",
 			class_name 		: "form-row fields",
 			parent 			: fragment
 		})
-		
+
 		// name
 			self.form.item_factory({
 				id			: "name",
@@ -108,7 +108,43 @@ var mints =  {
 					})
 				}
 			})
-			
+
+		// public information
+			self.form.item_factory({
+				id			: "public_info",
+				name		: "public_info",
+				label		: tstring.history || "History",
+				q_column	: "public_info",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				// callback	: function(form_item) {
+				// 	self.form.activate_autocomplete({
+				// 		form_item	: form_item,
+				// 		table		: 'mints'
+				// 	})
+				// }
+			})
+		// indexation
+			self.form.item_factory({
+				id			: "indexation",
+				name		: "indexation",
+				label		: tstring.indexation || "Indexation",
+				q_column	: "indexation",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'mints'
+					})
+				}
+			})
+
+
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -128,9 +164,9 @@ var mints =  {
 				e.preventDefault()
 				self.pagination = {
 					total	: null,
-					limit	: 10,
+					// limit	: 10,
 					offset	: 0,
-					n_nodes	: 8
+					// n_nodes	: 8
 				}
 				self.form_submit()
 			})
@@ -160,7 +196,7 @@ var mints =  {
 	form_submit : function() {
 
 		const self = this
-		
+
 		const form_node = self.form.node
 		if (!form_node) {
 			return new Promise(function(resolve){
@@ -184,7 +220,7 @@ var mints =  {
 			const ar_fields	= ['*']
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
-			const count		= true			
+			const count		= true
 			const order		= "name"
 
 			// sql_filter
@@ -197,7 +233,7 @@ var mints =  {
 					: null
 				if(SHOW_DEBUG===true) {
 					console.log("-> coins form_submit sql_filter:",sql_filter);
-				}					
+				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
 				// 		// loading ends
@@ -221,8 +257,7 @@ var mints =  {
 				}
 			})
 			.then(function(api_response){
-				console.log("--------------- api_response:",api_response);
-				
+
 				// parse data
 					const data	= page.parse_mint_data(api_response.result)
 					const total	= api_response.total
@@ -234,7 +269,7 @@ var mints =  {
 						rows_container.classList.remove("loading")
 						resolve(null)
 					}
-				
+
 				// loading end
 					(function(){
 						while (rows_container.hasChildNodes()) {
@@ -242,13 +277,14 @@ var mints =  {
 						}
 						rows_container.classList.remove("loading")
 					})()
-				
+
 				// render
 					self.list = self.list || new list_factory() // creates / get existing instance of list
 					self.list.init({
 						data			: data,
 						fn_row_builder	: self.list_row_builder,
-						pagination		: self.pagination,
+						// pagination		: self.pagination,
+						pagination		: false,
 						caller			: self
 					})
 					self.list.render_list()
@@ -275,12 +311,12 @@ var mints =  {
 	* This function is a callback defined when list_factory is initialized (!)
 	* @param object data (db row parsed)
 	* @param object caller (instance of class caller like coin)
-	* @return DocumentFragment node 
+	* @return DocumentFragment node
 	*/
 	list_row_builder : function(data, caller){
-		
+
 		return mints_rows.draw_item(data)
-	
+
 	}//end list_row_builder
 
 
@@ -567,7 +603,7 @@ var mints =  {
 	// 	const count = !total ? true : false;
 
 	// 	return new Promise(function(resolve, reject){
-		
+
 	// 		// request
 	// 		data_manager.request({
 	// 			body : {
@@ -693,8 +729,8 @@ var mints =  {
 	// 				mints_row_wrapper.appendChild( row_field.name() )
 
 	// 			// place
-	// 				mints_row_wrapper.appendChild( row_field.place() )				
-				
+	// 				mints_row_wrapper.appendChild( row_field.place() )
+
 	// 		}//end for (var i = 0; i < len; i++)
 
 	// 	// pagination footer
@@ -725,7 +761,7 @@ var mints =  {
 	// * Return a DocumentFragment with all pagination nodes
 	// */
 	// draw_paginator : function(options) {
-	
+
 	// 	const self = this
 
 	// 	// short vars
@@ -734,9 +770,9 @@ var mints =  {
 	// 		const offset 	= options.offset
 	// 		const count 	= options.count
 	// 		const n_nodes 	= 10
-	
+
 	// 	const pagination_fragment = new DocumentFragment();
-		
+
 	// 	// paginator (nav bar)
 	// 		const paginator_node = paginator.get_full_paginator({
 	// 			total  	: total,
@@ -754,7 +790,7 @@ var mints =  {
 
 	// 				// scroll page to navigato header
 	// 					search.then(function(response){
-							
+
 	// 						// scroll to result
 	// 							const div_result = document.querySelector(".result")
 	// 							if (div_result) {
@@ -766,20 +802,20 @@ var mints =  {
 	// 								target  : 'rows_list',
 	// 								ar_rows : response.result
 	// 							})
-	// 					})					
+	// 					})
 
 	// 				return search
 	// 			}
 	// 		})
 	// 		pagination_fragment.appendChild(paginator_node)
-		
+
 	// 	// spacer
 	// 		common.create_dom_element({
 	// 			element_type 	: "div",
 	// 			class_name 		: "spacer",
 	// 			parent 			: pagination_fragment
 	// 		})
-		
+
 	// 	// totals (info about showed and total records)
 	// 		const totals_node = paginator.get_totals_node({
 	// 			total  	: total,

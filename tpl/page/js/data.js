@@ -55,7 +55,7 @@ page.parse_type_data = function(data) {
 
 				// parse portal resolved rows
 				row.ref_coins_union = page.parse_coin_data(row.ref_coins_union)
-				
+
 			}else{
 
 				row.ref_coins_union = row.ref_coins_union
@@ -65,10 +65,10 @@ page.parse_type_data = function(data) {
 
 		// coin_references (resolved portal case)
 			if (row.coin_references && Array.isArray(row.coin_references)) {
-				
+
 				// parse portal resolved rows
 				row.coin_references = page.parse_coin_data(row.coin_references)
-				
+
 			}else{
 
 				row.coin_references = row.coin_references
@@ -117,7 +117,7 @@ page.parse_type_data = function(data) {
 
 		row.term_section_tipo = row.term_section_tipo
 			? JSON.parse(row.term_section_tipo)
-			: null	
+			: null
 
 		row.term_section_label = row.term_section_label
 			? JSON.parse(row.term_section_label)
@@ -140,7 +140,7 @@ page.parse_type_data = function(data) {
 * PARSE_MINT_DATA
 */
 page.parse_mint_data = function(data) {
-	
+
 	const self = this
 
 	// array case
@@ -174,6 +174,8 @@ page.parse_mint_data = function(data) {
 	row.place_data = row.place_data
 		? JSON.parse(row.place_data)
 		: null
+
+	row.uri = self.parse_iri_data(row.uri)
 
 	return row
 }//end parse_mint_data
@@ -241,7 +243,7 @@ page.parse_coin_data = function(data) {
 		return row
 	}
 
-	try {	
+	try {
 
 		// url
 			row.image_obverse		= row.image_obverse
@@ -258,9 +260,9 @@ page.parse_coin_data = function(data) {
 				: page.default_image
 
 		// type_data
-		if (row.type_data && Array.isArray(row.type_data)) {	
-			
-			// case resolved portal 	
+		if (row.type_data && Array.isArray(row.type_data)) {
+
+			// case resolved portal
 			row.type_data = self.parse_type_data(row.type_data)
 
 			// add
@@ -401,7 +403,7 @@ page.parse_catalog_data = function(data) {
 	const new_data = []
 
 	try {
-		
+
 		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
 
@@ -479,7 +481,7 @@ page.parse_catalog_data = function(data) {
 
 			row.ref_type_material = page.trim_char(row.ref_type_material, '|')
 
-			
+
 			//
 			/*
 
@@ -502,7 +504,7 @@ page.parse_catalog_data = function(data) {
 			row.ref_type_design_obverse_data = row.ref_type_design_obverse_data
 				? JSON.parse(row.ref_type_design_obverse_data)
 				: null
-					
+
 		    row.ref_type_design_reverse_data = row.ref_type_design_reverse_data
 				? JSON.parse(row.ref_type_design_reverse_data)
 				: null
@@ -668,7 +670,7 @@ page.parse_publication = function(data) {
 		if(!data) {
 			return data
 		}
-		
+
 		const separator		= " # ";
 		const data_length	= data.length
 		for (let i = 0; i < data_length; i++) {
@@ -742,7 +744,7 @@ page.parse_publication = function(data) {
 
 	// 	const ar_rows_length = ar_rows.length
 	// 	for (let i = 0; i < ar_rows_length; i++) {
-			
+
 	// 		const row = ar_rows[i]
 
 	// 		if (row.parsed) {
@@ -763,7 +765,7 @@ page.parse_publication = function(data) {
 
 	// 		row.parsed = true
 	// 	}
-		
+
 
 	// 	return ar_rows
 	// }//end parse_map_global_data
@@ -783,7 +785,7 @@ page.parse_map_global_data = function(ar_rows) {
 
 		const ar_rows_length = ar_rows.length
 		for (let i = 0; i < ar_rows_length; i++) {
-			
+
 			const row = ar_rows[i]
 
 			if (row.parsed) {
@@ -845,7 +847,7 @@ page.parse_map_global_data = function(ar_rows) {
 					data		: item_data
 				}
 
-				row.item = item		
+				row.item = item
 			}else{
 				row.item = null
 			}
@@ -857,7 +859,7 @@ page.parse_map_global_data = function(ar_rows) {
 		console.error("ERROR CATCH " , error);
 		console.warn("ar_rows:",ar_rows);
 	}
-		
+
 
 	return ar_rows
 }//end parse_map_global_data
@@ -909,20 +911,20 @@ page.parse_iri_data = function(data) {
 
 /**
 * PARSE_TS_WEB
-* @return 
+* @return
 */
 page.parse_ts_web = function(rows) {
-	
+
 	if (!Array.isArray(rows)) {
 		rows = [rows]
 	}
 
 	for (let i = 0; i < rows.length; i++) {
-		
+
 		const row = rows[i]
 
 		if (row.parsed===true) continue;
-		
+
 		// fix link paths to aboslute paths
 			row.cuerpo = row.cuerpo
 				? row.cuerpo.replaceAll('../../../media', page_globals.__WEB_MEDIA_BASE_URL__ + '/dedalo/media')
@@ -935,7 +937,7 @@ page.parse_ts_web = function(rows) {
 		row.parsed = true
 	}
 
-	
+
 	return rows
 };//end parse_ts_web
 
@@ -947,10 +949,10 @@ page.parse_ts_web = function(rows) {
 * Table ts_thematic, ts_technique, ts_onomastic, ts_material
 */
 page.parse_tree_data = function(ar_rows, hilite_terms) {
-	
+
 	const data = []
 
-	// sample 
+	// sample
 		// childrens: "[{"type":"dd48","section_id":"2","section_tipo":"technique1","from_component_tipo":"hierarchy49"},{"type":"dd48","section_id":"3","section_tipo":"technique1","from_component_tipo":"hierarchy49"}]"
 		// code: "1191026"
 		// dd_relations: null
@@ -970,7 +972,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 		// time: null
 		// tld: "technique1"
 
-	const ar_parse = ['parent','childrens','space','mib_bibliography'] // 
+	const ar_parse = ['parent','childrens','space','mib_bibliography'] //
 	function decode_field(field) {
 		if (field) {
 			return JSON.parse(field)
@@ -988,14 +990,14 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 
 	const ar_rows_length = ar_rows.length
 	for (let i = 0; i < ar_rows_length; i++) {
-		
+
 		// parse json encoded strings
 			const item = parse_item(ar_rows[i])
 
 		// resolve relations images url
 			// if (item.relations && item.relations.length>0) {
 			// 	for (let j = item.relations.length - 1; j >= 0; j--) {
-					
+
 			// 		item.relations[j].image_url = item.relations[j].image
 			// 			? common.get_media_engine_url(item.relations[j].image, 'image')
 			// 			: __WEB_TEMPLATE_WEB__ + '/assets/images/default.jpg'
@@ -1007,15 +1009,15 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 			// 		item.relations[j].path = page.section_tipo_to_template(item.relations[j].section_tipo)
 			// 	}
 			// }
-					
+
 		data.push(item)
 	}
 
 	const term_id_to_remove = []
-	
+
 	// update_children_data recursive
 		function update_children_data(data, row){
-			
+
 			if ( ((!row.childrens || row.childrens.length===0) ) // && (!row.mib_bibliography || row.mib_bibliography.length===0)
 				|| row.descriptor!=='yes') {
 
@@ -1027,13 +1029,13 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 				const parent_term_id	= row.parent[0];
 				const parent_row		= data.find(item => item.term_id===parent_term_id)
 				if (parent_row && parent_row.childrens && parent_row.childrens.length>0) {
-					
+
 					const child_key = parent_row.childrens.findIndex(el => el.section_tipo===row.tld && el.section_id===row.section_id)
 					// console.log("child_key:",child_key, row.term_id, row);
 					if (child_key!==-1) {
-						
+
 						const term = row.term
-						
+
 						// ND cases. Before remove, add ND term to parent
 							if (row.descriptor==='no') {
 								if (parent_row.nd) {
@@ -1045,7 +1047,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 								}
 								// console.log("parent_row.nd:", parent_row.nd, parent_row.term_id, row.term_id);
 							}
-						
+
 						// remove me as child
 						parent_row.childrens.splice(child_key, 1)
 
@@ -1066,7 +1068,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 		for (let i = data_length - 1; i >= 0; i--) {
 
 			const row = data[i]
-			
+
 			const parent_term_id = (row.parent && row.parent[0]) ? row.parent[0] : false
 			if (!parent_term_id) {
 				console.warn("Ignored undefined parent_term_id:",row.term_id, row );
@@ -1081,15 +1083,15 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 		if (term_id_to_remove.length>0) {
 			console.warn("term_id_to_remove:",term_id_to_remove);
 		}
-			
+
 
 	// remove unused terms
 		const data_clean = data.filter(el => term_id_to_remove.indexOf(el.term_id)===-1);
-	
+
 	// open hilite parent terms (recursive)
 		for (let i = 0; i < data_clean.length; i++) {
 			const row = data_clean[i]
-			
+
 			// hilite_terms (ussually one term from user request url like /thesaurus/technique1_1)
 				if (hilite_terms && (hilite_terms.indexOf(row.term_id)!==-1 || (row.nd_term_id && hilite_terms.indexOf(row.nd_term_id)!==-1)) ) {
 					row.hilite = true
@@ -1106,9 +1108,9 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 								break;
 							}
 						}
-					}						
+					}
 				}
-			
+
 			if (row.hilite===true) {
 				set_status_as_opened(data_clean, row, false)
 			}
@@ -1121,11 +1123,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 				set_status_as_opened(data_clean, parent_row, true)
 			}
 		}
-	
+
 
 	return data_clean
 }//end parse_tree_data
-
-
-
-

@@ -1174,11 +1174,12 @@ function form_factory() {
 var psqo_factory = {
 
 
+
 	/**
-	* build_psqo
+	* BUILD_SAFE_PSQO
 	* Builds a plain sql filter from the form nodes values
 	*/
-	build_psqo : function(options){
+	build_safe_psqo : function(options){
 
 		const self = this
 
@@ -1186,9 +1187,11 @@ var psqo_factory = {
 
 		const sql_filter = []
 		for (let i = 0; i < psqo_length; i++) {
+			
 			const global_key = Object.keys(options[i])
 			if(global_key === '$and' || global_key === '$or'){
-				const safe_value = self.build_psqo(options[i])
+				
+				const safe_value = self.build_safe_psqo(options[i])
 				options[i][global_key] = safe_value
 
 			}else{
@@ -1196,7 +1199,6 @@ var psqo_factory = {
 				for (let j = 0; j < options[j].length; j++) {
 					options[i] = check_value(check_value)
 				}
-
 			}
 		}
 
@@ -1222,28 +1224,46 @@ var psqo_factory = {
 		}
 
 		return options
-	},// build_psqo
+	},// build_safe_psqo
+
+
 
 	/**
-	* encode_psqo
+	* ENCODE_PSQO
 	* Builds a plain sql filter from the form nodes values
 	*/
 	encode_psqo : function(psqo){
-		const encoded_psqo = JSON.stringify(psqo)
+
+		// const stringify_psqo	= JSON.stringify(psqo)
+		// const encoded_psqo	= encodeURI(stringify_psqo)
+
+		const encoded_psqo = window.btoa(JSON.stringify(psqo));
 
 		return encoded_psqo
-	},
+	},//end encode_psqo
 
 
 	/**
-	* decode_psqo
+	* DECODE_PSQO
 	* Builds a plain sql filter from the form nodes values
+	* @return object | null
 	*/
 	decode_psqo : function(psqo){
-		const decoded_psqo = JSON.parse(psqo)
 
-		return decoded_psqo
-	}
+		const parsed_psqo = (()=>{
+			try {
+				return JSON.parse(window.atob(psqo))
+			}catch(error) {
+				console.log("psqo:",psqo);
+				console.warn("invalid psqo: ", error);
+			}
+			return null
+		})()		
 
 
-}
+		return parsed_psqo
+	}//end decode_psqo
+
+
+
+}//end psqo_factory

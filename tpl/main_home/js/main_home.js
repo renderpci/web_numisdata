@@ -12,7 +12,7 @@ var main_home =  {
 	/**
 	* VARS
 	*/
-		form			: null,		
+		form			: null,
 		// DOM items ready from page html
 		form_container	: null,
 
@@ -49,13 +49,13 @@ var main_home =  {
 		const self = this
 
 		const fragment = new DocumentFragment()
-		
+
 		const form_row = common.create_dom_element({
 			element_type	: "div",
 			class_name 		: "form-row fields",
 			parent 			: fragment
 		})
-		
+
 		// global_search
 			const global_search = self.form.item_factory({
 				id 			: "global_search",
@@ -76,7 +76,7 @@ var main_home =  {
 						parent			: node_input.parentNode
 					})
 
-					let operators_info 
+					let operators_info
 					button_info.addEventListener('click', function(event) {
 						event.stopPropagation()
 						if (operators_info) {
@@ -97,7 +97,7 @@ var main_home =  {
 					})
 				}
 			})
-			
+
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -117,7 +117,7 @@ var main_home =  {
 				e.preventDefault()
 				self.form_submit()
 			})
-		
+
 		// form
 			const form_node = common.create_dom_element({
 				element_type	: "form",
@@ -138,14 +138,14 @@ var main_home =  {
 	form_submit : function() {
 
 		const self = this
-		
+
 		const form_node = self.form_node
 		if (!form_node) {
 			return new Promise(function(resolve){
 				console.error("Error on submit. Invalid form_node.", form_node);
 				resolve(false)
 			})
-		}		
+		}
 
 		return new Promise(function(resolve){
 
@@ -157,13 +157,23 @@ var main_home =  {
 					resolve(false)
 				}
 
+				const psqo = [{
+					"$and":[{
+							field		: 'global_search',
+							value		: value, // Like '%${form_item.q}%'
+							op			: '=', // default is 'LIKE'
+						}]
+					}]
+				// console.log("form_factory", psqo_factory);
+				const parse_psqo = psqo_factory.encode_psqo(psqo)
+
 				// search using value in url of catalog
-				window.location.href = './catalog/' + encodeURIComponent(value);
+				window.location.href = './catalog/?psqo='+ parse_psqo  //'./catalog/' + encodeURIComponent(value);
 
 				resolve(true)
 			}else{
 				resolve(false)
-			}			
+			}
 		})
 	},//end form_submit
 

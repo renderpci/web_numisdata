@@ -11,6 +11,8 @@ function form_factory() {
 	this.form_items	= []
 	// form element DOM node
 	this.node		= null
+	// form operators_node
+	this.operators_node = null
 
 
 
@@ -46,7 +48,7 @@ function form_factory() {
 	* Every form input has a js object representation
 	*/
 	this.build_form_item = function(options) {
-		
+
 		// console.log("options.eq_in:", typeof options.eq_in, options.name);
 		// console.log("options.eq_out:", typeof options.eq_out, options.name);
 
@@ -237,6 +239,8 @@ function form_factory() {
 	*/
 	this.build_operators_node = function() {
 
+		const self = this
+
 		const group = common.create_dom_element({
 			element_type	: "div",
 			class_name 		: "form-group field field_operators"
@@ -281,9 +285,39 @@ function form_factory() {
 		})
 		radio2_label.setAttribute("for","operator_and")
 
+		// fix node
+			self.operators_node = group
 
 		return group
 	}//end build_operators_node
+
+
+
+
+	/**
+	* SET_OPERATOR_NODE_VALUE
+	* Set a q value to a form item
+	*/
+	this.set_operator_node_value = function(operator_value) {
+
+		const self = this
+
+		const operator = (operator_value === '$and')
+			? 'and'
+			: (operator_value === '$or')
+				? 'or'
+				: null
+
+		if(!operator){
+			return false
+		}
+
+		const radio_button = self.operators_node.querySelector('#operator_'+operator)
+		radio_button.setAttribute("checked","checked")
+
+		return true
+	}//end set_operator_node_value
+
 
 
 
@@ -375,6 +409,34 @@ function form_factory() {
 
 		return true
 	}//end set_input_value
+
+
+	/**
+	* SET_FORM_ITEM
+	* Set a imput node of the form with the value and config searc of the psqo item object
+	*/
+	this.set_form_item = function(psqo_item) {
+
+		const self = this
+
+		if (typeof self.form_items[psqo_item.field]==="undefined") {
+			console.error("Error on get form item", psqo_item);
+			return false
+		}
+
+		const form_item = self.form_items[psqo_item.field]
+
+		// set properties
+			form_item.op = psqo_item.op || form_item.op
+			form_item.eq_in = psqo_item.eq_in || form_item.eq_in
+			form_item.eq_out = psqo_item.eq_out || form_item.eq_out
+
+		// add value
+			form_item.node_input.value	= psqo_item.value
+			form_item.q					= psqo_item.value
+
+		return form_item
+	}//end set_form_item
 
 
 
@@ -512,7 +574,6 @@ function form_factory() {
 		// filter object
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
-
 
 		return filter
 	}//end build_filter
@@ -1103,4 +1164,84 @@ function form_factory() {
 
 
 
+
 }//end form_factory
+
+
+
+var psqo_factory = {
+
+
+	/**
+	* build_psqo
+	* Builds a plain sql filter from the form nodes values
+	*/
+	build_psqo : function(options){
+
+		const self = this
+
+		const psqo_length = options.length
+
+		const sql_filter = []
+		for (let i = 0; i < psqo_length; i++) {
+			const global_key = Object.keys(options[i])
+			if(global_key === '$and' || global_key === '$or'){
+				const safe_value = self.build_psqo(options[i])
+				options[i][global_key] = safe_value
+
+			}else{
+
+				for (let j = 0; j < options[j].length; j++) {
+					options[i] = check_value(check_value)
+				}
+
+			}
+		}
+
+		const check_value = function(value_obj){
+
+			const field 	= value_obj.field
+			const eq_in 	= (value_obj.eq_in && value_obj.eq_in === '%') ? '%' : ''
+			const eq_out 	= (value_obj.eq_out && value_obj.eq_out === '%') ? '%' : ''
+			const pre_value = value_obj.value
+			const op 		= value_obj.op || '='
+
+			const safe_value = (typeof pre_value==='string' || pre_value instanceof String)
+				? pre_value.replace(/(')/g, "''")
+				: pre_value
+
+			const filter = {
+				field		: field,
+				value		: `'${eq_in}${safe_value}${eq_out}'`, // Like '%${form_item.q}%'
+				op			: op // default is 'LIKE'
+			}
+
+			return filter
+		}
+
+		return options
+	},// build_psqo
+
+	/**
+	* encode_psqo
+	* Builds a plain sql filter from the form nodes values
+	*/
+	encode_psqo : function(psqo){
+		const encoded_psqo = JSON.stringify(psqo)
+
+		return encoded_psqo
+	},
+
+
+	/**
+	* decode_psqo
+	* Builds a plain sql filter from the form nodes values
+	*/
+	decode_psqo : function(psqo){
+		const decoded_psqo = JSON.parse(psqo)
+
+		return decoded_psqo
+	}
+
+
+}

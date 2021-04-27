@@ -27,7 +27,7 @@
 						<div id="items_container"></div>
 					</section>
 
-					
+
 
 					<!-- Result -->
 						<section class="result">
@@ -48,10 +48,7 @@
 <script>
 dom_ready(function(){
 	catalog.set_up({
-		global_search			: <?php echo json_encode($global_search) ?>,
-		item_type				: <?php echo json_encode($item_type) ?>,
-		label					: <?php echo json_encode($label) ?>,
-		value					: <?php echo json_encode($value) ?>,
+		psqo					: <?php echo json_encode($psqo) ?>,
 		rows_list_container		: document.getElementById('rows_list'),
 		export_data_container	: document.getElementById('export_data'),
 		form_items_container	: document.getElementById('items_container')

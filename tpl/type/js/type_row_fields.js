@@ -341,8 +341,18 @@ var type_row_fields = {
 				// 	parent			: line
 				// })
 
-				//const catalog_url = page_globals.__WEB_BASE_URL__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
-				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+name+"&label="+item[name]+"&value="+item[name];
+				const psqo = [{
+					"$and":[{
+							field		: name,
+							value		: item[name], // Like '%${form_item.q}%'
+							op			: '=', // default is 'LIKE'
+						}]
+					}]
+				// console.log("form_factory", psqo_factory);
+				const parse_psqo = psqo_factory.encode_psqo(psqo)
+
+
+				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?psqo="+ parse_psqo
 
 				const prompt_label = common.create_dom_element({
 					element_type	: "a",
@@ -1315,7 +1325,7 @@ var type_row_fields = {
 				parent			: wrapper
 			})
 
-			
+
 			const ar_references = data.bibliography_data
 			if (ar_references && ar_references.length>0 && typeof ar_references[0]==='object') {
 				const biblio_node = self.draw_bibliographic_reference(ar_references)
@@ -2245,7 +2255,16 @@ var type_row_fields = {
 				var url_label = item[data_ref][0].term;
 			}
 
-			const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type="+item[data_ref][0].table+"&label="+url_label+"&value="+url_label;
+			const psqo = [{
+				"$and":[{
+						field		: item[data_ref][0].table,
+						value		: url_label, // Like '%${form_item.q}%'
+						op			: '=', // default is 'LIKE'
+					}]
+				}]
+			// console.log("form_factory", psqo_factory);
+			const parse_psqo = psqo_factory.encode_psqo(psqo)
+			const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?psqo="+ parse_psqo
 
 			const prompt_label = common.create_dom_element({
 				element_type	: "a",

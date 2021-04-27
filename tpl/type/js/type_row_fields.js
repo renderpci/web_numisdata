@@ -348,9 +348,8 @@ var type_row_fields = {
 							op			: '=', // default is 'LIKE'
 						}]
 					}]
-				// console.log("form_factory", psqo_factory);
-				const parse_psqo = psqo_factory.encode_psqo(psqo)
 
+				const parse_psqo = psqo_factory.encode_psqo(psqo)
 
 				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?psqo="+ parse_psqo
 

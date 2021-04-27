@@ -12,7 +12,7 @@
 
 /**
 * RENDER_MAP_LEGEND
-* Unified way to build  
+* Unified way to build
 */
 page.render_map_legend = function(){
 
@@ -51,19 +51,20 @@ page.render_map_legend = function(){
 * @return promise : DOM node
 */
 page.render_export_data_buttons = function() {
-	
+
 	// vars filled on event publish options
 		let request_body
 		let result
 		let export_data_parser
+		let filter
 
-	// unrestricted request to db 
+	// unrestricted request to db
 		function get_data() {
 
 			const data_object = {
 				info		: "WARNING! This is a draft version data. Please do not use it in production",
 				source_org	: "MIB (Moneda Ibérica - Iberian Coin)",
-				source_url	: "https://mib.numisdata.org",
+				source_url	: "https://monedaiberica.org",
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
 				date		: common.get_today_date()
 			}
@@ -113,18 +114,81 @@ page.render_export_data_buttons = function() {
 				return data_object
 			})
 		}
-	
+
 	// event data_request_done is triggered when new search is done
 		event_manager.subscribe('data_request_done', manage_data_request_done)
-		function manage_data_request_done(options) {			
+		function manage_data_request_done(options) {
 			// console.warn("data_request_done options:",options);
 			request_body		= options.request_body
 			result				= options.result
 			export_data_parser	= options.export_data_parser || null
-		}	
-	
+			filter 				= options.filter
+		}
+
 
 	const fragment = new DocumentFragment()
+
+	// button_shared_search
+		const button_shared_search_container = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "export_container",
+			parent			: fragment
+		})
+		const button_shared_search = common.create_dom_element({
+			element_type	: "input",
+			type			: "button",
+			value			: tstring.shared_search || 'Shared search',
+			class_name		: "btn primary button_shared search",
+			parent			: button_shared_search_container
+		})
+		button_shared_search.addEventListener("click", function(){
+
+			const button = this
+
+			// Shared wrapper
+				const shared_wrapper = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "shared_wrapper",
+					parent			: document.body
+				})
+				// Shared container
+					const shared_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "shared_container",
+						parent			: shared_wrapper
+					})
+					// Shared JSON
+						const shared_json = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "shared_json",
+							value 			: JSON.stringify(filter),
+							parent			: shared_container
+						})
+					// Shared URI encoded
+						const parse_psqo = psqo_factory.encode_psqo(filter)
+						console.log("parse_psqo", parse_psqo);
+						const uri = window.location.protocol + '//'+
+									window.location.host+
+									page_globals.__WEB_ROOT_WEB__+
+									'/'+WEB_AREA+
+									"/?psqo="+ parse_psqo;
+									console.log("uri", uri);
+
+						const shared_uri_encoded = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "shared_uri_encoded",
+							value 			: uri,
+							parent			: shared_container
+						})
+
+
+
+
+
+		})
+
+
+
 
 	// button_export_json
 		const button_export_json_container = common.create_dom_element({
@@ -144,7 +208,7 @@ page.render_export_data_buttons = function() {
 			// console.log("result:",result);
 
 			const button = this
-			
+
 			// spinner on
 				button.classList.add("unactive")
 				const spinner = common.create_dom_element({
@@ -152,12 +216,12 @@ page.render_export_data_buttons = function() {
 					class_name		: "spinner small",
 					parent			: button_export_json_container
 				})
-			
+
 			get_data().then(function(data){
 				// console.log("data:",data);
 
 				const file_name	= 'mib_export_data.json'
-				
+
 				// Blob data
 					const blob_data = new Blob([JSON.stringify(data, null, 2)], {
 						type	: 'application/json',
@@ -181,7 +245,7 @@ page.render_export_data_buttons = function() {
 					button.classList.remove("unactive")
 			})
 		})
-	
+
 	// button_export_csv
 		const button_export_csv_container = common.create_dom_element({
 			element_type	: "div",
@@ -198,7 +262,7 @@ page.render_export_data_buttons = function() {
 		button_export_csv.addEventListener("click", function(){
 
 			const button = this
-			
+
 			// spinner on
 				button.classList.add("unactive")
 				const spinner = common.create_dom_element({
@@ -214,7 +278,7 @@ page.render_export_data_buttons = function() {
 
 				// Convert json obj to csv
 					const csv = page.convert_json_to_csv(data.data)
-				
+
 				// Blob data
 					const blob_data = new Blob([csv], {
 						type	: 'text/csv',
@@ -250,7 +314,7 @@ page.render_export_data_buttons = function() {
 * @return promise : DOM node
 */
 page.render_legend = function(options) {
-	
+
 	const self = this
 
 	// options
@@ -277,11 +341,11 @@ page.render_legend = function(options) {
 		element_type	: "div",
 		class_name		: "legend_box " + style,
 		inner_html		: value.trim()
-	})	
+	})
 	// while (parsed_node.hasChildNodes()) {
 	// 	legend_node.appendChild(parsed_node.firstChild);
 	// }
-	
+
 
 	return legend_node
 };//end render_legend
@@ -290,12 +354,12 @@ page.render_legend = function(options) {
 
 /**
 * RENDER_TYPE_LABEL
-* @return 
+* @return
 */
 page.render_type_label = function(row) {
 
 	let current_value
-	
+
 	const mint_number = (row.ref_mint_number)
 		? row.ref_mint_number+'/'
 		: ''
@@ -311,7 +375,7 @@ page.render_type_label = function(row) {
 					clean.push(ar[i])
 				}
 				return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
-			})()						
+			})()
 
 		const a_term = common.create_dom_element({
 			element_type	: "a",
@@ -333,7 +397,7 @@ page.render_type_label = function(row) {
 
 /**
 * RENDER_WEIGHT_VALUE
-* @return 
+* @return
 */
 page.render_weight_value = function(row) {
 	const weight = row.ref_type_averages_weight.toFixed(2).replace(/\.?0+$/, "");
@@ -344,11 +408,9 @@ page.render_weight_value = function(row) {
 
 /**
 * RENDER_DIAMETER_VALUE
-* @return 
+* @return
 */
 page.render_diameter_value = function(row) {
 	const diameter = row.ref_type_averages_diameter.toFixed(2).replace(/\.?0+$/, "");
 	return diameter.replace('.',',') + ' mm'
 };//end render_diameter_value
-
-

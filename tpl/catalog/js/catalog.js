@@ -198,35 +198,44 @@ var catalog = {
 
 		// first search
 			if(psqo && psqo.length>1){
+				
+				const decoded_psqo = psqo_factory.decode_psqo(psqo)				
+				if (decoded_psqo) {
 
-				const decoded_psqo 	= psqo_factory.decode_psqo(psqo)
-				const safe_psqo 	= psqo_factory.build_psqo(decoded_psqo)
+					const safe_psqo = psqo_factory.build_safe_psqo(decoded_psqo)
 
-				for (let i = 0; i < safe_psqo.length; i++) {
-					const current_psqo = safe_psqo[i]
-					const global_operator = Object.keys(safe_psqo[i])
-					self.form.set_operator_node_value(global_operator[0])
+					for (let i = 0; i < safe_psqo.length; i++) {
+						
+						const current_psqo = safe_psqo[i]
+						
+						// global_operator
+							const global_operator = Object.keys(safe_psqo[i])						
+							self.form.set_operator_node_value(global_operator[0])
 
-					const current_value = current_psqo[global_operator]
+						// items
+							const current_value = current_psqo[global_operator]
+							for (let j = 0; j < current_value.length; j++) {
+								
+								const psqo_item = current_value[j]
 
-					for (let j = 0; j < current_value.length; j++) {
-						const psqo_item = current_value[j]
-						// const form_item = self.form.form_items[psqo_item.field]
-						self.form.set_form_item(psqo_item)
+								self.form.set_form_item(psqo_item)
 
-						//add_selected_value = function(form_item, label, value)
-						// self.form.add_selected_value(self.form.form_items[psqo_item.field], psqo_item.value, psqo_item.value)
-
-						// self.form.set_input_value(self.form.form_items[psqo_item.field], psqo_item.value)
+								//add_selected_value = function(form_item, label, value)
+								// self.form.add_selected_value(self.form.form_items[psqo_item.field], psqo_item.value, psqo_item.value)
+								// self.form.set_input_value(self.form.form_items[psqo_item.field], psqo_item.value)
+							}
 					}
-				}
 
-				self.form_submit(form_node)
-
+					self.form_submit(form_node, {
+						scrool_result : true
+					})
+				}//end if (decoded_psqo)
 
 			}else{
+
 				// load mints list
-					self.load_mint_list().then(function(response){
+					self.load_mint_list()
+					.then(function(response){
 						const mint = response.result[Math.floor(Math.random() * response.result.length)];
 
 						// form_factory instance
@@ -243,7 +252,10 @@ var catalog = {
 							is_term		: true
 						})
 						// console.log("custom_form.form_items", [a]);
-						self.form_submit(form_node, [mint_item])
+						self.form_submit(form_node, {
+							form_items		: [mint_item],
+							scrool_result	: true
+						})
 					})
 			}
 
@@ -905,80 +917,6 @@ var catalog = {
 
 
 	/**
-	* ADD_SELECTED_VALUE
-	* (!) moved to form_factory
-	*/
-		// add_selected_value : function(form_item, label, value) {
-		// 	const container = form_item.node_values
-
-		// 	// Check if already exists
-		// 		const inputs 		= container.querySelectorAll(".input_values")
-		// 		const inputs_length = inputs.length
-		// 		for (let i = inputs_length - 1; i >= 0; i--) {
-		// 			if (value===inputs[i].value) return false;
-		// 		}
-
-		// 	// Create new line
-		// 		const line = common.create_dom_element({
-		// 			element_type 	: "div",
-		// 			class_name   	: "line_value",
-		// 			parent 			: container
-		// 		})
-
-		// 	// trash. <i class="fal fa-trash-alt"></i>
-		// 		const trash = common.create_dom_element({
-		// 			element_type 	: "i",
-		// 			class_name   	: "icon fa-trash", //awesome font 4
-		// 			parent 			: line
-		// 		})
-		// 		trash.addEventListener("click",function(){
-
-		// 			// remove from form_item q_selected
-		// 			const index = form_item.q_selected.indexOf(value);
-		// 			if (index > -1) {
-		// 				// remove array element
-		// 				form_item.q_selected.splice(index, 1);
-
-		// 				// remove dom node
-		// 				this.parentNode.remove()
-
-		// 				// debug
-		// 				if(SHOW_DEBUG===true) {
-		// 					console.log("form_item.q_selected removed value:",value,form_item.q_selected);
-		// 				}
-		// 			}
-		// 		})
-
-		// 	// label
-		// 		const value_label = common.create_dom_element({
-		// 			element_type	: "span",
-		// 			class_name		: "value_label",
-		// 			inner_html		: label,
-		// 			parent			: line
-		// 		})
-
-		// 	// input
-		// 		const input = common.create_dom_element({
-		// 			element_type	: "input",
-		// 			class_name		: "input_values",
-		// 			parent			: line
-		// 		})
-		// 		input.value = value
-
-		// 	// add to form_item
-		// 		form_item.q_selected.push(value)
-
-		// 	// clean values
-		// 		form_item.node_input.value 	= ""
-		// 		form_item.q 				= ""
-
-
-		// 	return true
-		// },//end add_selected_value
-
-
-
-	/**
 	* ACTIVATE_AUTOCOMPLETE
 	*/
 	activate_autocomplete : function(form_item) {
@@ -1004,11 +942,13 @@ var catalog = {
 	* FORM_SUBMIT
 	* Form submit launch search
 	*/
-	form_submit : function(form_obj, custom_form_items) {
+	form_submit : function(form_obj, options={}) {
 
 		const self = this
 
-		const form_items = custom_form_items || self.form.form_items
+		// options
+			const scrool_result	= typeof options.scrool_result==="boolean" ? options.scrool_result : true
+			const form_items	= options.form_items || self.form.form_items
 
 		const container_rows_list	= self.rows_list_container //	div_result.querySelector("#rows_list")
 		const div_result			= container_rows_list.parentNode // document.querySelector(".result")
@@ -1178,7 +1118,7 @@ var catalog = {
 			container_rows_list.classList.add("loading")
 
 		// scrool to head result
-			if (div_result) {
+			if (div_result && scrool_result===true) {
 				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 			}
 
@@ -1188,6 +1128,7 @@ var catalog = {
 
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
+
 
 		// search rows exec against API
 			const js_promise = self.search_rows({
@@ -1347,7 +1288,8 @@ var catalog = {
 					event_manager.publish('data_request_done', {
 						request_body		: request_body,
 						result				: data,
-						export_data_parser	: page.export_parse_catalog_data
+						export_data_parser	: page.export_parse_catalog_data,
+						filter 				: filter
 					})
 
 					resolve(data)

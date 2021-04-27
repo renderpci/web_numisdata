@@ -27,7 +27,9 @@ function form_factory() {
 			const form_item = self.build_form_item(options)
 
 		// node
-			self.build_form_node(form_item, options.parent)
+			if(options.parent) {
+				self.build_form_node(form_item, options.parent)
+			}
 
 		// callback
 			if (typeof options.callback==="function") {

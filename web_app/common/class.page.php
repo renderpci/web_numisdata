@@ -673,7 +673,7 @@ class page {
 					// menu active check
 						if (property_exists($menu_element, 'menu') && $menu_element->menu==='no') {
 							continue;
-						}					
+						}
 					
 					if (  !empty($menu_element->{$children_column_name}) 
 						&& $current_term_id!==WEB_MENU_PARENT
@@ -709,21 +709,21 @@ class page {
 
 			if (is_object($term_id)) {
 				// as locator (legacy)
-				$section_id	= $term_id->section_id;
+				$section_id	= (int)$term_id->section_id;
 
 			}else{
 				// as term_id
 				$ar			= explode('_', $term_id);
-				$section_id	= $ar[1];
+				$section_id	= (int)$ar[1];
 			}
 
 			$item = array_find($menu_tree_rows, function($el) use($section_id){
-				return $el->section_id==$section_id;
+				return (int)$el->section_id===(int)$section_id;
 			});
 			if ($item && $item->menu==='yes') {
 				$found_child_with_active_menu = true;
 				break;
-			}			
+			}
 		}
 
 		return $found_child_with_active_menu;

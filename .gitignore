@@ -4,3 +4,4 @@ config.codekit3
 acc
 .DS_Store
 /tpl/assets/.DS_Store
+*.sublime-workspace

@@ -79,7 +79,7 @@ function form_factory() {
 			callback		: options.callback || false, // callback function
 			list_format		: options.list_format || null,
 			wrapper			: options.wrapper || null, // like YEAR to obtain YEAR(name)
-			value_wrapper	: options.value_wrapper || null, // like ['["','"]'] to obtain ["value"]
+			value_wrapper	: options.value_wrapper || null, // like ['["','"]'] to obtain ["value"] in selected value only
 			value_split		: options.value_split || null, // like ' - ' to generate one item by beat in autocomplete
 			// nodes (are set on build_form_node)
 			node_input		: null,
@@ -418,24 +418,54 @@ function form_factory() {
 	* Set a imput node of the form with the value and config searc of the psqo item object
 	*/
 	this.set_form_item = function(psqo_item) {
+		// console.log("set_form_item psqo_item:",psqo_item);
 
 		const self = this
 
-		if (typeof self.form_items[psqo_item.field]==="undefined") {
-			console.error("Error on get form item", psqo_item);
-			return false
-		}
+		const q_column = psqo_item.field
 
-		const form_item = self.form_items[psqo_item.field]
+		// find form_items match q_column
+			const form_item = (()=>{
+
+				return self.form_items[psqo_item.id]
+				
+				// for(const key in self.form_items) {
+
+				// 	const value = self.form_items[key]
+
+				// 	if (value.q_column===q_column) {
+				// 		return value
+				// 	}
+				// }
+				
+				// return false;
+			})();
+			if (!form_item) {
+				console.error("Error on get form item", psqo_item, self.form_items);
+				return false
+			}
 
 		// set properties
-			form_item.op = psqo_item.op || form_item.op
-			form_item.eq_in = psqo_item.eq_in || form_item.eq_in
-			form_item.eq_out = psqo_item.eq_out || form_item.eq_out
+			form_item.op		= psqo_item.op || form_item.op
+			form_item.eq_in		= psqo_item.eq_in || form_item.eq_in
+			form_item.eq_out	= psqo_item.eq_out || form_item.eq_out
 
+		// const clean_value = psqo_item.value.replace(^'\[")|(^'\%?)|(\%?'$)|("\]'$)
+		// const clean_value = decodeURIComponent(psqo_item.q)
+		const clean_value = psqo_item.q
+
+		
 		// add value
-			form_item.node_input.value	= psqo_item.value
-			form_item.q					= psqo_item.value
+			if (psqo_item.q_type==='q_selected') {
+
+				const label = clean_value						
+				self.add_selected_value(form_item, label, clean_value)
+
+			}else{
+
+				self.set_input_value(form_item, clean_value)
+			}
+			
 
 		return form_item
 	}//end set_form_item
@@ -446,12 +476,13 @@ function form_factory() {
 	* BUILD_FILTER
 	* Creates a complete sqo filter using form items values
 	*/
-	this.build_filter = function() {
+	this.build_filter = function(options={}) {
 
 		const self = this
 
-		const form_items = self.form_items
-			// console.log("form_items:",form_items);
+		// options
+			const form_items = options.form_items || self.form_items
+		
 
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
@@ -477,12 +508,21 @@ function form_factory() {
 
 					// q element
 						const element = {
-							field		: form_item.q_column,
-							value		: `'${form_item.eq_in}${safe_value}${form_item.eq_out}'`, // Like '%${form_item.q}%'
-							op			: form_item.eq, // default is 'LIKE'
-							sql_filter	: form_item.sql_filter,
-							wrapper		: form_item.wrapper
+							id		: form_item.id,
+							field	: form_item.q_column,
+							value	: `'${form_item.eq_in}${safe_value}${form_item.eq_out}'`, // Like '%${form_item.q}%'
+							op		: form_item.eq, // default is 'LIKE'							
+							q_type	: 'q',
+							q		: form_item.q
 						}
+
+						// optionals
+							if (form_item.sql_filter) {
+								element.sql_filter = form_item.sql_filter
+							}
+							if (form_item.wrapper) {
+								element.wrapper = form_item.wrapper
+							}
 
 						c_group[c_group_op].push(element)
 
@@ -525,12 +565,21 @@ function form_factory() {
 
 						// elemet
 						const element = {
-							field		: form_item.q_column,
-							value		: (form_item.q_selected_eq==="LIKE") ? `'%${item_value}%'` : `'${item_value}'`,
-							op			: form_item.q_selected_eq,
-							sql_filter	: form_item.sql_filter,
-							wrapper		: form_item.wrapper
+							id		: form_item.id,
+							field	: form_item.q_column,
+							value	: (form_item.q_selected_eq==="LIKE") ? `'%${item_value}%'` : `'${item_value}'`,
+							op		: form_item.q_selected_eq,
+							q_type	: 'q_selected',
+							q		: value
 						}
+
+						// optionals
+							if (form_item.sql_filter) {
+								element.sql_filter = form_item.sql_filter
+							}
+							if (form_item.wrapper) {
+								element.wrapper = form_item.wrapper
+							}
 
 						c_group[c_group_op].push(element)
 
@@ -567,15 +616,20 @@ function form_factory() {
 				return false;
 			}
 
-		// operators value (optional)
-			const input_operators = self.node.querySelector('input[name="operators"]')
+		// input_operators (optional)
+			const input_operators = self.operators_node
+				? self.operators_node.querySelector('input[name="operators"]')
+				: null
+
+		// operators_value
 			const operators_value = input_operators
-				? self.node.querySelector('input[name="operators"]:checked').value
+				? self.operators_node.querySelector('input[name="operators"]:checked').value
 				: "$and";
 
 		// filter object
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
+
 
 		return filter
 	}//end build_filter
@@ -656,6 +710,36 @@ function form_factory() {
 
 		return sql_filter
 	}//end parse_sql_filter
+
+
+
+	/**
+	* PARSE_PSQO_TO_FORM
+	* @return 
+	*/
+	this.parse_psqo_to_form = function(psqo, recursion) {
+		
+		const self = this
+
+		const global_key = Object.keys(psqo)[0]
+		if(global_key==='$and' || global_key==='$or'){
+			// set global oprators value
+				if (!recursion) {
+					console.log("//----- SET global_key:",global_key);
+					self.set_operator_node_value(global_key)
+				}
+
+			// recursion values
+				for (let i = 0; i < psqo[global_key].length; i++) {
+					self.parse_psqo_to_form(psqo[global_key][i], true)
+				}
+		}else{
+			self.set_form_item(psqo)
+		}
+
+
+		return true
+	};//end parse_psqo_to_form
 
 
 
@@ -823,11 +907,15 @@ function form_factory() {
 						  filter[op] = []
 
 					const value_parsed = (form_item.eq_in) + term + (form_item.eq_out)
+					
+					const safe_value = (typeof value_parsed==='string' || value_parsed instanceof String)
+							? value_parsed.replace(/(')/g, "''")
+							: value_parsed
 
 					// main column search item
 						filter[op].push({
 							field	: form_item.q_column_filter || q_column,
-							value	: `'${value_parsed}'`,
+							value	: `'${safe_value}'`,
 							op		: form_item.eq, // 'LIKE',
 							group	: q_column
 						})
@@ -1165,8 +1253,6 @@ function form_factory() {
 
 
 
-
-
 }//end form_factory
 
 
@@ -1177,82 +1263,101 @@ var psqo_factory = {
 
 	/**
 	* BUILD_SAFE_PSQO
-	* Builds a plain sql filter from the form nodes values
+	* Check and validate psqo element
 	*/
-	build_safe_psqo : function(options){
+	build_safe_psqo : function(psqo){
 
 		const self = this
 
-		const psqo_length = options.length
+		const global_key = Object.keys(psqo)[0]
+		if(global_key==='$and' || global_key==='$or'){			
+			// recursion values
+			for (let i = 0; i < psqo[global_key].length; i++) {
+				psqo[global_key][i] = self.build_safe_psqo(psqo[global_key][i])
+			}
+		}else{
+			return clean_psqo_item(psqo)			
+		}
 
-		const sql_filter = []
-		for (let i = 0; i < psqo_length; i++) {
-			
-			const global_key = Object.keys(options[i])
-			if(global_key === '$and' || global_key === '$or'){
-				
-				const safe_value = self.build_safe_psqo(options[i])
-				options[i][global_key] = safe_value
+		function clean_psqo_item(psqo_item){
 
-			}else{
+			// des
+				// const eq_in			= (psqo_item.eq_in && psqo_item.eq_in === '%') ? '%' : ''
+				// const eq_out		= (psqo_item.eq_out && psqo_item.eq_out === '%') ? '%' : ''
+				// const value			= psqo_item.value
+				// const safe_value	= (typeof value==='string' || value instanceof String)
+				// 	? value.replace(/(')/g, "''")
+				// 	: value
 
-				for (let j = 0; j < options[j].length; j++) {
-					options[i] = check_value(check_value)
+			// mandatory properties
+				const id		= psqo_item.id 
+				const field		= psqo_item.field // db column name like 'p_culture'
+				const q			= psqo_item.q // search value original like 'arse'
+				const q_type	= typeof psqo_item.q_type!=="undefined" // type of form value: q | q_selected
+					? psqo_item.q_type
+					: 'q'
+
+			// const safe_q	= (typeof q==='string' || q instanceof String)
+			// 	? encodeURIComponent(q)
+			// 	: q
+		
+			const new_psqo_item = {
+				id		: id,
+				field	: field,
+				q		: q,
+				q_type	: q_type				
+			}
+
+			// optionals
+				if (psqo_item.op) {
+					new_psqo_item.op = psqo_item.op
 				}
-			}
+				if (psqo_item.eq_in) {
+					new_psqo_item.eq_in = psqo_item.eq_in
+				}
+				if (psqo_item.eq_out) {
+					new_psqo_item.eq_out = psqo_item.eq_out
+				}
+
+			return new_psqo_item
 		}
 
-		const check_value = function(value_obj){
-
-			const field 	= value_obj.field
-			const eq_in 	= (value_obj.eq_in && value_obj.eq_in === '%') ? '%' : ''
-			const eq_out 	= (value_obj.eq_out && value_obj.eq_out === '%') ? '%' : ''
-			const pre_value = value_obj.value
-			const op 		= value_obj.op || '='
-
-			const safe_value = (typeof pre_value==='string' || pre_value instanceof String)
-				? pre_value.replace(/(')/g, "''")
-				: pre_value
-
-			const filter = {
-				field		: field,
-				value		: `'${eq_in}${safe_value}${eq_out}'`, // Like '%${form_item.q}%'
-				op			: op // default is 'LIKE'
-			}
-
-			return filter
-		}
-
-		return options
+		return psqo
 	},// build_safe_psqo
 
 
 
 	/**
 	* ENCODE_PSQO
-	* Builds a plain sql filter from the form nodes values
+	* @see https://pieroxy.net/blog/pages/lz-string/guide.html#inline_menu_3
+	* Encode psqo object using base64 to allow use it in url context 
 	*/
 	encode_psqo : function(psqo){
 
-		// const stringify_psqo	= JSON.stringify(psqo)
-		// const encoded_psqo	= encodeURI(stringify_psqo)
+		// const encoded_psqo = window.btoa(JSON.stringify(psqo));
+		const base = JSON.stringify(psqo);
+		return LZString.compressToEncodedURIComponent(base);	
 
-		const encoded_psqo = window.btoa(JSON.stringify(psqo));
-
-		return encoded_psqo
+		// return encoded_psqo
 	},//end encode_psqo
+
 
 
 	/**
 	* DECODE_PSQO
-	* Builds a plain sql filter from the form nodes values
+	* Decode previously stringified and base64 encoded psqo object
+	* @see https://pieroxy.net/blog/pages/lz-string/guide.html#inline_menu_3
 	* @return object | null
 	*/
 	decode_psqo : function(psqo){
 
 		const parsed_psqo = (()=>{
 			try {
-				return JSON.parse(window.atob(psqo))
+				// return JSON.parse(window.atob(psqo))
+
+				const base = LZString.decompressFromEncodedURIComponent(psqo);				
+				return JSON.parse(base)		
+
 			}catch(error) {
 				console.log("psqo:",psqo);
 				console.warn("invalid psqo: ", error);

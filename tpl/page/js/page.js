@@ -645,6 +645,7 @@ var page = {
 
 	/**
 	* ACTIVATE_IMAGES_GALLERY
+	* @seee https://github.com/ajlkn/jquery.poptrox
 	* @return promise
 	*/
 	activate_images_gallery : function(images_gallery_container, clean) {

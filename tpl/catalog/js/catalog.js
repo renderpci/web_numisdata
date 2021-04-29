@@ -47,7 +47,7 @@ var catalog = {
 			self.form_items_container	= form_items_container
 
 
-			// 	// mints selector
+		// mints selector
 			// 		const select = self.draw_select({
 			// 			data		: response.result,
 			// 			term_table	: "mints",
@@ -199,35 +199,14 @@ var catalog = {
 		// first search
 			if(psqo && psqo.length>1){
 				
-				const decoded_psqo = psqo_factory.decode_psqo(psqo)				
+				// if psqo is received, recreate the original search into the current form and submit
+				const decoded_psqo = psqo_factory.decode_psqo(psqo)					
 				if (decoded_psqo) {
 
-					const safe_psqo = psqo_factory.build_safe_psqo(decoded_psqo)
-
-					for (let i = 0; i < safe_psqo.length; i++) {
-						
-						const current_psqo = safe_psqo[i]
-						
-						// global_operator
-							const global_operator = Object.keys(safe_psqo[i])						
-							self.form.set_operator_node_value(global_operator[0])
-
-						// items
-							const current_value = current_psqo[global_operator]
-							for (let j = 0; j < current_value.length; j++) {
-								
-								const psqo_item = current_value[j]
-
-								self.form.set_form_item(psqo_item)
-
-								//add_selected_value = function(form_item, label, value)
-								// self.form.add_selected_value(self.form.form_items[psqo_item.field], psqo_item.value, psqo_item.value)
-								// self.form.set_input_value(self.form.form_items[psqo_item.field], psqo_item.value)
-							}
-					}
+					self.form.parse_psqo_to_form(decoded_psqo)
 
 					self.form_submit(form_node, {
-						scrool_result : true
+						scroll_result : true
 					})
 				}//end if (decoded_psqo)
 
@@ -236,6 +215,8 @@ var catalog = {
 				// load mints list
 					self.load_mint_list()
 					.then(function(response){
+
+						// pick random one value
 						const mint = response.result[Math.floor(Math.random() * response.result.length)];
 
 						// form_factory instance
@@ -245,16 +226,16 @@ var catalog = {
 							name		: "mint",
 							label		: tstring.mint || "mint",
 							q_column	: "p_mint",
-							eq			: "LIKE",
+							eq			: "=",
 							eq_in		: "",
 							eq_out		: "",
-							q  			: mint.name,
+							q  			: `["${mint.name}"]`,
 							is_term		: true
 						})
 						// console.log("custom_form.form_items", [a]);
 						self.form_submit(form_node, {
 							form_items		: [mint_item],
-							scrool_result	: true
+							scroll_result	: true
 						})
 					})
 			}
@@ -329,17 +310,21 @@ var catalog = {
 
 		// mint
 			self.form.item_factory({
-				id			: "mint",
-				name		: "mint",
-				label		: tstring.mint || "mint",
-				q_column	: "p_mint",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				is_term		: true,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+				id				: "mint",
+				name			: "mint",
+				label			: tstring.mint || "mint",
+				q_column		: "p_mint",
+				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				eq				: "LIKE",
+				eq_in			: "%",
+				eq_out			: "%",
+				is_term			: true,
+				parent			: form_row,
+				callback		: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -353,37 +338,48 @@ var catalog = {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
 		// culture
 			self.form.item_factory({
-				id			: "culture",
-				name		: "culture",
-				label		: tstring.culture || "culture",
-				q_column	: "p_culture",
-				eq_in		: "%",
-				// q_table	: "ts_period",
-				is_term		: true,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+				id				: "culture",
+				name			: "culture",
+				label			: tstring.culture || "culture",
+				q_column		: "p_culture",
+				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				eq_in			: "%",
+				eq_out			: "%",
+				is_term			: true,
+				parent			: form_row,
+				callback		: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
-		// creator
+		// creator (autoridad)
 			self.form.item_factory({
-				id			: "creator",
-				name		: "creator",
-				label		: tstring.creator || "creator",
-				q_column	: "p_creator",
-				eq_in		: "%",
-				// q_table	: "ts_period",
-				is_term		: true,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+				id				: "creator",
+				name			: "creator",
+				label			: tstring.creator || "creator",
+				q_column		: "p_creator",
+				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				eq_in			: "%",
+				eq_out			: "%",
+				is_term			: true,
+				parent			: form_row,
+				callback		: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -398,7 +394,10 @@ var catalog = {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -413,7 +412,10 @@ var catalog = {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -428,7 +430,10 @@ var catalog = {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -443,7 +448,10 @@ var catalog = {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -458,7 +466,10 @@ var catalog = {
 				is_term			: false,
 				parent			: form_row,
 				callback		: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -473,7 +484,10 @@ var catalog = {
 				is_term			: false,
 				parent			: form_row,
 				callback		: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -488,7 +502,10 @@ var catalog = {
 				is_term 	: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -503,7 +520,10 @@ var catalog = {
 				is_term 	: true,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -517,7 +537,10 @@ var catalog = {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -531,7 +554,10 @@ var catalog = {
 			// 	is_term 	: false,
 			// 	parent		: form_row,
 			// 	callback	: function(form_item) {
-			// 		self.activate_autocomplete(form_item);
+			// 		self.form.activate_autocomplete({
+			//			form_item	: form_item,
+			//			table		: 'catalog'
+			//		})
 			// 	}
 			// })
 
@@ -545,7 +571,10 @@ var catalog = {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -559,7 +588,10 @@ var catalog = {
 			// 	is_term 	: false,
 			// 	parent		: form_row,
 			// 	callback	: function(form_item) {
-			// 		self.activate_autocomplete(form_item);
+			// 		self.form.activate_autocomplete({
+			//			form_item	: form_item,
+			//			table		: 'catalog'
+			//		})
 			// 	}
 			// })
 
@@ -573,7 +605,10 @@ var catalog = {
 				is_term 	: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -589,22 +624,29 @@ var catalog = {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
 		// period
 			self.form.item_factory({
-				id			: "period",
-				name		: "period",
-				label		: tstring.period || "period",
-				q_column	: "p_period",
-				eq_in		: "%",
-				// q_table	: "ts_period",
-				is_term		: true,
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.activate_autocomplete(form_item);
+				id				: "period",
+				name			: "period",
+				label			: tstring.period || "period",
+				q_column		: "p_period",
+				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				eq_in			: "%",
+				// q_table		: "ts_period",
+				is_term			: true,
+				parent			: form_row,
+				callback		: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
 				}
 			})
 
@@ -917,28 +959,6 @@ var catalog = {
 
 
 	/**
-	* ACTIVATE_AUTOCOMPLETE
-	*/
-	activate_autocomplete : function(form_item) {
-
-		const self = this
-
-		return self.form.activate_autocomplete({
-			form_item	: form_item,
-			table		: 'catalog'
-		})
-
-		// moved to common form_factory
-			// // define current_form_item in this scope
-			// // to allow acces from different places
-			// let current_form_item
-
-			// return true
-	},//end activate_autocomplete
-
-
-
-	/**
 	* FORM_SUBMIT
 	* Form submit launch search
 	*/
@@ -947,163 +967,33 @@ var catalog = {
 		const self = this
 
 		// options
-			const scrool_result	= typeof options.scrool_result==="boolean" ? options.scrool_result : true
+			const scroll_result	= typeof options.scroll_result==="boolean" ? options.scroll_result : true
 			const form_items	= options.form_items || self.form.form_items
 
-		const container_rows_list	= self.rows_list_container //	div_result.querySelector("#rows_list")
-		const div_result			= container_rows_list.parentNode // document.querySelector(".result")
+		// node containers
+			const container_rows_list	= self.rows_list_container // div_result.querySelector("#rows_list")
+			const div_result			= container_rows_list.parentNode // document.querySelector(".result")
 
 		// spinner add
-			// page.add_spinner(div_result)
 			const spinner = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "spinner",
 				parent			: div_result
 			})
 
-		// ar_is_term
-			const ar_is_term = []
-			for (let [id, form_item] of Object.entries(form_items)) {
-				if (form_item.is_term===true) ar_is_term.push(form_item)
-			}
+		// loading set css
+			container_rows_list.classList.add("loading")
 
-		const ar_query_elements = []
-		for (let [id, form_item] of Object.entries(form_items)) {
 
-			const current_group = []
+		// build filter
+			const filter = self.form.build_filter({
+				form_items : form_items
+			})
 
-			const group_op = (form_item.is_term===true) ? "$or" : "$and"
-			const group = {}
-				  group[group_op] = []
-
-			// q value
-				if (form_item.q.length>0) {
-
-					const c_group_op = '$and'
-					const c_group = {}
-						  c_group[c_group_op] = []
-
-					  const safe_value = (typeof form_item.q==='string' || form_item.q instanceof String)
-						  ? form_item.q.replace(/(')/g, "''")
-						  : form_item.q
-
-					// q element
-						const element = {
-							field	: form_item.q_column,
-							value	: `'%${safe_value}%'`,
-							op		: form_item.eq // default is 'LIKE'
-						}
-
-						c_group[c_group_op].push(element)
-
-					// q_table element
-						// if (form_item.q_table && form_item.q_table!=="any") {
-
-						// 	const element_table = {
-						// 		field	: form_item.q_table_name,
-						// 		value	: `'${form_item.q_table}'`,
-						// 		op		: '='
-						// 	}
-
-						// 	c_group[c_group_op].push(element_table)
-						// }
-
-					// add basic group
-						group[group_op].push(c_group)
-
-					// is_term
-						// const t_group_op = 'AND'
-						// const t_group = {}
-						// 	  t_group[t_group_op] = []
-
-						// if (form_item.is_term===true) {
-
-						// 	const element = {
-						// 		field	: 'parents_text',
-						// 		value	: `'%${form_item.q}%'`,
-						// 		op		: 'LIKE',
-						// 		debug_name 	: form_item.name
-						// 	}
-						// 	t_group[t_group_op].push(element)
-
-						// }else{
-
-						// 	for (let g = 0; g < ar_is_term.length; g++) {
-						// 		const is_term_item = ar_is_term[g]
-
-						// 		if (is_term_item.q.length<1) continue
-
-						// 		const element = {
-						// 			field	: 'parents_text',
-						// 			value	: `'%${is_term_item.q}%'`,
-						// 			op		: 'LIKE',
-						// 			debug_name 	: form_item.name
-						// 		}
-						// 		t_group[t_group_op].push(element)
-						// 	}
-						// }
-
-						// if (t_group[t_group_op].length>0) {
-						// 	group[group_op].push(t_group)
-						// }
-				}
-
-			// q_selected values
-				if (form_item.q_selected.length>0) {
-
-					for (let j = 0; j < form_item.q_selected.length; j++) {
-
-						// value
-							const value = form_item.q_selected[j]
-
-							// escape html strings containing single quotes inside.
-							// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
-							const safe_value = value.replace(/(')/g, "''")
-
-						const c_group_op = "$and"
-						const c_group = {}
-							  c_group[c_group_op] = []
-
-						// elemet
-						const element = {
-							field	: form_item.q_column,
-							value	: (form_item.is_term===true) ? `'%"${safe_value}"%'` : `'${safe_value}'`,
-							op		: (form_item.is_term===true) ? "LIKE" : "="
-						}
-						c_group[c_group_op].push(element)
-
-						// q_table element
-							// if (form_item.q_table && form_item.q_table!=="any") {
-
-							// 	const element_table = {
-							// 		field	: form_item.q_table_name,
-							// 		value	: `'${form_item.q_table}'`,
-							// 		op		: '='
-							// 	}
-
-							// 	c_group[c_group_op].push(element_table)
-							// }
-
-						group[group_op].push(c_group)
-					}
-				}
-
-			if (group[group_op].length>0) {
-				ar_query_elements.push(group)
-			}
-		}
-
-		// debug
-			if(SHOW_DEBUG===true) {
-				// console.log("self.form_items:",self.form_items);
-				console.log("ar_query_elements:",ar_query_elements);
-			}
-
-		// empty form case
-			if (ar_query_elements.length<1) {
-				// self.form_items.mint.node_input.focus()
-				// page.remove_spinner(div_result)
+		// empty filter case
+			if (!filter || filter.length<1) {
 				spinner.remove()
+				container_rows_list.classList.remove("loading")
 				return false;
 			}
 
@@ -1114,21 +1004,10 @@ var catalog = {
 				self.export_data_container.classList.add("hide")
 			}
 
-		// loading set css
-			container_rows_list.classList.add("loading")
-
 		// scrool to head result
-			if (div_result && scrool_result===true) {
+			if (div_result && scroll_result===true) {
 				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 			}
-
-		// operators value
-			const operators_value = form_obj.querySelector('input[name="operators"]:checked').value;
-				// console.log("operators_value:",operators_value);
-
-			const filter = {}
-				  filter[operators_value] = ar_query_elements
-
 
 		// search rows exec against API
 			const js_promise = self.search_rows({
@@ -1140,39 +1019,266 @@ var catalog = {
 				}
 			})
 			.then((parsed_data)=>{
-				// if(SHOW_DEBUG===true) {
-					// console.log("--- form_submit response:", parsed_data)
-				// }
-
+				
 				// draw
-					// clean container_rows_list and add_spinner
-						while (container_rows_list.hasChildNodes()) {
-							container_rows_list.removeChild(container_rows_list.lastChild);
-						}
-						container_rows_list.classList.remove("loading")
-						// page.remove_spinner(div_result)
-						spinner.remove()
+				// clean container_rows_list and add_spinner
+					while (container_rows_list.hasChildNodes()) {
+						container_rows_list.removeChild(container_rows_list.lastChild);
+					}
+					container_rows_list.classList.remove("loading")
+					spinner.remove()
 
-					// draw rows
-						self.draw_rows({
-							target  : self.rows_list_container,
-							ar_rows : parsed_data
-						})
-						.then(function(){
-							// // scrool to head result
-							// 	if (response.result.length>0) {
-							// 		const div_result = document.querySelector(".result")
-							// 		if (div_result) {
-							// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-							// 		}
-							// 	}
-							self.export_data_container.classList.remove("hide")
-						})
+				// draw rows
+					self.draw_rows({
+						target  : self.rows_list_container,
+						ar_rows : parsed_data
+					})
+					.then(function(){						
+						self.export_data_container.classList.remove("hide")
+					})
 			})
 
 
 		return js_promise
 	},//end form_submit
+
+
+
+	/**
+	* FORM_SUBMIT_OLD
+	* Form submit launch search
+	*/
+		// form_submit_OLD : function(form_obj, options={}) {
+
+		// 	const self = this
+
+		// 	// options
+		// 		const scroll_result	= typeof options.scroll_result==="boolean" ? options.scroll_result : true
+		// 		const form_items	= options.form_items || self.form.form_items
+
+		// 	const container_rows_list	= self.rows_list_container //	div_result.querySelector("#rows_list")
+		// 	const div_result			= container_rows_list.parentNode // document.querySelector(".result")
+
+		// 	// spinner add
+		// 		// page.add_spinner(div_result)
+		// 		const spinner = common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "spinner",
+		// 			parent			: div_result
+		// 		})
+
+		// 	// ar_is_term
+		// 		const ar_is_term = []
+		// 		for (let [id, form_item] of Object.entries(form_items)) {
+		// 			if (form_item.is_term===true) ar_is_term.push(form_item)
+		// 		}
+
+		// 	const ar_query_elements = []
+		// 	for (let [id, form_item] of Object.entries(form_items)) {
+
+		// 		const current_group = []
+
+		// 		const group_op = (form_item.is_term===true) ? "$or" : "$and"
+		// 		const group = {}
+		// 			  group[group_op] = []
+
+		// 		// q value
+		// 			if (form_item.q.length>0) {
+
+		// 				const c_group_op = '$and'
+		// 				const c_group = {}
+		// 					  c_group[c_group_op] = []
+
+		// 				  const safe_value = (typeof form_item.q==='string' || form_item.q instanceof String)
+		// 					  ? form_item.q.replace(/(')/g, "''")
+		// 					  : form_item.q
+
+		// 				// q element
+		// 					const element = {
+		// 						field	: form_item.q_column,
+		// 						value	: `'%${safe_value}%'`,
+		// 						op		: form_item.eq // default is 'LIKE'
+		// 					}
+
+		// 					c_group[c_group_op].push(element)
+
+		// 				// q_table element
+		// 					// if (form_item.q_table && form_item.q_table!=="any") {
+
+		// 					// 	const element_table = {
+		// 					// 		field	: form_item.q_table_name,
+		// 					// 		value	: `'${form_item.q_table}'`,
+		// 					// 		op		: '='
+		// 					// 	}
+
+		// 					// 	c_group[c_group_op].push(element_table)
+		// 					// }
+
+		// 				// add basic group
+		// 					group[group_op].push(c_group)
+
+		// 				// is_term
+		// 					// const t_group_op = 'AND'
+		// 					// const t_group = {}
+		// 					// 	  t_group[t_group_op] = []
+
+		// 					// if (form_item.is_term===true) {
+
+		// 					// 	const element = {
+		// 					// 		field	: 'parents_text',
+		// 					// 		value	: `'%${form_item.q}%'`,
+		// 					// 		op		: 'LIKE',
+		// 					// 		debug_name 	: form_item.name
+		// 					// 	}
+		// 					// 	t_group[t_group_op].push(element)
+
+		// 					// }else{
+
+		// 					// 	for (let g = 0; g < ar_is_term.length; g++) {
+		// 					// 		const is_term_item = ar_is_term[g]
+
+		// 					// 		if (is_term_item.q.length<1) continue
+
+		// 					// 		const element = {
+		// 					// 			field	: 'parents_text',
+		// 					// 			value	: `'%${is_term_item.q}%'`,
+		// 					// 			op		: 'LIKE',
+		// 					// 			debug_name 	: form_item.name
+		// 					// 		}
+		// 					// 		t_group[t_group_op].push(element)
+		// 					// 	}
+		// 					// }
+
+		// 					// if (t_group[t_group_op].length>0) {
+		// 					// 	group[group_op].push(t_group)
+		// 					// }
+		// 			}
+
+		// 		// q_selected values
+		// 			if (form_item.q_selected.length>0) {
+
+		// 				for (let j = 0; j < form_item.q_selected.length; j++) {
+
+		// 					// value
+		// 						const value = form_item.q_selected[j]
+
+		// 						// escape html strings containing single quotes inside.
+		// 						// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
+		// 						const safe_value = value.replace(/(')/g, "''")
+
+		// 					const c_group_op = "$and"
+		// 					const c_group = {}
+		// 						  c_group[c_group_op] = []
+
+		// 					// elemet
+		// 					const element = {
+		// 						field	: form_item.q_column,
+		// 						value	: (form_item.is_term===true) ? `'%"${safe_value}"%'` : `'${safe_value}'`,
+		// 						op		: (form_item.is_term===true) ? "LIKE" : "="
+		// 					}
+		// 					c_group[c_group_op].push(element)
+
+		// 					// q_table element
+		// 						// if (form_item.q_table && form_item.q_table!=="any") {
+
+		// 						// 	const element_table = {
+		// 						// 		field	: form_item.q_table_name,
+		// 						// 		value	: `'${form_item.q_table}'`,
+		// 						// 		op		: '='
+		// 						// 	}
+
+		// 						// 	c_group[c_group_op].push(element_table)
+		// 						// }
+
+		// 					group[group_op].push(c_group)
+		// 				}
+		// 			}
+
+		// 		if (group[group_op].length>0) {
+		// 			ar_query_elements.push(group)
+		// 		}
+		// 	}
+
+		// 	// debug
+		// 		if(SHOW_DEBUG===true) {
+		// 			// console.log("self.form_items:",self.form_items);
+		// 			// console.log("ar_query_elements:",ar_query_elements);
+		// 		}
+
+		// 	// empty form case
+		// 		if (ar_query_elements.length<1) {
+		// 			// self.form_items.mint.node_input.focus()
+		// 			// page.remove_spinner(div_result)
+		// 			spinner.remove()
+		// 			return false;
+		// 		}
+
+		// 	// export_data_buttons added once
+		// 		if (!self.export_data_buttons) {
+		// 			self.export_data_buttons = page.render_export_data_buttons()
+		// 			self.export_data_container.appendChild(self.export_data_buttons)
+		// 			self.export_data_container.classList.add("hide")
+		// 		}
+
+		// 	// loading set css
+		// 		container_rows_list.classList.add("loading")
+
+		// 	// scrool to head result
+		// 		if (div_result && scroll_result===true) {
+		// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+		// 		}
+
+		// 	// operators value
+		// 		const operators_value = form_obj.querySelector('input[name="operators"]:checked').value;
+		// 			// console.log("operators_value:",operators_value);
+
+		// 		const filter = {}
+		// 			  filter[operators_value] = ar_query_elements
+
+
+		// 	// search rows exec against API
+		// 		const js_promise = self.search_rows({
+		// 			filter			: filter,
+		// 			limit			: 0,
+		// 			process_result	: {
+		// 				fn 		: 'process_result::add_parents_and_children_recursive',
+		// 				columns : [{name : "parents"}]
+		// 			}
+		// 		})
+		// 		.then((parsed_data)=>{
+		// 			// if(SHOW_DEBUG===true) {
+		// 				// console.log("--- form_submit_OLD response:", parsed_data)
+		// 			// }
+
+		// 			// draw
+		// 				// clean container_rows_list and add_spinner
+		// 					while (container_rows_list.hasChildNodes()) {
+		// 						container_rows_list.removeChild(container_rows_list.lastChild);
+		// 					}
+		// 					container_rows_list.classList.remove("loading")
+		// 					// page.remove_spinner(div_result)
+		// 					spinner.remove()
+
+		// 				// draw rows
+		// 					self.draw_rows({
+		// 						target  : self.rows_list_container,
+		// 						ar_rows : parsed_data
+		// 					})
+		// 					.then(function(){
+		// 						// // scrool to head result
+		// 						// 	if (response.result.length>0) {
+		// 						// 		const div_result = document.querySelector(".result")
+		// 						// 		if (div_result) {
+		// 						// 			div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+		// 						// 		}
+		// 						// 	}
+		// 						self.export_data_container.classList.remove("hide")
+		// 					})
+		// 		})
+
+
+		// 	return js_promise
+		// },//end form_submit_OLD
 
 
 

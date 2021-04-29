@@ -340,16 +340,17 @@ var type_row_fields = {
 				// 	inner_html		: item_text.trim(),
 				// 	parent			: line
 				// })
-
-				const psqo = [{
+				
+				const psqo = {
 					"$and":[{
-							field		: name,
-							value		: item[name], // Like '%${form_item.q}%'
-							op			: '=', // default is 'LIKE'
-						}]
+						id	: name,
+						q	: item[name],
+						op	: '='
 					}]
-
-				const parse_psqo = psqo_factory.encode_psqo(psqo)
+				}
+				const safe_psqo		= psqo_factory.build_safe_psqo(psqo)
+					console.log("safe_psqo:",safe_psqo);
+				const parse_psqo	= psqo_factory.encode_psqo(safe_psqo)
 
 				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?psqo="+ parse_psqo
 

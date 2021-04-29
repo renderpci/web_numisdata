@@ -625,7 +625,7 @@ var map = {
 					limit			: 0,
 					count			: false,
 					offset			: 0,
-					order			: null,
+					order			: 'section_id ASC',
 					// group		: "type_data",
 					process_result	: null
 				}

@@ -34,6 +34,8 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/util.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.poptrox.min.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/lz-string/lz-string.min.js';
+		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/lz-string/base64-string.js';
 
 
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';

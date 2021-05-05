@@ -660,28 +660,35 @@ var page = {
 				}
 			}
 
+		console.log($(images_gallery_container))
 
-		return $(images_gallery_container).poptrox({
-			baseZIndex				: 20000,
-			fadeSpeed				: 1,
-			// onPopupClose: function() { $body.removeClass('modal-active'); },
-			// onPopupOpen: function() { $body.addClass('modal-active'); },
-			overlayOpacity			: 0.5,
-			popupCloserText			: '',
-			popupHeight				: "60%",
-			popupWidth				: "60%",
-			popupLoaderText			: '',
-			popupSpeed				: 1,
-			selector				: 'a.image_link',
-			usePopupCaption			: false,
-			usePopupCloser			: true,
-			usePopupDefaultStyling	: false,
-			usePopupForceClose		: true,
-			usePopupLoader			: true,
-			usePopupNav				: true,
-			windowMargin			: 50,
-			popupIsFixed			: true
+		const newGallery = new image_gallery({
+			galleryNode: images_gallery_container
 		})
+
+		// return $(images_gallery_container).poptrox({
+		// 	baseZIndex				: 20000,
+		// 	fadeSpeed				: 1,
+		// 	// onPopupClose: function() { $body.removeClass('modal-active'); },
+		// 	// onPopupOpen: function() { $body.addClass('modal-active'); },
+		// 	overlayOpacity			: 0.5,
+		// 	popupCloserText			: '',
+		// 	popupHeight				: "60%",
+		// 	popupWidth				: "60%",
+		// 	popupLoaderText			: '',
+		// 	popupSpeed				: 1,
+		// 	selector				: '.image_link',
+		// 	usePopupCaption			: true,
+		// 	usePopupCloser			: true,
+		// 	usePopupDefaultStyling	: false,
+		// 	usePopupForceClose		: true,
+		// 	usePopupLoader			: true,
+		// 	usePopupNav				: true,
+		// 	windowMargin			: 50,
+		// 	popupIsFixed			: true
+
+		// })
+
 	},//end activate_images_gallery
 
 

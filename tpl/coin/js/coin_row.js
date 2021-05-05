@@ -41,12 +41,14 @@ var coin_row = {
 		// identify_images
 			const identify_images = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "identify_images_wrapper gallery",
+				class_name		: "identify_images_wrapper gallery coins-sides-wrapper",
 				parent 			: fragment
 			})
 			// image_obverse
-				if (row.image_obverse && row.image_obverse.length>0) {
+				let coin_number = tstring.number || "Number"
+				coin_number += " "+row.number
 
+				if (row.image_obverse && row.image_obverse.length>0) {
 					const image_link = common.create_dom_element({
 						element_type	: "a",
 						class_name		: "image_link",
@@ -57,6 +59,7 @@ var coin_row = {
 					const image_obverse = common.create_dom_element({
 						element_type	: "img",
 						class_name		: "image image_obverse",
+						title			: coin_number,
 						src				: row.image_obverse,
 						parent			: image_link
 					})
@@ -74,6 +77,7 @@ var coin_row = {
 					const image_reverse = common.create_dom_element({
 						element_type	: "img",
 						class_name		: "image image_reverse",
+						title			: coin_number,
 						src				: row.image_reverse,
 						parent			: image_link
 					})

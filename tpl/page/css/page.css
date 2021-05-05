@@ -224,7 +224,7 @@ input.form-control:not(:placeholder-shown) {
   left: 0;
   bottom: -1px;
   z-index: 999;
-  background-color: rgba(255, 255, 255, 0.78);
+  background-color: rgb(255 255 255 / 78%);
   padding: 0.5em;
   padding-bottom: 0.25em;
   padding-top: 0.25em;
@@ -1492,6 +1492,63 @@ input[type=button].btn.button_download.unactive {
   width: auto;
   word-break: break-all;
   overflow-wrap: break-word;
+}
+#popup-gallery {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1500;
+}
+#popup-gallery #gallery-wrapper {
+  width: 70vw;
+  height: 75%;
+  margin: auto;
+  margin-top: 12.5vh;
+  background-color: #191919;
+  padding: 1em;
+}
+#popup-gallery #images-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  background-color: #ffffff;
+}
+#popup-gallery #images-wrapper img {
+  display: block;
+  width: 50%;
+  height: 100%;
+  object-fit: contain;
+  margin: auto;
+}
+#popup-gallery #caption-wrapper {
+  width: 100%;
+}
+#popup-gallery #caption-wrapper p {
+  font-size: 100%;
+  color: #ffffff;
+  text-align: center;
+}
+#popup-gallery .nav-button {
+  position: absolute;
+  top: 45vh;
+  width: 5vw;
+  height: 10vh;
+  background-color: rgba(25, 25, 25, 0.5);
+}
+#popup-gallery #next-button {
+  right: 10vw;
+  background: rgba(25, 25, 25, 0.5) url(images/arrow.svg) no-repeat center;
+}
+#popup-gallery #pre-button {
+  left: 10vw;
+  background: rgba(25, 25, 25, 0.5) url(images/arrow.svg) no-repeat center;
+  transform: rotate(180deg);
+}
+#popup-gallery .hidden {
+  visibility: hidden;
 }
 @media print {
   .print_hide {

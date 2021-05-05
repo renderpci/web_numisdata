@@ -1209,7 +1209,74 @@
 		}
 	}
 
+//gallery
+	#popup-gallery {
+        position:fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0,0,0,0.8);
+        z-index: 1500;
 
+        #gallery-wrapper{
+            width: 70vw;
+            height: 75%;
+            margin: auto;
+            margin-top: 12.5vh;
+            background-color: rgba(25,25,25,1);
+            padding:1em;
+        }
+        
+        #images-wrapper {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            background-color: #ffffff;
+        }
+        
+        #images-wrapper img{
+            display: block;
+            width: 50%;
+            height: 100%;
+            object-fit: contain;
+            margin:auto;
+        }
+        
+        #caption-wrapper{
+            width: 100%;
+            
+        }
+        
+        #caption-wrapper p {
+            font-size: 100%;
+            color: rgb(255,255,255);
+            text-align: center;
+        }
+        
+        .nav-button{
+            position:absolute;
+            top:45vh;
+            width: 5vw;
+            height: 10vh;
+            background-color: rgba(25,25,25,0.5);
+        }
+        
+        #next-button{
+            right: 10vw;
+            background: rgba(25,25,25,0.5) url(images/arrow.svg) no-repeat center;
+        }
+        
+        #pre-button{
+            left: 10vw;
+            background: rgba(25,25,25,0.5) url(images/arrow.svg) no-repeat center;
+            transform: rotate(180deg)
+        }
+
+        .hidden{
+            visibility: hidden;
+         }
+    }
 
 // print specifics
 	@media print {

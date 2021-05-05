@@ -476,7 +476,7 @@ var type_row_fields = {
 
 
 	image : function(item, name) {
-
+		
 		const self = this
 
 		// line
@@ -486,6 +486,13 @@ var type_row_fields = {
 			})
 
 		if (item[name] && item[name].length>0) {
+
+			const mint_number = (item.mint_number)
+					? item.mint_number+'/'
+					: ''
+
+			const item_text = item.catalogue + " " +  mint_number + item["number"]
+
 
 			const url = item[name]
 
@@ -499,7 +506,11 @@ var type_row_fields = {
 			common.create_dom_element({
 				element_type 	: "img",
 				class_name 		: "image",
-				src 			: url,
+				src 			: url,		
+				title 			: item.number,
+				dataset 		: {
+									caption: item_text
+								},
 				parent 			: image_link
 			})
 		}
@@ -1080,7 +1091,7 @@ var type_row_fields = {
 
 
 	draw_coin : function(data) {
-
+		console.log(data)
 		const self = this
 
 		// load_hires. When thumb is loaded, this event is triggered
@@ -1101,6 +1112,12 @@ var type_row_fields = {
 		})
 
 		// images
+			const mint_number = (data.mint_number)
+					? data.mint_number+'/'
+					: ''
+
+			const type_number = data.catalogue_type_mint + " " +  mint_number + data.type
+
 			// obverse
 			const images = common.create_dom_element({
 				element_type	: "div",
@@ -1116,6 +1133,10 @@ var type_row_fields = {
 			const image_obverse = common.create_dom_element({
 				element_type	: "img",
 				src				: data.image_obverse_thumb,
+				title 			: data.section_id,
+				dataset 		: {
+									caption: type_number
+								},
 				loading			: "lazy",
 				parent			: image_link_obverse
 			})
@@ -1131,6 +1152,10 @@ var type_row_fields = {
 			const image_reverse = common.create_dom_element({
 				element_type	: "img",
 				src				: data.image_reverse_thumb,
+				title 			: data.section_id,
+				dataset 		: {
+									caption: type_number
+								},
 				loading			: "lazy",
 				parent			: image_link_reverse
 			})
@@ -1426,6 +1451,13 @@ var type_row_fields = {
 			})
 
 			// images
+
+			const mint_number = (data.mint_number)
+					? data.mint_number+'/'
+					: ''
+
+			const type_number = data.catalogue_type_mint + " " +  mint_number + data.type
+			
 				const images = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "images_wrapper",
@@ -1440,6 +1472,10 @@ var type_row_fields = {
 				const image_obverse = common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_obverse,
+					title 			: data.section_id,
+					dataset 		: {
+									caption: type_number
+								},
 					parent			: image_link_obverse
 				})
 				image_obverse.loading="lazy"
@@ -1453,6 +1489,10 @@ var type_row_fields = {
 				const image_reverse = common.create_dom_element({
 					element_type	: "img",
 					src				: data.image_reverse,
+					title 			: data.section_id,
+					dataset 		: {
+									caption: type_number
+								},
 					parent			: image_link_reverse
 				})
 				image_reverse.loading="lazy"

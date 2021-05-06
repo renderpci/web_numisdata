@@ -184,12 +184,13 @@ var catalog_row_fields = {
 					self.node_factory(item, "ref_type_equivalents", type_container, null, null)
 
 					// images
-						console.log(item)
-						const mint_number = (item.mint_number)
-						? item.mint_number+'/'
+						
+						const mint_number = (item.ref_mint_number)
+						? item.ref_mint_number+'/'
 						: ''
 
-						const type_number = item.catalogue_type_mint + " " +  mint_number + item.type
+						const ar		= item.term.split(", ")
+						const c_name	= ar[0]
 
 						// convert the diameter to float.
 						const diameter = item.ref_type_averages_diameter
@@ -221,7 +222,7 @@ var catalog_row_fields = {
 								  class_name 	: "image_obverse",
 								  src 			: item.ref_coins_image_obverse_thumb,
 								  title 		: item.section_id,
-								  //dataset 		: {caption: type_number},
+								  dataset 		: {caption: "MIB " + mint_number + c_name  },
 								  parent 		: image_link_obverse
 							})
 							img_obverse.style.width = (diameter * 2 ) + 'mm'

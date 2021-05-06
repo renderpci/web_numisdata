@@ -97,7 +97,8 @@ var coin_row = {
 			// 	parent			: info_container
 			// })
 			// ID
-				if (row.section_id && row.section_id.length>0) {
+			console.log("row", row.section_id>0);
+				if (row.section_id && row.section_id>0) {
 					common.create_dom_element({
 						element_type	: "label",
 						class_name		: "left-labels",

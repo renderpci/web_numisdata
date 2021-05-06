@@ -28,6 +28,7 @@ var mints =  {
 		// options
 			self.form_container	= options.form_container
 			self.rows_container	= options.rows_container
+			const psqo			= options.psqo
 
 
 		// form
@@ -49,6 +50,31 @@ var mints =  {
 				// updates pagination.offset
 				self.pagination.offset = offset
 				// submit again
+				self.form_submit()
+			}
+
+		// first search
+			if(psqo && psqo.length>1){
+
+				// if psqo is received, recreate the original search into the current form and submit
+				const decoded_psqo = psqo_factory.decode_psqo(psqo)
+				if (decoded_psqo) {
+
+					self.form.parse_psqo_to_form(decoded_psqo)
+
+					self.form_submit(form_node, {
+						scroll_result : true
+					})
+				}//end if (decoded_psqo)
+
+			}else{
+
+				self.pagination = {
+					total	: null,
+					// limit	: 10,
+					offset	: 0,
+					// n_nodes	: 8
+				}
 				self.form_submit()
 			}
 
@@ -317,7 +343,31 @@ var mints =  {
 
 		return mints_rows.draw_item(data)
 
-	}//end list_row_builder
+	},//end list_row_builder
+
+
+	/**
+	* LOAD_MINT_LIST
+	* @return promise
+	*/
+	load_mint_list : function() {
+
+		const js_promise = data_manager.request({
+			body : {
+				dedalo_get 	: 'records',
+				table 		: 'mints',
+				ar_fields 	: ['*'],
+				// sql_fullselect : 'DISTINCT term, '
+				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+				limit 		: 0,
+				count 		: false,
+				order 		: 'name',
+				// sql_filter  : 'term_table=\'mints\''
+			}
+		})
+
+		return js_promise
+	}//end load_mint_list
 
 
 	/**

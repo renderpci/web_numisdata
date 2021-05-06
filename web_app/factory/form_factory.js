@@ -428,7 +428,7 @@ function form_factory() {
 			const form_item = (()=>{
 
 				return self.form_items[psqo_item.id]
-				
+
 				// for(const key in self.form_items) {
 
 				// 	const value = self.form_items[key]
@@ -437,7 +437,7 @@ function form_factory() {
 				// 		return value
 				// 	}
 				// }
-				
+
 				// return false;
 			})();
 			if (!form_item) {
@@ -454,18 +454,18 @@ function form_factory() {
 		// const clean_value = decodeURIComponent(psqo_item.q)
 		const clean_value = psqo_item.q
 
-		
+
 		// add value
 			if (psqo_item.q_type==='q_selected') {
 
-				const label = clean_value						
+				const label = clean_value
 				self.add_selected_value(form_item, label, clean_value)
 
 			}else{
 
 				self.set_input_value(form_item, clean_value)
 			}
-			
+
 
 		return form_item
 	}//end set_form_item
@@ -482,7 +482,7 @@ function form_factory() {
 
 		// options
 			const form_items = options.form_items || self.form_items
-		
+
 
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
@@ -511,7 +511,7 @@ function form_factory() {
 							id		: form_item.id,
 							field	: form_item.q_column,
 							value	: `'${form_item.eq_in}${safe_value}${form_item.eq_out}'`, // Like '%${form_item.q}%'
-							op		: form_item.eq, // default is 'LIKE'							
+							op		: form_item.eq, // default is 'LIKE'
 							q_type	: 'q',
 							q		: form_item.q
 						}
@@ -715,10 +715,10 @@ function form_factory() {
 
 	/**
 	* PARSE_PSQO_TO_FORM
-	* @return 
+	* @return
 	*/
 	this.parse_psqo_to_form = function(psqo, recursion) {
-		
+
 		const self = this
 
 		const global_key = Object.keys(psqo)[0]
@@ -830,7 +830,13 @@ function form_factory() {
 			const table			= options.table || form_item.table;
 			const cross_filter	= options.cross_filter || true; // look the other form values to generate the sql filter (default true)
 			const order			= options.order || 'name ASC'; // 'name' is the generic column alias
-
+			const parse_result	= options.parse_result || function(ar_result, term) {
+				return ar_result.map(function(item){
+					item.label	= item.label.replace(/<br>/g," ")
+					// item.label	= page.parse_legend_svg(item.label)
+					return item
+				})
+			}; // (!) always terminate with ;
 
 		/*
 		 * jQuery UI Autocomplete HTML Extension
@@ -885,7 +891,6 @@ function form_factory() {
 						.appendTo( ul );
 				}
 			});
-
 		})( jQuery );
 
 
@@ -907,7 +912,7 @@ function form_factory() {
 						  filter[op] = []
 
 					const value_parsed = (form_item.eq_in) + term + (form_item.eq_out)
-					
+
 					const safe_value = (typeof value_parsed==='string' || value_parsed instanceof String)
 							? value_parsed.replace(/(')/g, "''")
 							: value_parsed
@@ -1062,15 +1067,7 @@ function form_factory() {
 							}
 
 							// parse result
-								function parse_result(ar_result, term) {
-									return ar_result.map(function(item){
-										item.label	= item.label.replace(/<br>/g," ")
-										item.label	= page.parse_legend_svg(item.label)
-										return item
-									})
-								}
 								const ar_result_final = parse_result(ar_result, term)
-									// console.log("ar_result_final:",ar_result_final);
 
 							// cache . Use only when there are no cross filters
 								if (filter[op].length===1) {
@@ -1270,13 +1267,13 @@ var psqo_factory = {
 		const self = this
 
 		const global_key = Object.keys(psqo)[0]
-		if(global_key==='$and' || global_key==='$or'){			
+		if(global_key==='$and' || global_key==='$or'){
 			// recursion values
 			for (let i = 0; i < psqo[global_key].length; i++) {
 				psqo[global_key][i] = self.build_safe_psqo(psqo[global_key][i])
 			}
 		}else{
-			return clean_psqo_item(psqo)			
+			return clean_psqo_item(psqo)
 		}
 
 		function clean_psqo_item(psqo_item){
@@ -1290,7 +1287,7 @@ var psqo_factory = {
 				// 	: value
 
 			// mandatory properties
-				const id		= psqo_item.id 
+				const id		= psqo_item.id
 				const field		= psqo_item.field // db column name like 'p_culture'
 				const q			= psqo_item.q // search value original like 'arse'
 				const q_type	= typeof psqo_item.q_type!=="undefined" // type of form value: q | q_selected
@@ -1300,12 +1297,12 @@ var psqo_factory = {
 			// const safe_q	= (typeof q==='string' || q instanceof String)
 			// 	? encodeURIComponent(q)
 			// 	: q
-		
+
 			const new_psqo_item = {
 				id		: id,
 				field	: field,
 				q		: q,
-				q_type	: q_type				
+				q_type	: q_type
 			}
 
 			// optionals
@@ -1330,13 +1327,13 @@ var psqo_factory = {
 	/**
 	* ENCODE_PSQO
 	* @see https://pieroxy.net/blog/pages/lz-string/guide.html#inline_menu_3
-	* Encode psqo object using base64 to allow use it in url context 
+	* Encode psqo object using base64 to allow use it in url context
 	*/
 	encode_psqo : function(psqo){
 
 		// const encoded_psqo = window.btoa(JSON.stringify(psqo));
 		const base = JSON.stringify(psqo);
-		return LZString.compressToEncodedURIComponent(base);	
+		return LZString.compressToEncodedURIComponent(base);
 
 		// return encoded_psqo
 	},//end encode_psqo
@@ -1355,15 +1352,15 @@ var psqo_factory = {
 			try {
 				// return JSON.parse(window.atob(psqo))
 
-				const base = LZString.decompressFromEncodedURIComponent(psqo);				
-				return JSON.parse(base)		
+				const base = LZString.decompressFromEncodedURIComponent(psqo);
+				return JSON.parse(base)
 
 			}catch(error) {
 				console.log("psqo:",psqo);
 				console.warn("invalid psqo: ", error);
 			}
 			return null
-		})()		
+		})()
 
 
 		return parsed_psqo

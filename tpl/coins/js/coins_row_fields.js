@@ -277,6 +277,11 @@ var coins_row_fields = {
 
 
 		//IMAGE BLOCK
+			let mib_type_label = ""
+			if (mint_number){
+				mib_type_label = "MIB " + mint_number + row.type
+			}
+
 			const image_container = common.create_dom_element({
 				element_type 	: "div",
 				class_name		: "img_container",
@@ -295,6 +300,8 @@ var coins_row_fields = {
 				element_type	: "img",
 				class_name		: "image",
 				src				: row.image_obverse_thumb,
+				title 			: row.section_id,
+				dataset 		: {caption: mib_type_label},
 				loading			: 'lazy',
 				parent			: img_link_ob
 			})
@@ -314,6 +321,8 @@ var coins_row_fields = {
 				element_type	: "img",
 				class_name		: "image",
 				src				: row.image_reverse_thumb,
+				title 			: row.section_id,
+				dataset 		: {caption: mib_type_label},
 				loading			: 'lazy',
 				parent			: img_link_re
 			})

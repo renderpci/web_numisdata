@@ -1217,7 +1217,7 @@
         width: 100vw;
         height: 100vh;
         background-color: rgba(0,0,0,0.8);
-        z-index: 1500;
+        z-index: 10000;
 
         #gallery-wrapper{
             width: 70vw;
@@ -1225,14 +1225,23 @@
             margin: auto;
             margin-top: 12.5vh;
             background-color: rgba(25,25,25,1);
-            padding:1em;
+            @media screen and (max-width: @movil_max_width) {
+				width: 95vw;
+            	height: 92.5%;
+            	margin-top: 2.5vh;
+			}
         }
         
         #images-wrapper {
+        	padding:1em;
             display: flex;
             flex-direction: row;
             height: 100%;
             background-color: #ffffff;
+
+            @media screen and (max-width: @movil_max_width) {
+				flex-direction: column;
+			}
         }
         
         #images-wrapper img{
@@ -1241,10 +1250,15 @@
             height: 100%;
             object-fit: contain;
             margin:auto;
+            @media screen and (max-width: @movil_max_width) {
+				width: 90%;
+				height: 45vh;
+			}
         }
         
         #caption-wrapper{
             width: 100%;
+            background-color: rgb(0,0,0);
             
         }
         
@@ -1257,20 +1271,29 @@
         .nav-button{
             position:absolute;
             top:45vh;
-            width: 5vw;
+            width: 3vw;
             height: 10vh;
             background-color: rgba(25,25,25,0.5);
+            @media screen and (max-width: @movil_max_width) {
+				width: 10vw;
+			}
         }
         
         #next-button{
-            right: 10vw;
+            right: 12vw;
             background: rgba(25,25,25,0.5) url("@{assets_path}/images/arrow.svg") no-repeat center;
+            @media screen and (max-width: @movil_max_width) {
+				right: 0vw;
+			}
         }
         
         #pre-button{
-            left: 10vw;
+            left: 12vw;
             background: rgba(25,25,25,0.5) url("@{assets_path}/images/arrow.svg") no-repeat center;
-            transform: rotate(180deg)
+            transform: rotate(180deg);
+            @media screen and (max-width: @movil_max_width) {
+				left: 0vw;
+			}
         }
 
         .hidden{

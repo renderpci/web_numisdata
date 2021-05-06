@@ -153,6 +153,15 @@ var mint_row = {
 		// })
 
 		// image
+
+			const mint_number = (row.ref_mint_number)
+			? row.ref_mint_number+'/'
+			: ''
+
+			const ar		= row.term.split(", ")
+			const c_name	= ar[0]
+
+
 			const img_wrap = common.create_dom_element({
 				element_type 	: "div",
 				class_name 		: "types_img gallery",
@@ -170,6 +179,8 @@ var mint_row = {
 			const img_obverse = common.create_dom_element({
 				element_type	: "img",
 				src				: row.ref_coins_image_obverse_thumb,
+				title 			: row.section_id,
+				dataset 		: {caption: "MIB " + mint_number + c_name  },
 				parent			: img_link_ob
 			})
 			img_obverse.hires	= row.ref_coins_image_obverse
@@ -186,6 +197,8 @@ var mint_row = {
 			const img_reverse = common.create_dom_element({
 				element_type	: "img",
 				src 			: row.ref_coins_image_reverse_thumb,
+				title 			: row.section_id,
+				dataset 		: {caption: "MIB " + mint_number + c_name  },
 				parent 			: img_link_re
 			})
 			img_reverse.hires	= row.ref_coins_image_reverse

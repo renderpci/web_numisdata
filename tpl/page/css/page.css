@@ -1500,7 +1500,7 @@ input[type=button].btn.button_download.unactive {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.8);
-  z-index: 1500;
+  z-index: 10000;
 }
 #popup-gallery #gallery-wrapper {
   width: 70vw;
@@ -1508,13 +1508,25 @@ input[type=button].btn.button_download.unactive {
   margin: auto;
   margin-top: 12.5vh;
   background-color: #191919;
-  padding: 1em;
+}
+@media screen and (max-width: 842px) {
+  #popup-gallery #gallery-wrapper {
+    width: 95vw;
+    height: 92.5%;
+    margin-top: 2.5vh;
+  }
 }
 #popup-gallery #images-wrapper {
+  padding: 1em;
   display: flex;
   flex-direction: row;
   height: 100%;
   background-color: #ffffff;
+}
+@media screen and (max-width: 842px) {
+  #popup-gallery #images-wrapper {
+    flex-direction: column;
+  }
 }
 #popup-gallery #images-wrapper img {
   display: block;
@@ -1523,8 +1535,15 @@ input[type=button].btn.button_download.unactive {
   object-fit: contain;
   margin: auto;
 }
+@media screen and (max-width: 842px) {
+  #popup-gallery #images-wrapper img {
+    width: 90%;
+    height: 45vh;
+  }
+}
 #popup-gallery #caption-wrapper {
   width: 100%;
+  background-color: #000000;
 }
 #popup-gallery #caption-wrapper p {
   font-size: 100%;
@@ -1534,18 +1553,33 @@ input[type=button].btn.button_download.unactive {
 #popup-gallery .nav-button {
   position: absolute;
   top: 45vh;
-  width: 5vw;
+  width: 3vw;
   height: 10vh;
   background-color: rgba(25, 25, 25, 0.5);
 }
+@media screen and (max-width: 842px) {
+  #popup-gallery .nav-button {
+    width: 10vw;
+  }
+}
 #popup-gallery #next-button {
-  right: 10vw;
+  right: 12vw;
   background: rgba(25, 25, 25, 0.5) url("../../assets/images/arrow.svg") no-repeat center;
 }
+@media screen and (max-width: 842px) {
+  #popup-gallery #next-button {
+    right: 0vw;
+  }
+}
 #popup-gallery #pre-button {
-  left: 10vw;
+  left: 12vw;
   background: rgba(25, 25, 25, 0.5) url("../../assets/images/arrow.svg") no-repeat center;
   transform: rotate(180deg);
+}
+@media screen and (max-width: 842px) {
+  #popup-gallery #pre-button {
+    left: 0vw;
+  }
 }
 #popup-gallery .hidden {
   visibility: hidden;

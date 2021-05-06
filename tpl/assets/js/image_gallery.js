@@ -1,3 +1,9 @@
+// This gallery shows coins images in pairs obverse/reverse
+
+// "options.galleryNode": Must contains HTML nodes where "img" tags of every coin has an unique id in title attr ie: title=section_id 
+//                        Every "img" tag must to be wrapped with an "a" node who contains href attr with full size pic
+//                        Image caption <optional> can be putted in a data-caption attr inside "img" node
+
 class image_gallery {
         
     constructor(options) {
@@ -22,7 +28,6 @@ class image_gallery {
  
     OpenGallery(e,galleryNode){
         let currentClick = e
-        console.log(currentClick)
         
         //Get clicked info of gallery
         const clickedTittle = currentClick.target.attributes.title.textContent
@@ -40,14 +45,11 @@ class image_gallery {
         const parsedGallery = image_gallery.prototype.ParseGallery(imgNodes)
         
         for (let i=0;i<parsedGallery.length;i++){
-            console.log(parsedGallery[i][0].children[0].attributes.title.textContent)
             if (parsedGallery[i][0].children[0].attributes.title.textContent == clickedTittle){
                 this.currentIndex = i
                 break;
             }
         }
-        
-        console.log(this.currentIndex)
         
         //Generate popup html content
         this.popup = document.createRange().createContextualFragment('<div id="popup-gallery"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
@@ -86,7 +88,7 @@ class image_gallery {
         let parsedGallery = []
 
         for (let i=0;i<imgNodesArr.length;i++){
-                console.log(imgNodesArr[i].children[0].attributes.title)
+
                 const currentTitle = imgNodesArr[i].children[0].attributes.title.textContent
                 const elementsGroup = imgNodesArr.filter(obj => obj.children[0].attributes.title.textContent == currentTitle)
                                                          
@@ -94,14 +96,12 @@ class image_gallery {
                     let findedInParsedGallery = parsedGallery.find(obj => obj[0].children[0].attributes.title.textContent == currentTitle)   
                     if (findedInParsedGallery == null){
                         parsedGallery.push(elementsGroup)
-                        console.log(elementsGroup)
                     }       
                 } else{
                     parsedGallery.push(elementsGroup)
                 }
             
         }
-        console.log (parsedGallery)
         return parsedGallery
     }
     
@@ -115,7 +115,6 @@ class image_gallery {
     
     //Check current image to show/hide nav buttons
     CheckNavButtons(){
-        console.log(this.galleryLength)
         if (this.galleryLength==1) {
             this.preButton.classList.add("hidden")
             this.nextButton.classList.add("hidden")
@@ -135,9 +134,9 @@ class image_gallery {
 
     SwitchPic(parsedGallery,increment){
         this.currentIndex += increment;
-        console.log(this.currentIndex)
+
         let currentNode = parsedGallery[this.currentIndex]
-        console.log(currentNode)
+
         this.img1.src = currentNode[0].attributes.href.value
         this.img2.src = currentNode[1].attributes.href.value
         

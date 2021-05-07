@@ -14,16 +14,18 @@ var image_gallery = {
     caption : null,
     galleryLength : null,
     currentIndex : 0,
-    galleryPrimClass : "popup-gallery",
-    galleryNode : null,
+    setup : {
+        galleryPrimClass : "popup-gallery",
+        galleryNode : null
+    },
         
     set_up : function(options) {
         const self = this
         //setup
-        self.galleryNode = options.galleryNode
+        self.setup = {...self.setup, ...options}
         
         
-        this.galleryNode.addEventListener("click", function(e){
+        self.setup.galleryNode.addEventListener("click", function(e){
             if (e.target.tagName == "IMG"){
                 e.preventDefault()
                 e.stopPropagation()
@@ -34,6 +36,8 @@ var image_gallery = {
  
     OpenGallery : function(e){
         const self = this
+
+        galleryNode = self.setup.galleryNode
 
         let currentClick = e
         
@@ -49,7 +53,7 @@ var image_gallery = {
         }
         
 
-        let imgNodes = self.galleryNode.getElementsByTagName('a')
+        let imgNodes = galleryNode.getElementsByTagName('a')
         const parsedGallery = self.ParseGallery(imgNodes)
         
         for (let i=0;i<parsedGallery.length;i++){
@@ -60,7 +64,7 @@ var image_gallery = {
         }
         
         //Generate popup html content
-        this.popup = document.createRange().createContextualFragment('<div id="'+self.galleryPrimClass+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
+        this.popup = document.createRange().createContextualFragment('<div id="'+self.setup.galleryPrimClass+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
         
         //Get popup elements node
         this.img1 = this.popup.getElementById('img1')
@@ -84,7 +88,7 @@ var image_gallery = {
         
         //Append popup to DOM
         document.getElementsByTagName('body')[0].appendChild(this.popup)
-        document.getElementById(this.galleryPrimClass).addEventListener("click", this.CloseGallery)
+        document.getElementById(self.setup.galleryPrimClass).addEventListener("click", this.CloseGallery)
         
     },
     

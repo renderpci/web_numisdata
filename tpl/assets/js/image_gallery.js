@@ -4,29 +4,37 @@
 //                        Every "img" tag must to be wrapped with an "a" node who contains href attr with full size pic
 //                        Image caption <optional> can be putted in a data-caption attr inside "img" node
 
-class image_gallery {
+var image_gallery = {
+
+    preButton : null,
+    nextButton : null,
+    popup : null,
+    img1 : null,
+    img2 : null,
+    caption : null,
+    galleryLength : null,
+    currentIndex : 0,
+    galleryPrimClass : "popup-gallery",
+    galleryNode : null,
         
-    constructor(options) {
-        this.preButton = null
-        this.nextButton = null
-        this.popup = null
-        this.img1 = null
-        this.img2 = null
-        this.caption = null
-        this.galleryNode = options.galleryNode
-        this.galleryLength = null
-        this.currentIndex = 0
+    set_up : function(options) {
+        const self = this
+        //setup
+        self.galleryNode = options.galleryNode
+        
         
         this.galleryNode.addEventListener("click", function(e){
             if (e.target.tagName == "IMG"){
                 e.preventDefault()
                 e.stopPropagation()
-                image_gallery.prototype.OpenGallery(e,options.galleryNode)
+                self.OpenGallery(e)
             }
         })
-    }
+    },
  
-    OpenGallery(e,galleryNode){
+    OpenGallery : function(e){
+        const self = this
+
         let currentClick = e
         
         //Get clicked info of gallery
@@ -41,8 +49,8 @@ class image_gallery {
         }
         
 
-        let imgNodes = galleryNode.getElementsByTagName('a')
-        const parsedGallery = image_gallery.prototype.ParseGallery(imgNodes)
+        let imgNodes = self.galleryNode.getElementsByTagName('a')
+        const parsedGallery = self.ParseGallery(imgNodes)
         
         for (let i=0;i<parsedGallery.length;i++){
             if (parsedGallery[i][0].children[0].attributes.title.textContent == clickedTittle){
@@ -52,7 +60,7 @@ class image_gallery {
         }
         
         //Generate popup html content
-        this.popup = document.createRange().createContextualFragment('<div id="popup-gallery"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
+        this.popup = document.createRange().createContextualFragment('<div id="'+self.galleryPrimClass+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
         
         //Get popup elements node
         this.img1 = this.popup.getElementById('img1')
@@ -67,8 +75,8 @@ class image_gallery {
         this.nextButton = this.popup.getElementById("next-button")
         
         //Set elements behaviour
-        this.preButton.addEventListener("click", function(){image_gallery.prototype.SwitchPic(parsedGallery,-1)})
-        this.nextButton.addEventListener("click", function(){image_gallery.prototype.SwitchPic(parsedGallery,1)})
+        this.preButton.addEventListener("click", function(){self.SwitchPic(parsedGallery,-1)})
+        this.nextButton.addEventListener("click", function(){self.SwitchPic(parsedGallery,1)})
         this.galleryLength = parsedGallery.length
         
         //Initialize nav buttons
@@ -76,11 +84,11 @@ class image_gallery {
         
         //Append popup to DOM
         document.getElementsByTagName('body')[0].appendChild(this.popup)
-        document.getElementById('popup-gallery').addEventListener("click", this.CloseGallery)
+        document.getElementById(this.galleryPrimClass).addEventListener("click", this.CloseGallery)
         
-    }
+    },
     
-    ParseGallery(imgNodes){
+    ParseGallery : function(imgNodes){
         let imgNodesArr = [].slice.call(imgNodes)
         imgNodesArr = imgNodesArr.filter(obj => obj.children.length>0)
         imgNodesArr = imgNodesArr.filter(obj => obj.children[0].title.length>0)
@@ -103,18 +111,18 @@ class image_gallery {
             
         }
         return parsedGallery
-    }
+    },
     
-    CloseGallery(e){
+    CloseGallery : function(e){
         if (e.target.classList.contains('nav-button')){
             e.stopPropagation()
         } else{
             document.getElementById('popup-gallery').remove()
         }
-    }
+    },
     
     //Check current image to show/hide nav buttons
-    CheckNavButtons(){
+    CheckNavButtons : function(){
         if (this.galleryLength==1) {
             this.preButton.classList.add("hidden")
             this.nextButton.classList.add("hidden")
@@ -130,9 +138,9 @@ class image_gallery {
                 this.nextButton.classList.remove("hidden");
             }
         }
-    }
+    },
 
-    SwitchPic(parsedGallery,increment){
+    SwitchPic : function(parsedGallery,increment){
         this.currentIndex += increment;
 
         let currentNode = parsedGallery[this.currentIndex]

@@ -128,83 +128,85 @@ page.render_export_data_buttons = function() {
 
 	const fragment = new DocumentFragment()
 
-	// button_shared_search
-		const button_shared_search_container = common.create_dom_element({
-			element_type	: "div",
-			class_name		: "export_container",
-			parent			: fragment
-		})
-		const button_shared_search = common.create_dom_element({
-			element_type	: "input",
-			type			: "button",
-			value			: tstring.shared_search || 'Shared search',
-			class_name		: "btn primary button_shared search",
-			parent			: button_shared_search_container
-		})
-		button_shared_search.addEventListener("click", function(){
+	// button_shared_search now only in catalog
+		if(WEB_AREA === 'catalog'){
+			const button_shared_search_container = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "export_container",
+				parent			: fragment
+			})
+			const button_shared_search = common.create_dom_element({
+				element_type	: "input",
+				type			: "button",
+				value			: tstring.shared_search || 'Shared search',
+				class_name		: "btn primary button_download shared_search",
+				parent			: button_shared_search_container
+			})
+			button_shared_search.addEventListener("click", function(){
 
-			const button = this
+				const button = this
 
-			// minimize psqo
-			const min_psqo = psqo_factory.build_safe_psqo(filter)
+				// minimize psqo
+				const min_psqo = psqo_factory.build_safe_psqo(filter)
 
-			// Shared wrapper
-				const shared_wrapper = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "shared_wrapper",
-					parent			: document.body
-				})
-				shared_wrapper.addEventListener("click", function(e){
-					shared_wrapper.remove()
-				})
-			// Shared container
-				const shared_container = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "shared_container",
-					parent			: shared_wrapper
-				})
-				shared_container.addEventListener("click", function(e){
-					e.stopPropagation()
-				})
-			// Shared JSON
-				const shared_json = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "shared_json",
-					text_content	: JSON.stringify(min_psqo, null, 2),
-					parent			: shared_container
-				})
-			// Shared URI encoded
-				
-				// encode psqo to safe use it in url
-				const encoded_psqo	= psqo_factory.encode_psqo(min_psqo)
-				const uri			= window.location.protocol + '//'+
-									  window.location.host+
-									  page_globals.__WEB_ROOT_WEB__+
-									  '/' +WEB_AREA+
-									  '/?psqo=' + encoded_psqo;
+				// Shared wrapper
+					const shared_wrapper = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "shared_wrapper",
+						parent			: document.body
+					})
+					shared_wrapper.addEventListener("click", function(e){
+						shared_wrapper.remove()
+					})
+				// Shared container
+					const shared_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "shared_container",
+						parent			: shared_wrapper
+					})
+					shared_container.addEventListener("click", function(e){
+						e.stopPropagation()
+					})
+				// Shared JSON
+					const shared_json = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "shared_json",
+						text_content	: JSON.stringify(min_psqo, null, 2),
+						parent			: shared_container
+					})
+				// Shared URI encoded
 
-				// console.log("encoded_psqo", encoded_psqo);
-				// console.log("uri", uri);
+					// encode psqo to safe use it in url
+					const encoded_psqo	= psqo_factory.encode_psqo(min_psqo)
+					const uri			= window.location.protocol + '//'+
+										  window.location.host+
+										  page_globals.__WEB_ROOT_WEB__+
+										  '/' +WEB_AREA+
+										  '/?psqo=' + encoded_psqo;
 
-				const shared_uri_encoded = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "shared_uri_encoded",
-					parent			: shared_container
-				})
-				const uri_node = common.create_dom_element({
-					element_type	: "span",
-					text_content	: uri,
-					title			: uri.length,
-					parent			: shared_uri_encoded
-				})
-				const link = common.create_dom_element({
-					element_type	: "a",
-					href			: uri,
-					inner_html		: tstring.search || 'Search',
-					target			: '_blank',
-					parent			: shared_uri_encoded
-				})
-		})
+					// console.log("encoded_psqo", encoded_psqo);
+					// console.log("uri", uri);
+
+					const shared_uri_encoded = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "shared_uri_encoded",
+						parent			: shared_container
+					})
+					const uri_node = common.create_dom_element({
+						element_type	: "span",
+						text_content	: uri,
+						title			: uri.length,
+						parent			: shared_uri_encoded
+					})
+					const link = common.create_dom_element({
+						element_type	: "a",
+						href			: uri,
+						inner_html		: tstring.search || 'Search',
+						target			: '_blank',
+						parent			: shared_uri_encoded
+					})
+			})
+		}
 
 	// button_export_json
 		const button_export_json_container = common.create_dom_element({

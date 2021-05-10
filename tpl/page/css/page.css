@@ -224,7 +224,7 @@ input.form-control:not(:placeholder-shown) {
   left: 0;
   bottom: -1px;
   z-index: 999;
-  background-color: rgb(255 255 255 / 78%);
+  background-color: rgba(255, 255, 255, 0.78);
   padding: 0.5em;
   padding-bottom: 0.25em;
   padding-top: 0.25em;
@@ -1388,6 +1388,9 @@ input[type=button].btn.button_download:hover {
 input[type=button].btn.button_download.unactive {
   opacity: 0.4;
   pointer-events: none;
+}
+input[type=button].btn.button_download.shared_search {
+  background-image: url(../../assets/images/icon_shared_white.svg);
 }
 .legend_box {
   display: flex;

@@ -1369,7 +1369,7 @@ var type_row_fields = {
 		// uri
 			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 			const full_url	= page_globals.__WEB_BASE_URL__ + uri
-			const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a>'
+			const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> MIB </a>'
 			common.create_dom_element({
 				element_type	: "span",
 				class_name		: "uri-text",

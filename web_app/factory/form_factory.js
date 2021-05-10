@@ -937,7 +937,7 @@ function form_factory() {
 
 					// cross filter. Add other selected values to the filter to create a interactive filter
 						if (cross_filter) {
-							const c_op		= "$or"
+							const c_op		= "$and"
 							const c_filter	= {}
 								  c_filter[c_op] = []
 							for (let [id, current_form_item] of Object.entries(self.form_items)) {

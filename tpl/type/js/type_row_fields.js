@@ -158,20 +158,29 @@ var type_row_fields = {
 		// related_types : "MIB | 03a<br>MIB | 15b"
 			if(item.related_types){
 				const related_types 		= item.related_types
-				const related_types_data 	= JSON.parse(item.related_types_data)
+				const related_types_data 	= item.related_types_data
 
 				const label		= tstring.related_types || "Related types"
-				const beats 	= page.split_data(related_types, "<br>")
+				const beats 	= related_types_data.length
 				const ar_final 	= []
-				for (let i = 0; i < beats.length; i++) {
-					const related_label = beats[i].replace(/ \| /g, ' ')
-					const related_id 	= (related_types_data)
-						? (related_types_data[i])
-							? related_types_data[i]
+				for (let i = 0; i < beats; i++) {
+					const related_type = related_types_data[i]
+					const related_mint = (related_type.mint)
+						? related_type.mint
+						: "..."
+					const related_mint_number = (related_type.mint_number)
+						? related_type.mint_number
+						: '..'
+					const related_type_number = (related_type.number)
+						? related_type.number
+						: '..'
+					const related_label = related_mint +" "+related_mint_number+"/"+related_type_number
+
+					const related_id 	= (related_type.section_id)
+							? related_type.section_id
 							: false
-						: false
 					const url		= page_globals.__WEB_ROOT_WEB__ + "/type/" + related_id
-					// const full_url	= page_globals.__WEB_BASE_URL__ + url
+
 					const current_related_typo = (related_id)
 						? "<a href=\"" + url + "\">" +  related_label + "</a>"
 						: related_label
@@ -340,7 +349,7 @@ var type_row_fields = {
 				// 	inner_html		: item_text.trim(),
 				// 	parent			: line
 				// })
-				
+
 				const psqo = {
 					"$and":[{
 						id	: name,
@@ -476,7 +485,7 @@ var type_row_fields = {
 
 
 	image : function(item, name) {
-		
+
 		const self = this
 
 		// line
@@ -506,7 +515,7 @@ var type_row_fields = {
 			common.create_dom_element({
 				element_type 	: "img",
 				class_name 		: "image",
-				src 			: url,		
+				src 			: url,
 				title 			: item.number,
 				dataset 		: {
 									caption: item_text
@@ -1091,7 +1100,7 @@ var type_row_fields = {
 
 
 	draw_coin : function(data) {
-		console.log(data)
+		// console.log(data)
 		const self = this
 
 		// load_hires. When thumb is loaded, this event is triggered
@@ -1457,7 +1466,7 @@ var type_row_fields = {
 					: ''
 
 			const type_number = data.catalogue_type_mint + " " +  mint_number + data.type
-			
+
 				const images = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "images_wrapper",

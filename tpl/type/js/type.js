@@ -32,7 +32,7 @@ var type =  {
 				console.log("type set_up options:",options);
 			}
 
-		const self = this		
+		const self = this
 
 		// options
 			self.export_data_container	= options.export_data_container
@@ -81,14 +81,14 @@ var type =  {
 									request_body		: null,
 									result				: row,
 									export_data_parser	: page.export_parse_type_data
-								})			
+								})
 
 							// render row nodes
 							self.list_row_builder(row)
 							.then(function(row_wrapper){
 
 								// append final rendered node
-									container.appendChild(row_wrapper)								
+									container.appendChild(row_wrapper)
 
 								// activate images light box
 									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
@@ -163,7 +163,8 @@ var type =  {
 						"ref_coins_hoard_data"			: "hoards",
 						"hoards.bibliography_data"		: "bibliographic_references",
 						"denomination_data"				: "denomination",
-						"material_data"					: "material"
+						"material_data"					: "material",
+						"related_types_data"			: "types",
 					}
 				}
 			})

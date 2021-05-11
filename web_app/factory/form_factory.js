@@ -77,7 +77,7 @@ function form_factory() {
 			// category. thesurus terms and not terms
 			is_term			: options.is_term || false, // terms use special json format as '["name"]' instead 'name'
 			callback		: options.callback || false, // callback function
-			list_format		: options.list_format || null,
+			list_format		: options.list_format || null, // TO DEPRECATE !!! USE activate_autocomplete parse_result (!)
 			wrapper			: options.wrapper || null, // like YEAR to obtain YEAR(name)
 			value_wrapper	: options.value_wrapper || null, // like ['["','"]'] to obtain ["value"] in selected value only
 			value_split		: options.value_split || null, // like ' - ' to generate one item by beat in autocomplete
@@ -494,7 +494,11 @@ function form_factory() {
 				  group[group_op] = []
 
 			// q value or sql_filter
-				if ( (form_item.q.length!==0 && form_item.q!=='*') || form_item.sql_filter ) {
+				if ( (form_item.q.length!==0 && form_item.q!=='*') || (form_item.sql_filter) ) {
+
+					if (form_item.input_type==='range_slider' && (!form_item.sql_filter || form_item.sql_filter.length<2)) {
+						continue;
+					}
 
 					const c_group_op = '$and'
 					const c_group = {}
@@ -833,7 +837,10 @@ function form_factory() {
 			const parse_result	= options.parse_result || function(ar_result, term) {
 				return ar_result.map(function(item){
 					item.label	= item.label.replace(/<br>/g," ")
-					// item.label	= page.parse_legend_svg(item.label)
+					// temporal mib
+						if (typeof page.parse_legend_svg==='function') {
+							item.label	= page.parse_legend_svg(item.label)
+						}
 					return item
 				})
 			}; // (!) always terminate with ;
@@ -903,8 +910,8 @@ function form_factory() {
 
 				const term = request.term
 
-				const field		= form_item.q_name // Like 'mint'
-				const q_column	= form_item.q_column // Like 'term'
+				const field			= form_item.q_name // Like 'mint'
+				const q_column		= form_item.q_column // Like 'term'
 
 				// filter build
 					const op 	 = "$and"
@@ -967,7 +974,10 @@ function form_factory() {
 
 											// escape html strings containing single quotes inside.
 											// Like 'leyend <img data="{'lat':'452.6'}">' to 'leyend <img data="{''lat'':''452.6''}">'
-											const safe_value = value.replace(/(')/g, "''")
+											// const safe_value = value.replace(/(')/g, "''")
+											const safe_value = (typeof value==='string' || value instanceof String)
+												? value.replace(/(')/g, "''")
+												: value
 
 											// elemet
 											const element = {
@@ -1001,11 +1011,14 @@ function form_factory() {
 					// sql_filter
 						const sql_filter = self.parse_sql_filter(filter) // + ' AND `'+q_column+'` IS NOT NULL' // + ' AND `'+q_column+'`!=\'\''
 
+					// table resolved
+						const table_resolved = typeof table==="function" ? table() : table;
+
 					// search
 						data_manager.request({
 							body : {
 								dedalo_get	: 'records',
-								table		: table,
+								table		: table_resolved,
 								ar_fields	: [q_column + " AS name"],
 								sql_filter	: sql_filter,
 								group		: q_column,
@@ -1070,7 +1083,7 @@ function form_factory() {
 								const ar_result_final = parse_result(ar_result, term)
 
 							// cache . Use only when there are no cross filters
-								if (filter[op].length===1) {
+								if (filter[op].length===1 && typeof table!=="function") {
 									cache[ term ] = ar_result_final
 								}
 

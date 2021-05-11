@@ -1389,7 +1389,7 @@ input[type=button].btn.button_download.unactive {
   opacity: 0.4;
   pointer-events: none;
 }
-input[type=button].btn.button_download.shared_search {
+input[type=button].btn.button_download.share_search {
   background-image: url(../../assets/images/icon_shared_white.svg);
 }
 .legend_box {

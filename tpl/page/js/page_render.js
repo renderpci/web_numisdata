@@ -128,21 +128,21 @@ page.render_export_data_buttons = function() {
 
 	const fragment = new DocumentFragment()
 
-	// button_shared_search now only in catalog
+	// button_share_search now only in catalog
 		if(WEB_AREA === 'catalog'){
-			const button_shared_search_container = common.create_dom_element({
+			const button_share_search_container = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "export_container",
 				parent			: fragment
 			})
-			const button_shared_search = common.create_dom_element({
+			const button_share_search = common.create_dom_element({
 				element_type	: "input",
 				type			: "button",
-				value			: tstring.shared_search || 'Shared search',
-				class_name		: "btn primary button_download shared_search",
-				parent			: button_shared_search_container
+				value			: tstring.share_search || 'Shared search',
+				class_name		: "btn primary button_download share_search",
+				parent			: button_share_search_container
 			})
-			button_shared_search.addEventListener("click", function(){
+			button_share_search.addEventListener("click", function(){
 
 				const button = this
 

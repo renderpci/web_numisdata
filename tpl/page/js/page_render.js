@@ -138,7 +138,7 @@ page.render_export_data_buttons = function() {
 			const button_share_search = common.create_dom_element({
 				element_type	: "input",
 				type			: "button",
-				value			: tstring.share_search || 'Shared search',
+				value			: tstring.share_search || 'Share search',
 				class_name		: "btn primary button_download share_search",
 				parent			: button_share_search_container
 			})

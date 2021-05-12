@@ -102,7 +102,7 @@ var type =  {
 									})
 
 								// activate images light box
-									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
+									const images_gallery_containers = row_wrapper.querySelector('.result')
 									// console.log("images_gallery_containers:",images_gallery_containers);
 									if (images_gallery_containers) {
 										for (let i = 0; i < images_gallery_containers.length; i++) {

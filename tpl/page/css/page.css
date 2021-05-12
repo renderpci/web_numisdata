@@ -1504,6 +1504,8 @@ input[type=button].btn.button_download.share_search {
   width: 100%;
 }
 #embedded-gallery #gallery-wrapper {
+  display: flex;
+  flex-direction: row;
   width: 100%;
   margin: auto;
 }
@@ -1518,6 +1520,7 @@ input[type=button].btn.button_download.share_search {
   display: flex;
   flex-direction: row;
   height: 25em;
+  width: 90%;
   margin: 0 auto;
   background-color: #ffffff;
 }
@@ -1550,10 +1553,8 @@ input[type=button].btn.button_download.share_search {
   text-align: center;
 }
 #embedded-gallery .nav-button {
-  position: absolute;
-  top: 50%;
-  width: 3vw;
-  height: 10vh;
+  position: relative;
+  width: 5%;
   cursor: pointer;
 }
 @media screen and (max-width: 842px) {
@@ -1562,7 +1563,6 @@ input[type=button].btn.button_download.share_search {
   }
 }
 #embedded-gallery #next-button {
-  right: 8vw;
   background: url("../../assets/images/arrow.svg") no-repeat center;
 }
 @media screen and (max-width: 842px) {
@@ -1571,7 +1571,6 @@ input[type=button].btn.button_download.share_search {
   }
 }
 #embedded-gallery #pre-button {
-  left: 8vw;
   background: url("../../assets/images/arrow.svg") no-repeat center;
   transform: rotate(180deg);
 }
@@ -1582,7 +1581,6 @@ input[type=button].btn.button_download.share_search {
 }
 #embedded-gallery .hidden {
   visibility: hidden;
-  display: none;
 }
 #popup-gallery {
   position: fixed;

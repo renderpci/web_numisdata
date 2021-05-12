@@ -18,6 +18,8 @@ var page = {
 
 		default_image : page_globals.__WEB_ROOT_WEB__ + '/tpl/assets/images/default.jpg',
 
+		image_galleries : [],
+
 		// maps common config
 		maps_config : {
 			// source maps. Used on catalog and item maps
@@ -650,19 +652,28 @@ var page = {
 	*/
 	activate_images_gallery : function(images_gallery_container, clean) {
 
+		const self = this
 		// clean existing
-			if (clean===true) {
-				const old_poptrox_overlay = document.querySelectorAll('.poptrox-overlay')
-				if (old_poptrox_overlay) {
-					for (let i = old_poptrox_overlay.length - 1; i >= 0; i--) {
-						old_poptrox_overlay[i].remove()
-					}
-				}
+			// if (clean===true) {
+			// 	const old_poptrox_overlay = document.querySelectorAll('.poptrox-overlay')
+			// 	if (old_poptrox_overlay) {
+			// 		for (let i = old_poptrox_overlay.length - 1; i >= 0; i--) {
+			// 			old_poptrox_overlay[i].remove()
+			// 		}
+			// 	}
+			// }
+
+		if (clean===true && self.image_galleries.length>0) {
+			const currentGalleriesLength = self.image_galleries.length
+			for (let i = 0; i < currentGalleriesLength; i++) {
+				console.log("entra")
+				self.image_galleries[i].removeGallery()
+				self.image_galleries.splice(i,1)
 			}
+		}
 
 		console.log($(images_gallery_container))
 
-2
 		// const newGallery = new image_gallery2({
 		// 	galleryNode: images_gallery_container
 		// })
@@ -671,6 +682,8 @@ var page = {
 		newGallery.set_up ({
 			galleryNode: images_gallery_container
 		})
+
+		self.image_galleries.push(newGallery)
 
 		// return $(images_gallery_container).poptrox({
 		// 	baseZIndex				: 20000,

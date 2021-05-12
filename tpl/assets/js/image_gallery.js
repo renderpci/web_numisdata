@@ -6,6 +6,7 @@
 
 var image_gallery = {
 
+    galleryListener : null,
     preButton : null,
     nextButton : null,
     popup : null,
@@ -24,14 +25,16 @@ var image_gallery = {
         const self = this
         //setup
         self.setup = {...self.setup, ...options}
-        
-        self.setup.galleryNode.addEventListener("click", function(e){
+
+        self.galleryListener = function(e){
             if (e.target.tagName == "IMG"){
                 e.preventDefault()
                 e.stopPropagation()
                 self.OpenGallery(e)
             }
-        })
+        }
+        
+        self.setup.galleryNode.addEventListener("click", self.galleryListener)
 
     },
 
@@ -46,7 +49,7 @@ var image_gallery = {
 
         const parsedGallery = self.ParseGallery(galleryNode)
 
-        this.popup = document.createRange().createContextualFragment('<div id="'+self.setup.galleryPrimId+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p></p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>') 
+        this.popup = document.createRange().createContextualFragment('<div id="'+self.setup.galleryPrimId+'"><div id="gallery-wrapper"><div class="nav-button" id="pre-button"></div><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div class="nav-button" id="next-button"></div></div></div>')
 
         this.img1 = this.popup.getElementById('img1')
         this.img2 = this.popup.getElementById('img2')
@@ -55,7 +58,7 @@ var image_gallery = {
         this.img1.src = parsedGallery[0][0].attributes.href.value
         this.img2.src = parsedGallery[0][1].attributes.href.value
 
-        this.caption = this.popup.getElementById('caption-wrapper').getElementsByTagName('p')[0]
+        this.caption = ""
         this.preButton = this.popup.getElementById("pre-button")
         this.nextButton = this.popup.getElementById("next-button")
         
@@ -196,5 +199,11 @@ var image_gallery = {
             this.caption.textContent = ""
         }
         this.CheckNavButtons()       
-    }     
+    },
+
+    removeGallery : function(){
+        const self = this
+        self.setup.galleryNode.removeEventListener("click", self.galleryListener)
+        delete this
+    }  
 }

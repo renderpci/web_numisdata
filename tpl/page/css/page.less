@@ -1223,6 +1223,8 @@
 		}
 
 		#gallery-wrapper{
+			display: flex;
+            flex-direction: row;
             width: 100%;
             margin: auto;
             @media screen and (max-width: @movil_max_width) {
@@ -1236,6 +1238,7 @@
             display: flex;
             flex-direction: row;
             height: 25em;
+            width: 90%;
             margin: 0 auto;
             background-color: #ffffff;
 
@@ -1269,10 +1272,10 @@
         }
         
         .nav-button{
-            position:absolute;
-            top:50%;
-            width: 3vw;
-            height: 10vh;
+            position:relative;
+            //margin-top:40%;
+            width: 5%;
+            //height: 3em;
             //background-color: rgba(25,25,25,0.5);
             @media screen and (max-width: @movil_max_width) {
 				width: 10vw;
@@ -1281,7 +1284,7 @@
         }
         
         #next-button{
-            right: 8vw;
+            //right: 8vw;
             background: url("@{assets_path}/images/arrow.svg") no-repeat center;
             @media screen and (max-width: @movil_max_width) {
 				right: 0vw;
@@ -1289,7 +1292,7 @@
         }
         
         #pre-button{
-            left: 8vw;
+            //left: 8vw;
             background: url("@{assets_path}/images/arrow.svg") no-repeat center;
             transform: rotate(180deg);
             @media screen and (max-width: @movil_max_width) {
@@ -1299,7 +1302,7 @@
 
         .hidden{
             visibility: hidden;
-            display:none;
+            //display:none;
          }
 
 	}

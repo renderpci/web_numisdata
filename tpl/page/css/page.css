@@ -224,7 +224,7 @@ input.form-control:not(:placeholder-shown) {
   left: 0;
   bottom: -1px;
   z-index: 999;
-  background-color: rgba(255, 255, 255, 0.78);
+  background-color: rgb(255 255 255 / 78%);
   padding: 0.5em;
   padding-bottom: 0.25em;
   padding-top: 0.25em;
@@ -1495,6 +1495,94 @@ input[type=button].btn.button_download.share_search {
   width: auto;
   word-break: break-all;
   overflow-wrap: break-word;
+}
+#embedded-gallery {
+  width: 100%;
+  display: block !important;
+}
+#embedded-gallery #embedded-gallery-id {
+  width: 100%;
+}
+#embedded-gallery #gallery-wrapper {
+  width: 100%;
+  margin: auto;
+}
+@media screen and (max-width: 842px) {
+  #embedded-gallery #gallery-wrapper {
+    width: 95vw;
+    height: 92.5%;
+  }
+}
+#embedded-gallery #images-wrapper {
+  padding: 1em;
+  display: flex;
+  flex-direction: row;
+  height: 25em;
+  margin: 0 auto;
+  background-color: #ffffff;
+}
+@media screen and (max-width: 842px) {
+  #embedded-gallery #images-wrapper {
+    flex-direction: column;
+  }
+}
+#embedded-gallery #images-wrapper img {
+  display: block;
+  width: 50%;
+  height: 100%;
+  object-fit: contain;
+  margin: auto;
+}
+@media screen and (max-width: 842px) {
+  #embedded-gallery #images-wrapper img {
+    width: 95%;
+    height: 50%;
+  }
+}
+#embedded-gallery #caption-wrapper {
+  width: 100%;
+  background-color: #000000;
+  visibility: hidden;
+}
+#embedded-gallery #caption-wrapper p {
+  font-size: 100%;
+  color: #ffffff;
+  text-align: center;
+}
+#embedded-gallery .nav-button {
+  position: absolute;
+  top: 50%;
+  width: 3vw;
+  height: 10vh;
+  cursor: pointer;
+}
+@media screen and (max-width: 842px) {
+  #embedded-gallery .nav-button {
+    width: 10vw;
+  }
+}
+#embedded-gallery #next-button {
+  right: 8vw;
+  background: url("../../assets/images/arrow.svg") no-repeat center;
+}
+@media screen and (max-width: 842px) {
+  #embedded-gallery #next-button {
+    right: 0vw;
+  }
+}
+#embedded-gallery #pre-button {
+  left: 8vw;
+  background: url("../../assets/images/arrow.svg") no-repeat center;
+  transform: rotate(180deg);
+}
+@media screen and (max-width: 842px) {
+  #embedded-gallery #pre-button {
+    left: 0vw;
+  }
+}
+#embedded-gallery .hidden {
+  visibility: hidden;
+  display: none;
 }
 #popup-gallery {
   position: fixed;

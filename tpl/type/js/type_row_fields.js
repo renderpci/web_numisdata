@@ -47,6 +47,13 @@ var type_row_fields = {
 				self.image(item, "ref_coins_image_reverse")
 			)
 
+			//embedded gallery reference node
+			common.create_dom_element({
+				element_type 	: "div",
+				id 				: "embedded-gallery",
+				parent 			: fragment
+			})
+
 		// identify_coin
 			// fragment.appendChild(
 			// 	self.identify_coin(item, "identify_coin")

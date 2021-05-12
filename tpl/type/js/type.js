@@ -90,6 +90,17 @@ var type =  {
 								// append final rendered node
 									container.appendChild(row_wrapper)
 
+									const embeddedGallery = row_wrapper.querySelectorAll('a')
+									//hide default images
+									const currentImgs = row_wrapper.querySelector('.identify_coin_wrapper').remove()
+
+									const newGallery = Object.create(image_gallery);
+									newGallery.set_up_embedded ({
+										galleryNode			: embeddedGallery,
+										galleryPrimId 		: 'embedded-gallery-id',
+										containerId 		: 'embedded-gallery'
+									})
+
 								// activate images light box
 									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
 									// console.log("images_gallery_containers:",images_gallery_containers);

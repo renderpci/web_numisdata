@@ -15,15 +15,15 @@ var image_gallery = {
     galleryLength : null,
     currentIndex : 0,
     setup : {
-        galleryPrimClass : "popup-gallery",
-        galleryNode : null
+        galleryPrimId : "popup-gallery",
+        galleryNode : null,
+        containerId : null               //if null put gallery in body
     },
         
     set_up : function(options) {
         const self = this
         //setup
         self.setup = {...self.setup, ...options}
-        
         
         self.setup.galleryNode.addEventListener("click", function(e){
             if (e.target.tagName == "IMG"){
@@ -32,6 +32,43 @@ var image_gallery = {
                 self.OpenGallery(e)
             }
         })
+
+    },
+
+    set_up_embedded : function (options){
+         const self = this
+        //setup
+        self.setup = {...self.setup, ...options}
+        galleryNode = self.setup.galleryNode
+        this.currentIndex = 0
+
+        
+
+        const parsedGallery = self.ParseGallery(galleryNode)
+
+        this.popup = document.createRange().createContextualFragment('<div id="'+self.setup.galleryPrimId+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p></p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>') 
+
+        this.img1 = this.popup.getElementById('img1')
+        this.img2 = this.popup.getElementById('img2')
+
+        //put first open images
+        this.img1.src = parsedGallery[0][0].attributes.href.value
+        this.img2.src = parsedGallery[0][1].attributes.href.value
+
+        this.caption = this.popup.getElementById('caption-wrapper').getElementsByTagName('p')[0]
+        this.preButton = this.popup.getElementById("pre-button")
+        this.nextButton = this.popup.getElementById("next-button")
+        
+        //Set elements behaviour
+        this.preButton.addEventListener("click", function(){self.SwitchPic(parsedGallery,-1)})
+        this.nextButton.addEventListener("click", function(){self.SwitchPic(parsedGallery,1)})
+        this.galleryLength = parsedGallery.length
+        
+        //Initialize nav buttons
+        this.CheckNavButtons();
+
+        document.getElementById(self.setup.containerId).appendChild(this.popup)
+
     },
  
     OpenGallery : function(e){
@@ -64,7 +101,7 @@ var image_gallery = {
         }
         
         //Generate popup html content
-        this.popup = document.createRange().createContextualFragment('<div id="'+self.setup.galleryPrimClass+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
+        this.popup = document.createRange().createContextualFragment('<div id="'+self.setup.galleryPrimId+'"><div id="gallery-wrapper"><div id="images-wrapper"><img id="img1" src=""><img id="img2" src=""></div><div id="caption-wrapper"><p>'+clickedCaption+'</p></div><div class="nav-button" id="pre-button"></div><div class="nav-button" id="next-button"></div></div></div>')
         
         //Get popup elements node
         this.img1 = this.popup.getElementById('img1')
@@ -88,7 +125,8 @@ var image_gallery = {
         
         //Append popup to DOM
         document.getElementsByTagName('body')[0].appendChild(this.popup)
-        document.getElementById(self.setup.galleryPrimClass).addEventListener("click", this.CloseGallery)
+        document.getElementById(self.setup.galleryPrimId).addEventListener("click", this.CloseGallery)
+        
         
     },
     

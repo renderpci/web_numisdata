@@ -288,9 +288,40 @@ page.parse_coin_data = function(data) {
 				: null
 		}
 
+		const separator		= " | "
+
+		// type
 		row.type = row.type
-			? page.remove_gaps(row.type, ' | ')
+			? page.split_data(row.type, separator)
 			: null
+		
+		// mint data
+		const mint_data		= row.mint_data
+			? page.split_data(row.mint_data, separator) // format is '["1"] | ["2"]'
+			: []
+
+			const ar_mints_data = []
+			for (let i = 0; i < mint_data.length; i++) {
+				ar_mints_data.push(JSON.parse(mint_data[i]))
+			}
+		row.mint_data = ar_mints_data
+			? ar_mints_data
+			: null
+
+		// mint number
+		row.mint_number = row.mint_number
+			? page.split_data(row.mint_number, separator)
+			: null
+		// mint
+		row.mint = row.mint
+			? page.split_data(row.mint, separator)
+			: null
+		// catalogue_type_mint
+		row.catalogue_type_mint = row.catalogue_type_mint
+			? page.split_data(row.catalogue_type_mint, separator)
+			: null
+		
+
 
 		// legend text includes svg url
 		row.legend_obverse = row.legend_obverse

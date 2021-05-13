@@ -57,6 +57,9 @@ var coins =  {
 				self.form_submit()
 			}
 
+		//autoload first time
+			self.form_submit()	
+
 
 		return true
 	},//end set_up
@@ -409,8 +412,8 @@ var coins =  {
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
 			const count		= true			
-			const order		= "type"
-			const resolve_portals_custom = {"mint_data" : "mints"}
+			const order		= "type IS NULL, type"
+			// const resolve_portals_custom = {"mint_data" : "mints"}
 
 			// sql_filter
 				const filter = self.form.build_filter()
@@ -443,7 +446,7 @@ var coins =  {
 					offset			: offset,
 					order			: order,
 					process_result	: null,
-					resolve_portals_custom : resolve_portals_custom,
+					// resolve_portals_custom : resolve_portals_custom,
 				}
 			})
 			.then(function(api_response){
@@ -452,7 +455,7 @@ var coins =  {
 				// parse data
 					const data	= page.parse_coin_data(api_response.result)
 					const total	= api_response.total
-
+console.log("--------------- data:",data);
 					self.pagination.total	= total
 					self.pagination.offset	= offset
 

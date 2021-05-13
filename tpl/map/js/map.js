@@ -690,7 +690,9 @@ var map = {
 			switch(map_row.table) {
 				case 'mints':
 					found_coins = coin_rows.filter(function(el){
-						return '["'+map_row.ref_section_id+'"]'==el.mint_data
+						// return '["'+map_row.ref_section_id+'"]'==el.mint_data
+						// allow array with more than one value too like ["65","66"]
+						return el.mint_data.indexOf('"'+map_row.ref_section_id+'"')!==-1
 					})
 					break;
 				case 'hoards':

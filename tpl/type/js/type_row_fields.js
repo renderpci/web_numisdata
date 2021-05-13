@@ -286,7 +286,7 @@ var type_row_fields = {
 			if ( (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) ||
 				 (item.ref_coins_hoard_data && item.ref_coins_hoard_data.length>0)
 				) {
-				const label = tstring.findspots + "/" + tstring.hoards
+				const label = tstring.findspots + "/" + tstring.hoards + "/" + tstring.mints
 				fragment.appendChild( self.label(item, label) )
 				fragment.appendChild(
 					self.hoards_and_findspots(item, label)
@@ -365,7 +365,6 @@ var type_row_fields = {
 					}]
 				}
 				const safe_psqo		= psqo_factory.build_safe_psqo(psqo)
-					console.log("safe_psqo:",safe_psqo);
 				const parse_psqo	= psqo_factory.encode_psqo(safe_psqo)
 
 				const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?psqo="+ parse_psqo
@@ -1437,7 +1436,7 @@ var type_row_fields = {
 
 	hoards_and_findspots : function(item, name) {
 		if(SHOW_DEBUG===true) {
-			console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
+			// console.log("item.ref_coins_findspots_data:",item.ref_coins_findspots_data)
 		}
 
 		const self = this
@@ -1770,10 +1769,50 @@ var type_row_fields = {
 					// store already solved
 						findspots_solved.push(findspot.section_id)
 				}
-			}
+			}//end findspots
+
+		// mints
+			const mint_data			= item.mint_data || []
+			const mint_data_length	= mint_data.length
+			if(mint_data_length>0){
+
+				for (let i = 0; i < mint_data_length; i++) {
+					
+					const mint			= mint_data[i]
+					const coins			= JSON.parse(mint.relations_coins) || []
+					const coins_length	= coins.length
+
+					// cross all mint coins with curertn type coin_references
+						const ar_coins = []
+						for (let j = 0; j < coins_length; j++) {
+							const coin_section_id	= coins[j];
+							const current_coin		= item.coin_references.find(el => el.section_id==coin_section_id)
+							if (current_coin) {
+								ar_coins.push(coin_section_id)
+							}
+						}
+				
+					// map data
+					const mint_data_map = JSON.parse(mint.map)
+					if (mint_data_map) {
+						map_data.push({
+							section_id	: mint.section_id,
+							name		: mint.name,
+							place		: mint.place,
+							georef		: mint.georef,
+							data		: mint_data_map,
+							items 		: ar_coins.length,
+							total_items : coins_length,
+							type 		: 'mint',
+							marker_icon	: page.maps_config.markers.mint
+						})
+					}
+				}
+			}//end mints_data
+
+
 
 		// draw map
-			console.log("// map_data:",map_data);
 			if (map_data.length>0) {
 				common.when_in_dom(map_container, draw_map)
 				function draw_map() {
@@ -1786,7 +1825,6 @@ var type_row_fields = {
 			}else{
 				map_container.remove()
 			}
-
 
 
 		return line

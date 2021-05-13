@@ -27,11 +27,7 @@ var type =  {
 	* When the HTML page is loaded
 	*/
 	set_up : function(options) {
-		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("type set_up options:",options);
-			}
-
+	
 		const self = this
 
 		// options
@@ -52,9 +48,7 @@ var type =  {
 						section_id : self.section_id
 					})
 					.then(function(response){
-						// console.log("/// response:", response);
-						// console.log("/// row:", response.result[0]);
-
+						
 						// container. clean container div
 							const container	= document.getElementById('row_detail')
 							while (container.hasChildNodes()) {
@@ -176,6 +170,8 @@ var type =  {
 						"denomination_data"				: "denomination",
 						"material_data"					: "material",
 						"related_types_data"			: "types",
+						// mint resolution
+						"mint_data"						: "mints"
 					}
 				}
 			})
@@ -266,57 +262,8 @@ var type =  {
 	* @return array parsed_data
 	*/
 	parse_publication : function(data) {
+		
 		return page.parse_publication(data)
-
-		// const self = this
-
-		// const parsed_data	= []
-		// const separator		= " # ";
-		// const data_length	= data.length
-		// for (let i = 0; i < data_length; i++) {
-
-		// 	const reference = data[i]
-
-		// 	// add publications property to store all resolved references
-		// 		reference._publications = []
-
-		// 	const publications_data			= JSON.parse(reference.publications_data)
-		// 	const publications_data_length	= publications_data.length
-		// 	if (publications_data_length>0) {
-
-		// 		const ref_publications_authors	= page.split_data(reference.ref_publications_authors, separator)
-		// 		const ref_publications_date		= page.split_data(reference.ref_publications_date, separator)
-		// 		const ref_publications_editor	= page.split_data(reference.ref_publications_editor, separator)
-		// 		const ref_publications_magazine	= page.split_data(reference.ref_publications_magazine, separator)
-		// 		const ref_publications_place	= page.split_data(reference.ref_publications_place, separator)
-		// 		const ref_publications_title	= page.split_data(reference.ref_publications_title, separator)
-		// 		const ref_publications_url		= page.split_data(reference.ref_publications_url, separator)
-
-		// 		for (let j = 0; j < publications_data_length; j++) {
-
-		// 			const section_id = publications_data[j]
-
-		// 			const parsed_item = {
-		// 				reference	: reference.section_id,
-		// 				section_id	: section_id,
-		// 				authors		: ref_publications_authors[j] || null,
-		// 				date		: ref_publications_date[j] || null,
-		// 				editor		: ref_publications_editor[j] || null,
-		// 				magazine	: ref_publications_magazine[j] || null,
-		// 				place		: ref_publications_place[j] || null,
-		// 				title		: ref_publications_title[j] || null,
-		// 				url			: ref_publications_url[j] || null,
-		// 			}
-
-		// 			reference._publications.push(parsed_item)
-		// 			parsed_data.push(parsed_item)
-		// 		}
-		// 	}
-
-		// }
-		// // console.log("parsed_data:",parsed_data);
-
-		// return parsed_data
 	},//end parse_publication
 
 
@@ -366,7 +313,7 @@ var type =  {
 	* DRAW_MAP
 	*/
 	draw_map : function(options) {
-
+	
 		const self = this
 
 		// options
@@ -465,13 +412,15 @@ var type =  {
 			})
 
 		// descriptions
-			const description = tstring.total +" "+ tstring.items + ": " + total_items
-			const text_description = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "text_description",
-				inner_html		: description,
-				parent			: popup_item
-			})
+			if (total_items && total_items>0) {
+				const description = tstring.total +" "+ tstring.items + ": " + total_items
+				const text_description = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "text_description",
+					inner_html		: description,
+					parent			: popup_item
+				})
+			}
 
 
 		return popup_wrapper

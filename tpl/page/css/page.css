@@ -1645,6 +1645,7 @@ input[type=button].btn.button_download.share_search {
   width: 3vw;
   height: 10vh;
   background-color: rgba(25, 25, 25, 0.5);
+  cursor: pointer;
 }
 @media screen and (max-width: 842px) {
   #popup-gallery .nav-button {

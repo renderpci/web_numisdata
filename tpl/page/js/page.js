@@ -672,8 +672,6 @@ var page = {
 			}
 		}
 
-		console.log($(images_gallery_container))
-
 		// const newGallery = new image_gallery2({
 		// 	galleryNode: images_gallery_container
 		// })

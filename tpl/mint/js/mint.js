@@ -33,6 +33,10 @@ var mint = {
 			self.export_data_container.appendChild(export_data_buttons)
 			self.export_data_container.classList.add('hide')
 
+		//contact_form_button
+			const contact_form_button = page.create_contact_button()
+			self.export_data_container.appendChild(contact_form_button)
+
 
 		if (self.section_id) {
 

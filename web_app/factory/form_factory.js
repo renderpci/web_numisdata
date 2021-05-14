@@ -65,7 +65,7 @@ function form_factory() {
 			q_selected_eq	: options.q_selected_eq || "=", // default internal comparator used in autocomplete	with user picked values
 			q_column		: options.q_column, // like 'term'
 			q_column_filter	: options.q_column_filter, // overwrite q_column as filter column name
-			q_splittable	: options.q_splittable || false, // depending on its value the item content will be splitted or not on loading it
+			q_splittable	: options.q_splittable || false, // depending on its value the item content will be splitted or not on loading it (see qdp catalog)
 			sql_filter		: options.sql_filter || null,
 			// special double filters
 			// q_table 		: options.q_table, // like 'mints'
@@ -1075,7 +1075,7 @@ function form_factory() {
 											})
 										}
 
-									}//end if (q_splittable===true)
+									}//end if (form_item.value_split)
 								}
 							}
 

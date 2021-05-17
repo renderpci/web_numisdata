@@ -27,7 +27,22 @@
 .rows_container .icon_link {
   margin-left: 0.4em;
 }
-.rows_container .ceca_label {
+.rows_container .type_row {
+  display: flex;
+  margin-right: 1em;
+}
+.rows_container .type_wrapper {
+  border-bottom: 1px solid #000;
+  font-weight: 300;
+  font-variant: small-caps;
+  font-size: 1.2em;
+  display: flex;
+  flex-wrap: wrap;
+}
+.rows_container .mint {
+  padding-left: 1em;
+}
+.rows_container .mint_label {
   border-bottom: none;
   color: inherit;
 }
@@ -37,7 +52,7 @@
   padding-top: 1em;
   display: flex;
   align-content: space-between;
-  padding-left: 1em;
+  margin-left: 3em;
 }
 @media screen and (max-width: 625px) {
   .rows_container .row_wrapper {

@@ -97,7 +97,6 @@ var coin_row = {
 			// 	parent			: info_container
 			// })
 			// ID
-			console.log("row", row.section_id>0);
 				if (row.section_id && row.section_id>0) {
 					common.create_dom_element({
 						element_type	: "label",
@@ -217,20 +216,25 @@ var coin_row = {
 								// + ' ' +label_mint.toLowerCase()
 								// + ' / ' +label_number.toLowerCase()
 								// +' ' +label_type_name.toLowerCase();
+			const type_section = row.type_data.filter(item => item.catalogue === 'MIB')[0]
+
 			//value
 			const mint = (row.mint)
-				? row.mint
+				? type_section.mint
 				: ''
 
 			const mint_number = (row.mint_number)
-				? row.mint_number
+				? type_section.mint_number
 				: ''
 
 			const type_number = (row.mint_number)
-				? row.type_data[0].number
+				? type_section.number
 				: ''
 
-			const value_type = mint + ' ' + mint_number+'/'+type_number
+			const value_type = type_section.catalogue +' '+mint + ' ' + mint_number+'/'+type_number
+
+			const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section.section_id
+			const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
 
 			const label_type_node = common.create_dom_element({
 				element_type	: "label",
@@ -240,11 +244,26 @@ var coin_row = {
 			})
 
 			const value_type_node = common.create_dom_element({
-				element_type	: "span",
-				class_name		: "rigth-values",
-				inner_html		: value_type,
+				element_type	: "a",
+				class_name		: "rigth-values type_label",
+				inner_html		: value_type +' '+type_uri_text,
+				href 			: type_uri,
+				target 			: "_blank",
 				parent			: info_container
 			})
+
+			for (var i = 0; i < row.catalogue_type_mint.length; i++) {
+				const catalogue = row.catalogue_type_mint[i]
+				if(catalogue === 'MIB') continue;
+
+				const value_type_node = common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: catalogue+' '+row.type[i],
+					parent			: info_container
+				})
+
+			}
 
 
 
@@ -258,8 +277,8 @@ var coin_row = {
 			})
 
 			// design_obverse
-				const design_obverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].design_obverse
+				const design_obverse = typeof type_section!=="undefined"
+					? type_section.design_obverse
 					: null
 				if (design_obverse && design_obverse.length>0) {
 					common.create_dom_element({
@@ -281,8 +300,8 @@ var coin_row = {
 
 		//
 			// symbol_obverse
-				const symbol_obverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].symbol_obverse
+				const symbol_obverse = typeof type_section!=="undefined"
+					? type_section.symbol_obverse
 					: null
 				if (symbol_obverse && symbol_obverse.length>0) {
 					common.create_dom_element({
@@ -303,8 +322,8 @@ var coin_row = {
 				}
 
 			// legend_obverse
-				const legend_obverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].legend_obverse
+				const legend_obverse = typeof type_section!=="undefined"
+					? type_section.legend_obverse
 					: null
 				if (legend_obverse && legend_obverse.length>0) {
 					common.create_dom_element({
@@ -344,8 +363,8 @@ var coin_row = {
 			})
 
 		// design_reverse
-				const design_reverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].design_reverse
+				const design_reverse = typeof type_section!=="undefined"
+					? type_section.design_reverse
 					: null
 				if (design_reverse && design_reverse.length>0) {
 					common.create_dom_element({
@@ -366,8 +385,8 @@ var coin_row = {
 				}
 
 				// symbol_reverse
-				const symbol_reverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].symbol_reverse
+				const symbol_reverse = typeof type_section!=="undefined"
+					? type_section.symbol_reverse
 					: null
 				if (symbol_reverse && symbol_reverse.length>0) {
 					common.create_dom_element({
@@ -385,8 +404,8 @@ var coin_row = {
 				}
 
 				// legend_reverse
-				const legend_reverse = typeof row.type_data[0]!=="undefined"
-					? row.type_data[0].legend_reverse
+				const legend_reverse = typeof type_section!=="undefined"
+					? type_section.legend_reverse
 					: null
 				if (legend_reverse && legend_reverse.length>0) {
 					common.create_dom_element({

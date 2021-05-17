@@ -119,5 +119,11 @@
     "uri": "URI",
     "volume": "Volumen",
     "weight": "Peso",
-    "work_in_progress": "Versión en pruebas. Numeración provisional. No referenciar"
+    "work_in_progress": "Versión en pruebas. Numeración provisional. No referenciar",
+    "contact_form" : "Formulario de contacto",
+    "contact" : "Contacto",
+    "submit" : "Enviar",
+    "name" : "Nombre",
+    "message" : "Mensaje",
+    "cancel" : "Cancelar"
 }

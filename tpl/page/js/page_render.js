@@ -348,11 +348,26 @@ page.create_contact_button = function(){
 
 	button_form_container.addEventListener("click", function(){
 		document.querySelector('body').appendChild(form)
+
+		document.querySelector(".cancel-button").addEventListener("click",removeForm)
+
+
+		function removeForm(){
+			document.querySelector(".cancel-button").removeEventListener("click",removeForm)
+			document.querySelector("#popup-container").remove()
+		}
 	})
 
 	return fragment
 
 	function createForm(){
+
+		const formTitle_label = tstring.contact_form || 'Contact form'
+		const submitButton_Label = tstring.submit || 'Submit'
+		const cancelButton_Label = tstring.cancel || 'Cancel'
+		const name_Label = (tstring.name || 'Name')+":"
+		const email_Label = (tstring.email || 'Email')+":"
+		const message_Label = (tstring.message || 'Message')+":"
 		
 		const popUpContainer = common.create_dom_element({
 			element_type	: "div",
@@ -365,24 +380,47 @@ page.create_contact_button = function(){
 			parent			: popUpContainer
 		})
 
-		let form = document.createRange().createContextualFragment('<form action="/form_submit.php"></form>')
+		common.create_dom_element({
+			element_type 	: "h2",
+			class_name 		: "form-title",
+			text_content 	: formTitle_label,
+			parent			: form_container
+		})
 
-		const fname = document.createRange().createContextualFragment('<label for="fname">Name:</label><input type="text" id="fname" name="fname" value="" required>')
+		const formAction = ' onsubmit ="page.sendForm()" ' //Whats happend when send button is clicked
 
-		const fmail = document.createRange().createContextualFragment('<label for="fmail">Email:</label><input type="text" id="fmail" name="fmail" value="" required>')
+		let form = document.createRange().createContextualFragment('<form id="contact-form"></form>')
 
-		const fmessage = document.createRange().createContextualFragment('<label for="fmessage">Message</label><textarea name="message" rows="10" cols="30" required></textarea>')
+		const fname = document.createRange().createContextualFragment('<label for="fname">'+name_Label+'</label><input type="text" id="fname" name="fname" value="" required>')
 
-		const form_button = document.createRange().createContextualFragment('<input class="send-button" type="submit" value="Submit">')
+		const fmail = document.createRange().createContextualFragment('<label for="fmail">'+email_Label+'</label><input type="text" id="fmail" name="fmail" value="" required>')
 
-		form.appendChild(fname)
-		form.appendChild(fmail)
-		form.appendChild(fmessage)
-		form.appendChild(form_button)
+		const fmessage = document.createRange().createContextualFragment('<label for="fmessage">'+message_Label+'</label><textarea name="message" required></textarea>')
+
+		const form_button = document.createRange().createContextualFragment('<input class="send-button" type="submit" value="'+submitButton_Label+'">')
+
+		const cancel_button = document.createRange().createContextualFragment('<input class="cancel-button" type="button" value="'+cancelButton_Label+'">')
+
+		form.firstElementChild.addEventListener('submit',page.handleForm)
+		
+		
+		form.firstElementChild.appendChild(fname)
+		form.firstElementChild.appendChild(fmail)
+		form.firstElementChild.appendChild(fmessage)
+		form.firstElementChild.appendChild(form_button)
+		form.firstElementChild.appendChild(cancel_button)
 		form_container.appendChild(form)
 
 		return popUpContainer
 	}
+};
+
+page.handleForm = function(event){
+	event.preventDefault()
+	const currentForm = document.querySelector('#contact-form')
+	console.log(currentForm.querySelector('#fname').value)
+	currentForm.reset()
+	
 };
 
 

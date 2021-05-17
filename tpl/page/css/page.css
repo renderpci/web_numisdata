@@ -1699,6 +1699,32 @@ input[type=button].btn.button_contact.unactive {
 #popup-container .hidden {
   visibility: hidden;
 }
+#popup-container .form_container {
+  width: 60%;
+  margin: auto;
+  margin-top: 5%;
+  background-color: #ffffff;
+  padding: 2em 4em;
+}
+#popup-container .form_container .form-title {
+  text-align: center;
+}
+#popup-container .form_container label {
+  margin: 0;
+  width: auto;
+}
+#popup-container .form_container input {
+  height: auto;
+  margin-bottom: 2em;
+}
+#popup-container .form_container textarea {
+  height: 30vh;
+}
+#popup-container .form_container .send-button,
+#popup-container .form_container .cancel-button {
+  margin-top: 2em;
+  margin-right: 2em;
+}
 @media print {
   .print_hide {
     display: none !important;

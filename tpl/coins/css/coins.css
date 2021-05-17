@@ -40,7 +40,7 @@
   flex-wrap: wrap;
 }
 .rows_container .mint {
-  padding-left: 1em;
+  padding-right: 1em;
 }
 .rows_container .mint_label {
   border-bottom: none;

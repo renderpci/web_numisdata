@@ -51,17 +51,59 @@ var coins_row_fields = {
 					const current_type_number 	= row.type[i]
 					const current_catalogue		= row.catalogue_type_mint[i]
 
-					const ar_mint_number	= row.mint_number[i]
-						 ? row.mint_number[i]
-						 : []
-
-					const mint_number = ar_mint_number.join(' | ')
-
-					const current_numismatic_number = mint_number+"/"+current_type_number
-
-		
+					
 
 					if(current_catalogue === 'MIB'){
+
+						const ar_mint_number	= row.mint_number[i]
+						 	? row.mint_number[i]
+						 	: []
+
+						const mint_number = ar_mint_number.join(' | ')
+
+						const current_numismatic_number = mint_number+"/"+current_type_number					
+
+						const mint_line = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "mint",
+							parent 			: type_row
+						})
+
+						const mint_data	= row.mint_data[i]
+							 ?	row.mint_data[i]
+							 : 	[]
+						//mints mames
+						const mint	= row.mint[i]
+							 ?	row.mint[i]
+							 : 	[]
+
+						// const mint_label = tstring.mint || "mint"
+
+						// common.create_dom_element({
+						// 	element_type	: "span",
+						// 	inner_html  	: mint_label +': ',
+						// 	class_name		: "mint_label",
+						// 	parent 			: mint_line
+						// })
+
+						for (let i = 0; i < mint_data.length; i++) {
+							const current_mint_id 	= mint_data[i]
+							const mint_name 		= mint[i]
+
+							const mint_uri			= page_globals.__WEB_ROOT_WEB__ + "/mint/" + current_mint_id
+							const mint_uri_text		= "<a class=\"icon_link\" href=\""+mint_uri+"\"></a> "
+
+							common.create_dom_element({
+								element_type	: "a",
+								inner_html  	: mint_name + mint_uri_text,
+								class_name		: "mint_label",
+								href 			: mint_uri,
+								target 			: "_blank",
+								parent 			: mint_line
+							})
+
+						}//end for mints
+
 						const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + current_type_data
 						const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
 						
@@ -74,53 +116,11 @@ var coins_row_fields = {
 							parent 			: type_row
 						})
 
-					const mint_line = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "mint",
-						parent 			: type_row
-					})
-
-					const mint_data	= row.mint_data[i]
-						 ?	row.mint_data[i]
-						 : 	[]
-					//mints mames
-					const mint	= row.mint[i]
-						 ?	row.mint[i]
-						 : 	[]
-
-					// const mint_label = tstring.mint || "mint"
-
-					// common.create_dom_element({
-					// 	element_type	: "span",
-					// 	inner_html  	: mint_label +': ',
-					// 	class_name		: "mint_label",
-					// 	parent 			: mint_line
-					// })
-
-					for (let i = 0; i < mint_data.length; i++) {
-						const current_mint_id 	= mint_data[i]
-						const mint_name 		= mint[i]
-
-						const mint_uri			= page_globals.__WEB_ROOT_WEB__ + "/mint/" + current_mint_id
-						const mint_uri_text		= "<a class=\"icon_link\" href=\""+mint_uri+"\"></a> "
-
-						common.create_dom_element({
-							element_type	: "a",
-							inner_html  	: mint_name + mint_uri_text,
-							class_name		: "mint_label",
-							href 			: mint_uri,
-							target 			: "_blank",
-							parent 			: mint_line
-						})
-
-					}//end for mints
-
-
 					}else{
 
 						common.create_dom_element({
 							element_type	: "div",
-							inner_html  	: current_catalogue+" "+ current_numismatic_number,
+							inner_html  	: current_catalogue+" "+ current_type_number,
 							class_name		: "type_label",
 							parent 			: type_row
 						})
@@ -263,21 +263,26 @@ var coins_row_fields = {
 
 			}
 
-			if (row.ref_auction != null && row.ref_auction.length>0){
+			// Auctions
+			if (row.ref_auction_group){
 
-				var auctionInfo = row.ref_auction
+				for (let i = 0; i < row.ref_auction_group.length; i++) {
+					const auction = row.ref_auction_group[i]
 
-				if (row.number != null && row.number.length>0){
-					auctionInfo += " | "+ row.number
+					const auction_label = []
+					if (auction.name) auction_label.push(auction.name)
+		
+					if (auction.date) auction_label.push(auction.date)
+	
+					if (auction.number) auction_label.push(auction.number)
+
+					common.create_dom_element({
+						element_type	: "div",
+						inner_html  	: auction_label.join(' | '),
+						class_name		: "",
+						parent 			: data_cont
+					})
 				}
-
-				common.create_dom_element({
-					element_type	: "div",
-					inner_html  	: auctionInfo,
-					class_name		: "",
-					parent 			: data_cont
-				})
-
 			}
 
 			//countermarks

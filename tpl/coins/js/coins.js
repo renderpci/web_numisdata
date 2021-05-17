@@ -43,7 +43,7 @@ var coins =  {
 		// pagination
 			self.pagination = {
 				total	: null,
-				limit	: 10,
+				limit	: 100,
 				offset	: 0,
 				n_nodes	: 8
 			}
@@ -356,7 +356,7 @@ var coins =  {
 				e.preventDefault()
 				self.pagination = {
 					total	: null,
-					limit	: 10,
+					limit	: 100,
 					offset	: 0,
 					n_nodes	: 8
 				}

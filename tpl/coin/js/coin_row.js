@@ -147,37 +147,65 @@ var coin_row = {
 
 		//Auctions
 
-			const label_auctions = []
-			const value_auctions = []
+			
+			// const value_auctions = []
 
-			if (row.ref_auction_group && row.ref_auction_group.length>0) {
+			// if (row.ref_auction_group && row.ref_auction_group.length>0) {
 
-				for (let i=0;i<row.ref_auction_group.length;i++){
-					if (row.ref_auction_group[i].name.length>0){
-						label_auctions.push(tstring.auction || "Auction")
-						value_auctions.push(row.ref_auction_group[i].name)
+			// 	for (let i=0;i<row.ref_auction_group.length;i++){
+			// 		if (row.ref_auction_group[i].name.length>0){
+			// 			label_auctions.push(tstring.auction || "Auction")
+			// 			value_auctions.push(row.ref_auction_group[i].name)
 
-						if (row.ref_auction_group[i].number && row.ref_auction_group[i].number.length>0) {
-							label_auctions.push(tstring.number || "Number")
-							value_auctions.push(row.ref_auction_group[i].number)
-						}
-					}
+			// 			if (row.ref_auction_group[i].number && row.ref_auction_group[i].number.length>0) {
+			// 				label_auctions.push(tstring.number || "Number")
+			// 				value_auctions.push(row.ref_auction_group[i].number)
+			// 			}
+			// 		}
+			// 	}
+			//	}
+			if (row.ref_auction_group){
+				const label_auctions = []
+
+				label_auctions.push(tstring.auction || "Auction")
+				label_auctions.push(tstring.date || "Date")
+				label_auctions.push(tstring.number || "Number")
+
+				const label_auctions_node = common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: label_auctions.join(' | '),
+					parent			: info_container
+				})
+
+				for (let i = 0; i < row.ref_auction_group.length; i++) {
+					const auction = row.ref_auction_group[i]
+
+					const auction_label = []
+					if (auction.name) auction_label.push(auction.name)
+		
+					if (auction.date) auction_label.push(auction.date)
+	
+					if (auction.number) auction_label.push(auction.number)
+
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values",
+						inner_html  	: auction_label.join(' | '),
+						parent 			: info_container
+					})
 				}
 			}
+		
 
-			const label_auctions_node = common.create_dom_element({
-				element_type	: "label",
-				class_name		: "left-labels",
-				text_content	: label_auctions.join(' | '),
-				parent			: info_container
-			})
+			
 
-			const value_auctions_node = common.create_dom_element({
-				element_type	: "span",
-				class_name		: "rigth-values",
-				inner_html		: value_auctions.join(' | '),
-				parent			: info_container
-			})
+			// const value_auctions_node = common.create_dom_element({
+			// 	element_type	: "span",
+			// 	class_name		: "rigth-values",
+			// 	inner_html		: value_auctions.join(' | '),
+			// 	parent			: info_container
+			// })
 
 		//equivalents auctions
 			const value_equivalents = []
@@ -219,19 +247,19 @@ var coin_row = {
 			const type_section = row.type_data.filter(item => item.catalogue === 'MIB')[0]
 
 			//value
-			const mint = (row.mint)
+			const mint = (type_section.mint)
 				? type_section.mint
 				: ''
 
-			const mint_number = (row.mint_number)
+			const mint_number = (type_section.mint_number)
 				? type_section.mint_number
 				: ''
 
-			const type_number = (row.mint_number)
+			const type_number = (type_section.mint_number)
 				? type_section.number
 				: ''
 
-			const value_type = type_section.catalogue +' '+mint + ' ' + mint_number+'/'+type_number
+			const value_type = mint + ' ' +type_section.catalogue +' '+ mint_number+'/'+type_number
 
 			const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section.section_id
 			const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
@@ -258,7 +286,7 @@ var coin_row = {
 
 				const value_type_node = common.create_dom_element({
 					element_type	: "span",
-					class_name		: "rigth-values",
+					class_name		: "rigth-values equivalents",
 					inner_html		: catalogue+' '+row.type[i],
 					parent			: info_container
 				})

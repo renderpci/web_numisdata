@@ -16,7 +16,7 @@ var image_gallery = {
     galleryLength : null,
     currentIndex : 0,
     setup : {
-        galleryPrimId : "popup-gallery",
+        galleryPrimId : "popup-container",
         galleryNode : null,
         containerId : null               //if null put gallery in body
     },
@@ -157,7 +157,7 @@ var image_gallery = {
         if (e.target.classList.contains('nav-button')){
             e.stopPropagation()
         } else{
-            document.getElementById('popup-gallery').remove()
+            document.getElementById('popup-container').remove()
         }
     },
     

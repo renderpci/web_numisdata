@@ -157,7 +157,7 @@ var image_gallery = {
         if (e.target.classList.contains('nav-button')){
             e.stopPropagation()
         } else{
-            document.getElementById('popup-gallery').remove()
+            document.getElementById('popup-container').remove()
         }
     },
     

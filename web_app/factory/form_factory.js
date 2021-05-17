@@ -245,7 +245,7 @@ function form_factory() {
 
 		const group = common.create_dom_element({
 			element_type	: "div",
-			class_name 		: "form-group field field_operators"
+			class_name		: "form-group field field_operators"
 		})
 
 		const operator_label = common.create_dom_element({

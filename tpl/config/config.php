@@ -18,8 +18,8 @@
 	define('WEB_ENTITY_LABEL' 	,'Moneda Ibérica');
 
 // db . force use this db instead of default (usefull for multiple pubolications)
-	// define('WEB_DB' 			 ,'web_numisdata_mib');
-	define('WEB_DB' 			 ,'web_numisdata_mib_pre');
+	// define('WEB_DB'	 ,'web_numisdata_mib');
+	define('WEB_DB'	 ,'web_numisdata_mib_pre');
 
 
 // site config
@@ -29,7 +29,6 @@
 			? 'https://mib.numisdata.org'
 			: 'http://monedaiberica:8080'
 		);
-
 
 	// media base url
 		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');

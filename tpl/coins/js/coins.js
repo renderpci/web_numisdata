@@ -135,11 +135,12 @@ var coins =  {
 				id			: "mint",
 				name		: "mint",
 				label		: tstring.mint || "mint",
-				q_column	: "mint",
+				q_column	: "mint_name",
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
 				parent		: form_row,
+				value_split	: ' | ',
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
@@ -451,11 +452,13 @@ var coins =  {
 			})
 			.then(function(api_response){
 				console.log("--------------- api_response:",api_response);
+
+				coins_row_fields.last_type = null
 				
 				// parse data
 					const data	= page.parse_coin_data(api_response.result)
 					const total	= api_response.total
-console.log("--------------- data:",data);
+
 					self.pagination.total	= total
 					self.pagination.offset	= offset
 
@@ -507,7 +510,7 @@ console.log("--------------- data:",data);
 	* @return DocumentFragment node 
 	*/
 	list_row_builder : function(data, caller){
-		
+
 		return coins_row_fields.draw_item(data)
 	
 	}//end list_row_builder

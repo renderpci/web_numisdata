@@ -325,6 +325,67 @@ page.render_export_data_buttons = function() {
 };//end render_export_data_buttons
 
 
+page.create_contact_button = function(){
+	const self = this
+
+	const fragment = new DocumentFragment()
+
+	const button_form_container = common.create_dom_element({
+		element_type	: "div",
+		class_name		: "form_button_container",
+		parent			: fragment
+	})
+
+	const button_form = common.create_dom_element({
+		element_type	: "input",
+		type			: "button",
+		value			: tstring.contact || 'Contact',
+		class_name		: "btn primary button_contact",
+		parent			: button_form_container
+	})
+
+	const form = createForm()
+
+	button_form_container.addEventListener("click", function(){
+		document.querySelector('body').appendChild(form)
+	})
+
+	return fragment
+
+	function createForm(){
+		
+		const popUpContainer = common.create_dom_element({
+			element_type	: "div",
+			id				: "popup-container"
+		})
+
+		const form_container = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "form_container",
+			parent			: popUpContainer
+		})
+
+		let form = document.createRange().createContextualFragment('<form action="/form_submit.php"></form>')
+
+		const fname = document.createRange().createContextualFragment('<label for="fname">Name:</label><input type="text" id="fname" name="fname" value="" required>')
+
+		const fmail = document.createRange().createContextualFragment('<label for="fmail">Email:</label><input type="text" id="fmail" name="fmail" value="" required>')
+
+		const fmessage = document.createRange().createContextualFragment('<label for="fmessage">Message</label><textarea name="message" rows="10" cols="30" required></textarea>')
+
+		const form_button = document.createRange().createContextualFragment('<input class="send-button" type="submit" value="Submit">')
+
+		form.appendChild(fname)
+		form.appendChild(fmail)
+		form.appendChild(fmessage)
+		form.appendChild(form_button)
+		form_container.appendChild(form)
+
+		return popUpContainer
+	}
+};
+
+
 
 /**
 * RENDER_LEGEND

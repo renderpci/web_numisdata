@@ -265,18 +265,6 @@ page.parse_coin_data = function(data) {
 			// case resolved portal
 			row.type_data = self.parse_type_data(row.type_data)
 
-			// add
-			row.mint	= row.type_data && typeof row.type_data[0]!=="undefined"
-				? row.type_data[0].mint
-				: null
-			row.type_number	= row.type_data && typeof row.type_data[0]!=="undefined"
-				? row.type_data[0].number
-				: null
-
-			row.type_section_id = row.type_data && typeof row.type_data[0]!=="undefined"
-				? row.type_data[0].section_id
-				: null
-
 		}else{
 
 			row.type_data = row.type_data
@@ -288,9 +276,60 @@ page.parse_coin_data = function(data) {
 				: null
 		}
 
+		const separator		= " | "
+
+		// type
 		row.type = row.type
-			? page.remove_gaps(row.type, ' | ')
+			? page.split_data(row.type, separator)
 			: null
+
+	
+		// mint data
+		const mint_data		= row.mint_data
+			? page.split_data(row.mint_data, separator) // format is '["1"] | ["2"]'
+			: []
+
+			const ar_mints_data = []
+			for (let i = 0; i < mint_data.length; i++) {
+				ar_mints_data.push(JSON.parse(mint_data[i]))
+			}
+			row.mint_data = ar_mints_data
+				? ar_mints_data
+				: null
+		
+		// mint number
+		const mint_number = row.mint_number
+			? page.split_data(row.mint_number, separator)
+			: []
+
+			const ar_mints_number = []
+			for (let i = 0; i < mint_number.length; i++) {
+				ar_mints_number.push(JSON.parse(mint_number[i]))
+			}
+
+			row.mint_number = ar_mints_number
+				? ar_mints_number
+				: null
+		// mint
+		const mints = row.mint
+			? page.split_data(row.mint, separator)
+			: []
+
+			const ar_mints = []
+			for (let i = 0; i < mints.length; i++) {
+				ar_mints.push(JSON.parse(mints[i]))
+			}
+
+			row.mint = ar_mints
+				? ar_mints
+				: null
+
+
+		// catalogue_type_mint
+		row.catalogue_type_mint = row.catalogue_type_mint
+			? JSON.parse(row.catalogue_type_mint)
+			: null
+		
 
 		// legend text includes svg url
 		row.legend_obverse = row.legend_obverse

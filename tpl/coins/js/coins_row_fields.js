@@ -51,17 +51,17 @@ var coins_row_fields = {
 					const current_type_number 	= row.type[i]
 					const current_catalogue		= row.catalogue_type_mint[i]
 
-					const ar_mint_number	= row.mint_number[i]
-						 ? row.mint_number[i]
-						 : []
+					
 
-					const mint_number = ar_mint_number.join(' | ')
+					if(current_catalogue === 'MIB'){
 
-					const current_numismatic_number = mint_number+"/"+current_type_number
+						const ar_mint_number	= row.mint_number[i]
+						 	? row.mint_number[i]
+						 	: []
 
-		
+						const mint_number = ar_mint_number.join(' | ')
 
-					if(current_catalogue === 'MIB'){						
+						const current_numismatic_number = mint_number+"/"+current_type_number					
 
 						const mint_line = common.create_dom_element({
 							element_type	: "div",
@@ -120,7 +120,7 @@ var coins_row_fields = {
 
 						common.create_dom_element({
 							element_type	: "div",
-							inner_html  	: current_catalogue+" "+ current_numismatic_number,
+							inner_html  	: current_catalogue+" "+ current_type_number,
 							class_name		: "type_label",
 							parent 			: type_row
 						})

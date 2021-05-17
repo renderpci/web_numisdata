@@ -123,6 +123,9 @@
 .result #row_detail .info_container .type_label {
   border-bottom: none;
 }
+.result #row_detail .info_container .equivalents {
+  font-size: 0.8em;
+}
 .result #row_detail .block_wrapper {
   display: flex;
   flex-flow: row;

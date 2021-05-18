@@ -218,19 +218,26 @@
   height: 100%;
   height: 8.25em;
 }
+@media screen and (max-width: 980px) {
+  .result #types .item_wrapper .type_wrap img {
+    width: 100%;
+    height: 100%;
+  }
+}
 .result #types .item_wrapper .type_wrap .type_info {
   font-size: 72%;
   margin: 0;
   text-align: center;
 }
 @media screen and (max-width: 980px) {
-  .result #types .item_wrapper .type_wrap .type_info {
-    font-size: 90%;
+  .result #types .item_wrapper .type_wrap .types_img {
+    display: flex;
+    flex-flow: column;
   }
 }
-@media screen and (max-width: 736px) {
-  .result #types .item_wrapper .type_wrap .type_info {
-    font-size: 120%;
+@media screen and (max-width: 980px) {
+  .result #types .item_wrapper .type_wrap .types_img .image_link {
+    width: 100%;
   }
 }
 /*# sourceMappingURL=mint.css.map */

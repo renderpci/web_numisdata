@@ -13,7 +13,7 @@
 		$AltBody	= $json_object->mail->message ?? ''; // Plain text mail body
 
 
-	// mailer . Configuración de envio
+	// mailer. Send configuration
 		$mconfig = (object)[
 			'Host'			=> 'smtp.ionos.es',
 			'SMTPAuth'		=> true,
@@ -31,13 +31,10 @@
 		// target info
 		$mconfig->to		= 'paco@render.es';
 		$mconfig->reply_to	= 'no-reply@numisdata.org';
-		$mconfig->bcc		= 'webmaster@render.es';
+		$mconfig->bcc		= 'jandro@render.es'; // webmaster@render.es
 
 
 	// Body. Cuerpo HTML
-		// $file_include	= dirname(__FILE__) . '/html/mail_content.phtml';
-		// ob_start();		include ( $file_include );
-		// $Body			= ob_get_clean();
 		$Body  = '';
 		function build_table($data, $add_styles=false) {
 
@@ -47,13 +44,15 @@
 				$html .= trim('
 				<style>
 					body { background-color: white; }
-					table { border: none; border-collapse:collapse; }
+					table { border: none; border-collapse:collapse; width: 100%;}
 					td {
 						outline: 1px solid #eeeeee;
 						padding: 1em;
+						width: 140px;
 					}
 					td.value {
-						background-color: #fafafa;						
+						background-color: #fafafa;
+						width: auto;						
 					}
 					td.key, td.value.info {
 						background-color: #6c6c6c;
@@ -66,7 +65,7 @@
 					}
 					.logo {
 						width: 100%;
-						height: 100px;
+						height: 160px;
 						margin-bottom: 1em;
 						padding: 1em;
 					}
@@ -78,36 +77,33 @@
 				</style>
 				');
 
+				// add logo always
 				$logo_url = 'https://monedaiberica.org/v1/tpl/assets/images/logo_mib_marron.svg';
-				$html .= '<div class="logo"><img src="'.$logo_url.'" /></div>';
-				
+				$html .= '<div class="logo"><img src="'.$logo_url.'" /></div>';				
 			}
 
-			$html .= '<table>';
-			foreach ($data as $key => $value) {
-				
-				$html .= '<tr>';
-				$html .= '<td class="key">'.$key.'</td>';
+			// build html table from data object
+				$html .= '<table>';
+				foreach ($data as $key => $value) {
+					
+					$html .= '<tr>';
+					$html .= '<td class="key">'.$key.'</td>';
 
-				if (is_object($value) || is_array($value)) {
+					if (is_object($value) || is_array($value)) {
 
-					$html .= '<td class="value '.$key.'">'.build_table($value).'</td>';
+						$html .= '<td class="value '.$key.'">'.build_table($value).'</td>';
 
-				}else{
+					}else{
 
-					if ($key==='image_url') {
-						$value = '<img src="'.$value.'" height="360" />';
+						if ($key==='image_url') {
+							$value = '<img src="'.$value.'" height="360" />';
+						}
+						$html .= '<td class="value '.$key.'">'. nl2br($value) .'</td>';
 					}
-					$html .= '<td class="value '.$key.'">'. nl2br($value) .'</td>';
+					
+					$html .= '</tr>';
 				}
-				
-				$html .= '</tr>';
-				
-				// $value_string = (is_object($value) || is_array($value))
-				// 	? json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-				// 	: $value;
-			}
-			$html .= '</table>';
+				$html .= '</table>';
 
 			return $html;
 		}

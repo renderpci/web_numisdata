@@ -1429,19 +1429,36 @@
          }
 
          .form_container{
+        	overflow-y: auto;
          	width: 60%;
+         	height: 80vh;
          	margin: auto;
          	margin-top: 5%;
          	background-color: rgb(255,255,255);
          	padding: 2em 4em;
 
+         	@media screen and (max-width: @movil_max_width) {
+				padding: 1em;
+				width: 95%;
+			}
+
+			#contact-form{
+				margin:0;
+			}
+
          	.form-title{
          		text-align: center;
+         		@media screen and (max-width: @movil_max_width) {
+					font-size: 2.5vw;
+				}
          	}
 
          	label {
          		margin: 0;
          		width: auto;
+         		@media screen and (max-width: @movil_max_width) {
+					font-size: 80%;
+				}
          	}
 
          	input {
@@ -1450,13 +1467,22 @@
          	}
 
          	textarea {
-         		height: 30vh;
+         		height: 20vh;
          	}
 
          	.send-button, .cancel-button{
          		margin-top: 2em;
          		margin-right: 2em;
+         		margin-bottom: 0;
+         		@media screen and (max-width: @movil_max_width) {
+         			display: block;
+					font-size: 60%;
+					margin: auto;
+					margin-top:2em;
+					width: 80%;
+				}
          	}
+         	
          }
     }
 

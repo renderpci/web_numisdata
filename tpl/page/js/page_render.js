@@ -325,7 +325,7 @@ page.render_export_data_buttons = function() {
 };//end render_export_data_buttons
 
 
-page.create_contact_button = function(){
+page.create_suggestions_button = function(){
 	const self = this
 
 	const fragment = new DocumentFragment()
@@ -339,7 +339,7 @@ page.create_contact_button = function(){
 	const button_form = common.create_dom_element({
 		element_type	: "input",
 		type			: "button",
-		value			: tstring.contact || 'Contact',
+		value			: tstring.suggest_error || 'Suggestions / errors',
 		class_name		: "btn primary button_contact",
 		parent			: button_form_container
 	})
@@ -387,13 +387,20 @@ page.create_contact_button = function(){
 			parent			: form_container
 		})
 
+		common.create_dom_element({
+			element_type 	: "h3",
+			class_name 		: "form-title",
+			text_content 	: tstring.suggest_error || 'Suggestions / errors',
+			parent			: form_container
+		})
+
 		const formAction = ' onsubmit ="page.sendForm()" ' //Whats happend when send button is clicked
 
 		let form = document.createRange().createContextualFragment('<form id="contact-form"></form>')
 
 		const fname = document.createRange().createContextualFragment('<label for="fname">'+name_Label+'</label><input type="text" id="fname" name="fname" value="" required>')
 
-		const fmail = document.createRange().createContextualFragment('<label for="fmail">'+email_Label+'</label><input type="text" id="fmail" name="fmail" value="" required>')
+		const fmail = document.createRange().createContextualFragment('<label for="fmail">'+email_Label+'</label><input type="email" id="fmail" name="fmail" value="" required>')
 
 		const fmessage = document.createRange().createContextualFragment('<label for="fmessage">'+message_Label+'</label><textarea name="message" required></textarea>')
 
@@ -403,6 +410,9 @@ page.create_contact_button = function(){
 
 		form.firstElementChild.addEventListener('submit',page.handleForm)
 		
+		// fmail.querySelector("#fmail").addEventListener("blur",function(){
+		// 	console.log("entra")
+		// })
 		
 		form.firstElementChild.appendChild(fname)
 		form.firstElementChild.appendChild(fmail)

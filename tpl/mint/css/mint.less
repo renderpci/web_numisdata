@@ -306,6 +306,12 @@
 					width: 50%;
 					height: 100%;
 					height: 8.25em;
+					
+					@media screen and (max-width: 980px){
+						width: 100%;
+						height: 100%;
+					}
+					
 				}
 
 				.type_info {
@@ -313,12 +319,24 @@
 					margin: 0;
 					text-align: center;
 
-					@media screen and (max-width: 980px){
-						font-size: 90%;
-					}
+					// @media screen and (max-width: 980px){
+					// 	font-size: 90%;
+					// }
 
-					@media screen and (max-width: 736px){
-						font-size: 120%;
+					// @media screen and (max-width: 736px){
+					// 	font-size: 120%;
+					// }
+				}
+
+				.types_img {
+					@media screen and (max-width: 980px){
+						display: flex;
+						flex-flow: column;
+					}
+					.image_link {
+						@media screen and (max-width: 980px){
+							width: 100%;
+						}
 					}
 				}
 			}

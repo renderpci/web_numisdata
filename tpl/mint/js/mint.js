@@ -34,7 +34,7 @@ var mint = {
 			self.export_data_container.classList.add('hide')
 
 		//contact_form_button
-			const contact_form_button = page.create_contact_button()
+			const contact_form_button = page.create_suggestions_button()
 			self.export_data_container.appendChild(contact_form_button)
 
 

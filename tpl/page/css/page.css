@@ -1700,30 +1700,62 @@ input[type=button].btn.button_contact.unactive {
   visibility: hidden;
 }
 #popup-container .form_container {
+  overflow-y: auto;
   width: 60%;
+  height: 80vh;
   margin: auto;
   margin-top: 5%;
   background-color: #ffffff;
   padding: 2em 4em;
 }
+@media screen and (max-width: 842px) {
+  #popup-container .form_container {
+    padding: 1em;
+    width: 95%;
+  }
+}
+#popup-container .form_container #contact-form {
+  margin: 0;
+}
 #popup-container .form_container .form-title {
   text-align: center;
+}
+@media screen and (max-width: 842px) {
+  #popup-container .form_container .form-title {
+    font-size: 2.5vw;
+  }
 }
 #popup-container .form_container label {
   margin: 0;
   width: auto;
+}
+@media screen and (max-width: 842px) {
+  #popup-container .form_container label {
+    font-size: 80%;
+  }
 }
 #popup-container .form_container input {
   height: auto;
   margin-bottom: 2em;
 }
 #popup-container .form_container textarea {
-  height: 30vh;
+  height: 20vh;
 }
 #popup-container .form_container .send-button,
 #popup-container .form_container .cancel-button {
   margin-top: 2em;
   margin-right: 2em;
+  margin-bottom: 0;
+}
+@media screen and (max-width: 842px) {
+  #popup-container .form_container .send-button,
+  #popup-container .form_container .cancel-button {
+    display: block;
+    font-size: 60%;
+    margin: auto;
+    margin-top: 2em;
+    width: 80%;
+  }
 }
 @media print {
   .print_hide {

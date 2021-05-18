@@ -125,5 +125,6 @@
     "submit" : "Enviar",
     "name" : "Nombre",
     "message" : "Mensaje",
-    "cancel" : "Cancelar"
+    "cancel" : "Cancelar",
+    "suggest_error" : "Sugerencias / errores"
 }

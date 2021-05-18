@@ -1461,7 +1461,7 @@ var catalog = {
 
 				const ar_parent = []
 				for (let i = 0; i < ar_mints.length; i++) {
-					const parent = typeof ar_mints[i].parent[0]!=="undefined"
+					const parent = (ar_mints[i].parent && typeof ar_mints[i].parent[0]!=="undefined")
 						? ar_mints[i].parent[0]
 						: null
 					const mint_parent = parent

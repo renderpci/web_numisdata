@@ -349,13 +349,10 @@ page.create_suggestions_button = function(){
 	button_form_container.addEventListener("click", function(){
 		document.querySelector('body').appendChild(form)
 
-		document.querySelector(".cancel-button").addEventListener("click",removeForm)
+		document.querySelector(".cancel-button").addEventListener("click",page.removeForm)
 
 
-		function removeForm(){
-			document.querySelector(".cancel-button").removeEventListener("click",removeForm)
-			document.querySelector("#popup-container").remove()
-		}
+		
 	})
 
 	return fragment
@@ -408,15 +405,18 @@ page.create_suggestions_button = function(){
 
 		const cancel_button = document.createRange().createContextualFragment('<input class="cancel-button" type="button" value="'+cancelButton_Label+'">')
 
+		const error_msn = document.createRange().createContextualFragment('<p id="error-msn"></p>')
+
 		form.firstElementChild.addEventListener('submit',page.handleForm)
 		
 		// fmail.querySelector("#fmail").addEventListener("blur",function(){
 		// 	console.log("entra")
 		// })
-		
+
 		form.firstElementChild.appendChild(fname)
 		form.firstElementChild.appendChild(fmail)
 		form.firstElementChild.appendChild(fmessage)
+		form.firstElementChild.appendChild(error_msn)
 		form.firstElementChild.appendChild(form_button)
 		form.firstElementChild.appendChild(cancel_button)
 		form_container.appendChild(form)
@@ -425,8 +425,14 @@ page.create_suggestions_button = function(){
 	}
 };
 
+page.removeForm = function(){
+	document.querySelector(".cancel-button").removeEventListener("click",page.removeForm)
+	document.querySelector("#popup-container").remove()
+};
+
 page.handleForm = function(event){
 	event.preventDefault()
+	document.querySelector('#error-msn').textContent = ""
 	const currentForm = document.querySelector('#contact-form')
 	// console.log(currentForm.querySelector('#fname').value)
 	// currentForm.reset()
@@ -455,15 +461,23 @@ page.handleForm = function(event){
 
 	// request
 		return new Promise(function(resolve){
-			
+			const success_msn = "Mensaje enviado correctamente, gracias."
+			const error_msn = "Ha ocurrido un error. Por favor, prueba más tarde."
+
 			data_manager.request({
 				url		: __WEB_TEMPLATE_WEB__ + '/assets/lib/sendmail/send.php',
 				body	: body
 			})
 			.then((api_response)=>{
 				console.log("--- sendmail api_response:", api_response);
-				currentForm.reset()
-				resolve(api_response)
+				if (api_response.result){
+					alert (success_msn)
+					currentForm.reset()
+					page.removeForm();
+
+				} else {
+					document.querySelector('#error-msn').textContent = error_msn
+				}
 			})
 		})
 };

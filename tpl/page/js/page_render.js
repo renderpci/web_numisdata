@@ -349,13 +349,10 @@ page.create_suggestions_button = function(){
 	button_form_container.addEventListener("click", function(){
 		document.querySelector('body').appendChild(form)
 
-		document.querySelector(".cancel-button").addEventListener("click",removeForm)
+		document.querySelector(".cancel-button").addEventListener("click",page.removeForm)
 
 
-		function removeForm(){
-			document.querySelector(".cancel-button").removeEventListener("click",removeForm)
-			document.querySelector("#popup-container").remove()
-		}
+		
 	})
 
 	return fragment
@@ -402,21 +399,24 @@ page.create_suggestions_button = function(){
 
 		const fmail = document.createRange().createContextualFragment('<label for="fmail">'+email_Label+'</label><input type="email" id="fmail" name="fmail" value="" required>')
 
-		const fmessage = document.createRange().createContextualFragment('<label for="fmessage">'+message_Label+'</label><textarea name="message" required></textarea>')
+		const fmessage = document.createRange().createContextualFragment('<label for="fmessage">'+message_Label+'</label><textarea id="fmessage" name="message" required></textarea>')
 
 		const form_button = document.createRange().createContextualFragment('<input class="send-button" type="submit" value="'+submitButton_Label+'">')
 
 		const cancel_button = document.createRange().createContextualFragment('<input class="cancel-button" type="button" value="'+cancelButton_Label+'">')
+
+		const error_msn = document.createRange().createContextualFragment('<p id="error-msn"></p>')
 
 		form.firstElementChild.addEventListener('submit',page.handleForm)
 		
 		// fmail.querySelector("#fmail").addEventListener("blur",function(){
 		// 	console.log("entra")
 		// })
-		
+
 		form.firstElementChild.appendChild(fname)
 		form.firstElementChild.appendChild(fmail)
 		form.firstElementChild.appendChild(fmessage)
+		form.firstElementChild.appendChild(error_msn)
 		form.firstElementChild.appendChild(form_button)
 		form.firstElementChild.appendChild(cancel_button)
 		form_container.appendChild(form)
@@ -425,12 +425,61 @@ page.create_suggestions_button = function(){
 	}
 };
 
+page.removeForm = function(){
+	document.querySelector(".cancel-button").removeEventListener("click",page.removeForm)
+	document.querySelector("#popup-container").remove()
+};
+
 page.handleForm = function(event){
 	event.preventDefault()
+	document.querySelector('#error-msn').textContent = ""
 	const currentForm = document.querySelector('#contact-form')
-	console.log(currentForm.querySelector('#fname').value)
-	currentForm.reset()
+	// console.log(currentForm.querySelector('#fname').value)
+	// currentForm.reset()
 	
+	// short vars
+		const today		= new Date().toUTCString()
+		const name		= currentForm.querySelector('#fname').value
+		const email		= currentForm.querySelector('#fmail').value
+		const message	= currentForm.querySelector('#fmessage').value
+		
+	// row data
+		const body = {
+			mail : {
+				subject	: `${name} '${email}' MIB [${today}]`,
+				message	: message
+			},
+			data : {
+				name		: name,
+				email		: email,
+				message		: message,
+				lang		: page_globals.WEB_CURRENT_LANG_CODE,
+				web_url		: window.location.href,
+				date		: today
+			}
+		}
+
+	// request
+		return new Promise(function(resolve){
+			const success_msn = "Mensaje enviado correctamente, gracias."
+			const error_msn = "Ha ocurrido un error. Por favor, prueba más tarde."
+
+			data_manager.request({
+				url		: __WEB_TEMPLATE_WEB__ + '/assets/lib/sendmail/send.php',
+				body	: body
+			})
+			.then((api_response)=>{
+				console.log("--- sendmail api_response:", api_response);
+				if (api_response.result){
+					alert (success_msn)
+					currentForm.reset()
+					page.removeForm();
+
+				} else {
+					document.querySelector('#error-msn').textContent = error_msn
+				}
+			})
+		})
 };
 
 

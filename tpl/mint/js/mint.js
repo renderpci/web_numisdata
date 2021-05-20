@@ -58,7 +58,6 @@ var mint = {
 
 				// map draw
 					if (typeof mint.result[0]!=="undefined") {
-
 						if (mint_data.georef_geojson) {
 							self.draw_map({
 								mint_map_data	: mint_data.georef_geojson,
@@ -67,7 +66,7 @@ var mint = {
 									title		: mint_data.name,
 									description	: mint_data.public_info.trim()
 								},
-								place_data		: mint_data.place_data
+								types			: mint_data.relations_types
 							})
 						}
 					}
@@ -165,7 +164,8 @@ var mint = {
 						'uri',
 						'indexation',
 						'indexation_data',
-						'georef_geojson'
+						'georef_geojson',
+						'relations_types'
 					],
 					sql_filter				: "section_id = " + parseInt(section_id),
 					count					: false,
@@ -1234,11 +1234,10 @@ var mint = {
 		// options
 			const mint_map_data		= options.mint_map_data
 			const mint_popup_data	= options.mint_popup_data
-			const place_data		= options.place_data
+			const types				= options.types
 
-
-		self.get_place_data({
-			place_data : place_data
+		self.get_findspot_hoards({
+			types : types
 		})
 		.then(function(response){
 			// console.log("draw_map get_place_data: ",response);
@@ -1255,7 +1254,7 @@ var mint = {
 				legend			: page.render_map_legend
 			})
 
-			const map_data_poitns = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
+			const map_data_points = self.map_data(mint_map_data, mint_popup_data) // prepares data to used in map
 
 			// findspots to map
 				const findspots_map_data = response.result[0].result;
@@ -1263,42 +1262,43 @@ var mint = {
 
 					for (let i=0;i<findspots_map_data.length;i++){
 
+						if (!findspots_map_data[i].georef_geojson) continue
+
 						const findspot_map_data		= JSON.parse(findspots_map_data[i].georef_geojson)
 						const findspot_popup_data	= parse_popup_data(findspots_map_data[i])
 
 						findspot_popup_data.type = {}
 						findspot_popup_data.type = "findspot"
 
-						const findspot_map_data_poitns = self.map_data(findspot_map_data,findspot_popup_data)
+						const findspot_map_data_points = self.map_data(findspot_map_data,findspot_popup_data)
 
-						console.log("--findspot_popup_data",findspot_popup_data)
-
-						map_data_poitns.push(findspot_map_data_poitns[0])
+						map_data_points.push(findspot_map_data_points[0])
 					}
 				}
 
 			// hoards to map
 				const hoards_map_data = response.result[1].result;
+
 				if (hoards_map_data && hoards_map_data.length>0){
 					for (let i=0;i<hoards_map_data.length;i++){
 
-						const hoard_map_data	= JSON.parse(hoards_map_data[i].georef_geojson) || ""
+						if (!hoards_map_data[i].georef_geojson) continue
+
+						const hoard_map_data	= JSON.parse(hoards_map_data[i].georef_geojson)
 						const hoard_popup_data	= parse_popup_data(hoards_map_data[i])
 
 						hoard_popup_data.type = {}
 						hoard_popup_data.type = "hoard"
 
-						const hoard_map_data_poitns = self.map_data(hoard_map_data,hoard_popup_data)
+						const hoard_map_data_points = self.map_data(hoard_map_data,hoard_popup_data)
 
-						console.log("--hoard_map_data_poitns",hoard_map_data_poitns)
-
-						map_data_poitns.push(hoard_map_data_poitns[0])
+						map_data_points.push(hoard_map_data_points[0])
 					}
 				}
 
 			// draw points
-					console.log("map_data_poitns:",map_data_poitns);
-				self.map.parse_data_to_map(map_data_poitns, null)
+					console.log("map_data_points:",map_data_points);
+				self.map.parse_data_to_map(map_data_points, null)
 				.then(function(){
 					container.classList.remove("hide_opacity")
 				})
@@ -1322,11 +1322,21 @@ var mint = {
 	* GET_PLACE_DATA
 	* Search findspots and hoards data with same place_data
 	*/
-	get_place_data : function(data){
+	get_findspot_hoards : function(data){
 
-		const place_data = JSON.stringify(data.place_data)
+		const types = data.types
 
-		const sql_filter = "place_data='" + place_data + "'";
+			console.log("types:",types);
+
+		const ar_filter = []
+
+		for (let i = types.length - 1; i >= 0; i--) {
+			const current_coin = types[i]
+
+			ar_filter.push("types like '%\"" + current_coin + "\"%'");
+		}
+
+		const sql_filter = '('+ ar_filter.join(' OR ') +')'
 
 			const ar_calls = []
 
@@ -1339,7 +1349,7 @@ var mint = {
 					lang					: page_globals.WEB_CURRENT_LANG_CODE,
 					ar_fields				: ["*"],
 					count					: false,
-					sql_filter				: sql_filter
+					sql_filter				: sql_filter 
 				}
 			})
 

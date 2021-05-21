@@ -177,6 +177,16 @@ page.parse_mint_data = function(data) {
 
 	row.uri = self.parse_iri_data(row.uri)
 
+	row.relations_coins = (row.relations_coins)
+		? JSON.parse(row.relations_coins)
+		: null
+
+	
+	row.relations_types = (row.relations_types)
+		? JSON.parse(row.relations_types)
+		: null
+
+
 	return row
 }//end parse_mint_data
 

@@ -933,7 +933,7 @@ page.parse_iri_data = function(data) {
 				const _url = new URL(url)
 				source = _url.hostname
 			}catch (error) {
-				console.error(error);
+				console.warn(error);
 			}
 		}
 		items.push({
@@ -1166,3 +1166,42 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 
 	return data_clean
 }//end parse_tree_data
+
+
+
+/**
+* GET_ALL_ID_UNLIMITED
+* @return promise - array
+*/
+this.get_all_id_unlimited = function(body) {
+	
+	const ar_id_promise = (limit===0 && offset===0)
+		? Promise.resolve( data.map(el => el.section_id) ) // use existing
+		: (()=>{
+			// create a unlimited search
+			const new_body		= Object.assign({}, body)
+			new_body.limit		= 0
+			new_body.offset		= 0
+			new_body.count		= false
+			new_body.ar_fields	= ['section_id'] 
+										
+			return data_manager.request({
+				body : new_body
+			})
+			.then(function(response){								
+				const ar_id = response.result
+					? response.result.map(el => el.section_id)
+					: null							
+				return(ar_id)
+			})
+		  })()
+	ar_id_promise.then(function(ar_id){
+			console.log("********** ar_id:",ar_id);
+	})
+
+	
+};//end get_all_id_unlimited
+
+
+
+

@@ -244,8 +244,8 @@ var mints =  {
 
 			const table		= 'mints'
 			const ar_fields	= ['*']
-			const limit		= self.pagination.limit
-			const offset	= self.pagination.offset
+			const limit		= self.pagination.limit || 0
+			const offset	= self.pagination.offset || 0
 			const count		= true
 			const order		= "name"
 
@@ -269,18 +269,19 @@ var mints =  {
 				// 	})
 				// }
 
+			const body = {
+				dedalo_get		: 'records',
+				table			: table,
+				ar_fields		: ar_fields,
+				sql_filter		: sql_filter,
+				limit			: limit,
+				count			: count,
+				offset			: offset,
+				order			: order,
+				process_result	: null,
+			}
 			data_manager.request({
-				body : {
-					dedalo_get		: 'records',
-					table			: table,
-					ar_fields		: ar_fields,
-					sql_filter		: sql_filter,
-					limit			: limit,
-					count			: count,
-					offset			: offset,
-					order			: order,
-					process_result	: null,
-				}
+				body : body
 			})
 			.then(function(api_response){
 
@@ -320,6 +321,31 @@ var mints =  {
 						}
 						resolve(list_node)
 					})
+
+				// load all id sequence
+					const ar_id_promise = (limit===0 && offset===0)
+						? Promise.resolve( data.map(el => el.section_id) ) // use existing
+						: (()=>{
+							// create a unlimited search
+							const new_body		= Object.assign({}, body)
+							new_body.limit		= 0
+							new_body.offset		= 0
+							new_body.count		= false
+							new_body.ar_fields	= ['section_id'] 
+														
+							return data_manager.request({
+								body : new_body
+							})
+							.then(function(response){								
+								const ar_id = response.result
+									? response.result.map(el => el.section_id)
+									: null							
+								return(ar_id)
+							})
+						  })()
+					ar_id_promise.then(function(ar_id){
+							console.log("********** ar_id:",ar_id);
+					})
 			})
 
 			// scrool to head result
@@ -345,29 +371,6 @@ var mints =  {
 
 	},//end list_row_builder
 
-
-	/**
-	* LOAD_MINT_LIST
-	* @return promise
-	*/
-	load_mint_list : function() {
-
-		const js_promise = data_manager.request({
-			body : {
-				dedalo_get 	: 'records',
-				table 		: 'mints',
-				ar_fields 	: ['*'],
-				// sql_fullselect : 'DISTINCT term, '
-				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
-				limit 		: 0,
-				count 		: false,
-				order 		: 'name',
-				// sql_filter  : 'term_table=\'mints\''
-			}
-		})
-
-		return js_promise
-	}//end load_mint_list
 
 
 	/**

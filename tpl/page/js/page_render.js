@@ -57,6 +57,7 @@ page.render_export_data_buttons = function() {
 		let result
 		let export_data_parser
 		let filter
+		let uri
 
 	// unrestricted request to db
 		function get_data() {
@@ -178,7 +179,7 @@ page.render_export_data_buttons = function() {
 
 					// encode psqo to safe use it in url
 					const encoded_psqo	= psqo_factory.encode_psqo(min_psqo)
-					const uri			= window.location.protocol + '//'+
+					uri					= window.location.protocol + '//'+
 										  window.location.host+
 										  page_globals.__WEB_ROOT_WEB__+
 										  '/' +WEB_AREA+
@@ -328,6 +329,8 @@ page.render_export_data_buttons = function() {
 page.create_suggestions_button = function(){
 	const self = this
 
+	let currentUrl = "";
+
 	const fragment = new DocumentFragment()
 
 	const button_form_container = common.create_dom_element({
@@ -344,15 +347,34 @@ page.create_suggestions_button = function(){
 		parent			: button_form_container
 	})
 
+	//get search url
+	// event data_request_done is triggered when new search is done
+	event_manager.subscribe('data_request_done', manage_data_request_done)
+	
+	function manage_data_request_done(options) {
+		// console.warn("data_request_done options:",options);
+		const filter 				= options.filter
+
+		if (filter != null){
+			const min_psqo = psqo_factory.build_safe_psqo(filter)
+			const encoded_psqo	= psqo_factory.encode_psqo(min_psqo)
+			currentUrl			= window.location.protocol + '//'+
+							  window.location.host+
+							  page_globals.__WEB_ROOT_WEB__+
+							  '/' +WEB_AREA+
+							  '/?psqo=' + encoded_psqo;
+		}
+
+	}
+
+	
+
 	const form = createForm()
 
 	button_form_container.addEventListener("click", function(){
 		document.querySelector('body').appendChild(form)
 
-		document.querySelector(".cancel-button").addEventListener("click",page.removeForm)
-
-
-		
+		document.querySelector(".cancel-button").addEventListener("click",page.removeForm)		
 	})
 
 	return fragment
@@ -407,7 +429,12 @@ page.create_suggestions_button = function(){
 
 		const error_msn = document.createRange().createContextualFragment('<p id="error-msn"></p>')
 
-		form.firstElementChild.addEventListener('submit',page.handleForm)
+		
+		form.firstElementChild.addEventListener('submit',function(event){
+			event.preventDefault()
+			page.handleForm(currentUrl)
+
+		})
 		
 		// fmail.querySelector("#fmail").addEventListener("blur",function(){
 		// 	console.log("entra")
@@ -430,8 +457,8 @@ page.removeForm = function(){
 	document.querySelector("#popup-container").remove()
 };
 
-page.handleForm = function(event){
-	event.preventDefault()
+page.handleForm = function(currentUrl){
+	//event.preventDefault()
 	document.querySelector('#error-msn').textContent = ""
 	const currentForm = document.querySelector('#contact-form')
 	// console.log(currentForm.querySelector('#fname').value)
@@ -443,6 +470,10 @@ page.handleForm = function(event){
 		const email		= currentForm.querySelector('#fmail').value
 		const message	= currentForm.querySelector('#fmessage').value
 		
+	let url = window.location.href
+	if (currentUrl != null && currentUrl.length>0){
+		url = currentUrl
+	}
 	// row data
 		const body = {
 			mail : {
@@ -454,7 +485,7 @@ page.handleForm = function(event){
 				email		: email,
 				message		: message,
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
-				web_url		: window.location.href,
+				web_url		: url,
 				date		: today
 			}
 		}

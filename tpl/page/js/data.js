@@ -98,11 +98,10 @@ page.parse_type_data = function(data) {
 				: null
 
 			row.symbol_obverse = row.symbol_obverse
-				? page.trim_char( page.remove_gaps(row.symbol_obverse, ' | '), '|')
+				? self.parse_legend_svg(row.symbol_obverse)
 				: null
-
 			row.symbol_reverse = row.symbol_reverse
-				? page.trim_char( page.remove_gaps(row.symbol_reverse, ' | '), '|')
+				? self.parse_legend_svg(row.symbol_reverse)
 				: null
 
 			row.symbol_obverse_data = JSON.parse(row.symbol_obverse_data)

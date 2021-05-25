@@ -29,9 +29,9 @@
 		$mconfig->From		= $mconfig->Username;
 		$mconfig->FromName	= "Site numisdata.org";
 		// target info
-		$mconfig->to		= 'paco@render.es';
+		$mconfig->to		= 'mib@numisdata.org';
 		$mconfig->reply_to	= 'no-reply@numisdata.org';
-		$mconfig->bcc		= 'jandro@render.es'; // webmaster@render.es
+		$mconfig->bcc		= 'webmaster@render.es'; // webmaster@render.es
 
 
 	// Body. Cuerpo HTML

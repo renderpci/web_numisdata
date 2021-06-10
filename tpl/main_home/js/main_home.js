@@ -157,15 +157,17 @@ var main_home =  {
 					resolve(false)
 				}
 
-				const psqo = [{
+				const psqo = {
 					"$and":[{
+							id 			: 'global_search',
 							field		: 'global_search',
-							value		: value, // Like '%${form_item.q}%'
+							q			: value, // Like '%${form_item.q}%'
 							op			: '=', // default is 'LIKE'
 						}]
-					}]
+					}
 				// console.log("form_factory", psqo_factory);
-				const parse_psqo = psqo_factory.encode_psqo(psqo)
+				const safe_psqo		= psqo_factory.build_safe_psqo(psqo)
+				const parse_psqo 	= psqo_factory.encode_psqo(safe_psqo)
 
 				// search using value in url of catalog
 				window.location.href = './catalog/?psqo='+ parse_psqo  //'./catalog/' + encodeURIComponent(value);

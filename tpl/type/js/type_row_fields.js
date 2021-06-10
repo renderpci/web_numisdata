@@ -9,6 +9,8 @@ var type_row_fields = {
 
 	// caller. Like 'type'
 	caller : null,
+	type : '',
+	equivalents : '',
 
 
 
@@ -159,7 +161,8 @@ var type_row_fields = {
 					for (let i = 0; i < beats.length; i++) {
 						ar_final.push( beats[i].replace(/ \| /g, ' ') )
 					}
-					return ar_final.join(" | ")
+					self.equivalents = ar_final.join(" | ")
+					return self.equivalents
 				})
 			)
 		// related_types : "MIB | 03a<br>MIB | 15b"
@@ -502,13 +505,6 @@ var type_row_fields = {
 
 		if (item[name] && item[name].length>0) {
 
-			const mint_number = (item.mint_number)
-					? item.mint_number+'/'
-					: ''
-
-			const item_text = item.catalogue + " " +  mint_number + item["number"]
-
-
 			const url = item[name]
 
 			const image_link = common.create_dom_element({
@@ -524,7 +520,7 @@ var type_row_fields = {
 				src 			: url,
 				title 			: item.number,
 				dataset 		: {
-									caption: item_text
+									caption: self.type +' | '+self.equivalents
 								},
 				parent 			: image_link
 			})
@@ -771,6 +767,7 @@ var type_row_fields = {
 
 				const item_text = item[name] + " " +  mint_number + item["number"]
 
+				self.type = item_text
 				const node = common.create_dom_element({
 					element_type 	: "span",
 					class_name 		: "info_value " + name,
@@ -1069,6 +1066,7 @@ var type_row_fields = {
 
 				const el			= data[i]
 				const coinsLenght	= el.coins.length;
+
 				if (el.typology_id==1) continue; // ignore identify images typology
 
 				// typology label
@@ -1090,6 +1088,7 @@ var type_row_fields = {
 				const coins_length	= coins.length
 				for (let j = 0; j < coins_length; j++) {
 					const coin_section_id	= coins[j]
+					
 					const coin_data			= item.ref_coins_union.find(element => element.section_id==coin_section_id)
 					if (coin_data) {
 						// draw_coin(coin_data, typology_coins)
@@ -1127,11 +1126,7 @@ var type_row_fields = {
 		})
 
 		// images
-			const mint_number = (data.mint_number)
-					? data.mint_number+'/'
-					: ''
 
-			const type_number = data.catalogue_type_mint + " " +  mint_number + data.type
 
 			// obverse
 			const images = common.create_dom_element({
@@ -1150,7 +1145,7 @@ var type_row_fields = {
 				src				: data.image_obverse_thumb,
 				title 			: data.section_id,
 				dataset 		: {
-									caption: type_number
+									caption: self.type +' | '+self.equivalents
 								},
 				loading			: "lazy",
 				parent			: image_link_obverse
@@ -1169,7 +1164,7 @@ var type_row_fields = {
 				src				: data.image_reverse_thumb,
 				title 			: data.section_id,
 				dataset 		: {
-									caption: type_number
+									caption: self.type +' | '+self.equivalents
 								},
 				loading			: "lazy",
 				parent			: image_link_reverse
@@ -1467,12 +1462,6 @@ var type_row_fields = {
 
 			// images
 
-			const mint_number = (data.mint_number)
-					? data.mint_number+'/'
-					: ''
-
-			const type_number = data.catalogue_type_mint + " " +  mint_number + data.type
-
 				const images = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "images_wrapper",
@@ -1489,7 +1478,7 @@ var type_row_fields = {
 					src				: data.image_obverse,
 					title 			: data.section_id,
 					dataset 		: {
-									caption: type_number
+									caption: self.type +' | '+self.equivalents
 								},
 					parent			: image_link_obverse
 				})
@@ -1506,7 +1495,7 @@ var type_row_fields = {
 					src				: data.image_reverse,
 					title 			: data.section_id,
 					dataset 		: {
-									caption: type_number
+									caption: self.type +' | '+self.equivalents
 								},
 					parent			: image_link_reverse
 				})
@@ -1547,7 +1536,7 @@ var type_row_fields = {
 				// uri
 					const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 					const full_uri	= page_globals.__WEB_BASE_URL__ + uri
-					const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> URI </a>'
+					const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> MIB </a>'
 					common.create_dom_element({
 						element_type	: "div",
 						class_name		: "",

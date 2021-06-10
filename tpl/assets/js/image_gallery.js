@@ -107,6 +107,7 @@ var image_gallery = {
         this.img1.src = parsedGallery[this.currentIndex][0].attributes.href.value
         this.img2.src = parsedGallery[this.currentIndex][1].attributes.href.value
 
+
         this.caption = this.popup.getElementById('caption-wrapper').getElementsByTagName('p')[0]
         this.caption.textContent = parsedGallery[this.currentIndex][0].children[0].dataset.caption
 

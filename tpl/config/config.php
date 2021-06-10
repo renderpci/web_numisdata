@@ -19,7 +19,7 @@
 
 // db . force use this db instead of default (usefull for multiple pubolications)
 	// define('WEB_DB'	 ,'web_numisdata_mib');
-	define('WEB_DB'	 ,'web_numisdata_mib');
+	define('WEB_DB'	 ,'web_numisdata_mib_pre');
 
 
 // site config

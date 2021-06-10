@@ -1230,7 +1230,7 @@ var mint = {
 	draw_map : function(options) {
 
 		const self = this
-
+			
 		// options
 			const mint_map_data		= options.mint_map_data
 			const mint_popup_data	= options.mint_popup_data

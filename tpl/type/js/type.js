@@ -317,7 +317,7 @@ var type =  {
 	* DRAW_MAP
 	*/
 	draw_map : function(options) {
-	
+
 		const self = this
 
 		// options
@@ -392,6 +392,7 @@ var type =  {
 
 		const title			= data_group.name
 		const total_items	= data_group.total_items
+		const items			= data_group.items
 		const section_id	= data_group.section_id
 
 		const popup_wrapper = common.create_dom_element({
@@ -417,7 +418,7 @@ var type =  {
 
 		// descriptions
 			if (total_items && total_items>0) {
-				const description = tstring.total +" "+ tstring.items + ": " + total_items
+				const description = tstring.items + ": " + items + " " + (tstring.of || "of") +" "+ total_items
 				const text_description = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "text_description",

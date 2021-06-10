@@ -1805,6 +1805,7 @@ var type_row_fields = {
 			if (map_data.length>0) {
 				common.when_in_dom(map_container, draw_map)
 				function draw_map() {
+						
 					self.caller.draw_map({
 						container		: map_container,
 						map_position	: null, // use default position

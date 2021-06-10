@@ -158,6 +158,7 @@ var hoard =  {
 		// options
 			const map_data = options.map_data
 
+
 		const map_position	= map_data
 		const container		= document.getElementById("map_container")
 

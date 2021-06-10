@@ -368,11 +368,11 @@ var catalog = {
 				id				: "creator",
 				name			: "creator",
 				label			: tstring.creator || "creator",
-				q_column		: "p_creator",
-				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				q_column		: "ref_type_people", //"p_creator",
+				// value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
 				eq_in			: "%",
 				eq_out			: "%",
-				is_term			: true,
+				is_term			: false, //true
 				parent			: form_row,
 				callback		: function(form_item) {
 					self.form.activate_autocomplete({

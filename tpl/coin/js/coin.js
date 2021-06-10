@@ -27,6 +27,10 @@ var coin = {
 			self.export_data_container.appendChild(export_data_buttons)
 			self.export_data_container.classList.add('hide')
 
+			//suggestions_form_button
+			const contact_form_button = page.create_suggestions_button()
+			self.export_data_container.appendChild(contact_form_button)
+
 		// trigger render coin with current options.section_id 
 			if (self.section_id || self.section_id<1) {
 				

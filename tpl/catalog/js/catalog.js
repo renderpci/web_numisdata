@@ -46,7 +46,6 @@ var catalog = {
 			self.export_data_container	= export_data_container
 			self.form_items_container	= form_items_container
 
-
 		// mints selector
 			// 		const select = self.draw_select({
 			// 			data		: response.result,
@@ -1002,6 +1001,10 @@ var catalog = {
 				self.export_data_buttons = page.render_export_data_buttons()
 				self.export_data_container.appendChild(self.export_data_buttons)
 				self.export_data_container.classList.add("hide")
+
+				//suggestions_form_button
+				const contact_form_button = page.create_suggestions_button()
+				self.export_data_container.appendChild(contact_form_button)
 			}
 
 		// scrool to head result

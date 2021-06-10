@@ -666,7 +666,6 @@ var page = {
 		if (clean===true && self.image_galleries.length>0) {
 			const currentGalleriesLength = self.image_galleries.length
 			for (let i = 0; i < currentGalleriesLength; i++) {
-				console.log("entra")
 				self.image_galleries[i].removeGallery()
 				self.image_galleries.splice(i,1)
 			}

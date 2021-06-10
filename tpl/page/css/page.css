@@ -224,7 +224,7 @@ input.form-control:not(:placeholder-shown) {
   left: 0;
   bottom: -1px;
   z-index: 999;
-  background-color: rgb(255 255 255 / 78%);
+  background-color: rgba(255, 255, 255, 0.78);
   padding: 0.5em;
   padding-bottom: 0.25em;
   padding-top: 0.25em;
@@ -985,7 +985,7 @@ nav ul {
   color: #4c4430;
   letter-spacing: 0.05em;
   font-weight: 100;
-  font-size: 2.8em;
+  font-size: 2em;
   margin-bottom: 0em;
 }
 #main .inner .info_line.separator {

@@ -126,10 +126,6 @@ var coin_row = {
 				value_collection.push(row.former_collection)
 			}
 
-			if (row.number && row.number.length>0) {
-				label_collection.push( tstring.number || "Number")
-				value_collection.push(row.number)
-			}
 
 			const label_collection_node = common.create_dom_element({
 				element_type	: "label",
@@ -168,8 +164,8 @@ var coin_row = {
 				const label_auctions = []
 
 				label_auctions.push(tstring.auction || "Auction")
-				label_auctions.push(tstring.date || "Date")
-				label_auctions.push(tstring.number || "Number")
+				// label_auctions.push(tstring.date || "Date")
+				// label_auctions.push(tstring.number || "Number")
 
 				const label_auctions_node = common.create_dom_element({
 					element_type	: "label",
@@ -186,8 +182,10 @@ var coin_row = {
 		
 					if (auction.date) auction_label.push(auction.date)
 	
-					if (auction.number) auction_label.push(auction.number)
+					if (auction.number) auction_label.push(auction.number || row.number)
 
+					if (row.number) auction_label.push(row.number)
+						
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "rigth-values",
@@ -198,7 +196,10 @@ var coin_row = {
 			}
 		
 
-			
+			// if (row.number && row.number.length>0) {
+			// 	label_collection.push( tstring.number || "Number")
+			// 	value_collection.push(r)
+			// }
 
 			// const value_auctions_node = common.create_dom_element({
 			// 	element_type	: "span",

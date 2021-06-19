@@ -303,16 +303,34 @@ var map = {
 			parent			: form_row
 		})
 
-		// section_id
+		// // section_id
+		// 	self.form.item_factory({
+		// 		id			: "section_id",
+		// 		name		: "section_id",
+		// 		label		: tstring.is || "ID",
+		// 		q_column	: "section_id",
+		// 		eq			: "=",
+		// 		eq_in		: "",
+		// 		eq_out		: "",
+		// 		parent		: form_row
+		// 	})
+
+		// mint
 			self.form.item_factory({
-				id			: "section_id",
-				name		: "section_id",
-				label		: tstring.is || "ID",
-				q_column	: "section_id",
-				eq			: "=",
-				eq_in		: "",
-				eq_out		: "",
-				parent		: form_row
+				id			: "mint",
+				name		: "mint",
+				label		: tstring.mint || "mint",
+				q_column	: "mint",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
 			})
 
 		// collection
@@ -333,41 +351,25 @@ var map = {
 				}
 			})
 
-		// ref_auction
-			self.form.item_factory({
-				id			: "ref_auction",
-				name		: "ref_auction",
-				label		: tstring.auction || "auction",
-				q_column	: "ref_auction",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
+		// // ref_auction
+		// 	self.form.item_factory({
+		// 		id			: "ref_auction",
+		// 		name		: "ref_auction",
+		// 		label		: tstring.auction || "auction",
+		// 		q_column	: "ref_auction",
+		// 		eq			: "LIKE",
+		// 		eq_in		: "%",
+		// 		eq_out		: "%",
+		// 		parent		: form_row,
+		// 		callback	: function(form_item) {
+		// 			self.form.activate_autocomplete({
+		// 				form_item	: form_item,
+		// 				table		: 'coins'
+		// 			})
+		// 		}
+		// 	})
 
-		// mint
-			self.form.item_factory({
-				id			: "mint",
-				name		: "mint",
-				label		: tstring.mint || "mint",
-				q_column	: "mint",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'coins'
-					})
-				}
-			})
+
 
 		// findspot
 			self.form.item_factory({
@@ -734,12 +736,14 @@ var map = {
 
 				const coins_list_total = new_row.coins_list ? new_row.coins_list.length : 0;
 				const types_list_total = new_row.types_list ? new_row.types_list.length : 0;
-					console.log("new_row:",new_row);
+				
 				// item data update
-					const description = (tstring.coins || 'Coins') + ' ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ' ' + types_list_total
+					const description = (tstring.coins || 'Coins') + ': ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ': ' + types_list_total
 					new_row.item.data.coins_total = coins_list_total
 					new_row.item.data.types_total = types_list_total
 					new_row.item.data.description = description
+
+			// const new_row2 = page.parse_map_global_data([new_row])[0]
 
 			// add cloned and updated row
 				new_map_global_data.push(new_row)

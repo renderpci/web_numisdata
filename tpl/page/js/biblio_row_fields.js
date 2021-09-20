@@ -1,3 +1,7 @@
+/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page, forms, document, DocumentFragment, common, console */
+/*eslint no-undef: "error"*/
+/*jshint esversion: 6 */
+
 "use strict";
 
 
@@ -133,10 +137,19 @@ var biblio_row_fields = {
 		const typology 		= this.get_typology()
 
 		// pdf data
-		const pdf_uri 			= biblio_object.pdf || '[]'
-		const ar_pdf_uri 		= JSON.parse(pdf_uri)
-		const ar_pdf_uri_length = ar_pdf_uri.length
-
+			// unified pdf_uri_items objects (from component pdf -internal- or component iri -external-)
+			const pdf_uri_items = []
+			if (biblio_object.pdf) {
+				// add formatted object
+				pdf_uri_items.push({
+					title	: 'Download pdf',
+					iri		: (page_globals.__WEB_MEDIA_BASE_URL__ + biblio_object.pdf)
+				})
+			}else if(biblio_object.pdf_uri) {
+				const ar_uri = JSON.parse(biblio_object.pdf_uri)
+				pdf_uri_items.push(...ar_uri)
+			}
+			const pdf_uri_items_length = pdf_uri_items.length
 
 		// line
 			const line = common.create_dom_element({
@@ -149,22 +162,29 @@ var biblio_row_fields = {
 			const title_style 	= typology==="book" ? " italic" : ""
 			common.create_dom_element({
 				element_type 	: "div",
-				class_name 		: "title" + title_style + (ar_pdf_uri_length>0 ? " blue" : ""),
+				class_name 		: "title" + title_style + (pdf_uri_items_length>0 ? " blue" : ""),
 				text_content 	: title,
 				parent 			: line
 			})
 
-			for (let i = 0; i < ar_pdf_uri_length; i++) {
-				const pdf_item = ar_pdf_uri[i]
-				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "pdf",
-					title 			: pdf_item.title,
-					// text_content : pdf_item.title,
-					// href 			: pdf_item.iri,
-					parent 			: line
-				}).addEventListener("click",(e) => {
-					window.open(pdf_item.iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
+		// link pdf
+			for (let i = 0; i < pdf_uri_items_length; i++) {
+
+				const pdf_item	= pdf_uri_items[i]
+				const title		= pdf_item.title
+				const iri		= pdf_item.iri
+
+				const pdf_link	= common.create_dom_element({
+					element_type	: "div",
+					class_name		: "pdf",
+					title			: title,
+					// text_content	: pdf_item.title,
+					// href			: pdf_item.iri,
+					parent			: line
+				})
+
+				pdf_link.addEventListener("click",(e) => {
+					window.open(iri, "PDF", "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 				})
 			}
 

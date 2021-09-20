@@ -150,11 +150,10 @@ function search_distinct($json_data) {
 			$options->sql_fullselect= 'SELECT distinct '.$safe_q_name_select.', section_id FROM '.$q_table;
 			$options->sql_filter 	= ''.$q_search.' IS NOT NULL '.PHP_EOL.'AND '.$q_search.'!=\'\' '.PHP_EOL.'AND '.$q_search.' LIKE \'%'.$q.'%\'';
 
-			// adtional filter using dd_relations column
+			// additional filter using dd_relations column
 			if (!empty($dd_relations)) {
 				$options->sql_filter .= PHP_EOL.'AND dd_relations LIKE \'%"'.$dd_relations.'"%\'';
 			}
-
 
 		# Http request in php to the API
 		$web_data = json_web_data::get_data($options);

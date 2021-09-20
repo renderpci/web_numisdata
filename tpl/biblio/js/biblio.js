@@ -159,7 +159,7 @@ var biblio =  {
 						limit			: element.dataset.limit || 30
 				}
 				if(SHOW_DEBUG===true) {
-					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars);
+					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars, self.trigger_url);
 				}
 
 				common.get_json_data(trigger_url, trigger_vars).then(function(response_data) {
@@ -305,10 +305,10 @@ var biblio =  {
 							const ar_parts = input.dataset.q_name.split(' AS ')
 							// overwrite current_column
 							current_column = ar_parts[1]
-							if (current_column==="authors") {
-								const regex = /\,/gi;
-								current_value = current_value.replace(regex, '');
-							}
+							// if (current_column==="authors") {
+							// 	const regex = /\,/gi;
+							// 	current_value = current_value.replace(regex, '');
+							// }
 						}
 
 					const current_obj = {

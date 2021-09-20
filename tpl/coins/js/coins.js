@@ -139,8 +139,8 @@ var coins =  {
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
+				is_term		: true,
 				parent		: form_row,
-				value_split	: ' | ',
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,

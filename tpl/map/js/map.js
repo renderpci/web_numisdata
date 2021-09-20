@@ -317,15 +317,16 @@ var map = {
 
 		// mint
 			self.form.item_factory({
-				id			: "mint",
-				name		: "mint",
-				label		: tstring.mint || "mint",
-				q_column	: "mint",
-				eq			: "LIKE",
-				eq_in		: "%",
-				eq_out		: "%",
-				parent		: form_row,
-				callback	: function(form_item) {
+				id				: "mint",
+				name			: "mint",
+				label			: tstring.mint || "mint",
+				q_column		: "mint",
+				eq				: "LIKE",
+				eq_in			: "%",
+				eq_out			: "%",
+				q_selected_eq	: "LIKE",
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
 						table		: 'coins'

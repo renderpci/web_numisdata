@@ -5,3 +5,4 @@ acc
 .DS_Store
 /tpl/assets/.DS_Store
 *.sublime-workspace
+/.phpintel/

@@ -1040,15 +1040,38 @@ function form_factory() {
 
 								if (!item.name || item.name.length<1) { continue; }
 
-								const current_ar_value = (item.name.indexOf("[\"")===0)
-									? JSON.parse(item.name)
-									: [item.name]
+								// name. Could be as ["Arse"] | ["Arse"]
+									let base_value = []
+									if (item.name.indexOf("[\"")===0 && item.name.indexOf("] | [")!==-1) {
+										// split and group
+										const beats			= item.name.split(" | ")
+										const parsed_beats	= beats.map(el => JSON.parse(el))
+
+										let ar_final = []
+										for (let k = 0; k < parsed_beats.length; k++) {
+											ar_final.concat(parsed_beats[k])
+										}
+										// unify expected string format
+										base_value = JSON.stringify(ar_final)
+
+									}else{
+										base_value = item.name
+									}
+
+								// const current_ar_value = (item.name.indexOf("[\"")===0)
+								// 	? JSON.parse(item.name)
+								// 	: [item.name]
+								const current_ar_value = (base_value.indexOf("[\"")===0)
+									? JSON.parse(base_value)
+									: (Array.isArray(base_value) ? base_value : [base_value])
 
 								for (let j = 0; j < current_ar_value.length; j++) {
 
 									const item_name		= current_ar_value[j] // self.format_drop_down_list(q_column, current_ar_value[j])
 									const item_value	= current_ar_value[j]
 									// const item_name = item.name.replace(/[\["|"\]]/g, '')
+
+									if (!item_name || item_name==='[]') continue;
 
 									if (form_item.value_split) {
 

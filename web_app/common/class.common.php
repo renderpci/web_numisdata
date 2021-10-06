@@ -531,25 +531,26 @@ function lang2iso3($lang) {
 
 	switch($lang) {
 		
+		case 'es':
 		case 'esp':
 		case 'espn':
 		case 'spa':
-		case 'es':
 			$lang_iso3 = 'lg-spa'; 
 			break;
 
-		case 'cat':
 		case 'ca':
+		case 'va':
+		case 'cat':
 			$lang_iso3 = 'lg-cat'; 
 			break;
 
+		case 'en':
 		case 'eng':
-		case 'en': 
 			$lang_iso3 = 'lg-eng';
 			break;
 
-		case 'fra':
 		case 'fr':
+		case 'fra':
 			$lang_iso3 = 'lg-fra';
 			break;
 
@@ -557,16 +558,20 @@ function lang2iso3($lang) {
 			$lang_iso3 = 'lg-deu';
 			break;
 
-		case 'it':	
+		case 'it':
 			$lang_iso3 = 'lg-ita';
 			break;
 
-		case 'el':	
+		case 'el':
 			$lang_iso3 = 'lg-ell';
-			break;		
+			break;
+
+		case 'pt':
+			$lang_iso3 = 'lg-por';
+			break;
 		
 		default	:
-			$lang_iso3 = WEB_DEFAULT_LANG_CODE;	
+			$lang_iso3 = WEB_DEFAULT_LANG_CODE;
 	}
 
 	return $lang_iso3;

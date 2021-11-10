@@ -7,18 +7,29 @@
   border-radius: 8px;
   margin-bottom: 6em;
 }
-#search_form {
+#search_form,
+#mint_search_form {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   padding-top: 1em;
 }
-#search_form > * {
+#search_form > *,
+#mint_search_form > * {
   height: 3em;
 }
-#search_form .form-row {
+#search_form .form-row,
+#mint_search_form .form-row {
   width: 80%;
 }
-#search_form .form-group.field.button_submit {
+#search_form .form-group.field.button_submit,
+#mint_search_form .form-group.field.button_submit {
   margin-top: 0.75em;
   margin-left: 2em;
 }
-/*# sourceMappingURL=main_home.css.map */
+.mint_form {
+  -webkit-box-flex: 1 !important;
+      -ms-flex: 1 !important;
+          flex: 1 !important;
+  padding-right: 0 !important;
+}

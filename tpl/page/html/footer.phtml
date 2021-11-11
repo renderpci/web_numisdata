@@ -44,6 +44,8 @@
 			*/ ?>
 			
 			<!-- logos -->
+
+			<!-- UNCOMMENT FOR PREVIOUS FOOTER
 				<ul class="logos">
 					<li class="ministerio">
 						<a href="http://www.ciencia.gob.es/portal/site/MICINN/" rel="noreferrer" target="_blank"></a>
@@ -58,7 +60,9 @@
 						<a href="https://render.es/" rel="noreferrer" target="_blank"></a>
 					</li>
 				</ul>
-			
+			-->
+
+
 			<?php /*
 			<!-- copyright -->
 				<ul class="copyright">
@@ -66,11 +70,97 @@
 				</ul>
 			*/ ?>
 			<!-- copyright -->
+
+			<!-- UNCOMMENT FOR PREVIOUS FOOTER
 				<ul class="copyright version">
 					<li>numisdata.org</li>
 					<li><a href="mailto:mib@numisdata.org">mib@numisdata.org</a></li>
 					<li>Moneda Ibérica v <?php echo WEB_VERSION ?></li>
 					<li class="print_hide99">Powered by <a href="https://dedalo.dev" rel="noreferrer" target="_blank"><img class="logo_dedalo" src="<?php echo __WEB_TEMPLATE_WEB__ ?>/assets/images/logo_dedalo_white.svg"> Dédalo Cultural Heritage Management Platform</a></li>
 				</ul>
+			-->
+
+
+			<!--NEW FOOTER -->
+			<div class="footer-section">
+				<p class="footer-section-txt">Proyecto</p>
+				<?php
+					function build_li($m_item) {
+
+						$link = __WEB_ROOT_WEB__  .'/'. $m_item->web_path;
+						
+						$li  = '';
+					 	$li .= '<li class="nav-item active">';
+						$li .= '<a class="nav-link" href="'.$link.'">'.$m_item->term.' <span class="sr-only">(current)</span></a>';
+						$li .= '</li>'.PHP_EOL;
+					
+						return $li;
+					}
+					function build_dropdown($m_item, $level=1) {
+						$dropdown  = '';
+						
+						$link = __WEB_ROOT_WEB__  .'/'. $m_item->web_path;
+
+						if ($level===1) {
+							$dropdown .= '<li class="nav-item dropdown">';
+							$dropdown .= '<a class="nav-link dropdown-toggle" href="'.$link.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$m_item->term.'</a>';
+							$dropdown .= '<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">';
+							$dropdown .= '<li><a class="dropdown-item" href="'.$link.'">'.tstring('inicio').'</a></li>';
+						}else{
+							$dropdown .= '<li class="dropdown-submenu">';
+							$dropdown .= '<a class="dropdown-item dropdown-toggle" href="'.$link.'">'.$m_item->term.'</a>';
+							$dropdown .= '<ul class="dropdown-menu">';	
+						}		   
+							foreach ($m_item->childrens_resolved as $ckey => $cm_item) {		    	
+								if (empty($cm_item->childrens_resolved)) {
+									$link = __WEB_ROOT_WEB__  .'/'. $cm_item->web_path;
+									$dropdown .= '<li><a class="dropdown-item" href="'.$link.'">'.$cm_item->term.'</a></li>';		    		
+								}else{
+									#$dropdown .= '<a class="dropdown-item" href="'.$cm_item->web_path.'">'.$cm_item->term.'</a>';
+									$dropdown .= build_dropdown($cm_item, $level+1);
+								}
+							}		    
+							$dropdown .= '</ul>';
+							$dropdown .= '</li>';
+
+						return $dropdown;
+					}	
+
+					$m_main_home = reset($this->menu_tree);
+					
+					if (isset($m_main_home->childrens_resolved)) {	
+						echo "entra";		
+						$first_level = $m_main_home->childrens_resolved;
+						foreach ((array)$first_level as $key => $m_item) {
+							if (empty($m_item->childrens_resolved)) {
+								echo build_li($m_item);
+							}else{
+								echo build_dropdown($m_item);
+							}
+						}//end foreach ((array)$this->menu_tree as $key => $value)
+					}
+				?>
+			</div>
+			<div class="footer-section">
+				<p class="footer-section-txt">Miembros</p>
+				<a href="https://www.uv.es/uvweb/geografia-historia/ca/departaments/llista-departaments/prehistoria-arqueologia-historia-antiga-1285849132686.html" rel="noreferrer" target="_blank">
+					<div class="uni_val_hist logos"></div>
+				</a>
+				<a href="http://www.mupreva.org/" rel="noreferrer" target="_blank">
+					<div class="mupreva logos"></div>
+				</a>
+			</div>
+			<div class="footer-section">
+				<p class="footer-section-txt">Patrocinio</p>
+				<a href="http://www.ciencia.gob.es/portal/site/MICINN/" rel="noreferrer" target="_blank">
+					<div class="ministerio logos"></div>
+				</a>
+			</div>
+			<div class="footer-section">
+				<p class="footer-section-txt">Tecnología</p>
+				<a href="https://render.es/" rel="noreferrer" target="_blank">
+					<div class="render logos"></div>
+				</a>
+			</div>
 		</div>
 </footer>

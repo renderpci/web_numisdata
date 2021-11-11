@@ -641,9 +641,57 @@
 
 		.inner {
 
+			display:flex;
+			width: 80%;
+
+			.footer-section {
+				width: 25%;
+			}
+
+			.footer-section-txt {
+				border-bottom: solid 1px #f0f0f0;
+				margin: 0 1em;
+			}
+
 			ul {
 				display: block;
 				color: #ffffff !important;
+			}
+
+			.ministerio {
+				background-image: url('../../assets/images/logo_mciu.jpg');
+			}
+			
+			.mupreva {
+				background-image: url('../../assets/images/LogoMuseoNegroValencia.png');
+			}
+
+			.uni_val_hist {
+				background-image: url('../../assets/images/uni_val_hist.png');						
+			}
+
+			.render {
+				background-image: url('../../assets/images/logo_render_bn.png');
+			}
+
+			.logos {
+				margin-top: 1em;
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+				width: 100%;
+				height: 4em;
+				filter: sepia(100%) saturate(0) brightness(50%);
+				opacity: 0.75;
+				transition: all 0.35s linear;
+				&:hover {
+					filter: initial;
+					opacity: 1;
+				}
+
+				@media print {
+					filter: unset;
+				}
 			}
 
 			ul.logos {

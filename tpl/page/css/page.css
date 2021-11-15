@@ -872,9 +872,6 @@ nav ul {
   min-height: 80vh;
 }
 @media screen and (max-width: 736px) {
-  #wrapper #main {
-    display: contents;
-  }
 }
 #wrapper .active-pointer {
   cursor: pointer;

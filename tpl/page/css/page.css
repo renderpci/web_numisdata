@@ -1171,17 +1171,60 @@ nav ul {
   font-size: 2.25em;
 }
 #footer .inner {
+  width: 80%;
+  margin: 0 auto;
+}
+#footer .inner .footer-section-wrapper {
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 80%;
+}
+@media (max-width: 842px) {
+  #footer .inner .footer-section-wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column;
+            flex-flow: column;
+  }
 }
 #footer .inner .footer-section {
   width: 25%;
 }
+#footer .inner .footer-section ul {
+  list-style-type: none;
+}
+@media (max-width: 842px) {
+  #footer .inner .footer-section ul {
+    font-size: 100%;
+  }
+}
+#footer .inner .footer-section li {
+  font-size: 80%;
+}
+@media (max-width: 842px) {
+  #footer .inner .footer-section li {
+    font-size: 100%;
+    float: left;
+    margin-bottom: 1em;
+    padding: 0 0.5em;
+  }
+}
+#footer .inner .footer-section li ul {
+  display: none;
+  visibility: hidden;
+}
+@media (max-width: 842px) {
+  #footer .inner .footer-section {
+    width: 100%;
+  }
+}
 #footer .inner .footer-section-txt {
   border-bottom: solid 1px #f0f0f0;
   margin: 0 1em;
+}
+#footer .inner .footer-copyright-wrapper {
+  margin: 0 auto;
 }
 #footer .inner ul {
   display: block;
@@ -1200,11 +1243,12 @@ nav ul {
   background-image: url('../../assets/images/logo_render_bn.png');
 }
 #footer .inner .logos {
+  margin: auto;
   margin-top: 1em;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  width: 100%;
+  width: 90%;
   height: 4em;
   -webkit-filter: sepia(100%) saturate(0) brightness(50%);
           filter: sepia(100%) saturate(0) brightness(50%);
@@ -1221,6 +1265,11 @@ nav ul {
   #footer .inner .logos {
     -webkit-filter: unset;
             filter: unset;
+  }
+}
+@media (max-width: 842px) {
+  #footer .inner .logos {
+    height: 6em;
   }
 }
 #footer .inner ul.logos {

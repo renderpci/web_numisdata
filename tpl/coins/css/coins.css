@@ -28,6 +28,8 @@
   margin-left: 0.4em;
 }
 .rows_container .type_row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   margin-right: 1em;
 }
@@ -36,8 +38,11 @@
   font-weight: 300;
   font-variant: small-caps;
   font-size: 1.2em;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 .rows_container .mint {
   padding-right: 1em;
@@ -46,17 +51,29 @@
   border-bottom: none;
   color: inherit;
 }
+.rows_container .type_label {
+  font-size: 80%;
+  -ms-flex-item-align: end;
+      -ms-grid-row-align: end;
+      align-self: end;
+}
 .rows_container .row_wrapper {
   border-bottom: 1px solid #ddd;
   margin-bottom: 1em;
   padding-top: 1em;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-content: space-between;
+  -ms-flex-line-pack: justify;
+      align-content: space-between;
   margin-left: 3em;
 }
 @media screen and (max-width: 625px) {
   .rows_container .row_wrapper {
-    flex-direction: column-reverse;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
   }
 }
 .rows_container .row_wrapper .legend_box {
@@ -67,7 +84,9 @@
   top: 0.2em;
 }
 .rows_container .row_wrapper .info_container {
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 @media screen and (max-width: 736px) {
   .rows_container .row_wrapper .info_container {
@@ -76,7 +95,10 @@
 }
 .rows_container .row_wrapper .img_container {
   text-align: right;
-  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 @media screen and (max-width: 736px) {
   .rows_container .row_wrapper .img_container {
@@ -87,4 +109,3 @@
 .rows_container .row_wrapper:last-child {
   border-bottom: none;
 }
-/*# sourceMappingURL=coins.css.map */

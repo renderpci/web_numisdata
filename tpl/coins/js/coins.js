@@ -185,41 +185,58 @@ var coins =  {
 				}
 			})
 
-		// // material
-		// 	self.form.item_factory({
-		// 		id			: "material",
-		// 		name		: "material",
-		// 		label		: tstring.material || "Material",
-		// 		q_column	: "material",
-		// 		eq			: "LIKE",
-		// 		eq_in		: "%",
-		// 		eq_out		: "%",
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'coins'
-		// 			})
-		// 		}
-		// 	})
+		// material
+			self.form.item_factory({
+				id			: "material",
+				name		: "material",
+				label		: tstring.material || "Material",
+				q_column	: "material",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
 
-		// // denomination
-		// 	self.form.item_factory({
-		// 		id			: "denomination",
-		// 		name		: "denomination",
-		// 		label		: tstring.denomination || "Denomination",
-		// 		q_column	: "denomination",
-		// 		eq			: "LIKE",
-		// 		eq_in		: "%",
-		// 		eq_out		: "%",
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'coins'
-		// 			})
-		// 		}
-		// 	})
+		// denomination
+			self.form.item_factory({
+				id			: "denomination",
+				name		: "denomination",
+				label		: tstring.denomination || "Denomination",
+				q_column	: "denomination",
+				eq			: "LIKE",
+				eq_in		: "%",
+				eq_out		: "%",
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'coins'
+					})
+				}
+			})
+
+		// technique
+			self.form.item_factory({
+				id 			: "technique",
+				name 		: "technique",
+				q_column 	: "ref_type_technique",
+				q_table 	: "types",
+				label		: tstring.technique || "technique",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
 
 		// number
 			self.form.item_factory({

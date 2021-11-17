@@ -51,6 +51,9 @@
 <?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 dom_ready(function(){
-	generic.set_up()
+	generic.set_up({
+		area_name				: <?php echo json_encode($area_name) ?>,
+		export_data_container	: document.getElementById('export_data')
+	})
 })
 </script>

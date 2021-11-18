@@ -76,10 +76,9 @@ var generic =  {
 		const url_arr = video_url.split('/')
 		const filename = url_arr[url_arr.length-1]
 		const video_thumbnail = filename.split('.')[0]+".jpg"
-		const video_thumbnail_url = "https://monedaiberica.org/dedalo/media/av/posterframe/"+video_thumbnail
+		const video_thumbnail_url = common.local_to_remote_path("/dedalo/media/av/posterframe/"+video_thumbnail)
 		const video_title = data.title
-		console.log(video_thumbnail)
-		const fragment = new DocumentFragment();
+		const fragment = new DocumentFragment()
 
 		const video_wrapper = common.create_dom_element({
 			element_type	: "div",
@@ -118,20 +117,8 @@ var generic =  {
 		video_thumbnail_el.addEventListener("click", function(event){
 			video_thumbnail_el.style.display = "none"
 
-			const video_el = common.create_dom_element({
-				element_type	: "video",
-				class_name		: "video-thumb",
-				parent 			: video_wrapper
-			})
-
-			const video_source = common.create_dom_element({
-				element_type	: "source",
-				src 			: "https://monedaiberica.org/dedalo/media/av/404/"+filename,
-				type 			: "video/mp4",
-				parent 			: video_el
-			})
-
-			
+			let video_el = document.createRange().createContextualFragment('<video class="video-thumb" controls autoplay><source src="'+common.local_to_remote_path(video_url)+'" type="video/mp4"></video>')
+			video_wrapper.appendChild(video_el)
 
 		})
 

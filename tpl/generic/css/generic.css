@@ -21,6 +21,7 @@
   margin-top: 2em;
 }
 #main .video-thumb {
+  display: block;
   width: 80%;
   height: 40vw;
   margin: 1em auto;

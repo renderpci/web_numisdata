@@ -19,7 +19,12 @@ var generic =  {
 			area_name : self.area_name
 		})
 		.then(function(data){
-			console.log(data)
+			if (data[0].audiovisual.length>0){
+				const video_data = data[0].audiovisual
+				for (let i=0;i<video_data.length;i++){
+					self.create_video_element(video_data[i])
+				}
+			}
 		})
 
 		return true
@@ -63,6 +68,76 @@ var generic =  {
 			})
 		})	
 
+	},
+
+	create_video_element : function(data){
+
+		const video_url = data.video
+		const url_arr = video_url.split('/')
+		const filename = url_arr[url_arr.length-1]
+		const video_thumbnail = filename.split('.')[0]+".jpg"
+		const video_thumbnail_url = "https://monedaiberica.org/dedalo/media/av/posterframe/"+video_thumbnail
+		const video_title = data.title
+		console.log(video_thumbnail)
+		const fragment = new DocumentFragment();
+
+		const video_wrapper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "video-wrapper",
+			parent 			: fragment
+		})
+
+		const video_title_el = common.create_dom_element({
+			element_type	: "h2",
+			class_name		: "video-title",
+			parent 			: video_wrapper,
+			inner_html 		: video_title
+		})
+
+		const video_thumbnail_el = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "video-thumb",
+			parent 			: video_wrapper
+		})
+
+		//define video styles
+		video_thumbnail_el.style.background = "url("+video_thumbnail_url+") no-repeat center"
+		video_thumbnail_el.style.backgroundSize = "cover"
+
+		video_thumbnail_el.addEventListener("mouseleave", function(event){
+			video_thumbnail_el.style.background = "url("+video_thumbnail_url+") no-repeat center"
+			video_thumbnail_el.style.backgroundSize = "cover"
+		})
+
+		video_thumbnail_el.addEventListener("mouseenter", function(event){
+			video_thumbnail_el.style.background = "url(/web_mib/tpl/assets/images/video_thumb_overlay.png) no-repeat center ,url("+video_thumbnail_url+") no-repeat center"
+			video_thumbnail_el.style.backgroundSize = "cover"
+		})
+
+		//Define click behavior
+		video_thumbnail_el.addEventListener("click", function(event){
+			video_thumbnail_el.style.display = "none"
+
+			const video_el = common.create_dom_element({
+				element_type	: "video",
+				class_name		: "video-thumb",
+				parent 			: video_wrapper
+			})
+
+			const video_source = common.create_dom_element({
+				element_type	: "source",
+				src 			: "https://monedaiberica.org/dedalo/media/av/404/"+filename,
+				type 			: "video/mp4",
+				parent 			: video_el
+			})
+
+			
+
+		})
+
+		const container = document.querySelector(".content")
+		container.appendChild(fragment)
+		
 	}
 
 

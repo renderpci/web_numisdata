@@ -73,10 +73,13 @@ var generic =  {
 	create_video_element : function(data){
 
 		const video_url = data.video
+		const video_url_720 = video_url.replace('/404/','/720/')
+		console.log(video_url_720)
 		const url_arr = video_url.split('/')
 		const filename = url_arr[url_arr.length-1]
 		const video_thumbnail = filename.split('.')[0]+".jpg"
-		const video_thumbnail_url = common.local_to_remote_path("/dedalo/media/av/posterframe/"+video_thumbnail)
+		const video_thumbnail_url = page_globals.__WEB_MEDIA_BASE_URL__+"/dedalo/media/av/posterframe/"+video_thumbnail
+		console.log(page_globals.__WEB_MEDIA_BASE_URL__)
 		const video_title = data.title
 		const fragment = new DocumentFragment()
 
@@ -100,16 +103,16 @@ var generic =  {
 		})
 
 		//define video styles
-		video_thumbnail_el.style.background = "url("+video_thumbnail_url+") no-repeat center"
+		video_thumbnail_el.style.background = "url("+page_globals.__WEB_TEMPLATE_WEB__+"/assets/images/video_thumb_overlay.png) no-repeat center ,url("+video_thumbnail_url+") no-repeat center"
 		video_thumbnail_el.style.backgroundSize = "cover"
 
-		video_thumbnail_el.addEventListener("mouseleave", function(event){
+		video_thumbnail_el.addEventListener("mouseenter", function(event){
 			video_thumbnail_el.style.background = "url("+video_thumbnail_url+") no-repeat center"
 			video_thumbnail_el.style.backgroundSize = "cover"
 		})
 
-		video_thumbnail_el.addEventListener("mouseenter", function(event){
-			video_thumbnail_el.style.background = "url(/web_mib/tpl/assets/images/video_thumb_overlay.png) no-repeat center ,url("+video_thumbnail_url+") no-repeat center"
+		video_thumbnail_el.addEventListener("mouseleave", function(event){
+			video_thumbnail_el.style.background = "url("+page_globals.__WEB_TEMPLATE_WEB__+"/assets/images/video_thumb_overlay.png) no-repeat center ,url("+video_thumbnail_url+") no-repeat center"
 			video_thumbnail_el.style.backgroundSize = "cover"
 		})
 
@@ -117,7 +120,7 @@ var generic =  {
 		video_thumbnail_el.addEventListener("click", function(event){
 			video_thumbnail_el.style.display = "none"
 
-			let video_el = document.createRange().createContextualFragment('<video class="video-thumb" controls autoplay><source src="'+common.local_to_remote_path(video_url)+'" type="video/mp4"></video>')
+			let video_el = document.createRange().createContextualFragment('<video class="video-thumb" controls autoplay><source src="'+page_globals.__WEB_MEDIA_BASE_URL__+video_url_720+'" type="video/mp4"></video>')
 			video_wrapper.appendChild(video_el)
 
 		})

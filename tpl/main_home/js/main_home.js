@@ -73,6 +73,30 @@ var main_home =  {
 				class_name	: 'global_search',
 				parent		: form_row,
 				callback	: function(form_item) {
+
+					const mint_form = {
+						id				: "mint",
+						name			: "mint",
+						class_name		: "mint_form",
+						label			: tstring.mint || "mint",
+						q_column		: "p_mint",
+						value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+						eq				: "LIKE",
+						eq_in			: "%",
+						eq_out			: "%",
+						is_term			: true,
+						node_input  	: form_item.node_input,
+						node_values		: form_item.node_values,
+						q_selected 		: form_item.q_selected,
+						parent			: form_row
+					}
+
+					console.log(mint_form)
+					self.form.activate_autocomplete({
+						form_item	: mint_form,
+						table		: 'catalog'
+					})
+
 					const node_input = form_item.node_input
 
 					const button_info = common.create_dom_element({
@@ -164,6 +188,7 @@ var main_home =  {
 			is_term			: true,
 			parent			: form_row,
 			callback		: function(form_item) {
+				console.log(form_item)
 				self.form.activate_autocomplete({
 					form_item	: form_item,
 					table		: 'catalog'

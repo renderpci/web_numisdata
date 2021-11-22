@@ -36,11 +36,6 @@ var main_home =  {
 			self.form_node	= self.render_form()
 			self.form_container.appendChild(self.form_node)
 
-		//mint search form
-			self.mint_search_form		= new form_factory()
-			self.mint_form_node	= self.render_mint_form()
-			self.form_container.appendChild(self.mint_form_node)
-
 		return true
 	},//end set_up
 
@@ -126,7 +121,7 @@ var main_home =  {
 					})
 				}
 			})
-
+		
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
@@ -154,81 +149,16 @@ var main_home =  {
 			})
 			form_node.appendChild(fragment)
 
+		// search automatically when user click an autocomplete element
+			document.addEventListener("click",function(){
+				const container_values = document.querySelector(".container_values")
+				if (container_values.querySelector(".line_value")){
+					self.form_submit()
+				}
+			})
 
 		return form_node
 	},//end render_form
-
-
-	/**
-	* RENDER MINT SEARCH FORM
-	*/
-	render_mint_form : function() {
-
-		const self = this
-
-		const fragment = new DocumentFragment()
-
-		const form_row = common.create_dom_element({
-			element_type	: "div",
-			class_name 		: "form-row fields",
-			parent 			: fragment
-		})
-
-		//mint search
-		self.form.item_factory({
-			id				: "mint",
-			name			: "mint",
-			class_name		: "mint_form",
-			label			: tstring.mint || "mint",
-			q_column		: "p_mint",
-			value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
-			eq				: "LIKE",
-			eq_in			: "%",
-			eq_out			: "%",
-			is_term			: true,
-			parent			: form_row,
-			callback		: function(form_item) {
-				console.log(form_item)
-				self.form.activate_autocomplete({
-					form_item	: form_item,
-					table		: 'catalog'
-				})
-			}
-		})
-
-		// submit button
-			const submit_group = common.create_dom_element({
-				element_type	: "div",
-				class_name 		: "form-group field button_submit",
-				parent 			: fragment
-			})
-			const submit_button = common.create_dom_element({
-				element_type	: "input",
-				type 			: "submit",
-				id 				: "mint_submit",
-				value 			: tstring.search || "Search",
-				class_name 		: "btn btn-light btn-block primary",
-				parent 			: submit_group
-			})
-			submit_button.addEventListener("click",function(e){
-				e.preventDefault()
-				self.mint_form_submit()
-			})
-
-			// form
-			const form_node = common.create_dom_element({
-				element_type	: "form",
-				id 				: "mint_search_form",
-				class_name 		: "form-inline"
-			})
-			form_node.appendChild(fragment)
-
-
-		return form_node
-
-	},
-
-
 
 	/**
 	* FORM_SUBMIT
@@ -249,10 +179,15 @@ var main_home =  {
 
 			const input_global_search = document.getElementById('global_search')
 			if (input_global_search) {
+				let value
 
-				const value = input_global_search.value
-				if (value.leng<2) {
-					resolve(false)
+				if (document.querySelector(".line_value")){
+					value = document.querySelector(".value_label").innerHTML
+				} else{
+					value = input_global_search.value
+					if (value.leng<2) {
+						resolve(false)
+					}
 				}
 
 				const psqo = {

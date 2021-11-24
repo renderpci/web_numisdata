@@ -62,7 +62,7 @@ var generic =  {
 				body : request_body
 			})
 			.then(function(api_response){
-				console.log("--> coins get_row_data api_response:", api_response);
+				console.log("--> video_data api_response:", api_response);
 
 				resolve(api_response.result)
 			})

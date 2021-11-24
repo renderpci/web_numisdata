@@ -74,12 +74,10 @@ var generic =  {
 
 		const video_url = data.video
 		const video_url_720 = video_url.replace('/404/','/720/')
-		console.log(video_url_720)
 		const url_arr = video_url.split('/')
 		const filename = url_arr[url_arr.length-1]
 		const video_thumbnail = filename.split('.')[0]+".jpg"
 		const video_thumbnail_url = page_globals.__WEB_MEDIA_BASE_URL__+"/dedalo/media/av/posterframe/"+video_thumbnail
-		console.log(page_globals.__WEB_MEDIA_BASE_URL__)
 		const video_title = data.title
 		const fragment = new DocumentFragment()
 

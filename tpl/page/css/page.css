@@ -1238,6 +1238,9 @@ nav ul {
 #footer .inner .uni_val_hist {
   background-image: url('../../assets/images/uni_val_hist.png');
 }
+#footer .inner .inc {
+  background-image: url('../../assets/images/logo-inc.svg');
+}
 #footer .inner .render {
   background-image: url('../../assets/images/logo_render_bn.png');
 }

@@ -36,6 +36,9 @@ var main_home =  {
 			self.form_node	= self.render_form()
 			self.form_container.appendChild(self.form_node)
 
+		//render main image
+			self.main_coin_image()
+
 		return true
 	},//end set_up
 
@@ -213,52 +216,47 @@ var main_home =  {
 	},//end form_submit
 
 	/**
-	* MINT_FORM_SUBMIT
+	* MAIN COIN IMAGE
 	*/
-	mint_form_submit : function() {
-
+	main_coin_image : function() {
 		const self = this
 
-		const mint_form_node = self.mint_form_node
-		if (!mint_form_node) {
-			return new Promise(function(resolve){
-				console.error("Error on submit. Invalid form_node.", mint_form_node);
-				resolve(false)
+		const request_body = {
+			dedalo_get		: 'records',
+			db_name			: page_globals.WEB_DB,
+			lang			: page_globals.WEB_CURRENT_LANG_CODE,
+			table			: 'ts_web',
+			ar_fields		: ['*'],
+			sql_filter		: 'section_id=2',
+			limit			: 1,
+			count			: false,
+			offset			: 0
+		}
+		// request
+			return data_manager.request({
+				body : request_body
+			})
+			.then(function(api_response){
+				const img_arr = JSON.parse(api_response.result[0].imagen)
+				render_coin_image(img_arr)
+			})
+
+		function render_coin_image(img_arr){
+			
+			const rnd_number = Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
+			const coin_filename = "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
+
+			const inner_el = document.querySelector('.inner')
+
+			const coin_img = common.create_dom_element ({
+				element_type	: "img",
+				class_name		: "main-coin-image",
+				src				: page_globals.__WEB_MEDIA_BASE_URL__+"/dedalo/media/image/1.5MB/0/"+coin_filename,
+				parent			: inner_el
 			})
 		}
-
-		return new Promise(function(resolve){
-
-			const input_mint_search = document.querySelector('.value_label')
-			if (input_mint_search) {
-
-				const value = input_mint_search.innerHTML
-				console.log("search value:"+value)
-				if (value.leng<2) {
-					resolve(false)
-				}
-
-				const psqo = {
-					"$and":[{
-							id 			: 'mint',
-							field		: 'mint_form',
-							q			: value, // Like '%${form_item.q}%'
-							op			: '=', // default is 'LIKE'
-						}]
-					}
-				// console.log("form_factory", psqo_factory);
-				const safe_psqo		= psqo_factory.build_safe_psqo(psqo)
-				const parse_psqo 	= psqo_factory.encode_psqo(safe_psqo)
-
-				// search using value in url of catalog
-				window.location.href = './catalog/?psqo='+ parse_psqo  //'./catalog/' + encodeURIComponent(value);
-
-				resolve(true)
-			}else{
-				resolve(false)
-			}
-		})
-	},//end form_submit
+		
+	},//end main_coin_image
 
 
 

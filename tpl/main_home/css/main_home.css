@@ -4,26 +4,23 @@
 #main {
   background-color: #ffffff;
   padding-top: 2.5em;
+  padding-bottom: 2em;
   border-radius: 8px;
   margin-bottom: 6em;
 }
-#search_form,
-#mint_search_form {
+#search_form {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   padding-top: 1em;
 }
-#search_form > *,
-#mint_search_form > * {
+#search_form > * {
   height: 3em;
 }
-#search_form .form-row,
-#mint_search_form .form-row {
+#search_form .form-row {
   width: 80%;
 }
-#search_form .form-group.field.button_submit,
-#mint_search_form .form-group.field.button_submit {
+#search_form .form-group.field.button_submit {
   margin-top: 0.75em;
   margin-left: 2em;
 }
@@ -32,4 +29,17 @@
       -ms-flex: 1 !important;
           flex: 1 !important;
   padding-right: 0 !important;
+}
+.inner {
+  padding-bottom: 0 !important;
+}
+.inner .main-coin-image {
+  display: block;
+  width: 50%;
+  margin: auto;
+}
+@media (max-width: 736px) {
+  .inner .main-coin-image {
+    width: 80%;
+  }
 }

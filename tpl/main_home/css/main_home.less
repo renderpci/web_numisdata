@@ -16,12 +16,13 @@
 #main {
 	background-color: #ffffff;
 	padding-top: 2.5em;
+	padding-bottom: 2em;
 	border-radius: 8px;
 	margin-bottom: 6em;
 }
 
 
-#search_form, #mint_search_form{
+#search_form{
 	display: flex;
 	padding-top: 1em;
 
@@ -44,4 +45,17 @@
 .mint_form {
 	flex: 1 !important;
 	padding-right: 0 !important;
+}
+
+.inner {
+	padding-bottom: 0 !important;
+	.main-coin-image{
+		display: block;
+		width: 50%;
+		margin: auto;
+
+		@media (max-width: 736px) {
+			width: 80%;
+		}
+	}
 }

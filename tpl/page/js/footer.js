@@ -113,7 +113,6 @@ var footer =  {
 			})
 
 		}
-		console.log(footer_links_el)
 		footer_links_el.appendChild(fragment)
 
 	}

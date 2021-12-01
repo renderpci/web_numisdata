@@ -245,15 +245,75 @@ var main_home =  {
 			
 			const rnd_number = Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
 			const coin_filename = "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
+			const coin_url = "/dedalo/media/image/1.5MB/0/"+coin_filename
+			const sql_filter= "ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"'"
+			console.log(sql_filter)
 
-			const inner_el = document.querySelector('.inner')
-
-			const coin_img = common.create_dom_element ({
-				element_type	: "img",
-				class_name		: "main-coin-image",
-				src				: page_globals.__WEB_MEDIA_BASE_URL__+"/dedalo/media/image/1.5MB/0/"+coin_filename,
-				parent			: inner_el
+			const request_body = {
+				dedalo_get		: 'records',
+				db_name			: page_globals.WEB_DB,
+				lang			: page_globals.WEB_CURRENT_LANG_CODE,
+				table			: 'types',
+				ar_fields		: ['*'],
+				sql_filter		: sql_filter,
+				limit			: 1,
+				count			: false,
+				offset			: 0
+			}
+		// request
+			return data_manager.request({
+				body : request_body
 			})
+			.then(function(api_response){
+				//const img_arr = JSON.parse(api_response.result[0])
+				
+				const item = api_response.result[0]
+				let item_text = ""
+				let mint_number = ""
+				let denomination = ""
+
+				if (item) {
+					mint_number = (item.mint_number)
+						? item.mint_number+'/'
+						: ''
+
+					item_text = item.catalogue + " " + mint_number + item.number
+
+					denomination = (item.denomination)
+						? " | "+item.denomination
+						: ""
+
+				}
+				
+
+				
+				console.log(item)
+
+				const inner_el = document.querySelector('.inner')
+
+				const img_wrapper = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "img-wrapper"
+				})
+
+				const coin_img = common.create_dom_element ({
+					element_type	: "img",
+					class_name		: "main-coin-image",
+					src				: page_globals.__WEB_MEDIA_BASE_URL__+coin_url,
+					parent 			: img_wrapper
+				})
+
+				common.create_dom_element({
+					element_type	: "p",
+					class_name		: "img-text",
+					text_content 	: item_text+denomination,
+					parent 			: img_wrapper
+				})
+
+				inner_el.prepend(img_wrapper)
+			})
+
+			
 		}
 		
 	},//end main_coin_image

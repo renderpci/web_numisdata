@@ -15,7 +15,7 @@
 	.logo_big {
 		margin-bottom: -2em !important;
 		img{
-			height: 9em !important;
+			height: 10em !important;
 		}
 	}
 }
@@ -28,6 +28,15 @@
 	margin-bottom: 6em;
 	h1 {
 		text-align: center;
+		//border-bottom: 1px solid #f0bf6f;
+	}
+}
+
+#form_container{
+	@media (max-width: 736px) {
+		grid-column-start: 1;
+		grid-column-end: 3;
+
 	}
 }
 
@@ -50,6 +59,7 @@
 		margin-top: 0.75em;
 		margin-left: 2em;
 	}
+
 }
 
 .mint_form {
@@ -73,10 +83,15 @@
 		margin:auto;
 		grid-row-start:1;
 		grid-row-end: 5;
-
+		border-bottom: none;
 
 		@media (max-width: 736px) {
 			width: 80%;
+			grid-row-start: 5;
+			grid-row-end: 5;
+			grid-column-start: 1;
+			grid-column-end: 3;
+
 		}
 
 		img {
@@ -91,8 +106,14 @@
 		}
 	}
 
-	.body-text {
+	p {
 		grid-row-start:3;
 		grid-row-end: 5;
+
+		@media (max-width: 736px) {
+			grid-column-start: 1;
+			grid-column-end: 3;
+
+		}
 	}
 }

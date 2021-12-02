@@ -89,7 +89,6 @@ var main_home =  {
 						parent			: form_row
 					}
 
-					console.log(mint_form)
 					self.form.activate_autocomplete({
 						form_item	: mint_form,
 						table		: 'catalog'
@@ -245,9 +244,9 @@ var main_home =  {
 			
 			const rnd_number = Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
 			const coin_filename = "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
+			//const coin_filename = "rsc29_rsc170_"+61+".jpg"
 			const coin_url = "/dedalo/media/image/1.5MB/0/"+coin_filename
 			const sql_filter= "ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"'"
-			console.log(sql_filter)
 
 			const request_body = {
 				dedalo_get		: 'records',
@@ -265,12 +264,12 @@ var main_home =  {
 				body : request_body
 			})
 			.then(function(api_response){
-				//const img_arr = JSON.parse(api_response.result[0])
-				
+
 				const item = api_response.result[0]
 				let item_text = ""
 				let mint_number = ""
 				let denomination = ""
+				let type_url = page_globals.__WEB_ROOT_WEB__+"/type/"
 
 				if (item) {
 					mint_number = (item.mint_number)
@@ -283,17 +282,20 @@ var main_home =  {
 						? " | "+item.denomination
 						: ""
 
-				}
-				
+					type_url = (item.section_id)
+						? type_url+item.section_id
+						: "#"
 
-				
-				console.log(item)
+				} else {
+					type_url = "#"
+				}
 
 				const inner_el = document.querySelector('.inner')
 
 				const img_wrapper = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "img-wrapper"
+					element_type	: "a",
+					class_name		: "img-wrapper",
+					href 			: type_url
 				})
 
 				const coin_img = common.create_dom_element ({

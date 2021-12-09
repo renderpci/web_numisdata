@@ -59,15 +59,19 @@
   background: url(../../assets/images/arrow.svg) no-repeat bottom left;
   background-size: contain;
   display: inline-block;
-  transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
   width: 25px;
   height: 25px;
   margin-left: 1em;
   vertical-align: middle;
 }
 .result #types99 .types_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   padding-left: 2em;
 }
 .result #types99 .types_container .row_node {
@@ -109,7 +113,8 @@
   }
 }
 .result #types99 .types_container .type_wrap img {
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   width: 50%;
 }
 .result #types99 .types_container .type_wrap .type_number p {
@@ -175,6 +180,7 @@
   font-weight: 600;
 }
 .result #types .item_wrapper .unit {
+  display: -ms-inline-grid;
   display: inline-grid;
   width: 33.33%;
 }
@@ -182,6 +188,7 @@
   width: 100%;
   padding: 1em;
   padding-top: 0;
+  display: -ms-grid;
   display: grid;
 }
 .result #types .item_wrapper .type_wrap .type_number {
@@ -213,7 +220,8 @@
   }
 }
 .result #types .item_wrapper .type_wrap img {
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   width: 50%;
   height: 100%;
   height: 8.25em;
@@ -231,8 +239,13 @@
 }
 @media screen and (max-width: 980px) {
   .result #types .item_wrapper .type_wrap .types_img {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-flow: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column;
+            flex-flow: column;
   }
 }
 @media screen and (max-width: 980px) {
@@ -240,4 +253,116 @@
     width: 100%;
   }
 }
-/*# sourceMappingURL=mint.css.map */
+@media print {
+  .inner > h1,
+  .form,
+  nav {
+    display: none !important;
+  }
+  #header {
+    padding: 0 !important;
+  }
+  #footer,
+  #header,
+  #export_data {
+    display: none;
+  }
+  #wrapper {
+    font-size: 50%;
+    color: black !important;
+  }
+  a {
+    color: black !important;
+  }
+  .term {
+    color: black !important;
+  }
+  .coins_images {
+    width: 10vw;
+  }
+  .type_container {
+    display: -ms-inline-grid !important;
+    display: inline-grid !important;
+    -ms-grid-columns: auto 40% !important;
+    grid-template-columns: auto 40% !important;
+    -ms-grid-rows: auto auto !important;
+    grid-template-rows: auto auto !important;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+  }
+  .type_container > *:nth-child(1) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
+  }
+  .type_container > *:nth-child(2) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 2;
+  }
+  .type_container > *:nth-child(3) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 1;
+  }
+  .type_container > *:nth-child(4) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 2;
+  }
+  @page {
+    size: 1200px 1692px;
+  }
+  .inner {
+    max-width: 100% !important;
+  }
+  .inner .contracted-block {
+    max-height: 10000px !important;
+  }
+  .inner .text-block-separator {
+    display: none;
+  }
+  .inner .item_wrapper .unit {
+    font-size: 150% !important;
+    width: 100% !important;
+  }
+  .inner .item_wrapper .unit .type_wrap {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr;
+    -ms-grid-rows: 1fr 2fr 2fr;
+    grid-template-rows: 1fr 2fr 2fr;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(1) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(2) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 2;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(3) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 1;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(4) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 2;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(5) {
+    -ms-grid-row: 3;
+    -ms-grid-column: 1;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(6) {
+    -ms-grid-row: 3;
+    -ms-grid-column: 2;
+  }
+  .inner .item_wrapper .unit .types_img {
+    -ms-grid-column: 2;
+        grid-column-start: 2;
+    -ms-grid-row: 1;
+        grid-row-start: 1;
+    -ms-grid-row-span: 3;
+    grid-row-end: 4;
+  }
+  .inner .item_wrapper .unit .info_wrap .type_info {
+    text-align: left !important;
+  }
+}

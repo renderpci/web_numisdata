@@ -232,6 +232,85 @@ var mint_row = {
 			parent 			: info_wrap
 		})
 
+		console.log(row)
+		//ONLY PRINT INFO
+
+		const design_wrap = common.create_dom_element({
+			element_type 	: "div",
+			class_name 		: "design_wrap",
+			parent 			: row_type
+		})
+
+		common.create_dom_element ({
+			element_type 	: "p",
+			class_name 		: "type_info design-info print-info",
+			text_content 	: row.ref_type_design_obverse,
+			parent 			: design_wrap
+		})
+
+		common.create_dom_element ({
+			element_type 	: "p",
+			class_name 		: "type_info design-info print-info",
+			text_content 	: row.ref_type_design_reverse,
+			parent 			: design_wrap
+		})
+
+		//Legend obverse
+
+		const legend_wrap = common.create_dom_element({
+			element_type 	: "div",
+			class_name 		: "legend_wrap",
+			parent 			: row_type
+		})
+
+		const legend_obverse = (row.ref_type_legend_obverse) 
+		? row.ref_type_legend_obverse
+		: ""
+
+		common.create_dom_element ({
+			element_type 	: "p",
+			class_name 		: "legend_box small legend_obverse_box legend-info print-info",
+			inner_html  	: legend_obverse,
+			parent 			: legend_wrap
+		})
+
+		//Legend reverse
+		const legend_reverse = (row.ref_type_legend_reverse) 
+		? row.ref_type_legend_reverse
+		: ""
+
+		common.create_dom_element ({
+			element_type 	: "p",
+			class_name 		: "legend_box small legend_reverse_box legend-info print-info",
+			inner_html 		: legend_reverse,
+			parent 			: legend_wrap
+		})
+
+		//Equivalents
+
+		
+		let equivalents_arr = ""
+		if (row.ref_type_equivalents) {
+			equivalents_arr = row.ref_type_equivalents.split("<br>")
+
+			for (let i=0;i<equivalents_arr.length;i++){
+				equivalents_arr[i] = equivalents_arr[i].replace("|","")
+			}
+			equivalents_arr = equivalents_arr.join(' | ')
+
+		} 
+
+		
+		console.log(equivalents_arr)
+		
+
+		common.create_dom_element ({
+			element_type 	: "p",
+			class_name 		: "type_info equivalents print-info",
+			text_content	: equivalents_arr,
+			parent 			: row_type
+		})
+
 		// page.activate_images_gallery(img_wrap)
 
 		return row_type

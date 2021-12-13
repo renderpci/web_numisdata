@@ -24,6 +24,8 @@ section.result {
   min-height: 70vh;
 }
 .line_value {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   line-height: 1em;
   padding-top: 5px;
@@ -32,7 +34,9 @@ section.result {
 .line_value i {
   color: #BFBFBF;
   cursor: pointer;
-  align-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
 }
 .line_value i:hover {
   color: #E31A0A;
@@ -42,7 +46,9 @@ section.result {
   border: none;
   margin-left: 5px;
   width: 100%;
-  align-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
   text-overflow: ellipsis;
   background-color: transparent;
   display: block;
@@ -77,8 +83,11 @@ section.result {
   color: #8C8C8C;
 }
 .biblio_row_wrapper .row_title {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   white-space: break-spaces;
 }
 .biblio_row_wrapper .row_title .pdf {
@@ -96,12 +105,16 @@ section.result {
   cursor: pointer;
 }
 .biblio_row_wrapper .row_body {
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   white-space: break-spaces;
 }
 .biblio_row_wrapper .row_url {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 .biblio_row_wrapper .row_url .separator {
   padding-left: 0.5em;
@@ -153,19 +166,64 @@ section.result {
 .biblio_row_wrapper .transcription .occurrence .item_transcription {
   font-size: 0.85em;
 }
+.block-expandable {
+  overflow: hidden;
+  max-height: 10000px;
+  -webkit-transition: max-height 1s ease-in-out;
+  transition: max-height 1s ease-in-out;
+}
+.info_text_block {
+  padding: 1em;
+  overflow: hidden;
+  max-height: 10000px;
+  -webkit-transition: max-height 1s ease-in-out;
+  transition: max-height 1s ease-in-out;
+}
+.text-block-separator {
+  width: 80%;
+  height: 2em;
+  margin: 1em auto;
+  position: relative;
+  border-top: 1px solid #aaaaaa;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #aaaaaa 25%, #aaaaaa 75%, rgba(255, 255, 255, 0) 100%);
+  cursor: pointer;
+}
+.separator-arrow {
+  background: url('../../assets/images/arrow.svg') no-repeat bottom center;
+  background-size: contain;
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+  width: 20%;
+  height: 40px;
+  margin: 0 auto;
+}
+.contracted-block {
+  max-height: 200px;
+}
 .form-inline .form-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 .form-inline .form-row .form-group {
-  flex: 0 1 33.33%;
-  align-self: baseline;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 33.33%;
+          flex: 0 1 33.33%;
+  -ms-flex-item-align: baseline;
+      align-self: baseline;
 }
 .form-inline .form-row .form-group.field_operators {
-  flex: 1 1 33.33%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 33.33%;
+          flex: 1 1 33.33%;
 }
 .form-inline .form-row .form-group.field_submit {
-  flex: 0 0 100%;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 100%;
+          flex: 0 0 100%;
 }
 .form-inline .form-row .operators {
   padding-right: 2em;
@@ -176,6 +234,8 @@ section.result {
 .ui-menu .ui-menu-item {
   padding-left: 0;
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 .ui-menu .ui-menu-item-wrapper {
@@ -187,4 +247,3 @@ section.result {
   background-color: #f9f9f9;
   border: none !important;
 }
-/*# sourceMappingURL=biblio.css.map */

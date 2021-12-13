@@ -64,7 +64,8 @@ var biblio =  {
 				})
 		}
 
-
+		self.createExpandableBlock()
+		
 		return true
 	},//end set_up
 
@@ -632,6 +633,37 @@ var biblio =  {
 
 		return pagination_fragment
 	},//end draw_paginator
+
+	//Create an expandable block when text length is over 500
+	createExpandableBlock : function() {
+
+		const self = this
+		let textBlock = document.querySelector("#body-txt")
+		let nodeParent = document.querySelector("#body-txt-parent")
+		textBlock.classList.add("contracted-block");
+
+		const textBlockSeparator = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "text-block-separator",
+			parent 			: nodeParent
+		})
+
+		const separatorArrow = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "separator-arrow",
+			parent 			: textBlockSeparator
+		})
+
+		textBlockSeparator.addEventListener("click",function(){
+			if (textBlock.classList.contains("contracted-block")){
+				textBlock.classList.remove ("contracted-block");
+				separatorArrow.style.transform = "rotate(-90deg)";
+			} else {
+				textBlock.classList.add("contracted-block");
+				separatorArrow.style.transform = "rotate(90deg)";
+			}
+		})
+	},
 
 
 

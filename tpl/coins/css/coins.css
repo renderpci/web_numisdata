@@ -109,3 +109,72 @@
 .rows_container .row_wrapper:last-child {
   border-bottom: none;
 }
+@media print {
+  .form,
+  nav,
+  #form_container {
+    display: none !important;
+  }
+  #header {
+    padding: 0 !important;
+  }
+  #footer,
+  #header,
+  #export_data {
+    display: none;
+  }
+  #wrapper {
+    font-size: 50%;
+    color: black !important;
+  }
+  a {
+    color: black !important;
+  }
+  .term {
+    color: black !important;
+  }
+  .coins_images {
+    width: 10vw;
+  }
+  .type_container {
+    display: -ms-inline-grid !important;
+    display: inline-grid !important;
+    -ms-grid-columns: auto 40% !important;
+    grid-template-columns: auto 40% !important;
+    -ms-grid-rows: auto auto !important;
+    grid-template-rows: auto auto !important;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+  }
+  .type_container > *:nth-child(1) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
+  }
+  .type_container > *:nth-child(2) {
+    -ms-grid-row: 1;
+    -ms-grid-column: 2;
+  }
+  .type_container > *:nth-child(3) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 1;
+  }
+  .type_container > *:nth-child(4) {
+    -ms-grid-row: 2;
+    -ms-grid-column: 2;
+  }
+  @page {
+    size: 1200px 1692px;
+  }
+  .inner {
+    max-width: 100% !important;
+  }
+  .inner .contracted-block {
+    max-height: 10000px !important;
+  }
+  .inner .text-block-separator {
+    display: none;
+  }
+  .inner .pagination {
+    display: none;
+  }
+}

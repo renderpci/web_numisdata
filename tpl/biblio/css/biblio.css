@@ -248,7 +248,6 @@ section.result {
   border: none !important;
 }
 @media print {
-  .inner > h1,
   .form,
   nav {
     display: none !important;

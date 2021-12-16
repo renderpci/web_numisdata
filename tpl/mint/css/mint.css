@@ -279,8 +279,12 @@
   #export_data {
     display: none;
   }
+  #map_container {
+    page-break-before: always;
+    max-height: 40vh;
+  }
   #wrapper {
-    font-size: 50%;
+    font-size: 60%;
     color: black !important;
   }
   a {
@@ -327,22 +331,30 @@
   .inner .contracted-block {
     max-height: 10000px !important;
   }
+  .inner .ts_period {
+    font-size: 140% !important;
+  }
   .inner .text-block-separator {
     display: none;
+  }
+  .inner .item_wrapper {
+    page-break-inside: avoid;
   }
   .inner .item_wrapper .unit {
     font-size: 150% !important;
     width: 100% !important;
-    margin-bottom: 2em;
+    margin-bottom: 1em;
   }
   .inner .item_wrapper .unit .type_wrap {
     display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 2fr 1fr;
+    -ms-grid-columns: 2fr 1em 1fr;
     grid-template-columns: 2fr 1fr;
-    -ms-grid-rows: 2em 2em 2em 2em;
-    grid-template-rows: 2em 2em 2em 2em;
+    -ms-grid-rows: (auto)[6];
+    grid-template-rows: repeat(6, auto);
+    grid-column-gap: 1em;
     border-bottom: 1px solid #ddd;
+    padding: 0 !important;
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(1) {
     -ms-grid-row: 1;
@@ -350,7 +362,7 @@
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(2) {
     -ms-grid-row: 1;
-    -ms-grid-column: 2;
+    -ms-grid-column: 3;
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(3) {
     -ms-grid-row: 2;
@@ -358,7 +370,7 @@
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(4) {
     -ms-grid-row: 2;
-    -ms-grid-column: 2;
+    -ms-grid-column: 3;
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(5) {
     -ms-grid-row: 3;
@@ -366,7 +378,7 @@
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(6) {
     -ms-grid-row: 3;
-    -ms-grid-column: 2;
+    -ms-grid-column: 3;
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(7) {
     -ms-grid-row: 4;
@@ -374,15 +386,37 @@
   }
   .inner .item_wrapper .unit .type_wrap > *:nth-child(8) {
     -ms-grid-row: 4;
-    -ms-grid-column: 2;
+    -ms-grid-column: 3;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(9) {
+    -ms-grid-row: 5;
+    -ms-grid-column: 1;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(10) {
+    -ms-grid-row: 5;
+    -ms-grid-column: 3;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(11) {
+    -ms-grid-row: 6;
+    -ms-grid-column: 1;
+  }
+  .inner .item_wrapper .unit .type_wrap > *:nth-child(12) {
+    -ms-grid-row: 6;
+    -ms-grid-column: 3;
+  }
+  .inner .item_wrapper .unit .type_number {
+    white-space: normal !important;
+  }
+  .inner .item_wrapper .unit .type_info {
+    font-size: 84% !important;
   }
   .inner .item_wrapper .unit .types_img {
     -ms-grid-column: 2;
         grid-column-start: 2;
     -ms-grid-row: 1;
         grid-row-start: 1;
-    -ms-grid-row-span: 3;
-    grid-row-end: 4;
+    -ms-grid-row-span: 5;
+    grid-row-end: 6;
   }
   .inner .item_wrapper .unit .info_wrap {
     -ms-grid-row: 2;
@@ -391,49 +425,28 @@
   .inner .item_wrapper .unit .info_wrap .type_info {
     text-align: left !important;
   }
-  .inner .item_wrapper .unit .design_wrap {
-    width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-flow: row;
-            flex-flow: row;
-    -ms-flex-line-pack: justify;
-        align-content: space-between;
-  }
   .inner .item_wrapper .unit .design-info {
-    display: inline-block;
-    width: 50%;
-    text-align: center;
-  }
-  .inner .item_wrapper .unit .design-info {
-    display: inline-block;
-    width: 50%;
     text-align: left !important;
-  }
-  .inner .item_wrapper .unit .legend_wrap {
-    width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-flow: row;
-            flex-flow: row;
-    -ms-flex-line-pack: justify;
-        align-content: space-between;
+    -ms-grid-column: 1;
+        grid-column-start: 1;
   }
   .inner .item_wrapper .unit .legend-info {
     display: inline-block;
     width: 50%;
     text-align: left;
+    -ms-grid-column: 1;
+        grid-column-start: 1;
   }
   .inner .item_wrapper .unit .equivalents {
-    -ms-grid-row: 5;
-        grid-row-start: 5;
+    -ms-grid-row: 6;
+        grid-row-start: 6;
     text-align: left !important;
     font-size: 60% !important;
+  }
+  .inner .item_wrapper .unit .coins-info {
+    font-size: 80%;
+    text-align: center;
+    color: #888;
+    margin: 0 !important;
   }
 }

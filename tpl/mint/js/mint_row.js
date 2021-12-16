@@ -232,59 +232,45 @@ var mint_row = {
 			parent 			: info_wrap
 		})
 
-		console.log(row)
 		//ONLY PRINT INFO
-
-		const design_wrap = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "design_wrap",
-			parent 			: row_type
-		})
-
+		console.log(row)
+		//obverse
 		common.create_dom_element ({
 			element_type 	: "p",
 			class_name 		: "type_info design-info print-info",
 			text_content 	: row.ref_type_design_obverse,
-			parent 			: design_wrap
+			parent 			: row_type
 		})
 
+		if (row.ref_type_legend_obverse) {
+			const legend_obverse = row.ref_type_legend_obverse
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
+				inner_html  	: legend_obverse,
+				parent 			: row_type
+			})
+		}
+		
+		//reverse
 		common.create_dom_element ({
 			element_type 	: "p",
 			class_name 		: "type_info design-info print-info",
 			text_content 	: row.ref_type_design_reverse,
-			parent 			: design_wrap
-		})
-
-		//Legend obverse
-
-		const legend_wrap = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "legend_wrap",
 			parent 			: row_type
 		})
 
-		const legend_obverse = (row.ref_type_legend_obverse) 
-		? row.ref_type_legend_obverse
-		: ""
+		if (row.ref_type_legend_reverse) {
+			const legend_reverse = row.ref_type_legend_reverse
 
-		common.create_dom_element ({
-			element_type 	: "p",
-			class_name 		: "legend_box small legend_obverse_box legend-info print-info",
-			inner_html  	: legend_obverse,
-			parent 			: legend_wrap
-		})
-
-		//Legend reverse
-		const legend_reverse = (row.ref_type_legend_reverse) 
-		? row.ref_type_legend_reverse
-		: ""
-
-		common.create_dom_element ({
-			element_type 	: "p",
-			class_name 		: "legend_box small legend_reverse_box legend-info print-info",
-			inner_html 		: legend_reverse,
-			parent 			: legend_wrap
-		})
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "legend_box small legend_reverse_box legend-info print-info",
+				inner_html 		: legend_reverse,
+				parent 			: row_type
+			})
+		}
 
 		//Equivalents
 
@@ -300,16 +286,36 @@ var mint_row = {
 
 		} 
 
-		
-		console.log(equivalents_arr)
-		
-
 		common.create_dom_element ({
 			element_type 	: "p",
 			class_name 		: "type_info equivalents print-info",
 			text_content	: equivalents_arr,
 			parent 			: row_type
 		})
+
+		//collection
+		if (row.ref_coins_collection) {
+			const collection = row.ref_coins_collection
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "small coins-info print-info",
+				inner_html 		: collection,
+				parent 			: row_type
+			})
+		}
+
+		//auction
+		if (row.ref_coins_auction) {
+			const auction = row.ref_coins_auction
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "small coins-info print-info",
+				inner_html 		: auction,
+				parent 			: row_type
+			})
+		}
 
 		// page.activate_images_gallery(img_wrap)
 

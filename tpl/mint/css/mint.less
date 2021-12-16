@@ -378,8 +378,13 @@
 			
 		}
 
+		#map_container {
+			page-break-before: always;
+			max-height: 40vh;
+		}
+
 		#wrapper {
-			font-size: 50%;
+			font-size: 60%;
 			color: black !important;
 		}
 
@@ -414,26 +419,44 @@
   				max-height: 10000px !important;
   			}
 
+  			.ts_period {
+  				font-size: 140% !important;
+  			}
+
   			.text-block-separator{
   				display: none;
+  			}
+
+  			.item_wrapper {
+  				page-break-inside:avoid;
   			}
 
   			.item_wrapper .unit{
   				font-size: 150% !important;
   				width: 100% !important;
-  				margin-bottom: 2em;
+  				margin-bottom: 1em;
 
   				.type_wrap {
   					display: grid;
   					grid-template-columns: 2fr 1fr;
-  					grid-template-rows: 2em 2em 2em 2em;
+  					grid-template-rows: repeat(6,auto);
+  					grid-column-gap: 1em;
   					border-bottom: 1px solid #ddd;
+  					padding: 0 !important;
+  				}
+
+  				.type_number {
+  					white-space: normal !important;
+  				}
+
+  				.type_info {
+  					font-size: 84% !important;
   				}
 
   				.types_img{
   					grid-column-start:2;
   					grid-row-start: 1;
-  					grid-row-end: 4;
+  					grid-row-end: 6;
   				}
 
   				.info_wrap {
@@ -443,41 +466,29 @@
   					}
   				}
 
-  				.design_wrap {
-  					width: 100%;
-  					display: flex;
-  					flex-flow: row;
-  					align-content: space-between;
-  				}
-
   				.design-info {
-  					display: inline-block;
-  					width: 50%;
-  					text-align: center;
-  				}
-  				.design-info {
-  					display: inline-block;
-  					width: 50%;
   					text-align: left !important;
-  				}
-
-  				.legend_wrap {
-  					width: 100%;
-  					display: flex;
-  					flex-flow: row;
-  					align-content: space-between;
+  					grid-column-start: 1;
   				}
 
   				.legend-info {
   					display: inline-block;
   					width: 50%;
   					text-align: left;
+  					grid-column-start: 1;
   				}
 
   				.equivalents {
-  					grid-row-start: 5;
+  					grid-row-start: 6;
   					text-align: left !important;
   					font-size: 60% !important;
+  				}
+
+  				.coins-info{
+  					font-size: 80%;
+  					text-align: center;
+  					color: #888;
+  					margin: 0 !important;
   				}
   			}
   		}

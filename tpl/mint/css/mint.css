@@ -279,6 +279,26 @@
   #export_data {
     display: none;
   }
+  .line-tittle-wrap {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column;
+            flex-flow: column;
+  }
+  .line-tittle-wrap .info_value {
+    font-size: 20px;
+    text-align: center;
+  }
+  .line-tittle-wrap .info_value::first-letter {
+    font-size: 0px !important;
+  }
+  .line-tittle {
+    font-size: 35px !important;
+    text-align: center;
+  }
   #map_container {
     page-break-before: always;
     max-height: 40vh;
@@ -426,27 +446,38 @@
     text-align: left !important;
   }
   .inner .item_wrapper .unit .design-info {
+    display: inline-block;
     text-align: left !important;
     -ms-grid-column: 1;
         grid-column-start: 1;
   }
+  .inner .item_wrapper .unit .sides-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row;
+            flex-flow: row;
+  }
   .inner .item_wrapper .unit .legend-info {
     display: inline-block;
-    width: 50%;
     text-align: left;
-    -ms-grid-column: 1;
-        grid-column-start: 1;
+    line-height: inherit;
+    margin-left: 1em;
   }
   .inner .item_wrapper .unit .equivalents {
-    -ms-grid-row: 6;
-        grid-row-start: 6;
+    -ms-grid-row: 5;
+        grid-row-start: 5;
     text-align: left !important;
     font-size: 60% !important;
   }
   .inner .item_wrapper .unit .coins-info {
-    font-size: 80%;
+    font-size: 65%;
     text-align: center;
-    color: #888;
+    color: #888 !important;
     margin: 0 !important;
+    -ms-grid-column: 2;
+        grid-column-start: 2;
   }
 }

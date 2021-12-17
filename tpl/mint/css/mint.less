@@ -378,6 +378,25 @@
 			
 		}
 
+		.line-tittle-wrap {
+			display: flex;
+    		flex-flow: column;
+
+    		.info_value {
+    			font-size: 20px;
+    			text-align: center;
+    		}
+
+    		.info_value::first-letter {
+    			font-size: 0px !important;
+    		}
+		}
+
+		.line-tittle{
+			font-size: 35px !important;
+			text-align: center;
+		}
+
 		#map_container {
 			page-break-before: always;
 			max-height: 40vh;
@@ -467,28 +486,35 @@
   				}
 
   				.design-info {
+  					display: inline-block;
   					text-align: left !important;
   					grid-column-start: 1;
   				}
 
+  				.sides-wrapper {
+  					display: flex;
+  					flex-flow: row;
+  				}
+
   				.legend-info {
   					display: inline-block;
-  					width: 50%;
   					text-align: left;
-  					grid-column-start: 1;
+  					line-height: inherit;
+  					margin-left: 1em;
   				}
 
   				.equivalents {
-  					grid-row-start: 6;
+  					grid-row-start: 5;
   					text-align: left !important;
   					font-size: 60% !important;
   				}
 
   				.coins-info{
-  					font-size: 80%;
+  					font-size: 65%;
   					text-align: center;
-  					color: #888;
+  					color: #888 !important;;
   					margin: 0 !important;
+  					grid-column-start: 2;
   				}
   			}
   		}

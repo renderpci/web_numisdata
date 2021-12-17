@@ -235,11 +235,20 @@ var mint_row = {
 		//ONLY PRINT INFO
 		console.log(row)
 		//obverse
-		common.create_dom_element ({
+
+		const obverse_warpper = common.create_dom_element({
+			element_type 	: "div",
+			class_name 		: "sides-wrapper",
+			parent 			: row_type
+		})
+
+		const ob_label = tstring.obverse.charAt(0) || "O"
+
+		const design_obverse = common.create_dom_element ({
 			element_type 	: "p",
 			class_name 		: "type_info design-info print-info",
-			text_content 	: row.ref_type_design_obverse,
-			parent 			: row_type
+			text_content 	: ob_label + "/ " + row.ref_type_design_obverse,
+			parent 			: obverse_warpper
 		})
 
 		if (row.ref_type_legend_obverse) {
@@ -249,16 +258,24 @@ var mint_row = {
 				element_type 	: "p",
 				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
 				inner_html  	: legend_obverse,
-				parent 			: row_type
+				parent 			: design_obverse
 			})
 		}
 		
 		//reverse
-		common.create_dom_element ({
+		const reverse_warpper = common.create_dom_element({
+			element_type 	: "div",
+			class_name 		: "sides-wrapper",
+			parent 			: row_type
+		})
+
+		const re_label = tstring.reverse.charAt(0) || "R"
+
+		const design_reverse = common.create_dom_element ({
 			element_type 	: "p",
 			class_name 		: "type_info design-info print-info",
-			text_content 	: row.ref_type_design_reverse,
-			parent 			: row_type
+			text_content 	: re_label + "/ " + row.ref_type_design_reverse,
+			parent 			: reverse_warpper
 		})
 
 		if (row.ref_type_legend_reverse) {
@@ -268,7 +285,7 @@ var mint_row = {
 				element_type 	: "p",
 				class_name 		: "legend_box small legend_reverse_box legend-info print-info",
 				inner_html 		: legend_reverse,
-				parent 			: row_type
+				parent 			: design_reverse
 			})
 		}
 

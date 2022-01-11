@@ -245,6 +245,9 @@ var mint = {
 				group		: null,
 				count		: false,
 				order		: 'norder ASC',
+				resolve_portals_custom	: {
+					term_data : 'types'
+				},
 				process_result	: {
 					fn 		: 'process_result::add_parents_and_children_recursive',
 					columns : [{name : "parents"}]
@@ -255,7 +258,7 @@ var mint = {
 			})
 			.then(function(response){
 				// console.log("++++++++++++ request_body:",request_body);
-				// console.log("get_types_data2 API response:",response);
+				 console.log("get_types_data2 API response:",response);
 
 				const parsed_data = response.result
 					? page.parse_catalog_data(response.result)

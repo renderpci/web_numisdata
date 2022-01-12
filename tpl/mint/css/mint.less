@@ -448,7 +448,7 @@
   			}
 
   			.item_wrapper {
-  				page-break-inside:avoid;
+  				//page-break-inside:avoid;
   			}
 
   			.item_wrapper .unit{
@@ -458,7 +458,7 @@
 
   				.type_wrap {
   					display: grid;
-  					grid-template-columns: 2fr 1fr;
+  					grid-template-columns: auto auto;
   					grid-template-rows: repeat(6,auto);
   					grid-column-gap: 1em;
   					border-bottom: 1px solid #ddd;
@@ -477,6 +477,8 @@
   					grid-column-start:2;
   					grid-row-start: 1;
   					grid-row-end: 6;
+  					text-align: right;
+  					margin: inherit !important;
   				}
 
   				.info_wrap {
@@ -512,7 +514,7 @@
 
   				.coins-info{
   					font-size: 65%;
-  					text-align: center;
+  					text-align: right;
   					color: #888 !important;;
   					margin: 0 !important;
   					grid-column-start: 2;

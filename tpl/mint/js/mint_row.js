@@ -187,7 +187,7 @@ var mint_row = {
 				dataset 		: {caption: "MIB " + mint_number + c_name  },
 				parent			: img_link_ob
 			})
-			img_obverse.style.width = (diameter * 1.1 ) + 'mm'
+			img_obverse.style.width = (diameter * 1) + 'mm'
 			img_obverse.hires	= row.ref_coins_image_obverse
 			img_obverse.loading	= "lazy"
 			img_obverse.addEventListener("load", page.load_hires, false)
@@ -206,7 +206,7 @@ var mint_row = {
 				dataset 		: {caption: "MIB " + mint_number + c_name  },
 				parent 			: img_link_re
 			})
-			img_reverse.style.width = (diameter* 1.1 ) + 'mm'
+			img_reverse.style.width = (diameter* 1) + 'mm'
 			img_reverse.hires	= row.ref_coins_image_reverse
 			img_reverse.loading	= "lazy"
 			img_reverse.addEventListener("load", page.load_hires, false)

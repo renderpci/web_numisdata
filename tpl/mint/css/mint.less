@@ -362,6 +362,15 @@
 // print specifics
 	@media print {
 
+		* {
+
+		}
+
+		#main {
+			width: 98% !important;
+			margin-top: 8mm !important;
+		}
+
 		.print-info {
 			visibility: visible;
 			display: inherit;
@@ -379,23 +388,33 @@
 			
 		}
 
+		.bibliographic_reference{
+    		font-size: 12px !important;
+    		margin-top: 0.5em !important;
+    	}
+
+    	.icon_link {
+    		font-size: 10px !important;
+    	}
+
 		.line-tittle-wrap {
 			display: flex;
     		flex-flow: column;
 
     		.info_value {
-    			font-size: 20px;
+    			font-size: 14px;
     			text-align: center;
     		}
 
     		.info_value::first-letter {
     			font-size: 0px !important;
-    		}
+    		}	
 		}
 
 		.line-tittle{
-			font-size: 35px !important;
+			font-size: 25px !important;
 			text-align: center;
+			color: black !important;
 		}
 
 		#map_container {
@@ -429,18 +448,24 @@
 		}
 
 		@page {
-    		size: 1200px 1692px;
+    		size: 210mm 297mm;
   		}
 
   		.inner {
   			max-width: 100% !important;
+  			font-family: "Times New Roman", Times, serif !important;
 
   			.contracted-block {
   				max-height: 10000px !important;
   			}
 
+  			.info_text_block{
+  				font-size: 14px !important;
+  			}
+
   			.ts_period {
-  				font-size: 140% !important;
+  				font-size: 120% !important;
+  				padding-left: 0 !important;
   			}
 
   			.text-block-separator{
@@ -449,6 +474,19 @@
 
   			.item_wrapper {
   				//page-break-inside:avoid;
+  				padding-left: 0 !important;
+
+  				.type_group {
+  					font-size: 120% !important;
+  				}
+
+  				.container {
+  					padding-left:1em;
+  				}
+
+  				.unit {
+  					padding-left: 1em !important;
+  				}
   			}
 
   			.item_wrapper .unit{
@@ -457,6 +495,7 @@
   				margin-bottom: 1em;
 
   				.type_wrap {
+  					font-size: 13px;
   					display: grid;
   					grid-template-columns: auto auto;
   					grid-template-rows: repeat(6,auto);
@@ -504,6 +543,7 @@
   					text-align: left;
   					line-height: inherit;
   					margin-left: 1em;
+  					font-size: 11px !important;
   				}
 
   				.equivalents {
@@ -521,8 +561,9 @@
   				}
 
   				.public-info {
-  					font-size: 60%;
+  					font-size: 80%;
   					display: flex;
+  					grid-row-start: 6;
 
   					img {
   						line-height: 1em;

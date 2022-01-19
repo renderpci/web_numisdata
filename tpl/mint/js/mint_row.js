@@ -249,7 +249,6 @@ var mint_row = {
 		})
 
 		//ONLY PRINT INFO
-		console.log(row)
 		//obverse
 
 		const obverse_warpper = common.create_dom_element({
@@ -267,6 +266,17 @@ var mint_row = {
 			parent 			: obverse_warpper
 		})
 
+		if(row.ref_type_symbol_obverse){
+			const symbol_obverse = row.ref_type_symbol_obverse
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
+				inner_html  	: symbol_obverse,
+				parent 			: design_obverse
+			})
+		}
+
 		if (row.ref_type_legend_obverse) {
 			const legend_obverse = row.ref_type_legend_obverse
 
@@ -278,17 +288,17 @@ var mint_row = {
 			})
 		}
 
-		if(row.ref_type_symbol_obverse){
-			const symbol_obverse = row.ref_type_symbol_obverse
+		if (row.ref_type_legend_transcription_obverse) {
+			const transcription_obverse = "("+row.ref_type_legend_transcription_obverse+")"
 
 			common.create_dom_element ({
 				element_type 	: "p",
 				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
-				inner_html  	: symbol_obverse,
+				inner_html  	: transcription_obverse,
 				parent 			: design_obverse
 			})
 		}
-		
+
 		//reverse
 		const reverse_warpper = common.create_dom_element({
 			element_type 	: "div",
@@ -305,6 +315,17 @@ var mint_row = {
 			parent 			: reverse_warpper
 		})
 
+		if(row.ref_type_symbol_reverse){
+			const symbol_reverse = row.ref_type_symbol_reverse
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
+				inner_html  	: symbol_reverse,
+				parent 			: design_reverse
+			})
+		}
+
 		if (row.ref_type_legend_reverse) {
 			const legend_reverse = row.ref_type_legend_reverse
 
@@ -316,13 +337,13 @@ var mint_row = {
 			})
 		}
 
-		if(row.ref_type_symbol_reverse){
-			const symbol_reverse = row.ref_type_symbol_reverse
+		if (row.ref_type_legend_transcription_reverse) {
+			const transcription_reverse = "("+row.ref_type_legend_transcription_reverse+")"
 
 			common.create_dom_element ({
 				element_type 	: "p",
-				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
-				inner_html  	: symbol_reverse,
+				class_name 		: "legend_box small legend_reverse_box legend-info print-info",
+				inner_html  	: transcription_reverse,
 				parent 			: design_reverse
 			})
 		}

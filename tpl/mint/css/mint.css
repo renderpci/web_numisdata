@@ -369,6 +369,7 @@
   }
   .inner .info_text_block {
     font-size: 14px !important;
+    line-height: 1.4em !important;
   }
   .inner .ts_period {
     font-size: 120% !important;

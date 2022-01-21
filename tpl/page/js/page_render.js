@@ -584,6 +584,8 @@ page.render_type_label = function(row) {
 				return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
 			})()
 
+		//console.log(row)
+
 		const a_term = common.create_dom_element({
 			element_type	: "a",
 			class_name		: "a_term",

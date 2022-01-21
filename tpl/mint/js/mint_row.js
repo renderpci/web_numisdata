@@ -30,8 +30,6 @@ var mint_row = {
 
 					const type_group_text = type_number_value.split(",")
 
-					console.log(type_group_text)
-
 					// term_line
 						const term_line = common.create_dom_element({
 							element_type	: "div",

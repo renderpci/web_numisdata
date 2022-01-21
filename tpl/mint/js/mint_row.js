@@ -28,12 +28,16 @@ var mint_row = {
 
 					const type_number_value = page.render_type_label(row)
 
+					const type_group_text = type_number_value.split(",")
+
+					console.log(type_group_text)
+
 					// term_line
 						const term_line = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "term_line bold type_group",
 							// inner_html	: row.term,
-							inner_html		: type_number_value,
+							inner_html		: "<b>"+type_group_text[0]+"</b>, "+type_group_text[1],
 							parent			: wrapper
 						})
 					// container

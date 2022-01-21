@@ -367,8 +367,7 @@
 		}
 
 		#main {
-			width: 98% !important;
-			margin-top: 8mm !important;
+			width: 100% !important;
 		}
 
 		.print-info {
@@ -449,11 +448,21 @@
 
 		@page {
     		size: 210mm 297mm;
+    		margin: 22mm 22mm 22mm 22mm;
   		}
 
   		.inner {
   			max-width: 100% !important;
   			font-family: "Times New Roman", Times, serif !important;
+  			padding: 0 !important;
+
+  			.golden-separator{
+  				display: none !important;
+  			}
+
+  			.line-tittle-wrap{
+  				margin: 0 !important;
+  			}
 
   			.contracted-block {
   				max-height: 10000px !important;
@@ -478,7 +487,8 @@
   				padding-left: 0 !important;
 
   				.type_group {
-  					font-size: 120% !important;
+  					//font-size: 120% !important;
+  					font-weight: inherit !important;
   				}
 
   				.container {

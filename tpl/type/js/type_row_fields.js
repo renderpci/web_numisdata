@@ -1191,51 +1191,6 @@ var type_row_fields = {
 				})
 			}
 
-		// size. weight / dies / diameter
-			const ar_beats = []
-			if (data.weight && data.weight.length>0) {
-				ar_beats.push( data.weight.replace('.', ',') + " g" )
-			}
-			if (data.diameter && data.diameter.length>0) {
-				ar_beats.push( data.diameter.replace('.', ',') + " mm" )
-			}
-			if (data.dies && data.dies.length>0) {
-				ar_beats.push( data.dies + " h" )
-			}
-			const size_text = ar_beats.join("; ")
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "",
-				inner_html		: size_text,
-				parent			: wrapper
-			})
-
-		// findspots + hoard
-			const ar_find = []
-			let label = ""
-			if(data.hoard){
-				const hoard = (data.hoard_place)
-					? data.hoard + " ("+data.hoard_place+")"
-					: data.hoard
-				label = (tstring.hoard || "Hoard")+": "
-				ar_find.push( hoard )
-			}
-			if(data.findspot){
-				const findspot = (data.findspot_place)
-					? data.findspot + " ("+data.findspot_place+")"
-					: data.findspot
-				label = (tstring.findspot || "Findspot")+": "
-				ar_find.push( findspot )
-			}
-
-			const find_text = ar_find.join(" | ")
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "",
-				inner_html		: label+find_text,
-				parent			: wrapper
-			})
-
 		// auction
 			function draw_auction(data, parent, class_name, prepend) {
 
@@ -1300,6 +1255,51 @@ var type_row_fields = {
 					draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
 				}
 			}
+
+		// size. weight / dies / diameter
+			const ar_beats = []
+			if (data.weight && data.weight.length>0) {
+				ar_beats.push( data.weight.replace('.', ',') + " g" )
+			}
+			if (data.diameter && data.diameter.length>0) {
+				ar_beats.push( data.diameter.replace('.', ',') + " mm" )
+			}
+			if (data.dies && data.dies.length>0) {
+				ar_beats.push( data.dies + " h" )
+			}
+			const size_text = ar_beats.join("; ")
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "",
+				inner_html		: size_text,
+				parent			: wrapper
+			})
+
+		// findspots + hoard
+			const ar_find = []
+			let label = ""
+			if(data.hoard){
+				const hoard = (data.hoard_place)
+					? data.hoard + " ("+data.hoard_place+")"
+					: data.hoard
+				label = (tstring.hoard || "Hoard")+": "
+				ar_find.push( hoard )
+			}
+			if(data.findspot){
+				const findspot = (data.findspot_place)
+					? data.findspot + " ("+data.findspot_place+")"
+					: data.findspot
+				label = (tstring.findspot || "Findspot")+": "
+				ar_find.push( findspot )
+			}
+
+			const find_text = ar_find.join(" | ")
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "",
+				inner_html		: label+find_text,
+				parent			: wrapper
+			})
 
 		// public_info
 			if (data.public_info && data.public_info.length>0){

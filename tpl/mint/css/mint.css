@@ -265,6 +265,10 @@
   display: none;
 }
 @media print {
+  .leaflet-map-pane {
+    -webkit-transform: scale(0.7) !important;
+            transform: scale(0.7) !important;
+  }
   #main {
     width: 100% !important;
   }

@@ -1105,7 +1105,7 @@ var type_row_fields = {
 
 
 	draw_coin : function(data) {
-		// console.log(data)
+		 console.log(data)
 		const self = this
 
 		// load_hires. When thumb is loaded, this event is triggered
@@ -1144,9 +1144,11 @@ var type_row_fields = {
 				element_type	: "img",
 				src				: data.image_obverse_thumb,
 				title 			: data.section_id,
+				/*
 				dataset 		: {
 									caption: self.type +' | '+self.equivalents
 								},
+				*/
 				loading			: "lazy",
 				parent			: image_link_obverse
 			})
@@ -1163,9 +1165,11 @@ var type_row_fields = {
 				element_type	: "img",
 				src				: data.image_reverse_thumb,
 				title 			: data.section_id,
+				/*
 				dataset 		: {
 									caption: self.type +' | '+self.equivalents
 								},
+				*/
 				loading			: "lazy",
 				parent			: image_link_reverse
 			})
@@ -1183,6 +1187,10 @@ var type_row_fields = {
 					? collection_former+ " "+ data.number
 					: collection_former
 
+				//put gallery attributes to img
+				image_obverse.setAttribute("data-caption",collection_label)
+				image_reverse.setAttribute("data-caption",collection_label)
+
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "golden-color",
@@ -1195,6 +1203,7 @@ var type_row_fields = {
 			function draw_auction(data, parent, class_name, prepend) {
 
 				if (data.name.length<1) return
+				let auctionAalleryAttributes = ""
 
 				// line
 					const line = common.create_dom_element({
@@ -1204,6 +1213,7 @@ var type_row_fields = {
 					})
 				// name
 					if (data.name) {
+						auctionAalleryAttributes += prepend + " " + data.name
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1213,6 +1223,7 @@ var type_row_fields = {
 					}
 				// ref_auction_date
 					if (data.date) {
+						auctionAalleryAttributes += " " + data.date
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1222,6 +1233,7 @@ var type_row_fields = {
 					}
 				// number
 					if (data.number) {
+						auctionAalleryAttributes += ", "+ data.number
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1232,6 +1244,7 @@ var type_row_fields = {
 
 				// lot
 					if (data.lot) {
+						auctionAalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ data.lot
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1239,6 +1252,9 @@ var type_row_fields = {
 							parent			: line
 						})
 					}
+
+					image_obverse.setAttribute("data-caption",auctionAalleryAttributes)
+					image_reverse.setAttribute("data-caption",auctionAalleryAttributes)
 
 				return true
 			}

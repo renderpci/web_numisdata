@@ -5,6 +5,7 @@
     "$": true
   },
   "env": {
+    "es6": true,
     // I write for browser
     "browser": true,
     // in CommonJS
@@ -12,9 +13,23 @@
   },
   // To give you an idea how to override rule options:
   "rules": {
-    // Tons of rules you can use, for example...
-    "quotes": [1, "double"],
-    "semicolon": false
+    // Rules
+    // "quotes": ["error", "single", {
+    //   "avoidEscape": true,
+    //   "allowTemplateLiterals": true
+    // }],
+    "semicolon": 0,
+    "no-unused-vars" : 2,
+    "no-undef" : 2
   },
-  "esversion": 6
+   "ecmaFeatures": {
+      "modules": true,
+      "spread" : true,
+      "restParams" : true
+  },
+  "parserOptions": {
+      "ecmaVersion": 8,
+      "sourceType": "module"
+  }
 }
+/*jshint esversion: 6 */

@@ -84,6 +84,13 @@ var mint = {
 								// 	target	: document.getElementById('types'),
 								// 	ar_rows	: result
 								// })
+
+								//RESTORE term_section_id info
+								for (let i=0;i<result.length;i++){
+									result[i].catalog_info = result[i].term_section_id
+									result[i].term_section_id = result[i].term_section_id.section_id
+								}
+						
 								const types_node = self.draw_types2({
 									ar_rows			: result,
 									mint_section_id	: _mint_catalog.section_id

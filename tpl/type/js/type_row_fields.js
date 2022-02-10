@@ -1105,7 +1105,7 @@ var type_row_fields = {
 
 
 	draw_coin : function(data) {
-		// console.log(data)
+		 console.log(data)
 		const self = this
 
 		// load_hires. When thumb is loaded, this event is triggered
@@ -1144,9 +1144,11 @@ var type_row_fields = {
 				element_type	: "img",
 				src				: data.image_obverse_thumb,
 				title 			: data.section_id,
+				/*
 				dataset 		: {
 									caption: self.type +' | '+self.equivalents
 								},
+				*/
 				loading			: "lazy",
 				parent			: image_link_obverse
 			})
@@ -1163,9 +1165,11 @@ var type_row_fields = {
 				element_type	: "img",
 				src				: data.image_reverse_thumb,
 				title 			: data.section_id,
+				/*
 				dataset 		: {
 									caption: self.type +' | '+self.equivalents
 								},
+				*/
 				loading			: "lazy",
 				parent			: image_link_reverse
 			})
@@ -1183,12 +1187,89 @@ var type_row_fields = {
 					? collection_former+ " "+ data.number
 					: collection_former
 
+				//put gallery attributes to img
+				image_obverse.setAttribute("data-caption",collection_label)
+				image_reverse.setAttribute("data-caption",collection_label)
+
 				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "golden-color",
 					inner_html		: collection_label,
 					parent			: wrapper
 				})
+			}
+
+		// auction
+			function draw_auction(data, parent, class_name, prepend) {
+
+				if (data.name.length<1) return
+				let auctionAalleryAttributes = ""
+
+				// line
+					const line = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "line_full",
+						parent			: parent
+					})
+				// name
+					if (data.name) {
+						auctionAalleryAttributes += prepend + " " + data.name
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: prepend + " " + data.name,
+							parent			: line
+						})
+					}
+				// ref_auction_date
+					if (data.date) {
+						auctionAalleryAttributes += " " + data.date
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: " " + data.date,
+							parent			: line
+						})
+					}
+				// number
+					if (data.number) {
+						auctionAalleryAttributes += ", "+ data.number
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: ", "+ data.number,
+							parent			: line
+						})
+					}
+
+				// lot
+					if (data.lot) {
+						auctionAalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ data.lot
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: class_name+" golden-color",
+							inner_html		: ", "+(tstring.lot || 'lot') +" "+ data.lot,
+							parent			: line
+						})
+					}
+
+					image_obverse.setAttribute("data-caption",auctionAalleryAttributes)
+					image_reverse.setAttribute("data-caption",auctionAalleryAttributes)
+
+				return true
+			}
+			if (data.ref_auction_group) {
+				for (let i = 0; i < data.ref_auction_group.length; i++) {
+					data.ref_auction_group[i].lot = data.number
+					draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
+				}
+			}
+
+			if (data.ref_related_coin_auction_group) {
+				for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
+					data.ref_related_coin_auction_group[i].lot = data.number
+					draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
+				}
 			}
 
 		// size. weight / dies / diameter
@@ -1235,71 +1316,6 @@ var type_row_fields = {
 				inner_html		: label+find_text,
 				parent			: wrapper
 			})
-
-		// auction
-			function draw_auction(data, parent, class_name, prepend) {
-
-				if (data.name.length<1) return
-
-				// line
-					const line = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "line_full",
-						parent			: parent
-					})
-				// name
-					if (data.name) {
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: class_name+" golden-color",
-							inner_html		: prepend + " " + data.name,
-							parent			: line
-						})
-					}
-				// ref_auction_date
-					if (data.date) {
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: class_name+" golden-color",
-							inner_html		: " " + data.date,
-							parent			: line
-						})
-					}
-				// number
-					if (data.number) {
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: class_name+" golden-color",
-							inner_html		: ", "+ data.number,
-							parent			: line
-						})
-					}
-
-				// lot
-					if (data.lot) {
-						common.create_dom_element({
-							element_type	: "span",
-							class_name		: class_name+" golden-color",
-							inner_html		: ", "+(tstring.lot || 'lot') +" "+ data.lot,
-							parent			: line
-						})
-					}
-
-				return true
-			}
-			if (data.ref_auction_group) {
-				for (let i = 0; i < data.ref_auction_group.length; i++) {
-					data.ref_auction_group[i].lot = data.number
-					draw_auction(data.ref_auction_group[i], wrapper, "identify_coin", '')
-				}
-			}
-
-			if (data.ref_related_coin_auction_group) {
-				for (let i = 0; i < data.ref_related_coin_auction_group.length; i++) {
-					data.ref_related_coin_auction_group[i].lot = data.number
-					draw_auction(data.ref_related_coin_auction_group[i], wrapper, "identify_coin", '= ')
-				}
-			}
 
 		// public_info
 			if (data.public_info && data.public_info.length>0){

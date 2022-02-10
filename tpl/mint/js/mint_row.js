@@ -28,12 +28,14 @@ var mint_row = {
 
 					const type_number_value = page.render_type_label(row)
 
+					const type_group_text = type_number_value.split(",")
+
 					// term_line
 						const term_line = common.create_dom_element({
 							element_type	: "div",
 							class_name		: "term_line bold type_group",
 							// inner_html	: row.term,
-							inner_html		: type_number_value,
+							inner_html		: "<b>"+type_group_text[0]+"</b>, "+type_group_text[1],
 							parent			: wrapper
 						})
 					// container
@@ -187,7 +189,7 @@ var mint_row = {
 				dataset 		: {caption: "MIB " + mint_number + c_name  },
 				parent			: img_link_ob
 			})
-			img_obverse.style.width = (diameter * 1.1 ) + 'mm'
+			img_obverse.style.width = (diameter * 1) + 'mm'
 			img_obverse.hires	= row.ref_coins_image_obverse
 			img_obverse.loading	= "lazy"
 			img_obverse.addEventListener("load", page.load_hires, false)
@@ -206,7 +208,7 @@ var mint_row = {
 				dataset 		: {caption: "MIB " + mint_number + c_name  },
 				parent 			: img_link_re
 			})
-			img_reverse.style.width = (diameter* 1.1 ) + 'mm'
+			img_reverse.style.width = (diameter* 1) + 'mm'
 			img_reverse.hires	= row.ref_coins_image_reverse
 			img_reverse.loading	= "lazy"
 			img_reverse.addEventListener("load", page.load_hires, false)
@@ -249,7 +251,6 @@ var mint_row = {
 		})
 
 		//ONLY PRINT INFO
-		console.log(row)
 		//obverse
 
 		const obverse_warpper = common.create_dom_element({
@@ -267,6 +268,17 @@ var mint_row = {
 			parent 			: obverse_warpper
 		})
 
+		if(row.ref_type_symbol_obverse){
+			const symbol_obverse = row.ref_type_symbol_obverse
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
+				inner_html  	: symbol_obverse,
+				parent 			: design_obverse
+			})
+		}
+
 		if (row.ref_type_legend_obverse) {
 			const legend_obverse = row.ref_type_legend_obverse
 
@@ -278,17 +290,17 @@ var mint_row = {
 			})
 		}
 
-		if(row.ref_type_symbol_obverse){
-			const symbol_obverse = row.ref_type_symbol_obverse
+		if (row.ref_type_legend_transcription_obverse) {
+			const transcription_obverse = "("+row.ref_type_legend_transcription_obverse+")"
 
 			common.create_dom_element ({
 				element_type 	: "p",
 				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
-				inner_html  	: symbol_obverse,
+				inner_html  	: transcription_obverse,
 				parent 			: design_obverse
 			})
 		}
-		
+
 		//reverse
 		const reverse_warpper = common.create_dom_element({
 			element_type 	: "div",
@@ -305,6 +317,17 @@ var mint_row = {
 			parent 			: reverse_warpper
 		})
 
+		if(row.ref_type_symbol_reverse){
+			const symbol_reverse = row.ref_type_symbol_reverse
+
+			common.create_dom_element ({
+				element_type 	: "p",
+				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
+				inner_html  	: symbol_reverse,
+				parent 			: design_reverse
+			})
+		}
+
 		if (row.ref_type_legend_reverse) {
 			const legend_reverse = row.ref_type_legend_reverse
 
@@ -316,13 +339,13 @@ var mint_row = {
 			})
 		}
 
-		if(row.ref_type_symbol_reverse){
-			const symbol_reverse = row.ref_type_symbol_reverse
+		if (row.ref_type_legend_transcription_reverse) {
+			const transcription_reverse = "("+row.ref_type_legend_transcription_reverse+")"
 
 			common.create_dom_element ({
 				element_type 	: "p",
-				class_name 		: "legend_box small legend_obverse_box legend-info print-info",
-				inner_html  	: symbol_reverse,
+				class_name 		: "legend_box small legend_reverse_box legend-info print-info",
+				inner_html  	: transcription_reverse,
 				parent 			: design_reverse
 			})
 		}

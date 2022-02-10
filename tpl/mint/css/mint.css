@@ -265,6 +265,13 @@
   display: none;
 }
 @media print {
+  .leaflet-map-pane {
+    -webkit-transform: scale(0.7) !important;
+            transform: scale(0.7) !important;
+  }
+  #main {
+    width: 100% !important;
+  }
   .print-info {
     visibility: visible;
     display: inherit;
@@ -282,6 +289,13 @@
   #export_data {
     display: none;
   }
+  .bibliographic_reference {
+    font-size: 12px !important;
+    margin-top: 0.5em !important;
+  }
+  .icon_link {
+    font-size: 10px !important;
+  }
   .line-tittle-wrap {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -292,15 +306,16 @@
             flex-flow: column;
   }
   .line-tittle-wrap .info_value {
-    font-size: 20px;
+    font-size: 14px;
     text-align: center;
   }
   .line-tittle-wrap .info_value::first-letter {
     font-size: 0px !important;
   }
   .line-tittle {
-    font-size: 35px !important;
+    font-size: 25px !important;
     text-align: center;
+    color: black !important;
   }
   #map_container {
     page-break-before: always;
@@ -346,19 +361,45 @@
     -ms-grid-column: 2;
   }
   @page {
-    size: 1200px 1692px;
+    size: 210mm 297mm;
+    margin: 22mm 22mm 22mm 22mm;
   }
   .inner {
     max-width: 100% !important;
+    font-family: "Times New Roman", Times, serif !important;
+    padding: 0 !important;
+  }
+  .inner .golden-separator {
+    display: none !important;
+  }
+  .inner .line-tittle-wrap {
+    margin: 0 !important;
   }
   .inner .contracted-block {
     max-height: 10000px !important;
   }
+  .inner .info_text_block {
+    font-size: 14px !important;
+    line-height: 1.4em !important;
+  }
   .inner .ts_period {
-    font-size: 140% !important;
+    font-size: 120% !important;
+    padding-left: 0 !important;
   }
   .inner .text-block-separator {
     display: none;
+  }
+  .inner .item_wrapper {
+    padding-left: 0 !important;
+  }
+  .inner .item_wrapper .type_group {
+    font-weight: inherit !important;
+  }
+  .inner .item_wrapper .container {
+    padding-left: 1em;
+  }
+  .inner .item_wrapper .unit {
+    padding-left: 1em !important;
   }
   .inner .item_wrapper .unit {
     font-size: 150% !important;
@@ -366,6 +407,7 @@
     margin-bottom: 1em;
   }
   .inner .item_wrapper .unit .type_wrap {
+    font-size: 13px;
     display: -ms-grid;
     display: grid;
     -ms-grid-columns: auto 1em auto;
@@ -467,6 +509,7 @@
     text-align: left;
     line-height: inherit;
     margin-left: 1em;
+    font-size: 11px !important;
   }
   .inner .item_wrapper .unit .equivalents {
     -ms-grid-row: 5;
@@ -483,10 +526,12 @@
         grid-column-start: 2;
   }
   .inner .item_wrapper .unit .public-info {
-    font-size: 60%;
+    font-size: 80%;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    -ms-grid-row: 6;
+        grid-row-start: 6;
   }
   .inner .item_wrapper .unit .public-info img {
     line-height: 1em;

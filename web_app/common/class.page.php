@@ -64,20 +64,20 @@ class page {
 
 		// web_fields_map set from config
 			self::$web_fields_map = json_decode(WEB_FIELDS_MAP);
-		
+
 		// default title
 			$this->page_title = 'Untitled';
 
 		// init
-			if ($reference_page!==false) {				
-				// use reference page to get already calculated data. inject data					
+			if ($reference_page!==false) {
+				// use reference page to get already calculated data. inject data
 					$this->data_combi 	= $reference_page->data_combi;
 					$this->template_map = (array)$this->get_template_map();
 
 				$this->status = 'initied';
 			}
 
-		return true;	
+		return true;
 	}//end __construct()
 
 
@@ -92,12 +92,12 @@ class page {
 			return false;
 		}
 
-		// load page data combi	(templates, menu all)		
-			$this->get_page_data_combi();			
-		
+		// load page data combi	(templates, menu all)
+			$this->get_page_data_combi();
+
 		// set template_map file
-			$this->template_map = (array)$this->get_template_map();	
-	
+			$this->template_map = (array)$this->get_template_map();
+
 		return true;
 	}//end init
 
@@ -110,7 +110,7 @@ class page {
 	public function get_page_data_combi() {
 
 		$ar_calls = [];
-		
+
 		// templates all
 			$options = new stdClass();
 				$options->dedalo_get 	= 'records';
@@ -141,7 +141,7 @@ class page {
 				$call->options 	= $options;
 
 			$ar_calls[] = $call;
-		
+
 		// record detail. table and section_id is received. We are in a portal link
 			if (isset($this->area_section_id) && isset($this->area_table) && !isset($this->lang_from_path)) {
 
@@ -168,7 +168,7 @@ class page {
 			# Http request in php to the API
 			$response = json_web_data::get_data($options);
 				#dump($response->result, ' response ++ '.to_string());
-		
+
 		// filter page by config WEB_MENU_PARENT
 			# $ar_terms = [];
 			# foreach ($response->result[1]->result as $key => $item) {
@@ -180,7 +180,7 @@ class page {
 			# }
 			# $response->result[1]->result = $ar_terms; // overwrite with filtered records
 
-		
+
 		// fix
 			$this->data_combi = $response->result;
 
@@ -191,7 +191,7 @@ class page {
 
 		// fix global_page info
 			// menu_items
-			$menu_items = $this->data_combi[1]->result;		
+			$menu_items = $this->data_combi[1]->result;
 			$global_page = array_find($menu_items, function($item){
 				return ($item->term_id===WEB_MENU_PARENT);
 			});
@@ -231,12 +231,12 @@ class page {
 							$ar_current_template = is_array($current_template) ? $current_template : array($current_template);
 							foreach ($ar_current_template as $element) {
 								$template_map[] = $element;
-							}							
+							}
 						}
 					}
 				}
 				break;
-			
+
 			case 'db':
 			default:
 				if (empty($this->data_combi)) {
@@ -281,14 +281,14 @@ class page {
 		$mode 			= $options->mode;
 		#$page_title 	= $this->get_page_title();
 
-		#$css_links 		= $this->get_header_links('css'); 
+		#$css_links 		= $this->get_header_links('css');
 		#$js_links 		= $this->get_header_links('js', ['js_async' => 'defer']);
-		
+
 		ob_start();
 		#include ( __WEB_BASE_PATH__ .'/'. WEB_DISPATCH_DIR . '/tpl/'. WEB_ENTITY . '/page/html/page.phtml');
 		include ( __WEB_TEMPLATE_PATH__ . '/page/html/page.phtml');
 		$html = ob_get_clean();
-		
+
 		return $html;
 	}//end render_page_html
 
@@ -310,12 +310,12 @@ class page {
 	* @return string $html
 	*/
 	public function get_header_links($type, $options=[]) {
-		
+
 		$html = '';
 		switch ($type) {
 			case 'css':
 
-				# CSS main. Prepend main page css to the beginning of the array			
+				# CSS main. Prepend main page css to the beginning of the array
 				#array_unshift(page::$css_ar_url, __WEB_ROOT_WEB__ . '/page/css/page.css');
 
 				# Remove duplicates
@@ -324,10 +324,10 @@ class page {
 					$html .= self::build_css_tag($url) .PHP_EOL;
 				}
 				break;
-			
+
 			case 'js':
 
-				# JS main. Prepend main page js to the beginning of the array			
+				# JS main. Prepend main page js to the beginning of the array
 				#array_unshift(page::$js_ar_url, __WEB_ROOT_WEB__ . '/common/js/common.js', __WEB_ROOT_WEB__ . '/page/js/page.js.php');
 
 				// Remove duplicates
@@ -340,7 +340,7 @@ class page {
 				}
 				break;
 		}
-		
+
 
 		return $html;
 	}//end get_header_links
@@ -364,7 +364,7 @@ class page {
 		$media_attr='';
 		if (!is_null($media)) {
 			$media_attr = ' media="'.$media.'"';  // Like screen
-		}	
+		}
 
 		$tag = '<link href="'.$url.'" rel="stylesheet"'.$media_attr.'>';
 
@@ -393,7 +393,7 @@ class page {
 
 		// async_tag (defer, async)
 			$async_tag = $async!==null
-				? (' '.$async) 
+				? (' '.$async)
 				: '';
 
 		$tag = '<script'.$async_tag.' src="'.$url.'"></script>';
@@ -413,7 +413,7 @@ class page {
 			$page_title = $title;
 		}else {
 			$page_title = $this->page_title . ' | ' . WEB_ENTITY_LABEL;
-		}		
+		}
 
 		return $page_title;
 	}//end get_page_title
@@ -435,24 +435,24 @@ class page {
 
 	/**
 	* GET_MENU_data
-	* @return 
+	* @return
 	*/
 	public function get_menu_data( $parent ) {
 
 		#if ($this->row===false) {
 		#	return false;
-		#}	
+		#}
 		#$parent = $this->row->term_id;
-		
+
 		# Search childrens
-		$ar_fields = array(			
+		$ar_fields = array(
 			self::$web_fields_map->term_id,
 			self::$web_fields_map->term,
 			self::$web_fields_map->web_path,
 			self::$web_fields_map->title,
 			self::$web_fields_map->parent
 		);
-	
+
 
 		# Sometimes parent is term_id. Unify search format here
 		$parent_search = strpos($parent, '["')===false ? '["'.$parent.'"]' : $parent;
@@ -469,7 +469,7 @@ class page {
 		# Http request in php to the API
 		$data = json_web_data::get_data($options);
 			#dump($data, ' data ++ '.to_string($options));
-		
+
 		$main_menu_data = (array)$data->result;
 		#$main_menu_data = reset($main_menu_data);
 			#dump($main_menu_data, ' main_menu_data ++ '.to_string());
@@ -488,14 +488,14 @@ class page {
 
 	/**
 	* GET_MENU_TREE
-	* @return 
+	* @return
 	*/
 	public static function get_menu_tree( $term_id=WEB_MENU_PARENT ) {
 
 		#static $ar_data;
-		
-		# Search childrens		
-		$ar_fields = array(			
+
+		# Search childrens
+		$ar_fields = array(
 			self::$web_fields_map->term_id,
 			self::$web_fields_map->term,
 			self::$web_fields_map->web_path,
@@ -513,29 +513,29 @@ class page {
 			$options->table 		= WEB_MENU_TABLE;
 			$options->ar_fields 	= $ar_fields;
 			#$options->sql_filter 	= "parent = '[\"{$parent}\"]'"; // ["mupreva2564_1"]
-			$options->sql_filter 	= "term_id = '{$term_id_search}'"; // ["mupreva2564_1"]						
+			$options->sql_filter 	= "term_id = '{$term_id_search}'"; // ["mupreva2564_1"]
 
 		# Http request in php to the API
 		$data = json_web_data::get_data($options);
 			#dump($data, ' data ++ '.to_string($options));
 
 		#$ar_data = (array)$data->result;
-		
-		$ar_data = $data->result;	
+
+		$ar_data = $data->result;
 		#dump($ar_data, ' ar_data ++ '.to_string());
 
 		foreach ((array)$data->result as $key => $value) {
 
-			$childrens = json_decode($value->childrens);			
+			$childrens = json_decode($value->childrens);
 			if (!empty($childrens)) {
-				if (!isset($ar_data[$key]->childrens_resolved)) $ar_data[$key]->childrens_resolved = array();			
+				if (!isset($ar_data[$key]->childrens_resolved)) $ar_data[$key]->childrens_resolved = array();
 				foreach ((array)$childrens as $locator) {
 					$current_term_id = $locator->section_tipo .'_'. $locator->section_id;
 					#dump($current_term_id, ' current_term_id ++ '.to_string());
 					$ar_data[$key]->childrens_resolved = array_merge($ar_data[$key]->childrens_resolved, self::get_menu_tree( $current_term_id) );
 				}
 				// Clean final array
-				unset($ar_data[$key]->childrens);	
+				unset($ar_data[$key]->childrens);
 			}
 		}
 		#dump($ar_data, ' ar_data ++ '.to_string());
@@ -551,8 +551,8 @@ class page {
 	*/
 	public function get_menu_tree_plain( $term_id=WEB_MENU_PARENT, $exclude=[] ) {
 
-		#// ar_fields. Search fields		
-		#	$ar_fields = array(			
+		#// ar_fields. Search fields
+		#	$ar_fields = array(
 		#		self::$web_fields_map->term_id,
 		#		self::$web_fields_map->term,
 		#		self::$web_fields_map->web_path,
@@ -568,7 +568,7 @@ class page {
 		#		$options->lang 			= WEB_CURRENT_LANG_CODE;
 		#		$options->fields 		= $ar_fields;
 		#		$options->term_id 		= $term_id;
-		#		
+		#
 		#	# Http request in php to the API
 		#	$data = json_web_data::get_data($options);
 		#		#dump($data, ' data ++ '.to_string());
@@ -596,8 +596,8 @@ class page {
 			}
 
 		return $ar_data;
-		
-		/* OLD 
+
+		/* OLD
 			// term_id_search. Sometimes parent is term_id. Unify search format here
 				$term_id_search = $term_id;
 
@@ -607,23 +607,23 @@ class page {
 					$options->lang 			= WEB_CURRENT_LANG_CODE;
 					$options->table 		= WEB_MENU_TABLE;
 					$options->ar_fields 	= $ar_fields;
-					#$options->sql_filter 	= "term_id = '{$term_id_search}'"; // ["mupreva2564_1"]						
+					#$options->sql_filter 	= "term_id = '{$term_id_search}'"; // ["mupreva2564_1"]
 					$options->sql_filter 	= "parent = '{$term_id}'"; // ["mupreva2564_1"]
 					$options->order 		= '`norder` ASC';
 				# Http request in php to the API
 				$data = json_web_data::get_data($options);
 					#dump($data, ' data ++ '.to_string());
-			
-			$ar_data = $data->result;	
+
+			$ar_data = $data->result;
 				#dump($ar_data, ' ar_data ++ '.to_string($term_id));
 
 
 			foreach ((array)$data->result as $key => $value) {
 
 				$childrens = json_decode($value->childrens);
-							
-				if (!empty($childrens)) {				
-					# # if (!isset($ar_data[$key]->childrens_resolved)) $ar_data[$key]->childrens_resolved = array();			
+
+				if (!empty($childrens)) {
+					# # if (!isset($ar_data[$key]->childrens_resolved)) $ar_data[$key]->childrens_resolved = array();
 					# foreach ((array)$childrens as $locator) {
 					# 	$current_term_id = $locator->section_tipo .'_'. $locator->section_id;
 					# 	#dump($current_term_id, ' current_term_id ++ '.to_string());
@@ -632,7 +632,7 @@ class page {
 					# }
 					# // Clean final array
 					# #unset($ar_data[$key]->childrens);
-					
+
 					$ar_data = array_merge($ar_data, self::get_menu_tree_plain($value->term_id));
 				}
 			}
@@ -648,10 +648,10 @@ class page {
 	* RENDER_MENU_TREE_PLAIN
 	*/
 	public static function render_menu_tree_plain($term_id, $menu_tree, $li_drawer, $ul_drawer, $children_column_name='childrens') {
-		#dump($menu_tree, ' menu_tree ++ '.to_string()); 
+		#dump($menu_tree, ' menu_tree ++ '.to_string());
 
 		$html = '';
-			
+
 			// filter menu tree for parent $term_id (and include root parent when is $term_id)
 				$items = array_filter($menu_tree,function($item) use($term_id) {
 					return ($item->parent===$term_id); //  || ($term_id===WEB_MENU_PARENT && $item->term_id===WEB_MENU_PARENT)
@@ -665,7 +665,7 @@ class page {
 					return 0;
 				});
 
-			// iterate items from filter 
+			// iterate items from filter
 				foreach ($items as $menu_element) {
 
 					$current_term_id = $menu_element->term_id;
@@ -674,8 +674,8 @@ class page {
 						if (property_exists($menu_element, 'menu') && $menu_element->menu==='no') {
 							continue;
 						}
-					
-					if (  !empty($menu_element->{$children_column_name}) 
+
+					if (  !empty($menu_element->{$children_column_name})
 						&& $current_term_id!==WEB_MENU_PARENT
 						&& (true===page::have_menu_children($menu_element->{$children_column_name}, $menu_tree))
 					) {
@@ -684,11 +684,11 @@ class page {
 					}else{
 						$embed_html = '';
 					}
-					
+
 					$html .= $li_drawer($menu_element, $embed_html);
 				}
-		
-		// wrap			
+
+		// wrap
 			$html = $ul_drawer($term_id, $html);
 
 		return $html;
@@ -701,7 +701,7 @@ class page {
 	* @return bool
 	*/
 	public static function have_menu_children($children_data, $menu_tree_rows) {
-		
+
 		$found_child_with_active_menu = false;
 
 		$ar_term_id = json_decode($children_data);
@@ -736,14 +736,14 @@ class page {
 	* @return string $template_name
 	*/
 	public static function get_template_name($web_path) {
-		
+
 		$template_name = null;
 
 		// Modelo name
 		switch ($web_path) {
 			case null:
 				$template_name = 'error';
-				break;				
+				break;
 			case 'main_home':
 				$template_name = 'main_home';
 				break;
@@ -754,7 +754,7 @@ class page {
 		if(SHOW_DEBUG===true) {
 			#dump($template_name, ' template_name ++ '.to_string());
 		}
-		
+
 
 		return $template_name;
 	}//end get_template_name
@@ -763,7 +763,7 @@ class page {
 
 	/**
 	* GET_BREADCRUMB
-	* @return 
+	* @return
 	*/
 	public function get_breadcrumb() {
 
@@ -781,7 +781,7 @@ class page {
 			self::$web_fields_map->parent
 			#self::$web_fields_map->childrens
 		);
-		
+
 		$options = new stdClass();
 			$options->dedalo_get 	= 'thesaurus_parents';
 			$options->term_id 		= $term_id;
@@ -789,14 +789,14 @@ class page {
 			$options->lang 			= WEB_CURRENT_LANG_CODE;
 			$options->ar_fields		= $ar_fields;
 			#$options->ar_fields = array('*');
-			
+
 		# Http request in php to the API
 		$data = json_web_data::get_data($options);
 			#dump($data, ' data ++ '.to_string($options));
 
 		$breadcrumb = array_reverse($data->result);
 
-		
+
 		$object = new stdClass();
 		foreach ($options->ar_fields as $key => $name) {
 			$object->{$name} = $this->row->{$name};
@@ -806,7 +806,7 @@ class page {
 		$breadcrumb[] = $object;
 		if(SHOW_DEBUG===true) {
 			#dump($options->ar_fields, ' options->ar_fields ++ '.to_string($this->row));;
-		}			
+		}
 
 
 		return $breadcrumb;
@@ -822,7 +822,7 @@ class page {
 	public function resolve_column_value($column_obj, $row=false) {
 
 		if (property_exists($row, $column_obj->colname)) {
-		
+
 			# Postprocess some complex elements
 			switch ($column_obj->type) {
 				case 'image':
@@ -835,7 +835,7 @@ class page {
 					$column_obj->value = $this->get_video_value($column_obj, $row);
 					break;
 				case 'reference':
-					# reference value (array)			
+					# reference value (array)
 					$column_obj->value = $this->get_reference_value($column_obj, $row);
 					break;
 				case 'portal':
@@ -863,7 +863,7 @@ class page {
 
 	/**
 	* GET_DEFAULT_VALUE
-	* @return 
+	* @return
 	*/
 	public function get_default_value($column_obj, $row) {
 
@@ -873,7 +873,7 @@ class page {
 			$this->page_title = $value;
 				#dump($value, ' value ++ '.to_string());
 		}
-		
+
 		return $value;
 	}//end get_default_value
 
@@ -881,13 +881,16 @@ class page {
 
 	/**
 	* GET_IMAGE_VALUE
-	* @return 
+	* @return
 	*/
 	public function get_image_value($column_obj, $row) {
-	
+
 		$image_url = false;
 
 		$value = $row->{$column_obj->colname};
+		if (empty($value)) {
+			return $image_url;
+		}
 
 		if (!property_exists($column_obj, 'target')) {
 
@@ -895,7 +898,7 @@ class page {
 			$image_url = $value;
 
 		}else{
-		
+
 			# JSON array of element pointing to another table (target)
 			if ($value==='[]' || !$ar_value=json_decode($value)) {
 				return $image_url;
@@ -909,7 +912,7 @@ class page {
 
 			$order = 'FIELD(`section_id`, '.implode(',', $ar_value).')';
 
-			# resolves value			
+			# resolves value
 			$options = new stdClass();
 				$options->dedalo_get 		= 'records';
 				$options->lang 				= WEB_CURRENT_LANG_CODE;
@@ -923,7 +926,7 @@ class page {
 
 			# Http request in php to API
 			$data = json_web_data::get_data($options);
-			
+
 			#if (!empty($data->result)) {
 			#	$image_url = reset($data->result)->{$column_obj->target->colname};
 			#}
@@ -931,12 +934,12 @@ class page {
 				$image_url = [];
 				foreach ($data->result as $key => $row) {
 					$image_url[] = $row->{$column_obj->target->colname};
-				}				
+				}
 			}
 			#dump($data->result, ' image_url +++++++++++++++++++++++++++++ OPTIONS: '.to_string($options));
 
 		}//end if (isset($column_obj->target))
-		
+
 		return $image_url;
 	}//end get_image_value
 
@@ -944,10 +947,10 @@ class page {
 
 	/**
 	* GET_video_VALUE
-	* @return 
+	* @return
 	*/
 	public function get_video_value($column_obj, $row) {
-		
+
 		return $this->get_image_value($column_obj, $row);
 	}//end get_video_value
 
@@ -955,13 +958,16 @@ class page {
 
 	/**
 	* GET_REFERENCE_VALUE
-	* @return 
+	* @return
 	*/
 	public function get_reference_value($column_obj, $row) {
 
 		$ar_reference_value = false;
 
 		$value = $row->{$column_obj->colname};
+		if (empty($value)) {
+			return false;
+		}
 
 		if (!property_exists($column_obj, 'target')) {
 
@@ -969,7 +975,7 @@ class page {
 			$ar_reference_value = $value;
 
 		}else{
-	
+
 			# JSON array of element pointing to another table (target)
 			if ($value==='[]' || !$ar_value=json_decode($value)) {
 				return $ar_reference_value;
@@ -982,7 +988,7 @@ class page {
 			}
 			$sql_filter = implode(' OR ', $ar_filter);
 
-			# resolves value			
+			# resolves value
 			$options = new stdClass();
 				$options->dedalo_get 		= 'records';
 				$options->lang 				= WEB_CURRENT_LANG_CODE;
@@ -995,7 +1001,7 @@ class page {
 
 			# Http request in php to API
 			$data = json_web_data::get_data($options);
-			
+
 			#if (!empty($data->result)) {
 			#	$ar_reference_value = reset($data->result)->{$column_obj->target->colname};
 			#}
@@ -1003,13 +1009,13 @@ class page {
 				$ar_reference_value = [];
 				foreach ($data->result as $key => $row) {
 					$ar_reference_value[] = $row->{$column_obj->target->colname};
-				}				
+				}
 			}
 			#dump($data->result, ' ar_reference_value ++ '.to_string());
 
 		}//end if (isset($column_obj->target))
-		
-		
+
+
 		return $ar_reference_value;
 	}//end get_reference_value
 
@@ -1017,7 +1023,7 @@ class page {
 
 	/**
 	* GET_PORTAL_VALUE
-	* @return 
+	* @return
 	*/
 	public function get_portal_value($column_obj, $row, $max_records=5, $offset=0) {
 		#$max_records=50; $offset=0;
@@ -1033,16 +1039,17 @@ class page {
 
 		$column_name = $column_obj->colname;
 		$value 		 = $row->{$column_name};
-			#dump($row, ' row ++ '.to_string());
-			#dump($column_obj, ' column_obj ++ '.to_string());
+		if (empty($value)) {
+			return false;
+		}
 
-		# Configure object with aditional info always		
+		# Configure object with aditional info always
 		$column_obj->max_records 	= (int)$max_records;
 		$column_obj->offset 		= (int)$offset;
-		
+
 
 		if ($value==='[]' || !$ar_value=json_decode($value)) {
-			$column_obj->total_records  = 0;			
+			$column_obj->total_records  = 0;
 			return false;
 		}
 		#dump($ar_value, ' ar_value ++ '.to_string());
@@ -1062,13 +1069,13 @@ class page {
 			#dump($column_obj, ' column_obj ++ '.to_string());
 
 
-		// calls array 
+		// calls array
 			/*
 			$ar_calls = [];
 
 				$options = new stdClass();
 					$options->dedalo_get 	= 'records';
-					$options->table 		= WEB_MENU_TABLE;					
+					$options->table 		= WEB_MENU_TABLE;
 					$options->ar_fields 	= $ar_fields;
 					$options->lang 			= WEB_CURRENT_LANG_CODE;
 
@@ -1087,8 +1094,8 @@ class page {
 			*/
 
 
-		// filter 
-			$ar_filter = array_map(function($section_id){					
+		// filter
+			$ar_filter = array_map(function($section_id){
 				return '`section_id`='.(int)$section_id;
 			}, $ar_value);
 
@@ -1108,8 +1115,8 @@ class page {
 			$portal_template_map->ar_value 		= (string)$value;
 			$portal_template_map->total_records = count($rows_data->result);
 			$i=1;foreach ($rows_data->result as $portal_row) {
-				
-				// skip records before offset 
+
+				// skip records before offset
 					if ($i<=$offset) {
 						$i++;
 						continue;
@@ -1133,7 +1140,7 @@ class page {
 				// stop on max_records
 					if ($i>=($max_records+$offset)) break;
 
-			$i++;}		
+			$i++;}
 
 
 		/*
@@ -1145,7 +1152,7 @@ class page {
 			# 	$i++;
 			# 	continue;
 			# }
-			
+
 			$options = new stdClass();
 				$options->dedalo_get 		= 'records';
 				$options->lang 				= WEB_CURRENT_LANG_CODE;
@@ -1162,22 +1169,22 @@ class page {
 				# To resolve
 				$ar_to_resolve[] = $data->result;
 			}
-			
+
 			# foreach ((array)$data->result as $key => $portal_row) {
 			# 	#dump($portal_row, ' portal_row ++ '.to_string());
 			# 	$temp_page = new page();
 			# 	$temp_page->area_name 	= $this->area_name;
 			# 	$temp_page->area_table 	= $column_obj->table;
 			# 	$temp_page->row 		= $portal_row;
-			# 	
+			#
 			# 	$html .= $temp_page->get_template_html($portal_template_map, $temp_page_mode);
 			# }//end foreach ((array)$data->result as $key => $portal_row)
-			
+
 			# Stop on max_records
 			#if ($i>=$max_records+$offset) break;
 
 		$i++;}//end foreach ($ar_value as $key => $section_id)
-		
+
 
 		$portal_template_map->ar_value 		= (string)$value;
 		$portal_template_map->total_records = count($ar_to_resolve);
@@ -1196,7 +1203,7 @@ class page {
 					$temp_page->area_name 	= $this->area_name;
 					$temp_page->area_table 	= $column_obj->table;
 					$temp_page->row 		= $portal_row;
-				
+
 				#$html .= $temp_page->get_template_html($portal_template_map, $temp_page_mode);
 				// html build from template
 					$current_options = new stdClass();
@@ -1234,16 +1241,17 @@ class page {
 
 		$column_name = $column_obj->colname;
 		$value 		 = $row->{$column_name};
-			#dump($row, ' row ++ '.to_string());
-			#dump($column_obj, ' column_obj ++ '.to_string());
+		if (empty($value)) {
+			return false;
+		}
 
-		# Configure object with aditional info always		
+		# Configure object with aditional info always
 		$column_obj->max_records 	= (int)$max_records;
 		$column_obj->offset 		= (int)$offset;
-		
+
 
 		if ($value==='[]' || !$ar_value=json_decode($value)) {
-			$column_obj->total_records  = 0;			
+			$column_obj->total_records  = 0;
 			return false;
 		}
 		#dump($ar_value, ' ar_value ++ '.to_string());
@@ -1262,7 +1270,7 @@ class page {
 		$childrens_template_map->ar_value 		= (string)$value;
 		$childrens_template_map->total_records 	= count($ar_value);
 			#dump($column_obj, ' column_obj ++ '.to_string());
-			
+
 		$html='';
 		$i=1;foreach ($ar_value as $key => $current_locator) {
 
@@ -1272,8 +1280,8 @@ class page {
 			if ($i<=$offset) {
 				$i++;
 				continue;
-			}			
-			
+			}
+
 			$options = new stdClass();
 				$options->dedalo_get 		= 'records';
 				$options->lang 				= WEB_CURRENT_LANG_CODE;
@@ -1290,16 +1298,16 @@ class page {
 
 			foreach ((array)$data->result as $key => $children_row) {
 				#dump($children_row, ' children_row ++ '.to_string());
-				
+
 				# $temp_page = new page();
 				# $temp_page->area_name 		= $this->area_name;
 				# $temp_page->area_table 		= $table_name;
 				# $temp_page->main_menu_data 	= $this->main_menu_data;
-				
+
 				$temp_page 		= clone($this);
 				$temp_page->row	= $children_row;
-				
-				$html .= $temp_page->get_template_html($childrens_template_map, $temp_page_mode);				
+
+				$html .= $temp_page->get_template_html($childrens_template_map, $temp_page_mode);
 			}//end foreach ((array)$data->result as $key => $children_row)
 
 			# Stop on max_records
@@ -1339,14 +1347,14 @@ class page {
 		# Fix var to template acccess
 		$template_map 	= $options->template_map;
 		$mode 			= $options->mode;
-			
+
 		if(SHOW_DEBUG===true) {
 			#$db = debug_backtrace();
 			#dump($db, ' db ++ '.to_string());
-			#throw new Exception("Error Processing Request", 1);			
+			#throw new Exception("Error Processing Request", 1);
 			#dump($options, ' $options ++ '.to_string());
-		}		
-		
+		}
+
 		if ($options->template_map===false) {
 			# error template
 			$template_name = 'error';
@@ -1356,16 +1364,16 @@ class page {
 			if ($options->resolve_values===true) {
 				if (!isset($template_map->{$mode})) {
 					if(SHOW_DEBUG===true) {
-						dump($template_map, ' invalid template_map ++ '.to_string());						
+						dump($template_map, ' invalid template_map ++ '.to_string());
 						echo "Error on get template on mode: $mode";
-					}					
+					}
 					return false;
-				}			
+				}
 				foreach ($template_map->{$mode} as $key => $column_obj) {
 					$this->resolve_column_value( $column_obj, $this->row );
 				}//end foreach ($template_map->{$mode} as $key => $column_obj)
 			}
-			$template_name = $template_map->template;			
+			$template_name = $template_map->template;
 		}
 		#dump( $template_name, ' template_name ++ '.to_string($mode));
 		#dump($this, ' this ++ '.to_string());
@@ -1374,13 +1382,13 @@ class page {
 			#if ($options->add_common_css===true) {
 			#	page::$css_ar_url[] = __WEB_ROOT_WEB__ . '/'. WEB_DISPATCH_DIR. '/tpl/' . WEB_ENTITY . '/tpl_common/css/tpl_common.css';
 			#	page::$js_ar_url[]  = __WEB_ROOT_WEB__ . '/'. WEB_DISPATCH_DIR. '/tpl/' . WEB_ENTITY . '/tpl_common/js/tpl_common.js';
-			#}			
+			#}
 
 		#
 		# TEMPLATE CSS / JS
 			if ($options->add_template_css===true) {
 				# Add url to final header render
-				page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $template_name . '/css/' . $template_name . CSS_SUFFIX . '.css';				
+				page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $template_name . '/css/' . $template_name . CSS_SUFFIX . '.css';
 				page::$js_ar_url[]  = __WEB_TEMPLATE_WEB__ . '/' . $template_name . '/js/'  . $template_name . JS_SUFFIX . '.js';
 			}
 
@@ -1388,13 +1396,13 @@ class page {
 		# TEMPLATE_HTML
 			# Compose html with current template file if exists or with basic html template
 			ob_start();
-			$html_content_file = __WEB_TEMPLATE_PATH__ . '/' . $template_name . '/html/' . $template_name . '.phtml';					
+			$html_content_file = __WEB_TEMPLATE_PATH__ . '/' . $template_name . '/html/' . $template_name . '.phtml';
 			if (!include($html_content_file)) {
 				if(SHOW_DEBUG===true) {
-					#dump($html_content_file, ' html_content_file ++ '.to_string());	
+					#dump($html_content_file, ' html_content_file ++ '.to_string());
 					trigger_error("Unable load template file: $template_name . $html_content_file");
-				}				
-			}								
+				}
+			}
 			$template_html = ob_get_clean();
 
 
@@ -1405,17 +1413,17 @@ class page {
 
 	/**
 	* CLEAN_TEMPLATE_MAP
-	* Used to remove unnecessary elements of the template object (values for example) 
+	* Used to remove unnecessary elements of the template object (values for example)
 	* for easy send as json data to triggers
 	* @return object $clean_template_map
 	*/
 	public function clean_template_map( $template_map ) {
-		
+
 		$clean_template_map = new stdClass();
 		foreach ($template_map as $co_key => $co_value) {
 			if($co_key==='value') continue;
 
-			if($co_key==='list') {		
+			if($co_key==='list') {
 				$elements = array();
 				foreach ($template_map->{$co_key} as $colist_value) {
 					$element = new stdClass();
@@ -1428,9 +1436,9 @@ class page {
 				$clean_template_map->$co_key = $elements;
 			}else{
 				$clean_template_map->$co_key = $co_value;
-			}					
+			}
 		}
-		
+
 
 		return $clean_template_map;
 	}//end clean_template_map
@@ -1445,7 +1453,7 @@ class page {
 	* @return string $link
 	*/
 	public function get_menu_link($main_menu_data, $area_name, $table_name, $section_id) {
-		
+
 		# Default link, using table name path
 		$link = __WEB_ROOT_WEB__ ."/$area_name/$table_name/$section_id";
 
@@ -1475,7 +1483,7 @@ class page {
 
 		// reduce array template_map
 			$element_objects = array_filter($template_map, function($item) use($type, $custom_filter){
-				
+
 				if($item->type!==$type) return false;
 
 				if (!empty($custom_filter)) {
@@ -1488,18 +1496,18 @@ class page {
 				}else{
 					// default case. only filtered by type
 					return $item;
-				}				
+				}
 			});
 			#dump($element_objects, ' element_objects ++ '.to_string());
 
 			if (count($element_objects)>1) {
 				// merge equal type elements in one
 				$element_object = reset($element_objects); // uses the first as base
-		
+
 				$mix_value = [];
-				foreach ($element_objects as $key => $current_element_object) {					
+				foreach ($element_objects as $key => $current_element_object) {
 					if(empty($current_element_object->value)) continue;
-						
+
 					$mix_value = array_merge($mix_value, $current_element_object->value);
 
 					// removel old item
@@ -1512,15 +1520,15 @@ class page {
 			}else{
 				$element_object = reset($element_objects);
 			}
-			
+
 
 		// reduce array template_map
 			/*
 			$element_object = array_reduce($template_map, function($carry, $item) use($type, $custom_filter){
-				#dump($item, ' item ++ '.to_string($type)." - ".json_encode($item->type===$type));		
+				#dump($item, ' item ++ '.to_string($type)." - ".json_encode($item->type===$type));
 				if($item->type===$type) {
 					#dump($item, ' match item ++ type: '.to_string($type));
-					
+
 					if (!empty($custom_filter)) {
 						// additional filter check using '$custom_filter' array like ['colname'=>'logos']
 							foreach ($custom_filter as $property_name => $property_value) {
@@ -1531,12 +1539,12 @@ class page {
 					}else{
 						// default case. only filtered by type
 							return $item;
-					}				
+					}
 				}
 				return $carry;
 			});
 			*/
-		
+
 
 		/* OLD way array filter
 			$ar_elements = array_filter(
@@ -1551,7 +1559,7 @@ class page {
 									dump($key, ' custom_filter ++ '.to_string($value));
 									break;
 								}
-									
+
 							}
 							$filter = $find;
 						}else{
@@ -1561,17 +1569,17 @@ class page {
 					}
 			);
 			#dump($ar_elements, ' ar_elements ++ '.to_string());
-		
-		
+
+
 			$element_object = reset($ar_elements); //isset($ar_elements[$key]) ? $ar_elements[$key] : null;
 			#if ($type==="image") {
 			#	dump($ar_elements, ' ar_elements ++ custom_filter: '.to_string($custom_filter));
-			#}		
+			#}
 			*/
-		
+
 		$element_value = isset($element_object->value) ? $element_object->value : '';
 
-		// debug fallback 
+		// debug fallback
 			if(SHOW_DEBUG===true && isset($patata)) {
 				if (empty($element_value)) {
 					switch ($type) {
@@ -1613,14 +1621,14 @@ class page {
 
 		# Config values
 		$TABLE_TO_TEMPLATE = (object)TABLE_TO_TEMPLATE;
-	
+
 		switch (true) {
 			# case received custom
 			case (!is_null($custom)):
 				$template_name = $custom;
 				break;
 			# Same for all
-			case (isset($TABLE_TO_TEMPLATE->all)): 
+			case (isset($TABLE_TO_TEMPLATE->all)):
 				$template_name = $TABLE_TO_TEMPLATE->all;
 				break;
 			# Defined custom in config
@@ -1633,14 +1641,14 @@ class page {
 				$template_name = $area_name;
 				break;
 		}
-	
+
 		# Set template_name
 		$this->row->template_name = $template_name;
 
 
 		if(SHOW_DEBUG===true) {
-			error_log("!!! Maped table '$area_table' to template_map name: '$template_name'");			
-		}	
+			error_log("!!! Maped table '$area_table' to template_map name: '$template_name'");
+		}
 
 
 		return $template_name;
@@ -1686,7 +1694,7 @@ class page {
 	* GET_CHILDREN
 	*/
 	public static function get_children($term_id, $menu_elements, $recursive=false, $children_column_name='childrens') {
-	
+
 		// filter menu tree for parent $term_id (and include root parent when is $term_id)
 			$items = array_filter($menu_elements,function($item) use($term_id) {
 				return ($item->parent==$term_id); //  || ($term_id===WEB_MENU_PARENT && $item->term_id===WEB_MENU_PARENT)
@@ -1700,16 +1708,16 @@ class page {
 				return 0;
 			});
 
-		// iterate items from filter 
+		// iterate items from filter
 			if ($recursive===true) {
-				
+
 				foreach ($items as $menu_element) {
-					
+
 					if (!empty($menu_element->{$children_column_name})) {
 
 						// recursion
 							$children = self::get_children($menu_element->term_id, $menu_elements, $recursive);
-							
+
 							$items = array_merge($items, $children);
 					}
 				}

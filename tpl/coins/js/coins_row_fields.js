@@ -479,8 +479,8 @@ var coins_row_fields = {
 					}
 
 				// lot
-					if (auction.lot) {
-						auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ auction.lot		
+					if (row.number) {
+						auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ row.number		
 					}
 
 					image_obverse.setAttribute("data-caption",auctionGalleryAttributes)

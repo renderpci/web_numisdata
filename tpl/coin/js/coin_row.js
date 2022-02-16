@@ -63,6 +63,48 @@ var coin_row = {
 						src				: row.image_obverse,
 						parent			: image_link
 					})
+
+					//GALLERY IMAGE CAPTIONS
+					if (row.collection && row.collection.length>0){
+						const collection_former = (row.former_collection.length>0)
+							? row.collection + " ("+row.former_collection+")"
+							: row.collection
+
+						const collection_label = (row.number && row.number.length>0)
+							? collection_former+ " "+ row.number
+							: collection_former
+
+						//put gallery attributes to img
+						image_obverse.setAttribute("data-caption",collection_label)
+					}
+
+					if (row.ref_auction_group){
+
+						for (let i = 0; i < row.ref_auction_group.length; i++) {
+							const auction = row.ref_auction_group[i]
+							console.log(row)
+							let auctionGalleryAttributes = ""
+						// name
+							if (auction.name) {
+								auctionGalleryAttributes += auction.name
+							}
+						// ref_auction_date
+							if (auction.date) {
+								auctionGalleryAttributes += " " + auction.date		
+							}
+						// number
+							if (auction.number) {
+								auctionGalleryAttributes += ", "+ auction.number
+							}
+
+						// lot
+							if (row.number) {
+								auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ row.number		
+							}
+
+							image_obverse.setAttribute("data-caption",auctionGalleryAttributes)
+						}
+					}
 				}
 			// image_reverse
 				if (row.image_reverse && row.image_reverse.length>0) {

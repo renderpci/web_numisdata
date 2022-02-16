@@ -443,6 +443,57 @@ var coins_row_fields = {
 			image_reverse.hires = row.image_reverse
 			image_reverse.addEventListener("load", page.load_hires)
 
+			
+			//IMAGE GALLERY CAPTIONS
+			if (row.collection && row.collection.length>0){
+				const collection_former = (row.former_collection.length>0)
+					? row.collection + " ("+row.former_collection+")"
+					: row.collection
+
+				const collection_label = (row.number && row.number.length>0)
+					? collection_former+ " "+ row.number
+					: collection_former
+
+				//put gallery attributes to img
+				image_obverse.setAttribute("data-caption",collection_label)
+				image_reverse.setAttribute("data-caption",collection_label)
+			}
+
+			if (row.ref_auction_group){
+
+				for (let i = 0; i < row.ref_auction_group.length; i++) {
+					const auction = row.ref_auction_group[i]
+
+				let auctionGalleryAttributes = ""
+				// name
+					if (auction.name) {
+						auctionGalleryAttributes += auction.name
+					}
+				// ref_auction_date
+					if (auction.date) {
+						auctionGalleryAttributes += " " + auction.date		
+					}
+				// number
+					if (auction.number) {
+						auctionGalleryAttributes += ", "+ auction.number
+					}
+
+				// lot
+					if (auction.lot) {
+						auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ auction.lot		
+					}
+
+					image_obverse.setAttribute("data-caption",auctionGalleryAttributes)
+					image_reverse.setAttribute("data-caption",auctionGalleryAttributes)
+				}
+			}
+
+			if(row.image_obverse_data[0] && row.image_obverse_data[0].photographer){
+				const currentAttr = image_obverse.getAttribute("data-caption")
+				image_obverse.setAttribute("data-caption", currentAttr + '<spam> | </spam> <i class="fa fa-camera"></i> ' + row.image_obverse_data[0].photographer)
+			}
+			//END IMAGE GALLERY CAPTIONS
+
 			page.activate_images_gallery(image_container)
 
 

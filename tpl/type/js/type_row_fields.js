@@ -1105,7 +1105,6 @@ var type_row_fields = {
 
 
 	draw_coin : function(data) {
-		 console.log(data)
 		const self = this
 
 		// load_hires. When thumb is loaded, this event is triggered
@@ -1203,7 +1202,7 @@ var type_row_fields = {
 			function draw_auction(data, parent, class_name, prepend) {
 
 				if (data.name.length<1) return
-				let auctionAalleryAttributes = ""
+				let auctionGalleryAttributes = ""
 
 				// line
 					const line = common.create_dom_element({
@@ -1213,7 +1212,7 @@ var type_row_fields = {
 					})
 				// name
 					if (data.name) {
-						auctionAalleryAttributes += prepend + " " + data.name
+						auctionGalleryAttributes += prepend + " " + data.name
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1223,7 +1222,7 @@ var type_row_fields = {
 					}
 				// ref_auction_date
 					if (data.date) {
-						auctionAalleryAttributes += " " + data.date
+						auctionGalleryAttributes += " " + data.date
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1233,7 +1232,7 @@ var type_row_fields = {
 					}
 				// number
 					if (data.number) {
-						auctionAalleryAttributes += ", "+ data.number
+						auctionGalleryAttributes += ", "+ data.number
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1244,7 +1243,7 @@ var type_row_fields = {
 
 				// lot
 					if (data.lot) {
-						auctionAalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ data.lot
+						auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ data.lot
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: class_name+" golden-color",
@@ -1253,11 +1252,34 @@ var type_row_fields = {
 						})
 					}
 
-					image_obverse.setAttribute("data-caption",auctionAalleryAttributes)
-					image_reverse.setAttribute("data-caption",auctionAalleryAttributes)
+					image_obverse.setAttribute("data-caption",auctionGalleryAttributes)
+					image_reverse.setAttribute("data-caption",auctionGalleryAttributes)
 
 				return true
 			}
+
+
+			//GET IMAGE PHOTOGRAPHER
+
+			self.get_image_data({
+				section_id : JSON.parse(data.image_obverse_data)[0]
+			})
+			.then(function(result){
+				if (result[0] && result[0].photographer) {
+					const currentAttr = image_obverse.getAttribute("data-caption")
+					image_obverse.setAttribute("data-caption", currentAttr + '<spam> | </spam> <i class="fa fa-camera"></i> ' + result[0].photographer)
+				}
+			})
+			/*
+			self.get_image_data({
+				section_id : JSON.parse(data.image_reverse_data)[0]
+			})
+			.then(function(result){
+				const image_reverse_photographer = result.photographer
+			})
+			*/
+			//END GET IMAGE PHOTOGRAPHER
+
 			if (data.ref_auction_group) {
 				for (let i = 0; i < data.ref_auction_group.length; i++) {
 					data.ref_auction_group[i].lot = data.number
@@ -1418,6 +1440,36 @@ var type_row_fields = {
 	},//end draw_coin
 
 
+	get_image_data : function(options) {
+		const self = this
+
+		const section_id = options.section_id
+		
+		// vars
+			const sql_filter	= 'section_id=' + parseInt(section_id)
+			const ar_fields		= ['*']
+
+		return new Promise(function(resolve){
+
+			// request
+			const request_body = {
+				dedalo_get	: 'records',
+				table		: 'images',
+				ar_fields	: ar_fields,
+				lang		: page_globals.WEB_CURRENT_LANG_CODE,
+				sql_filter	: sql_filter,
+			}
+			data_manager.request({
+				body : request_body
+			})
+			.then(function(response){
+				// console.log("++++++++++++ request_body:",request_body);
+				 console.log("get_image_author:",response);
+
+				resolve(response.result)
+			})
+		})
+	},
 
 	draw_bibliographic_reference : function(data) {
 

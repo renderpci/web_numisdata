@@ -464,7 +464,9 @@ var coins =  {
 					offset			: offset,
 					order			: order,
 					process_result	: null,
-					// resolve_portals_custom : resolve_portals_custom,
+					resolve_portals_custom	: {
+						"image_obverse_data"	: "images", 
+					}
 				}
 			})
 			.then(function(api_response){

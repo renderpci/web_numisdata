@@ -109,7 +109,7 @@ var image_gallery = {
 
 
         this.caption = this.popup.getElementById('caption-wrapper').getElementsByTagName('p')[0]
-        this.caption.textContent = parsedGallery[this.currentIndex][0].children[0].dataset.caption
+        this.caption.innerHTML = parsedGallery[this.currentIndex][0].children[0].dataset.caption
 
         this.preButton = this.popup.getElementById("pre-button")
         this.nextButton = this.popup.getElementById("next-button")
@@ -190,9 +190,9 @@ var image_gallery = {
         this.img2.src = currentNode[1].attributes.href.value
         
         if(currentNode[0].children[0].dataset.caption){
-            this.caption.textContent = currentNode[0].children[0].dataset.caption
+            this.caption.innerHTML = currentNode[0].children[0].dataset.caption
         } else {
-            this.caption.textContent = ""
+            this.caption.innerHTML = ""
         }
         this.CheckNavButtons()       
     },

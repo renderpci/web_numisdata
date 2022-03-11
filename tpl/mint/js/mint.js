@@ -16,13 +16,13 @@ var mint = {
 		export_data_container	: null,
 
 
-
 	/**
 	* SET_UP
 	*/
 	set_up : function(options) {
 
 		const self = this
+
 
 		// options
 			self.export_data_container	= options.export_data_container
@@ -36,7 +36,6 @@ var mint = {
 		//suggestions_form_button
 			const contact_form_button = page.create_suggestions_button()
 			self.export_data_container.appendChild(contact_form_button)
-
 
 		if (self.section_id) {
 
@@ -85,10 +84,12 @@ var mint = {
 								// 	ar_rows	: result
 								// })
 
+								console.log(result[0])
+
 								//RESTORE term_section_id info
 								for (let i=0;i<result.length;i++){
 									result[i].catalog_info = result[i].term_section_id
-									result[i].term_section_id = result[i].term_section_id.section_id
+									//result[i].term_section_id = result[i].term_section_id.section_id
 								}
 						
 								const types_node = self.draw_types2({

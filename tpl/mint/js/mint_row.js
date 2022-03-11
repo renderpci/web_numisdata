@@ -398,7 +398,7 @@ var mint_row = {
 		}
 
 		//Public info
-		if (row.term_data[0].public_info){
+		if (row.term_data[0] && row.term_data[0].public_info){
 			common.create_dom_element({
 				element_type 	: "p",
 				class_name 		: "small public-info print-info",

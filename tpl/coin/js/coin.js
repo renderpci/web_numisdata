@@ -115,7 +115,8 @@ var coin = {
 					offset			: 0,
 					resolve_portals_custom	: {
 						type_data			: 'types',
-						bibliography_data	: 'bibliographic_references'
+						bibliography_data	: 'bibliographic_references',
+						image_obverse_data 	: 'images', 
 						// images_obverse	: 'images_obverse',
 						// images_reverse	: 'images_reverse'
 					}

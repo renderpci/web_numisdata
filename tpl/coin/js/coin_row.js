@@ -105,6 +105,12 @@ var coin_row = {
 							image_obverse.setAttribute("data-caption",auctionGalleryAttributes)
 						}
 					}
+
+					if(row.image_obverse_data[0] && row.image_obverse_data[0].photographer){
+						const currentAttr = image_obverse.getAttribute("data-caption")
+						image_obverse.setAttribute("data-caption", currentAttr + '<spam> | </spam> <i class="fa fa-camera"></i> ' + row.image_obverse_data[0].photographer)
+					}
+					//END IMAGE GALLERY CAPTIONS
 				}
 			// image_reverse
 				if (row.image_reverse && row.image_reverse.length>0) {

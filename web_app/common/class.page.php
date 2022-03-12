@@ -134,6 +134,9 @@ class page {
 					$options->ar_fields		= array_values(get_object_vars(self::$web_fields_map));
 					$options->lang			= WEB_CURRENT_LANG_CODE;
 					$options->order			= 'norder ASC';
+					$options->resolve_portals_custom = (object)[
+						'imagen' => 'images'
+					];
 			}
 
 			$call = new stdClass();
@@ -593,6 +596,11 @@ class page {
 				if (empty($item->web_path)) {
 					$item->web_path = $item->term_id;
 				}
+
+				// parse json data
+					if (!empty($item->children) && is_string($item->children)) {
+						$item->children = json_decode($item->children);
+					}
 			}
 
 		return $ar_data;
@@ -704,7 +712,10 @@ class page {
 
 		$found_child_with_active_menu = false;
 
-		$ar_term_id = json_decode($children_data);
+		$ar_term_id = !empty($children_data) && is_string($children_data)
+			? json_decode($children_data)
+			: $children_data;
+
 		foreach ($ar_term_id as $term_id) {
 
 			if (is_object($term_id)) {
@@ -900,43 +911,46 @@ class page {
 		}else{
 
 			# JSON array of element pointing to another table (target)
-			if ($value==='[]' || !$ar_value=json_decode($value)) {
+			if ((!empty($value) && is_string($value)) && ($value==='[]' || !$ar_value=json_decode($value))) {
 				return $image_url;
 			}
 
-			$ar_filter = [];
-			foreach ($ar_value as $current_section_id) {
-				$ar_filter[] = '`section_id`='.(int)$current_section_id;
-			}
-			$sql_filter = implode(' OR ', $ar_filter);
+			if (!empty($ar_value)) {
 
-			$order = 'FIELD(`section_id`, '.implode(',', $ar_value).')';
-
-			# resolves value
-			$options = new stdClass();
-				$options->dedalo_get 		= 'records';
-				$options->lang 				= WEB_CURRENT_LANG_CODE;
-				$options->table 			= $column_obj->target->table;
-				$options->ar_fields 		= array($column_obj->target->colname);
-				#$options->sql_filter 		= "section_id = ".reset($ar_value)." ";
-				#$options->limit 			= 1;
-				$options->sql_filter 		= $sql_filter;
-				$options->limit 			= 0;
-				$options->order 			= $order;
-
-			# Http request in php to API
-			$data = json_web_data::get_data($options);
-
-			#if (!empty($data->result)) {
-			#	$image_url = reset($data->result)->{$column_obj->target->colname};
-			#}
-			if (!empty($data->result)) {
-				$image_url = [];
-				foreach ($data->result as $key => $row) {
-					$image_url[] = $row->{$column_obj->target->colname};
+				$ar_filter = [];
+				foreach ($ar_value as $current_section_id) {
+					$ar_filter[] = '`section_id`='.(int)$current_section_id;
 				}
+				$sql_filter = implode(' OR ', $ar_filter);
+
+				$order = 'FIELD(`section_id`, '.implode(',', $ar_value).')';
+
+				# resolves value
+				$options = new stdClass();
+					$options->dedalo_get 		= 'records';
+					$options->lang 				= WEB_CURRENT_LANG_CODE;
+					$options->table 			= $column_obj->target->table;
+					$options->ar_fields 		= array($column_obj->target->colname);
+					#$options->sql_filter 		= "section_id = ".reset($ar_value)." ";
+					#$options->limit 			= 1;
+					$options->sql_filter 		= $sql_filter;
+					$options->limit 			= 0;
+					$options->order 			= $order;
+
+				# Http request in php to API
+				$data = json_web_data::get_data($options);
+
+				#if (!empty($data->result)) {
+				#	$image_url = reset($data->result)->{$column_obj->target->colname};
+				#}
+				if (!empty($data->result)) {
+					$image_url = [];
+					foreach ($data->result as $key => $row) {
+						$image_url[] = $row->{$column_obj->target->colname};
+					}
+				}
+				#dump($data->result, ' image_url +++++++++++++++++++++++++++++ OPTIONS: '.to_string($options));
 			}
-			#dump($data->result, ' image_url +++++++++++++++++++++++++++++ OPTIONS: '.to_string($options));
 
 		}//end if (isset($column_obj->target))
 
@@ -1716,7 +1730,7 @@ class page {
 					if (!empty($menu_element->{$children_column_name})) {
 
 						// recursion
-							$children = self::get_children($menu_element->term_id, $menu_elements, $recursive);
+							$children = self::get_children($menu_element->term_id, $menu_elements, $recursive, $children_column_name);
 
 							$items = array_merge($items, $children);
 					}

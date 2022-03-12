@@ -1,7 +1,5 @@
 /*global common, page_globals */
 /*eslint no-undef: "error"*/
-
-
 "use strict";
 
 
@@ -9,9 +7,11 @@
 var footer =  {
 
 
+
 	footer_data : null,
 	footer_root : null,
 	footer_dynamic_wraper : null,
+
 
 
 	set_up : function(options) {
@@ -23,27 +23,15 @@ var footer =  {
 			self.footer_data			= options.footer_data // array JSON data from menu (ts_web)
 			self.footer_dynamic_wraper	= options.footer_dynamic_wraper // DOM node
 
-			console.log("self.footer_data:",self.footer_data);
-			console.log("self.footer_root:",self.footer_root);
+		// render
+			const footer_node = self.render_footer()
+			if (footer_node) {
+				self.footer_dynamic_wraper.appendChild(footer_node)
+			}
 
-		// old
-			// self.get_links_data({
-			// 	sql_filter : 'section_id='+32
-			// })
-			// .then(function(data){
+			return true
+	},//end set_up
 
-			// 	self.parse_links_data(data)
-			// 	.then(function(links_data){
-			// 		self.draw_footer_links (links_data)
-			// 	})
-
-			// })
-
-		const footer_node = self.render_footer()
-		if (footer_node) {
-			self.footer_dynamic_wraper.appendChild(footer_node)
-		}
-	},
 
 
 	/**

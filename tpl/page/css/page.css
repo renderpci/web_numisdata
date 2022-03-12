@@ -862,61 +862,56 @@ nav ul {
 #header > .head_inner > a.logo {
   border-bottom: #b93b3b 4px solid;
   background-color: #333333;
-  background-image: url("../../assets/images/horse_logo.svg");
-  background-size: 50%;
+  background-image: url("../../assets/images/logo_head-06.svg");
   background-repeat: no-repeat;
-  background-position: 80% 5%;
+  height: 5em;
   margin: 0;
 }
-#header > .head_inner > a.logo > .symbol {
-  display: flex;
-  align-items: center;
-  padding: 0.75em;
-  width: 80%;
-  max-width: 1280px;
-  margin: 0 auto;
+#header > .head_inner > a.logo > .title {
+  background-image: url("../../assets/images/logo_head-05.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22em;
 }
-#header > .head_inner > a.logo > .symbol > img {
-  height: 5em;
-}
-#header > .head_inner > a.logo > .symbol > .title {
-  font-family: 'Raleway', sans-serif;
-  font-weight: 300;
-  font-variant: small-caps;
-  letter-spacing: 0.065em;
-  font-size: 2.25em;
-  color: #b7996d;
-  padding-left: 0.5em;
+@media screen and (max-width: 520px) {
+  #header > .head_inner > a.logo > .title {
+    background-image: url("../../assets/images/logo_head-08.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 7em;
+  }
 }
 @media screen and (max-width: 736px) {
-  #header > .head_inner > a.logo > .symbol > .title {
-    font-size: 7vw !important;
+  #header > .head_inner > a.logo {
+    width: 100%;
   }
 }
 @media screen and (max-width: 520px) {
-  #header > .head_inner > a.logo > .symbol > .title {
-    width: 50%;
-    text-align: left;
-    line-height: 1em;
-  }
-}
-@media screen and (max-width: 736px) {
-  #header > .head_inner > a.logo > .symbol {
-    width: 95%;
+  #header > .head_inner > a.logo {
+    height: 4em;
+    background-image: url("../../assets/images/logo_head-07.svg");
+    background-repeat: no-repeat;
   }
 }
 #header nav {
-  right: 10%;
+  top: 1em;
   display: inline-block;
 }
 @media screen and (min-width: 1280px) {
   #header nav {
-    right: 12vw;
+    top: 1em;
   }
 }
 @media screen and (max-width: 736px) {
   #header nav {
-    top: 2em;
+    right: 1em;
+    top: 1em;
+  }
+}
+@media screen and (max-width: 520px) {
+  #header nav {
+    right: 0.5em;
+    top: 0.5em;
   }
 }
 #header nav .logo {
@@ -1122,14 +1117,10 @@ nav ul {
 }
 #footer .inner .footer-section li {
   font-size: 80%;
-  margin-top: 0.5em;
 }
 @media (max-width: 842px) {
   #footer .inner .footer-section li {
     font-size: 100%;
-    float: left;
-    margin-bottom: 1em;
-    padding: 0 0.5em;
   }
 }
 #footer .inner .footer-section li ul {

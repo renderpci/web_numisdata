@@ -321,65 +321,100 @@
 			>a.logo {
 				border-bottom: #b93b3b 4px solid;
 				background-color: #333333;
-				background-image: url("../../assets/images/horse_logo.svg");
-				background-size: 50%;
+				background-image: url("../../assets/images/logo_head-06.svg");
+				// background-size: 50%;
 				background-repeat: no-repeat;
-				background-position: 80% 5%;
+				height: 5em;
+				// background-position: 80% 5%;
 				margin: 0;
 
-				>.symbol {
-					display: flex;
-					align-items: center;
-					padding: .75em;
-					width: 80%;
-					max-width: 1280px;
-					margin: 0 auto;
+				// >.symbol {
+					// display: flex;
+					// height: 5em;
+					// align-items: center;
+					// padding: .75em;
+					// width: 80%;
+					// max-width: 1280px;
+					// margin: 0 auto;
 					// border-radius: 5px;
 
 
-					>img {
-						height: 5em;
-					}
+				// 	>img {
+				// 		height: 5em;
+				// 	}
 					>.title {
+
+						background-image: url("../../assets/images/logo_head-05.svg");
+						background-repeat: no-repeat;
+						background-position: center;
+						background-size: 22em;
+
+						@media screen and (max-width: 520px){
+
+
+							background-image: url("../../assets/images/logo_head-08.svg");
+							background-repeat: no-repeat;
+							background-position: center;
+							background-size: 7em;
+						}
+
 						// color: darken(#be875a, 8%);
 						// font-family: 'Montserrat', sans-serif;
 						// font-family: 'Varela Round', sans-serif;
-						.font_logo;
-						font-size: 2.25em;
-						// color: #B7996D;
-						color: @color_gold_logo;
-						padding-left: 0.5em;
+						// .font_logo;
+						// font-size: 2.25em;
+						// // color: #B7996D;
+						// color: @color_gold_logo;
+						// padding-left: 0.5em;
 
-						@media screen and (max-width: 736px){
-							font-size: 7vw !important;
+						// @media screen and (max-width: 736px){
+						// 	font-size: 7vw !important;
+						// }
+
+						// @media screen and (max-width: 520px){
+						// 	// width: 50%;
+    		// 	// 			text-align: left;
+    		// 	// 			line-height: 1em;
+    		// 				height: 4em;
+    		// 				background-image: url("../../assets/images/mib_header2.svg");
 						}
+					// }
 
-						@media screen and (max-width: 520px){
-							width: 50%;
-    						text-align: left;
-    						line-height: 1em;
-						}
-					}
+				@media screen and (max-width: 736px){
+					width: 100%;
+				}
 
-					@media screen and (max-width: 736px){
-						width: 95%;
-					}
+				@media screen and (max-width: 520px){
+					// width: 50%;
+		// 			text-align: left;
+		// 			line-height: 1em;
+					height: 4em;
+					background-image: url("../../assets/images/logo_head-07.svg");
+					background-repeat: no-repeat;
+				// }
 				}
 			}//end a.logo
 		}
 
 		nav {
-			right: 10%;
+			// right: 12vw;
+			top: 1em;
 			display: inline-block;
 			//transform: translateX(-50%);
 
 
 			@media screen and (min-width: 1280px){
-				right: 12vw;
+				// right: 12vw;
+				top: 1em;
 			}
 
 			@media screen and (max-width: 736px){
-				top: 2em;
+				right: 1em;
+				top: 1em;
+			}
+			@media screen and (max-width: 520px){
+				right: 0.5em;
+				top: 0.5em;
 			}
 
 			.logo {
@@ -668,12 +703,12 @@
 
 				li {
 					font-size: 80%;
-					margin-top: 0.5em;
+					// margin-top: 0.5em;
 					@media (max-width: @movil_max_width) {
 						font-size: 100%;
-						float:left;
-						margin-bottom: 1em;
-						padding: 0 0.5em;
+						// float:left;
+						// margin-bottom: 1em;
+						// padding: 0 0.5em;
 					}
 
 					ul {

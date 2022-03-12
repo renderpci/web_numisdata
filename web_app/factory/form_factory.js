@@ -635,6 +635,7 @@ function form_factory() {
 				  filter[operators_value] = ar_query_elements
 
 
+
 		return filter
 	}//end build_filter
 
@@ -1078,7 +1079,16 @@ function form_factory() {
 										const terms = item_name.split(form_item.value_split)
 										for (let k = 0; k < terms.length; k++) {
 
+											// split sub_filter when the item has other terms in the same row
 											const term_name = terms[k].trim()
+											// all term to lower case for compare it
+											const term_name_lowercase = term_name.toLowerCase()
+											const search_name_lowercase = request.term.toLowerCase()
+											// it the search don't match with the current_term continue to other
+											if(term_name_lowercase.indexOf(search_name_lowercase)===-1){
+												continue
+											}
+
 											const found = ar_result.find(el => el.value===term_name)
 											if (!found && term_name.length > 0) {
 												ar_result.push({

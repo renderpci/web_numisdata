@@ -82,11 +82,8 @@
   color: #497FC2;
 }
 .row_wrapper .row_title {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .row_wrapper .row_title .pdf {
   margin-left: 0.5em;
@@ -103,18 +100,12 @@
   cursor: pointer;
 }
 .row_wrapper .row_body {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .row_wrapper .row_url {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .row_wrapper .row_url a.url_data {
   color: #497FC2;
@@ -176,86 +167,47 @@
 .ts_period_value {
   font-weight: 600;
 }
+.ts_numismatic_group_value {
+  font-weight: 600;
+}
 .descriptions {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 50% 50%;
   grid-template-columns: 50% 50%;
-  -ms-grid-rows: auto 0.75em auto 0.75em auto;
   grid-template-rows: auto auto auto;
   row-gap: 0.75em;
   font-size: 15px;
   line-height: 1.4em;
 }
-.descriptions > *:nth-child(1) {
-  -ms-grid-row: 1;
-  -ms-grid-column: 1;
-}
-.descriptions > *:nth-child(2) {
-  -ms-grid-row: 1;
-  -ms-grid-column: 2;
-}
-.descriptions > *:nth-child(3) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 1;
-}
-.descriptions > *:nth-child(4) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 2;
-}
-.descriptions > *:nth-child(5) {
-  -ms-grid-row: 5;
-  -ms-grid-column: 1;
-}
-.descriptions > *:nth-child(6) {
-  -ms-grid-row: 5;
-  -ms-grid-column: 2;
-}
 .ref_type_equivalents {
   font-size: 0.6em;
-  -ms-grid-column: 1;
-      grid-column-start: 1;
-  -ms-grid-row: 2;
-      grid-row-start: 2;
+  grid-column-start: 1;
+  grid-row-start: 2;
 }
 .collection_auction {
   font-size: 0.6em;
-  -ms-grid-column: 2;
-      grid-column-start: 2;
-  -ms-grid-row: 2;
-      grid-row-start: 2;
-  display: -webkit-inline-box;
-  display: -ms-inline-flexbox;
+  grid-column-start: 2;
+  grid-row-start: 2;
   display: inline-flex;
   text-align: center;
   /* justify-items: center; */
   /* align-items: center; */
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
 }
 .ref_type_design_obverse {
-  -ms-grid-column: 1;
-      grid-column-start: 1;
-  -ms-grid-row: 1;
-      grid-row-start: 1;
+  grid-column-start: 1;
+  grid-row-start: 1;
 }
 .ref_type_symbol_obverse {
-  -ms-grid-column: 1;
-      grid-column-start: 1;
-  -ms-grid-row: 2;
-      grid-row-start: 2;
+  grid-column-start: 1;
+  grid-row-start: 2;
 }
 .ref_type_symbol_obverse img {
   height: 1.2em;
   vertical-align: middle;
 }
 .legend_obverse {
-  -ms-grid-column: 1;
-      grid-column-start: 1;
-  -ms-grid-row: 3;
-      grid-row-start: 3;
-  display: -ms-grid;
+  grid-column-start: 1;
+  grid-row-start: 3;
   display: grid;
 }
 .legend_obverse span {
@@ -268,31 +220,24 @@
   font-weight: unset;
 }
 .ref_type_design_reverse {
-  -ms-grid-column: 2;
-      grid-column-start: 2;
-  -ms-grid-row: 1;
-      grid-row-start: 1;
+  grid-column-start: 2;
+  grid-row-start: 1;
 }
 .ref_type_design_reverse img {
   height: 1.2em;
   vertical-align: middle;
 }
 .ref_type_symbol_reverse {
-  -ms-grid-column: 2;
-      grid-column-start: 2;
-  -ms-grid-row: 2;
-      grid-row-start: 2;
+  grid-column-start: 2;
+  grid-row-start: 2;
 }
 .ref_type_symbol_reverse img {
   height: 1.2em;
   vertical-align: middle;
 }
 .legend_reverse {
-  -ms-grid-column: 2;
-      grid-column-start: 2;
-  -ms-grid-row: 3;
-      grid-row-start: 3;
-  display: -ms-grid;
+  grid-column-start: 2;
+  grid-row-start: 3;
   display: grid;
 }
 .legend_reverse span {
@@ -305,30 +250,17 @@
   font-weight: unset;
 }
 .coins_images {
-  display: -ms-inline-grid;
   display: inline-grid;
-  -ms-grid-columns: 50% 50%;
   grid-template-columns: 50% 50%;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 .coins_images_container {
-  -ms-grid-column: 2;
-      grid-column-start: 2;
-  -ms-grid-row: 1;
-      grid-row-start: 1;
+  grid-column-start: 2;
+  grid-row-start: 1;
   justify-items: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  display: -ms-grid;
+  align-items: center;
+  justify-content: center;
   display: grid;
 }
 .image_obverse {
@@ -340,39 +272,18 @@
   height: auto;
 }
 .type_container {
-  display: -ms-inline-grid;
   display: inline-grid;
-  -ms-grid-columns: auto 40%;
   grid-template-columns: auto 40%;
-  -ms-grid-rows: auto auto;
   grid-template-rows: auto auto;
   margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
-.type_container > *:nth-child(1) {
-  -ms-grid-row: 1;
-  -ms-grid-column: 1;
-}
-.type_container > *:nth-child(2) {
-  -ms-grid-row: 1;
-  -ms-grid-column: 2;
-}
-.type_container > *:nth-child(3) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 1;
-}
-.type_container > *:nth-child(4) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 2;
-}
 @media screen and (max-width: 1280px) {
   .type_container {
-    -ms-grid-columns: auto 50%;
     grid-template-columns: auto 50%;
   }
 }
 .types {
-  display: -ms-grid;
   display: grid;
   page-break-inside: avoid;
 }
@@ -407,30 +318,11 @@
     width: 10vw;
   }
   .type_container {
-    display: -ms-inline-grid !important;
     display: inline-grid !important;
-    -ms-grid-columns: auto 40% !important;
     grid-template-columns: auto 40% !important;
-    -ms-grid-rows: auto auto !important;
     grid-template-rows: auto auto !important;
     margin-bottom: 0.5em;
     margin-top: 0.5em;
-  }
-  .type_container > *:nth-child(1) {
-    -ms-grid-row: 1;
-    -ms-grid-column: 1;
-  }
-  .type_container > *:nth-child(2) {
-    -ms-grid-row: 1;
-    -ms-grid-column: 2;
-  }
-  .type_container > *:nth-child(3) {
-    -ms-grid-row: 2;
-    -ms-grid-column: 1;
-  }
-  .type_container > *:nth-child(4) {
-    -ms-grid-row: 2;
-    -ms-grid-column: 2;
   }
   @page {
     size: 1200px 1692px;
@@ -444,68 +336,37 @@
     margin-left: 0.5em;
   }
   .type_container {
-    display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 100%;
     grid-template-columns: 100%;
-    -ms-grid-rows: auto auto auto;
     grid-template-rows: auto auto auto;
     /* margin-bottom: 0.5em; */
     margin-top: 0.5em;
   }
-  .type_container > *:nth-child(1) {
-    -ms-grid-row: 1;
-    -ms-grid-column: 1;
-  }
-  .type_container > *:nth-child(2) {
-    -ms-grid-row: 2;
-    -ms-grid-column: 1;
-  }
-  .type_container > *:nth-child(3) {
-    -ms-grid-row: 3;
-    -ms-grid-column: 1;
-  }
   .type_container .type_info {
-    -ms-grid-row: 3;
-        grid-row-start: 3;
-    -ms-grid-column: 1;
-        grid-column-start: 1;
+    grid-row-start: 3;
+    grid-column-start: 1;
   }
   .type_container .ref_type_equivalents {
-    -ms-grid-column: 1;
-        grid-column-start: 1;
-    -ms-grid-row: 4;
-        grid-row-start: 4;
+    grid-column-start: 1;
+    grid-row-start: 4;
   }
   .type_container .coins_images_container {
-    -ms-grid-column: 1;
-        grid-column-start: 1;
-    -ms-grid-row: 1;
-        grid-row-start: 1;
+    grid-column-start: 1;
+    grid-row-start: 1;
     justify-items: center;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    display: -ms-grid;
+    align-items: center;
+    justify-content: center;
     display: grid;
   }
   .type_container .collection_auction {
     font-size: 0.6em;
-    -ms-grid-column: 1;
-        grid-column-start: 1;
-    -ms-grid-row: 2;
-        grid-row-start: 2;
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
+    grid-column-start: 1;
+    grid-row-start: 2;
     display: inline-flex;
     text-align: center;
     /* justify-items: center; */
     /* align-items: center; */
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    justify-content: center;
   }
 }
+/*# sourceMappingURL=catalog.css.map */

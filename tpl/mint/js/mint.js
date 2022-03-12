@@ -173,7 +173,11 @@ var mint = {
 						'indexation',
 						'indexation_data',
 						'georef_geojson',
-						'relations_types'
+						'relations_types',
+						'authorship_data',
+						'authorship_names',
+						'authorship_surnames',
+						'authorship_roles',
 					],
 					sql_filter				: "section_id = " + parseInt(section_id),
 					count					: false,
@@ -693,6 +697,29 @@ var mint = {
 						text_content 	: place,
 						parent 			: lineTittleWrap
 					})
+				}
+
+			// authorship
+				if (row_object.authorship_names && row_object.authorship_names.length>0) {
+
+					const ar_names = row_object.authorship_names.split('|');
+					const ar_surnames = row_object.authorship_surnames.split('|');
+					const ar_roles = row_object.authorship_roles.split('|');
+
+					const authorship_length = ar_names.length
+					for (let i = 0; i < authorship_length; i++) {
+						const name		= ar_names[i].trim().toUpperCase()
+						const surname	= ar_surnames[i].trim().toUpperCase()
+						const rol		= ar_roles[i].trim()
+
+						const authorship = name + ' ' + surname+ ' | ' +rol
+						common.create_dom_element({
+							element_type 	: "div",
+							class_name 		: "authorship",
+							text_content 	: authorship,
+							parent 			: lineTittleWrap
+						})
+					}
 				}
 
 			}

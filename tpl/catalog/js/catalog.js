@@ -365,11 +365,38 @@ var catalog = {
 
 		// creator (autoridad)
 			self.form.item_factory({
+				id				: "role",
+				name			: "role",
+				label			: tstring.role || "role",
+				q_column		: "ref_type_creators_roles", //"p_creator",
+				// value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				value_split 	: '|',
+				// q_splittable 	: true,
+				q_selected_eq 	: 'LIKE',
+				eq_in			: "%",
+				eq_out			: "%",
+				is_term			: false, //true
+				parent			: form_row,
+				callback		: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
+
+
+
+		// creator (autoridad)
+			self.form.item_factory({
 				id				: "creator",
 				name			: "creator",
 				label			: tstring.creator || "creator",
-				q_column		: "ref_type_people", //"p_creator",
+				q_column		: "ref_type_creators_full_name", //"p_creator",
 				// value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				value_split 	: ' | ',
+				// q_splittable 	: true,
+				q_selected_eq 	: 'LIKE',
 				eq_in			: "%",
 				eq_out			: "%",
 				is_term			: false, //true

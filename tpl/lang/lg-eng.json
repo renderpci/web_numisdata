@@ -126,5 +126,7 @@
     "name" : "Name",
     "message" : "Message",
     "cancel" : "Cancel",
-    "suggest_error" : "Suggestions / errors"
+    "suggest_error" : "Suggestions / errors",
+    "iconography_obverse" : "Iconography obverse",
+    "iconography_reverse" : "Iconography reverse"
 }

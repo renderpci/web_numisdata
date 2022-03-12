@@ -1730,7 +1730,7 @@ class page {
 					if (!empty($menu_element->{$children_column_name})) {
 
 						// recursion
-							$children = self::get_children($menu_element->term_id, $menu_elements, $recursive);
+							$children = self::get_children($menu_element->term_id, $menu_elements, $recursive, $children_column_name);
 
 							$items = array_merge($items, $children);
 					}

@@ -1120,6 +1120,9 @@ nav ul {
   padding: 0;
   flex: 1 1;
 }
+#footer .inner .footer-section-wrapper > ul {
+  margin-bottom: 0.5rem;
+}
 #footer .inner .footer-section-wrapper a {
   text-decoration: none;
   border: none;
@@ -1132,6 +1135,7 @@ nav ul {
   margin-right: 0;
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
+  font-size: 1.4rem;
 }
 #footer .inner .footer-section-wrapper .footer-links-a {
   font-size: 1.15rem;

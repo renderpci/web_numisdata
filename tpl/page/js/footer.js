@@ -1,120 +1,224 @@
+/*global common, page_globals */
+/*eslint no-undef: "error"*/
+
+
 "use strict";
 
 
 
 var footer =  {
-	
+
+
+	footer_data : null,
+	footer_root : null,
+	footer_dynamic_wraper : null,
+
+
 	set_up : function(options) {
+
 		const self = this
 
-		self.get_links_data({
-			sql_filter : 'section_id='+32
-		})
-		.then(function(data){
-			
-			self.parse_links_data(data)
-			.then(function(links_data){
-				self.draw_footer_links (links_data)
-			})
+		// options
+			self.footer_root			= options.footer_root // object normally numisdata349_30 'Pie' row
+			self.footer_data			= options.footer_data // array JSON data from menu (ts_web)
+			self.footer_dynamic_wraper	= options.footer_dynamic_wraper // DOM node
 
-		})
+			console.log("self.footer_data:",self.footer_data);
+			console.log("self.footer_root:",self.footer_root);
 
-	},
+		// old
+			// self.get_links_data({
+			// 	sql_filter : 'section_id='+32
+			// })
+			// .then(function(data){
 
-	get_links_data : function (options){
-		const self = this
+			// 	self.parse_links_data(data)
+			// 	.then(function(links_data){
+			// 		self.draw_footer_links (links_data)
+			// 	})
 
-		return new Promise(function(resolve){
+			// })
 
-			// vars
-				const sql_filter	= options.sql_filter
-				const ar_fields		= ['*']
-
-			const request_body = {
-					dedalo_get		: 'records',
-					db_name			: page_globals.WEB_DB,
-					lang			: page_globals.WEB_CURRENT_LANG_CODE,
-					table			: 'ts_web',
-					ar_fields		: ar_fields,
-					sql_filter		: sql_filter,
-					limit			: 0,
-					count			: false,
-					offset			: 0
-					/*resolve_portals_custom	: {
-						type_data			: 'types'
-					}*/
-				}			
-			
-			// request
-			return data_manager.request({
-				body : request_body
-			})
-			.then(function(api_response){
-				console.log("--> links data api_response:", api_response);
-				resolve(api_response.result)
-			})
-		})		
-	},
-
-	parse_links_data : function (options) {
-		const self = this
-
-		let links_ids = ""
-		const data_arr = JSON.parse(options[0].children)
-		console.log(data_arr)
-		for (let i=0;i<data_arr.length;i++){
-			links_ids += i!=0 ? " OR " : ""
-			links_ids += "section_id="+data_arr[i].section_id
+		const footer_node = self.render_footer()
+		if (footer_node) {
+			self.footer_dynamic_wraper.appendChild(footer_node)
 		}
-
-		return new Promise (function(resolve){
-			return self.get_links_data({
-					sql_filter : links_ids
-				})
-				.then (function(data){
-					resolve(data)			
-				})
-		})
 	},
 
-	draw_footer_links : function (data){
+
+	/**
+	* RENDER_FOOTER
+	*/
+	render_footer : function() {
+
 		const self = this
 
-		const links_data = data
-		const footer_links_el = document.querySelector('#footer-links')
+		// short vars
+			const footer_data	= self.footer_data
+			const root_term_id	= self.footer_root.term_id
 
 		const fragment = new DocumentFragment();
 
-		const list = common.create_dom_element({
-			element_type 	: "ul",
-			class_name 		: "footer-links-ul",
-			parent 			: fragment
-		})
+		// root level
+			const root_rows = footer_data.filter(el => el.parent===root_term_id)
+			const root_rows_length = root_rows.length
+			for (let i = 0; i < root_rows_length; i++) {
 
-		for (let i=0;i<links_data.length;i++){
+				const item = root_rows[i]
 
-			const term = links_data[i].term
-			const path = links_data[i].web_path
+				const child_node = self.build_child_node(item)
+				if (child_node) {
 
-			const list_element = common.create_dom_element({
-				element_type 	: "li",
-				class_name 		: "footer-links-li",
-				parent 			: list
-		
+					// ul
+						const ul = common.create_dom_element({
+							element_type	: "ul",
+							class_name		: "footer-links-ul",
+							parent			: fragment
+						})
+
+					// li add
+						ul.appendChild(child_node)
+				}
+
+			}//end for (let i = 0; i < root_rows_length; i++) {
+
+		return fragment
+	},//end render_footer
+
+
+
+	/**
+	* BUILD_CHILD_NODE
+	*/
+	build_child_node : function(row) {
+
+		const self = this
+
+		// short vars
+			const image = row.images && row.images[0]
+				? page_globals.__WEB_BASE_URL__ + row.images[0]
+				: null
+			const label		= row.label
+			const url		= row.web_path
+			const children	= row.children
+			const menu		= row.menu || 'no'
+			const parent	= row.parent
+
+		const fragment = new DocumentFragment();
+
+		// li
+			const li = common.create_dom_element({
+				element_type	: "li",
+				class_name		: "footer-links-li",
+				parent			: fragment
 			})
 
-			common.create_dom_element({
-				element_type 	: "a",
-				class_name 		: "footer-links-a",
-				text_content 	: term,
-				href 			: page_globals.__WEB_ROOT_WEB__+"/"+path,
-				parent 			: list_element
-		
-			})
+		// content
+			if (parent===self.footer_root.term_id) {
 
-		}
-		footer_links_el.appendChild(fragment)
+				// root level child case
 
-	}
+				// label (root terms only)
+					common.create_dom_element({
+						element_type	: 'p',
+						class_name		: 'footer-section-txt',
+						inner_html		: label,
+						parent			: li
+					})
+
+				if (!children) {
+					// link duplicate root item to get a standard link
+						const link = common.create_dom_element({
+							element_type	: 'a',
+							class_name		: 'footer-links-a',
+							href			: url,
+							title			: label,
+							inner_html		: label,
+							parent			: li
+						})
+						if (url.indexOf('http')===0) {
+							link.rel	= 'noreferrer'
+							link.target	= '_blank'
+						}
+				}
+			}
+			else{
+
+				// non root level case
+
+				// link / image
+				if (image && menu!=='yes') {
+
+					// link
+						const link = common.create_dom_element({
+							element_type	: 'a',
+							href			: url,
+							title			: label,
+							parent			: li
+						})
+						if (url.indexOf('http')===0) {
+							link.rel	= 'noreferrer'
+							link.target	= '_blank'
+						}
+
+					// image
+						common.create_dom_element({
+							element_type	: 'img',
+							class_name		: 'footer_image_item',
+							src				: image,
+							title			: label,
+							parent			: link
+						})
+
+				}else{
+
+					// link
+						const link = common.create_dom_element({
+							element_type	: 'a',
+							class_name		: 'footer-links-a',
+							href			: url,
+							title			: label,
+							inner_html		: label,
+							parent			: li
+						})
+						if (url.indexOf('http')===0) {
+							link.rel	= 'noreferrer'
+							link.target	= '_blank'
+						}
+				}
+			}
+
+		// with children case
+			if (children) {
+				const children_length = children.length
+				for (let i = 0; i < children_length; i++) {
+
+					const child_tipo	= children[i]
+					const child			= self.footer_data.find(el => el.term_id===child_tipo)
+					if (!child) {
+						console.log("Ignore not found children:", child_tipo);
+						continue;
+					}
+
+					const child_node = self.build_child_node(child)
+					if (child_node) {
+
+						// ul
+							const ul = common.create_dom_element({
+								element_type	: "ul",
+								class_name		: "footer-links-ul",
+								parent			: li
+							})
+
+						// li child
+							ul.appendChild(child_node)
+					}
+				}
+			}
+
+		return fragment
+	}//end build_child_node
+
+
 
 }//end footer

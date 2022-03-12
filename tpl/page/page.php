@@ -98,6 +98,55 @@
 			$this->menu_tree_html = page::render_menu_tree_plain(WEB_MENU_PARENT, $menu_tree, $li_drawer, $ul_drawer, 'children');
 
 
+	// footer_data. get children recursive of menu element template_name='footer'
+		$footer_row = array_find($menu_tree, function($el){
+			return $el->template_name==='footer';
+		});
+		$footer_children = page::get_children(
+			$footer_row->term_id,
+			$menu_tree,
+			$recursive=true,
+			$children_column_name='children'
+		);
+		// dump($footer_children, ' footer_children ++ '.to_string());
+		$footer_data = [];
+		foreach ($footer_children as $el) {
+
+			// exclude
+			// if ($el->menu!=='yes') {
+			// 	continue;
+			// }
+
+			// images (get only url)
+				$images = (!empty($el->imagen) && is_array($el->imagen))
+					? array_map(function($item){
+						return $item->image;
+					  }, $el->imagen)
+					: null;
+
+			// children
+				$children = (!empty($el->children) && is_array($el->children))
+					? array_map(function($item){
+						return $item->section_tipo .'_'. $item->section_id;
+					  }, $el->children)
+					: null;
+
+			$item = (object)[
+				'term_id'	=> $el->term_id,
+				'term'		=> $el->term,
+				'label'		=> $el->titulo,
+				'web_path'	=> $el->web_path,
+				'menu'		=> $el->menu,
+				'parent'	=> $el->parent,
+				'children'	=> $children,
+				'images'	=> $images
+			];
+
+			$footer_data[] = $item;
+		}
+		// dump($footer_data, ' footer_data ++ '.to_string());
+		$this->footer_data = $footer_data;
+		$this->footer_root = $footer_row;
 
 	# content_html
 		$content_options = new stdClass();
@@ -115,6 +164,8 @@
 		#	$this->page_title = $this->row->term;
 		#}
 		$page_title = $this->get_page_title();
+
+
 
 
 	# build links css/js

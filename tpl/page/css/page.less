@@ -676,85 +676,137 @@
 		}
 
 		.inner {
-
 			width: 80%;
 			margin: 0 auto;
 
-			.footer-section-wrapper{
+			ul {
+				display: block;
+				color: #ffffff !important;
+				list-style-type: none;
+			}
+
+			li {
+				list-style-type: none;
+			}
+
+			.footer-section-wrapper {
+				color: #b7996d;
 				width: 100%;
 				display:flex;
+				justify-content: space-evenly;
+				align-items: flex-start;
+
+				ul {
+					margin: 0;
+					width: 100%;
+					padding-left: 0.5rem;
+					padding-right: 0.5rem;
+
+					li {
+						margin: 0;
+						padding: 0;
+						flex: 1 1;
+					}
+				}
+
+				a {
+					text-decoration: none;
+					border: none;
+				}
+
+				.footer-section-txt {
+					border-bottom: solid 1px #f0f0f0;
+					color: #b7996d;
+					margin-top: 0.25rem;
+					margin-left: 0;
+					margin-right: 0;
+					padding-bottom: 0.5rem;
+					margin-bottom: 0.5rem;
+				}
+
+				.footer-links-a {
+					font-size: 1.15rem;
+				}
+
+				img.footer_image_item {
+					width: 100%;
+					object-fit: contain;
+					max-height: 6rem;
+					filter: sepia(100%) saturate(0) brightness(50%);
+					opacity: 0.75;
+					transition: all 0.35s linear;
+
+					&:first-of-type {
+						margin-top: 12px;
+					}
+
+					&:hover {
+						opacity: 1;
+						filter: initial;
+					}
+				}
 
 				@media (max-width: @movil_max_width) {
 					flex-flow: column;
 				}
 			}
 
-			.footer-section {
-				width: 25%;
+			// .footer-section {
+			// 	width: 25%;
 
-				ul {
-					list-style-type: none;
-					margin-top: 1em;
-					@media (max-width: @movil_max_width) {
-						font-size: 100%;
-					}
-				}
+			// 	ul {
+			// 		list-style-type: none;
+			// 		margin-top: 1em;
+			// 		@media (max-width: @movil_max_width) {
+			// 			font-size: 100%;
+			// 		}
+			// 	}
 
 
-				li {
-					font-size: 80%;
-					// margin-top: 0.5em;
-					@media (max-width: @movil_max_width) {
-						font-size: 100%;
-						// float:left;
-						// margin-bottom: 1em;
-						// padding: 0 0.5em;
-					}
+			// 	li {
+			// 		font-size: 80%;
+			// 		// margin-top: 0.5em;
+			// 		@media (max-width: @movil_max_width) {
+			// 			font-size: 100%;
+			// 			// float:left;
+			// 			// margin-bottom: 1em;
+			// 			// padding: 0 0.5em;
+			// 		}
 
-					ul {
-						display: none;
-						visibility: hidden;
-					}
-				}
+			// 		ul {
+			// 			display: none;
+			// 			visibility: hidden;
+			// 		}
+			// 	}
 
-				@media (max-width: @movil_max_width) {
-					width: 100%;
-				}
-			}
-
-			.footer-section-txt {
-				border-bottom: solid 1px #f0f0f0;
-				margin: 0 1em;
-			}
+			// 	@media (max-width: @movil_max_width) {
+			// 		width: 100%;
+			// 	}
+			// }
 
 			.footer-copyright-wrapper{
 				margin:0 auto;
 			}
 
-			ul {
-				display: block;
-				color: #ffffff !important;
-			}
+			// .ministerio {
+			// 	background-image: url('../../assets/images/logo_mciu.jpg');
+			// }
 
-			.ministerio {
-				background-image: url('../../assets/images/logo_mciu.jpg');
-			}
+			// .mupreva {
+			// 	background-image: url('../../assets/images/LogoMuseoNegroValencia.png');
+			// }
 
-			.mupreva {
-				background-image: url('../../assets/images/LogoMuseoNegroValencia.png');
-			}
+			// .uni_val_hist {
+			// 	background-image: url('../../assets/images/uni_val_hist.png');
+			// }
 
-			.uni_val_hist {
-				background-image: url('../../assets/images/uni_val_hist.png');
-			}
+			// .inc {
+			// 	background-image: url('../../assets/images/logo-inc.svg');
+			// }
 
-			.inc {
-				background-image: url('../../assets/images/logo-inc.svg');
-			}
-
-			.render {
-				background-image: url('../../assets/images/logo_render_bn.png');
-			}
+			// .render {
+			// 	background-image: url('../../assets/images/logo_render_bn.png');
+			// }
 
 			.logos {
 				margin: auto;

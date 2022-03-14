@@ -14,15 +14,11 @@
 }
 @media (max-width: 736px) {
   #form_container {
-    -ms-grid-column: 1;
-        grid-column-start: 1;
-    -ms-grid-column-span: 2;
+    grid-column-start: 1;
     grid-column-end: 3;
   }
 }
 #search_form {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   padding-top: 1em;
 }
@@ -37,80 +33,51 @@
   margin-left: 2em;
 }
 .mint_form {
-  -webkit-box-flex: 1 !important;
-      -ms-flex: 1 !important;
-          flex: 1 !important;
+  flex: 1 !important;
   padding-right: 0 !important;
 }
-.inner {
+#main > .inner {
   padding-bottom: 0 !important;
-  display: -ms-grid;
   display: grid;
   grid-gap: 1em;
-  -ms-grid-columns: 1fr 1em 1fr;
   grid-template-columns: repeat(2, 1fr);
-  -ms-grid-rows: auto 1em auto;
   grid-template-rows: repeat(2, auto);
+  width: 100%;
 }
-.inner > *:nth-child(1) {
-  -ms-grid-row: 1;
-  -ms-grid-column: 1;
-}
-.inner > *:nth-child(2) {
-  -ms-grid-row: 1;
-  -ms-grid-column: 3;
-}
-.inner > *:nth-child(3) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 1;
-}
-.inner > *:nth-child(4) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 3;
-}
-.inner .img-wrapper {
+#main > .inner .img-wrapper {
   display: block;
   width: 100%;
   margin: auto;
-  -ms-grid-row: 1;
-      grid-row-start: 1;
-  -ms-grid-row-span: 4;
+  grid-row-start: 1;
   grid-row-end: 5;
   border-bottom: none;
 }
 @media (max-width: 736px) {
-  .inner .img-wrapper {
+  #main > .inner .img-wrapper {
     width: 80%;
-    -ms-grid-row: 5;
-        grid-row-start: 5;
-    -ms-grid-row-span: 0;
+    grid-row-start: 5;
     grid-row-end: 5;
-    -ms-grid-column: 1;
-        grid-column-start: 1;
-    -ms-grid-column-span: 2;
+    grid-column-start: 1;
     grid-column-end: 3;
   }
 }
-.inner .img-wrapper img {
+#main > .inner .img-wrapper img {
   display: block;
   width: 90%;
 }
-.inner .img-wrapper .img-text {
+#main > .inner .img-wrapper .img-text {
   text-align: center;
   font-weight: 600;
   margin-right: 2.7em;
 }
-.inner p {
-  -ms-grid-row: 3;
-      grid-row-start: 3;
-  -ms-grid-row-span: 2;
+#main > .inner p {
+  grid-row-start: 3;
   grid-row-end: 5;
 }
 @media (max-width: 736px) {
-  .inner p {
-    -ms-grid-column: 1;
-        grid-column-start: 1;
-    -ms-grid-column-span: 2;
+  #main > .inner p {
+    grid-column-start: 1;
     grid-column-end: 3;
   }
 }
+/*# sourceMappingURL=main_home.css.map */

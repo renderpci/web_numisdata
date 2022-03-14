@@ -19,7 +19,8 @@ var generic =  {
 			area_name : self.area_name
 		})
 		.then(function(data){
-			if (data[0].audiovisual.length>0){
+
+			if (data.length>0 && data[0].audiovisual && data[0].audiovisual.length>0){
 				const video_data = data[0].audiovisual
 				for (let i=0;i<video_data.length;i++){
 					self.create_video_element(video_data[i])
@@ -55,8 +56,8 @@ var generic =  {
 					resolve_portals_custom	: {
 						audiovisual			: 'audiovisual'
 					}
-				}			
-			
+				}
+
 			// request
 			return data_manager.request({
 				body : request_body
@@ -66,7 +67,7 @@ var generic =  {
 
 				resolve(api_response.result)
 			})
-		})	
+		})
 
 	},
 
@@ -125,7 +126,7 @@ var generic =  {
 
 		const container = document.querySelector(".content")
 		container.appendChild(fragment)
-		
+
 	}
 
 

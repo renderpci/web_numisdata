@@ -167,12 +167,13 @@
 		'term'			=> 'term',
 		'web_path'		=> 'web_path',
 		'menu'			=> 'menu',
+		'active'		=> 'active',
 		'parent'		=> 'parent',
 		'children'		=> 'children',
-		'template_name' => 'template_name',
+		'template_name'	=> 'template_name',
 		'title'			=> 'titulo', // before standard (compatibility)
-		'abstract' 		=> 'entradilla',
-		'body' 			=> 'cuerpo',
+		'abstract'		=> 'entradilla',
+		'body'			=> 'cuerpo',
 		'norder'		=> 'norder',
 		'image'			=> 'imagen'
 	]));

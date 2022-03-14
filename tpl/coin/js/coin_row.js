@@ -170,26 +170,26 @@ var coin_row = {
 			}
 
 			if (row.former_collection && row.former_collection.length>0) {
-				label_collection.push(tstring.former_collection || "Former collection")
-				value_collection.push(row.former_collection)
+				// label_collection.push(tstring.former_collection || "Former collection")
+				value_collection.push('('+row.former_collection+')')
 			}
 
 			if (row.number && row.number.length>0) {
-				label_collection.push(tstring.number || "Number")
+				// label_collection.push(tstring.number || "Number")
 				value_collection.push(row.number)
 			}
 
 			const label_collection_node = common.create_dom_element({
 				element_type	: "label",
 				class_name		: "left-labels",
-				text_content	: label_collection.join(' | '),
+				text_content	: label_collection.join(''),
 				parent			: info_container
 			})
 
 			const value_collection_node = common.create_dom_element({
 				element_type	: "span",
 				class_name		: "rigth-values",
-				inner_html		: value_collection.join(' | '),
+				inner_html		: value_collection.join(' '),
 				parent			: info_container
 			})
 
@@ -295,6 +295,8 @@ var coin_row = {
 				parent			: info_container
 			})
 
+
+
 		// MINT + MINT NUMBER + TYPE
 			//label
 			// const label_mint 		= tstring.mint || "Mint"
@@ -308,6 +310,61 @@ var coin_row = {
 								// + ' / ' +label_number.toLowerCase()
 								// +' ' +label_type_name.toLowerCase();
 			const type_section = row.type_data.filter(item => item.catalogue === 'MIB')[0]
+
+			// creators
+			const creators_data = typeof type_section!=="undefined"
+				? type_section.creators_data
+				: null
+			if (creators_data && creators_data.length>0) {
+
+				const data = JSON.parse(creators_data)
+
+				const ar_names		= type_section.creators_names
+					? type_section.creators_names.split(' | ')
+					: []
+				const ar_surnames	= type_section.creators_surnames
+					? type_section.creators_surnames.split(' | ')
+					: []
+				const ar_roles		= type_section.creators_roles
+					? type_section.creators_roles.split('|')
+					: []
+
+				const text_creators = []
+				const data_length = data.length
+
+				for (var i = 0; i < data_length; i++) {
+					const name		= ar_names[i]
+						? ar_names[i]
+						: ''
+					const surname	= ar_surnames[i]
+						? ar_surnames[i]
+						: ''
+					const rol		= ar_roles[i]
+						? '('+ ar_roles[i] + ')'
+						: ''
+
+					const creator_name = name + ' ' + surname
+					const creator = creator_name.trim() + ' ' + rol
+
+					text_creators.push(creator.trim())
+				}
+
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.authorities || "Authorities",
+					parent			: info_container
+				})
+
+				const prompt_label = common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: text_creators,
+					parent 			: info_container
+				})
+			}
+
+
 
 			//value
 			const mint = (type_section.mint)
@@ -430,6 +487,27 @@ var coin_row = {
 					info_container.appendChild(legend_node)
 				}
 
+			// legend_obverse transcription
+				const legend_obverse_transcription = typeof type_section!=="undefined"
+					? type_section.legend_obverse_transcription
+					: null
+				if (legend_obverse_transcription && legend_obverse_transcription.length>0) {
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels sub-label",
+						text_content	: tstring.transcription || "Transcription",
+						parent			: info_container
+					})
+
+					const prompt_label = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values",
+						inner_html		: legend_obverse_transcription,
+						parent 			: info_container
+					})
+				}
+
+
 			// countermark_obverse
 				if (row.countermark_obverse && row.countermark_obverse.length>0) {
 					common.create_dom_element({
@@ -510,6 +588,26 @@ var coin_row = {
 						style : 'median legend_reverse_box rigth-values'
 					})
 					info_container.appendChild(legend_node)
+				}
+
+				// legend_reverse_transcription
+				const legend_reverse_transcription = typeof type_section!=="undefined"
+					? type_section.legend_reverse_transcription
+					: null
+				if (legend_reverse_transcription && legend_reverse_transcription.length>0) {
+					common.create_dom_element({
+						element_type	: "label",
+						class_name		: "left-labels sub-label",
+						text_content	: tstring.transcription || "Transcription",
+						parent			: info_container
+					})
+
+					const prompt_label = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values",
+						inner_html		: legend_reverse_transcription,
+						parent 			: info_container
+					})
 				}
 
 				// countermark_reverse

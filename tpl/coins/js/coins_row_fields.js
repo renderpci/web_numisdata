@@ -250,7 +250,7 @@ var coins_row_fields = {
 
 			common.create_dom_element({
 				element_type	: "a",
-				inner_html  	: "ID: "+row.section_id + uri_text,
+				inner_html  	: "ID: "+row.section_id,
 				class_name		: "mint_label icon_link_after",
 				href 			: uri,
 				target 			: "_blank",

@@ -1151,7 +1151,7 @@ var type_row_fields = {
 				const coins_length	= coins.length
 				for (let j = 0; j < coins_length; j++) {
 					const coin_section_id	= coins[j]
-					
+
 					const coin_data			= item.ref_coins_union.find(element => element.section_id==coin_section_id)
 					if (coin_data) {
 						// draw_coin(coin_data, typology_coins)
@@ -1322,17 +1322,34 @@ var type_row_fields = {
 			}
 
 
-			//GET IMAGE PHOTOGRAPHER
+		//GET IMAGE PHOTOGRAPHER
 
-			self.get_image_data({
-				section_id : JSON.parse(data.image_obverse_data)[0]
-			})
-			.then(function(result){
-				if (result[0] && result[0].photographer) {
-					const currentAttr = image_obverse.getAttribute("data-caption")
-					image_obverse.setAttribute("data-caption", currentAttr + '<spam> | </spam> <i class="fa fa-camera"></i> ' + result[0].photographer)
+			// (!) COMMENTED : UNFEASIBLE FOR MAP . REMOVED 14-03-2022 UNTIL RESOLVE IT IN A VIABLE WAY
+				// const observer = new IntersectionObserver(async function(entries) {
+				// 	const entry = entries[1] || entries[0]
+				// 	if (entry.isIntersecting===true || entry.intersectionRatio > 0) {
+				// 		observer.disconnect();
+
+				// 		self.get_image_data({
+				// 			section_id : JSON.parse(data.image_obverse_data)[0]
+				// 		})
+				// 		.then(function(result){
+				// 			if (result[0] && result[0].photographer) {
+				// 				const currentAttr = image_obverse.getAttribute("data-caption")
+				// 				image_obverse.setAttribute("data-caption", currentAttr + '<spam> | </spam> <i class="fa fa-camera"></i> ' + result[0].photographer)
+				// 				console.log("image_obverse:",image_obverse);
+				// 			}
+				// 		})
+				// 	}
+				// }, { threshold: [0] });
+				// observer.observe(image_obverse);
+
+			// direct from DDBB, column 'photographer'
+				if (data.photographer) {
+					const currentAttr = image_obverse.dataset.caption || ''
+					image_obverse.setAttribute("data-caption", currentAttr + '<spam> | </spam> <i class="fa fa-camera"></i> ' + data.photographer)
 				}
-			})
+
 			/*
 			self.get_image_data({
 				section_id : JSON.parse(data.image_reverse_data)[0]
@@ -1507,7 +1524,7 @@ var type_row_fields = {
 		const self = this
 
 		const section_id = options.section_id
-		
+
 		// vars
 			const sql_filter	= 'section_id=' + parseInt(section_id)
 			const ar_fields		= ['*']
@@ -1527,7 +1544,7 @@ var type_row_fields = {
 			})
 			.then(function(response){
 				// console.log("++++++++++++ request_body:",request_body);
-				 console.log("get_image_author:",response);
+				 // console.log("get_image_data:",response);
 
 				resolve(response.result)
 			})
@@ -1897,7 +1914,7 @@ var type_row_fields = {
 			if(mint_data_length>0){
 
 				for (let i = 0; i < mint_data_length; i++) {
-					
+
 					const mint			= mint_data[i]
 					const coins			= JSON.parse(mint.relations_coins) || []
 					const coins_length	= coins.length
@@ -1911,7 +1928,7 @@ var type_row_fields = {
 								ar_coins.push(coin_section_id)
 							}
 						}
-				
+
 					// map data
 					const mint_data_map = JSON.parse(mint.map)
 					if (mint_data_map) {
@@ -1936,7 +1953,7 @@ var type_row_fields = {
 			if (map_data.length>0) {
 				common.when_in_dom(map_container, draw_map)
 				function draw_map() {
-						
+
 					self.caller.draw_map({
 						container		: map_container,
 						map_position	: null, // use default position

@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, map*/
+/*global tstring, page_globals, SHOW_DEBUG, common, page, map_factory, data_manager, event_manager, form_factory */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -223,12 +223,10 @@ var map = {
 										page.activate_images_gallery(images_gallery_containers, true)
 									},600)
 
-
 							}else{
 								// page.remove_spinner(self.rows_container)
 								spinner.remove()
 							}
-
 
 							// scroll map at top
 								self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
@@ -737,7 +735,7 @@ var map = {
 
 				const coins_list_total = new_row.coins_list ? new_row.coins_list.length : 0;
 				const types_list_total = new_row.types_list ? new_row.types_list.length : 0;
-				
+
 				// item data update
 					const description = (tstring.coins || 'Coins') + ': ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ': ' + types_list_total
 					new_row.item.data.coins_total = coins_list_total

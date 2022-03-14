@@ -87,7 +87,11 @@
 				$html  = '';
 				$html .= PHP_EOL . '<li role="'.$menu_element->web_path.'">';
 				$web_path = $menu_element->web_path==='main_home' ? '' : $menu_element->web_path;
-				$html .= '<a href="'.__WEB_ROOT_WEB__.'/'.$web_path.'">'.$menu_element->term.'</a>';
+				if ($menu_element->active==='no') {
+					$html .= '<span class="unactive">'.$menu_element->term.'</span>';
+				}else{
+					$html .= '<a href="'.__WEB_ROOT_WEB__.'/'.$web_path.'">'.$menu_element->term.'</a>';
+				}
 				$html .= $embed_html;
 				$html .= '</li>';
 
@@ -96,7 +100,6 @@
 
 		// menu_tree_html
 			$this->menu_tree_html = page::render_menu_tree_plain(WEB_MENU_PARENT, $menu_tree, $li_drawer, $ul_drawer, 'children');
-
 
 	// footer_data. get children recursive of menu element template_name='footer'
 		$footer_row = array_find($menu_tree, function($el){

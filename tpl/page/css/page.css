@@ -809,6 +809,14 @@ nav ul {
   pointer-events: none;
   color: #b7996d;
 }
+#menu li .unactive {
+  display: block;
+  padding: 0.5em 0;
+  line-height: 1.5;
+  border: 0;
+  color: inherit;
+  opacity: 0.8;
+}
 #wrapper {
   background: white;
   background-image: url('../../assets/images/overlay_white.png');
@@ -1155,7 +1163,7 @@ nav ul {
   opacity: 1;
   filter: initial;
 }
-@media (max-width: 842px) {
+@media (max-width: 1160px) {
   #footer .inner .footer-section-wrapper {
     flex-flow: column;
   }

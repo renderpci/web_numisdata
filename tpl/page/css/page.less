@@ -207,6 +207,14 @@
 			color: @color_gold_logo;
 		}
 	}
+	#menu li .unactive {
+		display: block;
+		padding: 0.5em 0;
+		line-height: 1.5;
+		border: 0;
+		color: inherit;
+		opacity: 0.8;
+	}
 
 
 
@@ -751,7 +759,7 @@
 					}
 				}
 
-				@media (max-width: @movil_max_width) {
+				@media (max-width: 1160px) { // @movil_max_width
 					flex-flow: column;
 				}
 			}

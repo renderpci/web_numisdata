@@ -23,6 +23,10 @@ var footer =  {
 			self.footer_data			= options.footer_data // array JSON data from menu (ts_web)
 			self.footer_dynamic_wraper	= options.footer_dynamic_wraper // DOM node
 
+		if (!self.footer_root || !self.footer_root.term_id) {
+			return false
+		}
+
 		// render
 			const footer_node = self.render_footer()
 			if (footer_node) {

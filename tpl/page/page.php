@@ -105,12 +105,14 @@
 		$footer_row = array_find($menu_tree, function($el){
 			return $el->template_name==='footer';
 		});
-		$footer_children = page::get_children(
-			$footer_row->term_id,
-			$menu_tree,
-			$recursive=true,
-			$children_column_name='children'
-		);
+		$footer_children = empty($footer_row)
+			? []
+			: page::get_children(
+				$footer_row->term_id,
+				$menu_tree,
+				$recursive=true,
+				$children_column_name='children'
+			);
 		// dump($footer_children, ' footer_children ++ '.to_string());
 		$footer_data = [];
 		foreach ($footer_children as $el) {

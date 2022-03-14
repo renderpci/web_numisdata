@@ -51,7 +51,7 @@ var coins_row_fields = {
 					const current_type_number 	= row.type[i]
 					const current_catalogue		= row.catalogue_type_mint[i]
 
-					
+
 
 					if(current_catalogue === 'MIB'){
 
@@ -61,7 +61,7 @@ var coins_row_fields = {
 
 						const mint_number = ar_mint_number.join(' | ')
 
-						const current_numismatic_number = mint_number+"/"+current_type_number					
+						const current_numismatic_number = mint_number+"/"+current_type_number
 
 						const mint_line = common.create_dom_element({
 							element_type	: "div",
@@ -106,7 +106,7 @@ var coins_row_fields = {
 
 						const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + current_type_data
 						const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
-						
+
 						common.create_dom_element({
 							element_type	: "a",
 							inner_html  	: current_catalogue +" "+ current_numismatic_number + type_uri_text,
@@ -124,8 +124,8 @@ var coins_row_fields = {
 							class_name		: "type_label",
 							parent 			: type_row
 						})
-					}//end if mib catalog						
-				
+					}//end if mib catalog
+
 
 				}// end for
 			} // en if
@@ -250,7 +250,7 @@ var coins_row_fields = {
 
 			common.create_dom_element({
 				element_type	: "a",
-				inner_html  	: "ID: "+row.section_id + uri_text,
+				inner_html  	: "ID: "+row.section_id, // + uri_text,
 				class_name		: "mint_label icon_link_after",
 				href 			: uri,
 				target 			: "_blank",
@@ -290,9 +290,9 @@ var coins_row_fields = {
 
 					const auction_label = []
 					if (auction.name) auction_label.push(auction.name)
-		
+
 					if (auction.date) auction_label.push(auction.date)
-	
+
 					if (auction.number) auction_label.push(auction.number)
 
 					common.create_dom_element({
@@ -462,7 +462,7 @@ var coins_row_fields = {
 			image_reverse.hires = row.image_reverse
 			image_reverse.addEventListener("load", page.load_hires)
 
-			
+
 			//IMAGE GALLERY CAPTIONS
 			if (row.collection && row.collection.length>0){
 				const collection_former = (row.former_collection.length>0)
@@ -490,7 +490,7 @@ var coins_row_fields = {
 					}
 				// ref_auction_date
 					if (auction.date) {
-						auctionGalleryAttributes += " " + auction.date		
+						auctionGalleryAttributes += " " + auction.date
 					}
 				// number
 					if (auction.number) {
@@ -499,7 +499,7 @@ var coins_row_fields = {
 
 				// lot
 					if (row.number) {
-						auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ row.number		
+						auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ row.number
 					}
 
 					image_obverse.setAttribute("data-caption",auctionGalleryAttributes)

@@ -45,6 +45,7 @@
   width: 100%;
 }
 #main > .inner .img-wrapper {
+  position: relative;
   display: block;
   width: 100%;
   margin: auto;

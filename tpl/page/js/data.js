@@ -180,7 +180,7 @@ page.parse_mint_data = function(data) {
 		? JSON.parse(row.relations_coins)
 		: null
 
-	
+
 	row.relations_types = (row.relations_types)
 		? JSON.parse(row.relations_types)
 		: null
@@ -292,7 +292,7 @@ page.parse_coin_data = function(data) {
 			? page.split_data(row.type, separator)
 			: null
 
-	
+
 		// mint data
 		const mint_data		= row.mint_data
 			? page.split_data(row.mint_data, separator) // format is '["1"] | ["2"]'
@@ -305,7 +305,7 @@ page.parse_coin_data = function(data) {
 			row.mint_data = ar_mints_data
 				? ar_mints_data
 				: null
-		
+
 		// mint number
 		const mint_number = row.mint_number
 			? page.split_data(row.mint_number, separator)
@@ -326,7 +326,16 @@ page.parse_coin_data = function(data) {
 
 			const ar_mints = []
 			for (let i = 0; i < mints.length; i++) {
-				ar_mints.push(JSON.parse(mints[i]))
+				if (mints[i]) {
+					// console.log("mints[i]:",mints[i], row.section_id);
+					const current_mints = (mints[i].indexOf('["')===0)
+						? JSON.parse(mints[i])
+						: mints[i]
+					// const current_mints = JSON.parse(mints[i])
+					if (current_mints) {
+						ar_mints.push(current_mints)
+					}
+				}
 			}
 
 			row.mint = ar_mints
@@ -336,9 +345,11 @@ page.parse_coin_data = function(data) {
 
 		// catalogue_type_mint
 		row.catalogue_type_mint = row.catalogue_type_mint
-			? JSON.parse(row.catalogue_type_mint)
+			? row.catalogue_type_mint.indexOf('["')===0
+				? JSON.parse(row.catalogue_type_mint)
+				: row.catalogue_type_mint
 			: null
-		
+
 
 		// legend text includes svg url
 		row.legend_obverse = row.legend_obverse
@@ -1195,7 +1206,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 * @return promise - array
 */
 this.get_all_id_unlimited = function(body) {
-	
+
 	const ar_id_promise = (limit===0 && offset===0)
 		? Promise.resolve( data.map(el => el.section_id) ) // use existing
 		: (()=>{
@@ -1204,15 +1215,15 @@ this.get_all_id_unlimited = function(body) {
 			new_body.limit		= 0
 			new_body.offset		= 0
 			new_body.count		= false
-			new_body.ar_fields	= ['section_id'] 
-										
+			new_body.ar_fields	= ['section_id']
+
 			return data_manager.request({
 				body : new_body
 			})
-			.then(function(response){								
+			.then(function(response){
 				const ar_id = response.result
 					? response.result.map(el => el.section_id)
-					: null							
+					: null
 				return(ar_id)
 			})
 		  })()
@@ -1220,7 +1231,7 @@ this.get_all_id_unlimited = function(body) {
 			console.log("********** ar_id:",ar_id);
 	})
 
-	
+
 };//end get_all_id_unlimited
 
 

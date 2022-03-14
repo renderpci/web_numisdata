@@ -385,8 +385,6 @@ var catalog = {
 				}
 			})
 
-
-
 		// creator (autoridad)
 			self.form.item_factory({
 				id				: "creator",
@@ -474,6 +472,50 @@ var catalog = {
 				is_term		: false,
 				parent		: form_row,
 				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
+
+		// iconography_obverse
+			self.form.item_factory({
+				id				: "iconography_obverse",
+				name			: "iconography_obverse",
+				label			: tstring.iconography_obverse || "iconography obverse",
+				q_column		: "ref_type_design_obverse_iconography",
+				value_split		: ' - ',
+				q_splittable	: true,
+				q_selected_eq	: 'LIKE',
+				eq_in			: "%",
+				eq_out			: "%",
+				// q_table		: "ts_period",
+				is_term			: false,
+				parent			: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
+
+		// iconography_reverse
+			self.form.item_factory({
+				id				: "iconography_reverse",
+				name			: "iconography_reverse",
+				label			: tstring.iconography_reverse || "iconography reverse",
+				q_column		: "ref_type_design_reverse_iconography",
+				value_split		: ' - ',
+				q_splittable	: true,
+				q_selected_eq	: 'LIKE',
+				eq_in			: "%",
+				eq_out			: "%",
+				// q_table		: "ts_period",
+				is_term			: false,
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
 						table		: 'catalog'
@@ -658,106 +700,106 @@ var catalog = {
 			})
 
 		// period
-			self.form.item_factory({
-				id				: "period",
-				name			: "period",
-				label			: tstring.period || "period",
-				q_column		: "p_period",
-				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
-				eq_in			: "%",
-				// q_table		: "ts_period",
-				is_term			: true,
-				parent			: form_row,
-				callback		: function(form_item) {
-					self.form.activate_autocomplete({
-						form_item	: form_item,
-						table		: 'catalog'
-					})
-				}
-			})
-
-		// range slider date (range_slider) (!) WORKING HERE
 			// self.form.item_factory({
-			// 	id			: "range_slider",
-			// 	name		: "range_slider",
-			// 	input_type	: 'range_slider',
-			// 	label		: tstring.dating || "Dating",
-			// 	class_name	: 'range_slider',
-			// 	q_column	: "ref_date_in,ref_date_end",
-			// 	// eq		: "LIKE",
-			// 	// eq_in	: "",
-			// 	// eq_out	: "%",
-			// 	// q_table	: "catalog",
-			// 	sql_filter	: null,
-			// 	parent		: form_row,
-			// 	callback	: function(form_item) {
-
-			// 		// const form_item				= this
-			// 		const node_input				= form_item.node_input
-			// 		const range_slider_value_in		= node_input.parentNode.querySelector('#range_slider_in')
-			// 		const range_slider_value_out	= node_input.parentNode.querySelector('#range_slider_out')
-
-			// 		function set_up_slider() {
-
-			// 			// compute range years
-			// 			self.get_catalog_range_years()
-			// 			.then(function(range_data){
-			// 				// console.log("range_data:",range_data);
-
-			// 				// destroy current slider instance if already exists
-			// 					if ($(node_input).slider("instance")) {
-			// 						$(node_input).slider("destroy")
-			// 					}
-
-			// 				// reset filter
-			// 					form_item.sql_filter = null
-
-			// 				// set inputs values from database
-			// 					range_slider_value_in.value	= range_data.min
-			// 					range_slider_value_in.addEventListener("change",function(e){
-			// 						const value = (e.target.value>=range_data.min)
-			// 							? e.target.value
-			// 							: range_data.min
-			// 						$(node_input).slider( "values", 0, value );
-			// 						e.target.value = value
-			// 					})
-			// 					range_slider_value_out.value = range_data.max
-			// 					range_slider_value_out.addEventListener("change",function(e){
-			// 						const value = (e.target.value<=range_data.max)
-			// 							? e.target.value
-			// 							: range_data.max
-			// 						$(node_input).slider( "values", 1, e.target.value );
-			// 						e.target.value = value
-			// 					})
-
-			// 				// active jquery slider
-			// 					$(node_input).slider({
-			// 						range	: true,
-			// 						min		: range_data.min,
-			// 						max		: range_data.max,
-			// 						step	: 1,
-			// 						values	: [ range_data.min, range_data.max ],
-			// 						slide	: function( event, ui ) {
-			// 							// update input values on user drag slide points
-			// 							range_slider_value_in.value	 = ui.values[0]
-			// 							range_slider_value_out.value = ui.values[1]
-			// 							// console.warn("-----> slide range form_item.sql_filter:",form_item.sql_filter);
-			// 						},
-			// 						change: function( event, ui ) {
-			// 							// update form_item sql_filter value on every slider change
-			// 							form_item.sql_filter = "(ref_date_in >= " + ui.values[0] + " AND ref_date_in <= "+ui.values[1]+")"; // AND (ref_date_end <= " + ui.values[1] + " OR ref_date_end IS NULL)
-			// 							form_item.q = ui.value
-			// 							console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
-			// 						}
-			// 					});
-			// 			})
-			// 		}
-
-			// 		// initial_map_loaded event (triggered on initial map data is ready)
-			// 		// event_manager.subscribe('initial_map_loaded', set_up_slider)
-			// 		set_up_slider()
+			// 	id				: "period",
+			// 	name			: "period",
+			// 	label			: tstring.period || "period",
+			// 	q_column		: "p_period",
+			// 	value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+			// 	eq_in			: "%",
+			// 	// q_table		: "ts_period",
+			// 	is_term			: true,
+			// 	parent			: form_row,
+			// 	callback		: function(form_item) {
+			// 		self.form.activate_autocomplete({
+			// 			form_item	: form_item,
+			// 			table		: 'catalog'
+			// 		})
 			// 	}
 			// })
+
+		// range slider date (range_slider) (!) WORKING HERE
+			self.form.item_factory({
+				id			: "range_slider",
+				name		: "range_slider",
+				input_type	: 'range_slider',
+				label		: tstring.period || "Period",
+				class_name	: 'range_slider',
+				q_column	: "ref_date_in,ref_date_end",
+				// eq		: "LIKE",
+				// eq_in	: "",
+				// eq_out	: "%",
+				// q_table	: "catalog",
+				sql_filter	: null,
+				parent		: form_row,
+				callback	: function(form_item) {
+
+					// const form_item				= this
+					const node_input				= form_item.node_input
+					const range_slider_value_in		= node_input.parentNode.querySelector('#range_slider_in')
+					const range_slider_value_out	= node_input.parentNode.querySelector('#range_slider_out')
+
+					function set_up_slider() {
+
+						// compute range years
+						self.get_catalog_range_years()
+						.then(function(range_data){
+							// console.log("range_data:",range_data);
+
+							// destroy current slider instance if already exists
+								if ($(node_input).slider("instance")) {
+									$(node_input).slider("destroy")
+								}
+
+							// reset filter
+								form_item.sql_filter = null
+
+							// set inputs values from database
+								range_slider_value_in.value	= range_data.min
+								range_slider_value_in.addEventListener("change",function(e){
+									const value = (e.target.value>=range_data.min)
+										? e.target.value
+										: range_data.min
+									$(node_input).slider( "values", 0, value );
+									e.target.value = value
+								})
+								range_slider_value_out.value = range_data.max
+								range_slider_value_out.addEventListener("change",function(e){
+									const value = (e.target.value<=range_data.max)
+										? e.target.value
+										: range_data.max
+									$(node_input).slider( "values", 1, e.target.value );
+									e.target.value = value
+								})
+
+							// active jquery slider
+								$(node_input).slider({
+									range	: true,
+									min		: range_data.min,
+									max		: range_data.max,
+									step	: 1,
+									values	: [ range_data.min, range_data.max ],
+									slide	: function( event, ui ) {
+										// update input values on user drag slide points
+										range_slider_value_in.value	 = ui.values[0]
+										range_slider_value_out.value = ui.values[1]
+										// console.warn("-----> slide range form_item.sql_filter:",form_item.sql_filter);
+									},
+									change: function( event, ui ) {
+										// update form_item sql_filter value on every slider change
+										form_item.sql_filter = "(ref_date_in >= " + ui.values[0] + " AND ref_date_in <= "+ui.values[1]+")"; // AND (ref_date_end <= " + ui.values[1] + " OR ref_date_end IS NULL)
+										form_item.q = ui.value
+										console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
+									}
+								});
+						})
+					}
+
+					// initial_map_loaded event (triggered on initial map data is ready)
+					// event_manager.subscribe('initial_map_loaded', set_up_slider)
+					set_up_slider()
+				}
+			})
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -1012,9 +1054,7 @@ var catalog = {
 
 
 		// build filter
-			const filter = self.form.build_filter({
-				form_items : form_items
-			})
+			const filter = self.form.build_filter()
 
 		// empty filter case
 			if (!filter || filter.length<1) {
@@ -1334,62 +1374,68 @@ var catalog = {
 
 			// parse_sql_filter
 				const group = []
-				const parse_sql_filter = function(filter){
+				// old
+					// const parse_sql_filter = function(filter){
 
-					if (filter) {
+					// 	if (filter) {
 
-						const op		= Object.keys(filter)[0]
-						const ar_query	= filter[op]
+					// 		const op		= Object.keys(filter)[0]
+					// 		const ar_query	= filter[op]
 
-						const ar_filter = []
-						const ar_query_length = ar_query.length
-						for (let i = 0; i < ar_query_length; i++) {
+					// 		const ar_filter = []
+					// 		const ar_query_length = ar_query.length
+					// 		for (let i = 0; i < ar_query_length; i++) {
 
-							const item = ar_query[i]
+					// 			const item = ar_query[i]
+					// 				console.log("------------- item:",item);
 
-							const item_op = Object.keys(item)[0]
-							if(item_op==="$and" || item_op==="$or") {
 
-								const current_filter_line = "" + parse_sql_filter(item) + ""
-								ar_filter.push(current_filter_line)
-								continue;
-							}
 
-							// const filter_line = (item.field.indexOf("AS")!==-1)
-							// 	? "" +item.field+""  +" "+ item.op +" "+ item.value
-							// 	: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+					// 			const item_op = Object.keys(item)[0]
+					// 			if(item_op==="$and" || item_op==="$or") {
 
-							let filter_line
-							if (item.op==='MATCH') {
-								filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
-							}else{
-								filter_line = (item.field.indexOf("AS")!==-1)
-									? "" +item.field+""  +" "+ item.op +" "+ item.value
-									: "`"+item.field+"`" +" "+ item.op +" "+ item.value
-							}
+					// 				const current_filter_line = "" + parse_sql_filter(item) + ""
+					// 				ar_filter.push(current_filter_line)
+					// 				continue;
+					// 			}
 
-							ar_filter.push(filter_line)
+					// 			// const filter_line = (item.field.indexOf("AS")!==-1)
+					// 			// 	? "" +item.field+""  +" "+ item.op +" "+ item.value
+					// 			// 	: "`"+item.field+"`" +" "+ item.op +" "+ item.value
 
-							// group
-								if (item.group) {
-									group.push(item.group)
-								}
-						}
+					// 			let filter_line
+					// 			if (item.op==='MATCH') {
+					// 				filter_line = "MATCH (" + item.field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
+					// 			}else{
+					// 				filter_line = (item.field.indexOf("AS")!==-1)
+					// 					? "" +item.field+""  +" "+ item.op +" "+ item.value
+					// 					: "`"+item.field+"`" +" "+ item.op +" "+ item.value
+					// 			}
 
-						const boolean_op = (op === '$and')
-							? 'AND'
-							: (op === '$or')
-								? 'OR'
-								: null
+					// 			ar_filter.push(filter_line)
 
-						return ar_filter.join(" "+boolean_op+" ")
-					}
+					// 			// group
+					// 				if (item.group) {
+					// 					group.push(item.group)
+					// 				}
+					// 		}
 
-					return null
-				}
+					// 		const boolean_op = (op === '$and')
+					// 			? 'AND'
+					// 			: (op === '$or')
+					// 				? 'OR'
+					// 				: null
+
+					// 		return ar_filter.join(" "+boolean_op+" ")
+					// 	}
+
+					// 	return null
+					// }
 
 			// parsed_filters
-				const sql_filter = parse_sql_filter(filter)
+				const sql_filter = self.form.parse_sql_filter(filter)
+				// const sql_filter = filter
+				// console.log("Final sql_filter:", sql_filter);
 
 			// debug
 				if(SHOW_DEBUG===true) {
@@ -1415,7 +1461,7 @@ var catalog = {
 				})
 				.then((response)=>{
 					// console.log("++++++++++++ request_body:",request_body);
-					console.log("--- search_rows API response:",response);
+					// console.log("--- search_rows API response:",response);
 
 					// data parsed
 					const data = page.parse_catalog_data(response.result)

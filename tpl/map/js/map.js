@@ -634,7 +634,7 @@ var map = {
 				}
 			})
 			.then(function(api_response){
-				console.log("--------------- form_submit api_response:",api_response);
+				// console.log("--------------- form_submit api_response:",api_response);
 
 				if (api_response.result) {
 

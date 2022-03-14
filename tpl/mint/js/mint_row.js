@@ -132,8 +132,8 @@ var mint_row = {
 		const number_wrap = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "type_number",
-			inner_html : type_number_value,
-			parent 			: row_type
+			inner_html		: type_number_value,
+			parent			: row_type
 		})
 
 		// common.create_dom_element({

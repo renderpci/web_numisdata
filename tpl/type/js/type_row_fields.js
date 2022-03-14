@@ -32,6 +32,11 @@ var type_row_fields = {
 				self.catalog_hierarchy(item, "catalog_hierarchy")
 			)
 
+		// creators
+			fragment.appendChild(
+				self.creators(item, "creators")
+			)
+
 		// identify_coin_wrapper
 			const identify_coin = common.create_dom_element({
 				element_type	: "div",
@@ -491,6 +496,64 @@ var type_row_fields = {
 		return line
 	},//end catalog_hierarchy
 
+
+
+	creators : function(item, name) {
+		const self = this
+
+		// line
+			const line = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_line " + name
+			})
+
+
+		if (item.creators_data && item.creators_data.length>0) {
+			const data = JSON.parse(item.creators_data)
+
+			const ar_names		= item.creators_names
+				? item.creators_names.split(' | ')
+				: []
+			const ar_surnames	= item.creators_surnames
+				? item.creators_surnames.split(' | ')
+				: []
+			const ar_roles		= item.creators_roles
+				? item.creators_roles.split('|')
+				: []
+
+			const text_creators = []
+			const data_length = data.length
+
+			for (var i = 0; i < data_length; i++) {
+				const name		= ar_names[i]
+					? ar_names[i]
+					: ''
+				const surname	= ar_surnames[i]
+					? ar_surnames[i]
+					: ''
+				const rol		= ar_roles[i]
+					? '('+ ar_roles[i] + ')'
+					: ''
+
+				const creator_name = name + ' ' + surname
+				const creator = creator_name.trim() + ' ' + rol
+
+				text_creators.push(creator.trim())
+			}
+
+
+			common.create_dom_element({
+				element_type 	: "span",
+				class_name 		: "creators",
+				text_content 	: text_creators.join(' | '),
+				parent 			: line
+			})
+
+		}
+
+
+		return line
+	},//end creators
 
 
 	image : function(item, name) {

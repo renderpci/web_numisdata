@@ -230,15 +230,34 @@ var coins_row_fields = {
 		//ID
 			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
 			const full_url	= page_globals.__WEB_BASE_URL__ + uri
-			const uri_text	= "<a class=\"icon_link\" target='_blank' href=\""+uri+"\">  </a> "
+			// const uri_text	= "<a class=\"\" target='_blank' href=\""+uri+"\">  </a> "
 
+
+
+			// const coind_id = common.create_dom_element({
+			// 	element_type	: "span",
+			// 	class_name		: "mint_label",
+			// 	parent 			: data_cont
+			// })
+
+			// // uri_text
+			// const uri_text = common.create_dom_element({
+			// 	element_type 	: "span",
+			// 	class_name		: "icon_link",
+			// 	href 			: uri,
+			// 	parent 			: coind_id,
+			// })
 
 			common.create_dom_element({
-				element_type	: "span",
+				element_type	: "a",
 				inner_html  	: "ID: "+row.section_id + uri_text,
-				class_name		: "mint_label",
+				class_name		: "mint_label icon_link_after",
+				href 			: uri,
+				target 			: "_blank",
 				parent 			: data_cont
 			})
+
+
 
 			// Collection | former | number
 

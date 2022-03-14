@@ -1314,6 +1314,19 @@ a.image_link img {
   background-size: contain;
   background-position: center;
 }
+.icon_link_after {
+  margin-left: 1em;
+}
+.icon_link_after:after {
+  content: " ";
+  width: 0.75em;
+  height: 0.75em;
+  display: inline-block;
+  background-image: url("../../assets/images/icon_link_color.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
 .line_full {
   width: 100%;
   flex-basis: 100%;

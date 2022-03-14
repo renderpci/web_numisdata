@@ -27,9 +27,10 @@
 				<h1>Moneda Ibérica</h1>
 				<div class="inner">
 					<!-- <h1><?php echo $title ?></h1> -->
-					
-					
-					<div id="form_container"></div>				
+
+					<a id="image_wrapper" class="img-wrapper"></a>
+
+					<div id="form_container"></div>
 
 					<!-- body text -->
 					<?php echo $body ?>
@@ -41,8 +42,8 @@
 							<h1>Áreas</h1>
 							<p></p>
 						</header>
-						<section class="tiles">							
-							<?php foreach ($menu_items as $key => $item) { ?>						
+						<section class="tiles">
+							<?php foreach ($menu_items as $key => $item) { ?>
 							<article class="style1+">
 								<span class="image">
 									<img src="<?php echo __WEB_TEMPLATE_WEB__ ?>/images/pic01.jpg" alt="" />
@@ -54,7 +55,7 @@
 									</div>
 								</a>
 							</article>
-							<?php } ?>							
+							<?php } ?>
 						</section>
 						*/ ?>
 				</div>
@@ -70,7 +71,9 @@
 <script>
 dom_ready(function(){
 	main_home.set_up({
-		form_container : document.getElementById('form_container')
+		form_container	: document.getElementById('form_container'),
+		image_wrapper	: document.getElementById('image_wrapper'),
+		ar_images		: <?php echo json_encode($ar_images) ?>
 	})
 })
 </script>

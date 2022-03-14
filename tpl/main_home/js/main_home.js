@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, coins*/
+/*global tstring, page_globals, SHOW_DEBUG, common, form_factory, data_manager */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -14,7 +14,9 @@ var main_home =  {
 	*/
 		form			: null,
 		// DOM items ready from page html
+		image_wrapper	: null,
 		form_container	: null,
+		ar_images		: [],
 
 
 
@@ -28,7 +30,9 @@ var main_home =  {
 		const self = this
 
 		// options
+			self.image_wrapper	= options.image_wrapper
 			self.form_container	= options.form_container
+			self.ar_images		= options.ar_images
 
 
 		// form
@@ -123,7 +127,7 @@ var main_home =  {
 					})
 				}
 			})
-		
+
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
@@ -218,106 +222,122 @@ var main_home =  {
 	* MAIN COIN IMAGE
 	*/
 	main_coin_image : function() {
+
 		const self = this
 
-		const request_body = {
-			dedalo_get		: 'records',
-			db_name			: page_globals.WEB_DB,
-			lang			: page_globals.WEB_CURRENT_LANG_CODE,
-			table			: 'ts_web',
-			ar_fields		: ['*'],
-			sql_filter		: 'section_id=2',
-			limit			: 1,
-			count			: false,
-			offset			: 0
-		}
-		// request
-			return data_manager.request({
-				body : request_body
+		// DES OLD
+			// const request_body = {
+			// 	dedalo_get		: 'records',
+			// 	db_name			: page_globals.WEB_DB,
+			// 	lang			: page_globals.WEB_CURRENT_LANG_CODE,
+			// 	table			: 'ts_web',
+			// 	ar_fields		: ['*'],
+			// 	sql_filter		: 'section_id=2',
+			// 	limit			: 1,
+			// 	count			: false,
+			// 	offset			: 0
+			// }
+			// // request
+			// 	return data_manager.request({
+			// 		body : request_body
+			// 	})
+			// 	.then(function(api_response){
+			// 		const img_arr = JSON.parse(api_response.result[0].imagen)
+			// 		render_coin_image(img_arr)
+			// 	})
+
+		// spinner add
+			const spinner = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "spinner",
+				parent			: self.image_wrapper
 			})
-			.then(function(api_response){
-				const img_arr = JSON.parse(api_response.result[0].imagen)
-				render_coin_image(img_arr)
-			})
 
-		function render_coin_image(img_arr){
-			
-			const rnd_number = Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
-			const coin_filename = "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
-			//const coin_filename = "rsc29_rsc170_"+61+".jpg"
-			const coin_url = "/dedalo/media/image/1.5MB/0/"+coin_filename
-			const sql_filter= "ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"'"
+		// render_coin
+			function render_coin_image(img_arr){
 
-			const request_body = {
-				dedalo_get		: 'records',
-				db_name			: page_globals.WEB_DB,
-				lang			: page_globals.WEB_CURRENT_LANG_CODE,
-				table			: 'types',
-				ar_fields		: ['*'],
-				sql_filter		: sql_filter,
-				limit			: 1,
-				count			: false,
-				offset			: 0
-			}
-		// request
-			return data_manager.request({
-				body : request_body
-			})
-			.then(function(api_response){
-
-				const item = api_response.result[0]
-				let item_text = ""
-				let mint_number = ""
-				let denomination = ""
-				let type_url = page_globals.__WEB_ROOT_WEB__+"/type/"
-
-				if (item) {
-					mint_number = (item.mint_number)
-						? item.mint_number+'/'
-						: ''
-
-					item_text = item.catalogue + " " + mint_number + item.number
-
-					denomination = (item.denomination)
-						? " | "+item.denomination
-						: ""
-
-					type_url = (item.section_id)
-						? type_url+item.section_id
-						: "#"
-
-				} else {
-					type_url = "#"
+				const rnd_number		= Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
+				const coin_filename		= img_arr[rnd_number].url // "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
+				const coin_url			= coin_filename // "/dedalo/media/image/1.5MB/0/"+coin_filename
+				const sql_filter		= "ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"'"
+				const request_body = {
+					dedalo_get		: 'records',
+					db_name			: page_globals.WEB_DB,
+					lang			: page_globals.WEB_CURRENT_LANG_CODE,
+					table			: 'types',
+					// ar_fields	: ['*'],
+					ar_fields		: [
+						'mint_number',
+						'catalogue',
+						'number',
+						'denomination',
+						'section_id'
+					],
+					sql_filter		: sql_filter,
+					limit			: 1,
+					count			: false,
+					offset			: 0
 				}
-
-				const inner_el = document.querySelector('.inner')
-
-				const img_wrapper = common.create_dom_element({
-					element_type	: "a",
-					class_name		: "img-wrapper",
-					href 			: type_url
+				// request
+				return data_manager.request({
+					body : request_body
 				})
+				.then(function(api_response){
 
-				const coin_img = common.create_dom_element ({
-					element_type	: "img",
-					class_name		: "main-coin-image",
-					src				: page_globals.__WEB_MEDIA_BASE_URL__+coin_url,
-					parent 			: img_wrapper
+					const item = api_response.result[0]
+
+					// link and labels values
+						let item_text		= ""
+						let mint_number		= ""
+						let denomination	= ""
+						let type_url		= page_globals.__WEB_ROOT_WEB__+"/type/"
+
+						if (item) {
+							mint_number = (item.mint_number)
+								? item.mint_number+'/'
+								: ''
+
+							item_text = item.catalogue + " " + mint_number + item.number
+
+							denomination = (item.denomination)
+								? " | "+item.denomination
+								: ""
+
+							type_url = (item.section_id)
+								? type_url+item.section_id
+								: "#"
+
+						}else{
+							type_url = "#"
+						}
+
+					// image_wrapper DOM node
+						const image_wrapper = self.image_wrapper
+						// set href
+						image_wrapper.href = type_url
+
+					// coin_img
+						common.create_dom_element ({
+							element_type	: "img",
+							class_name		: "main-coin-image",
+							src				: page_globals.__WEB_MEDIA_BASE_URL__+coin_url,
+							parent			: image_wrapper
+						})
+
+					// coin text
+						common.create_dom_element({
+							element_type	: "p",
+							class_name		: "img-text",
+							text_content	: item_text + denomination,
+							parent			: image_wrapper
+						})
+
+					spinner.remove()
 				})
+			}
+			render_coin_image(self.ar_images)
 
-				common.create_dom_element({
-					element_type	: "p",
-					class_name		: "img-text",
-					text_content 	: item_text+denomination,
-					parent 			: img_wrapper
-				})
-
-				inner_el.prepend(img_wrapper)
-			})
-
-			
-		}
-		
+		return true
 	},//end main_coin_image
 
 

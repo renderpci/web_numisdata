@@ -13,20 +13,6 @@
 		$body = str_replace('../../../media', __WEB_BASE_URL__ . '/dedalo/media', $body);
 
 
-	// $menu_items = [];
-	// foreach ($this->data_combi[1]->result as $key => $item) {
-
-	// 	if ($item->term_id!==WEB_MENU_PARENT) {
-
-	// 		$new_item = new stdClass();
-	// 			$new_item->web_path = $item->web_path;
-	// 			$new_item->term 	= $item->term;
-
-	// 		$menu_items[] = $item;
-	// 	}
-	// }
-	#dump($menu_items, ' menu_items ++ '.to_string());
-
 	// menu tree
 		$menu_tree = $this->get_menu_tree_plain();
 	// main_home_row

@@ -31,6 +31,11 @@
   font-size: 0.8em;
   letter-spacing: 1px;
 }
+.result #row_detail .info_text_block br {
+  display: block;
+  margin: 1.2em 0;
+  content: " ";
+}
 .result #types99 {
   margin-top: 1em;
 }

@@ -76,6 +76,11 @@
 .tree_wrapper .tree_node a.icon_link {
   margin-left: 0.25rem;
 }
+.tree_wrapper .tree_node img.illustration {
+  display: inline-block;
+  vertical-align: bottom;
+  margin-left: 0.333rem;
+}
 .tree_wrapper .tree_node > .nd {
   font-size: 0.8em;
   color: #9d9d9d;

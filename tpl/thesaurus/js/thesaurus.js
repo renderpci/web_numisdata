@@ -491,7 +491,7 @@ var thesaurus =  {
 							// current_state.state = new_state
 							self.tree_state[row.term_id] = new_state
 							// update sessionStorage tree_state var
-							sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+							sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
 						}
 					})
 				}

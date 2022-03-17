@@ -112,9 +112,10 @@ function tree_factory() {
 
 			// 	// console.log(">>>>>> self.tree_state calculated new:", self.tree_state);
 			// }
+			// console.log("self:",self);
 
 		// tree_state (object way)
-			const session_tree_state = sessionStorage.getItem("tree_state")
+			const session_tree_state = sessionStorage.getItem("tree_state_" + WEB_AREA)
 			if (session_tree_state && !self.set_hilite) {
 
 				self.tree_state = JSON.parse(session_tree_state)
@@ -155,7 +156,7 @@ function tree_factory() {
 				}
 
 				// if (self.set_hilite!==true) {
-					sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+					sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
 				// }
 
 				// console.log(">>>>>> self.tree_state calculated new:", self.tree_state);
@@ -506,7 +507,7 @@ function tree_factory() {
 						if (current_state && current_state.state!==new_state) {
 							current_state.state = new_state
 							// update sessionStorage tree_state var
-							sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+							sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
 						}
 					})
 				}

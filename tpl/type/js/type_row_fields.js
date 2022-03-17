@@ -1,4 +1,4 @@
-/*global get_label, page_globals, SHOW_DEBUG, DEDALO_CORE_URL*/
+/*global tstring, page_globals, page, SHOW_DEBUG, psqo_factory, biblio_row_fields, common, dedalo_logged */
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -1520,36 +1520,37 @@ var type_row_fields = {
 	},//end draw_coin
 
 
-	get_image_data : function(options) {
-		const self = this
+	// DES
+		// get_image_data : function(options) {
+		// 	const self = this
 
-		const section_id = options.section_id
+		// 	const section_id = options.section_id
 
-		// vars
-			const sql_filter	= 'section_id=' + parseInt(section_id)
-			const ar_fields		= ['*']
+		// 	// vars
+		// 		const sql_filter	= 'section_id=' + parseInt(section_id)
+		// 		const ar_fields		= ['*']
 
-		return new Promise(function(resolve){
+		// 	return new Promise(function(resolve){
 
-			// request
-			const request_body = {
-				dedalo_get	: 'records',
-				table		: 'images',
-				ar_fields	: ar_fields,
-				lang		: page_globals.WEB_CURRENT_LANG_CODE,
-				sql_filter	: sql_filter,
-			}
-			data_manager.request({
-				body : request_body
-			})
-			.then(function(response){
-				// console.log("++++++++++++ request_body:",request_body);
-				 // console.log("get_image_data:",response);
+		// 		// request
+		// 		const request_body = {
+		// 			dedalo_get	: 'records',
+		// 			table		: 'images',
+		// 			ar_fields	: ar_fields,
+		// 			lang		: page_globals.WEB_CURRENT_LANG_CODE,
+		// 			sql_filter	: sql_filter,
+		// 		}
+		// 		data_manager.request({
+		// 			body : request_body
+		// 		})
+		// 		.then(function(response){
+		// 			// console.log("++++++++++++ request_body:",request_body);
+		// 			 // console.log("get_image_data:",response);
 
-				resolve(response.result)
-			})
-		})
-	},
+		// 			resolve(response.result)
+		// 		})
+		// 	})
+		// },
 
 	draw_bibliographic_reference : function(data) {
 
@@ -1846,12 +1847,12 @@ var type_row_fields = {
 						continue;
 					}
 
-
-					const wrapper = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "find_wrapper findspot",
-						parent			: findspots_container
-					})
+					// findspot wrapper
+						const wrapper = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "find_wrapper findspot",
+							parent			: findspots_container
+						})
 
 					// title
 						common.create_dom_element({
@@ -1859,6 +1860,15 @@ var type_row_fields = {
 							inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
 							parent			: wrapper
 						})
+					// link (falta hacer tpl 'findspots')
+						// common.create_dom_element({
+						// 	element_type	: "a",
+						// 	class_name		: "icon_link_after",
+						// 	inner_html		: " " + (findspot.name || "") + " (" + (findspot.place || "") + ") ",
+						// 	target			: '_blank',
+						// 	href			: '../hoard/' + findspot.section_id,
+						// 	parent			: wrapper
+						// })
 					// items (ejemplares)
 						const items = common.create_dom_element({
 							element_type	: "span",

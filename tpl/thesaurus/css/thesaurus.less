@@ -9,7 +9,7 @@
 
 
 
-	
+
 
 
 // result
@@ -24,7 +24,7 @@
 	#rows_list {
 		min-height: 14em;
 		position: relative;
-		
+
 
 		&.list {
 			height: 50vh;
@@ -32,7 +32,7 @@
 			border: 1px solid green;
 			background-color: #dae8dc;
 		}
-		
+
 		&.map {
 			height: 50vh;
 			min-height: 640px;
@@ -55,11 +55,11 @@
 		padding: 2em;
 		padding-left: 0;
 
-		
+
 		// every level
 		.tree_node {
 			margin-left: 1.65em;
-			
+
 			>span {
 				vertical-align: text-bottom;
 				font-size: 1.15em;
@@ -77,7 +77,7 @@
 				font-weight: 400;
 
 				&.hilite {
-					background-color: @color_gold_logo;					
+					background-color: @color_gold_logo;
 					padding: 0.15em;
 					padding-left: 0.35em;
 					padding-right: 0.35em;
@@ -97,6 +97,10 @@
 				}
 			}
 
+			a.icon_link {
+				margin-left: 0.25rem;
+			}
+
 			>.nd {
 				font-size: 0.8em;
 				color: #9d9d9d;
@@ -107,8 +111,8 @@
 				background-repeat: no-repeat;
 				background-size: 76%;
 				background-position: center center;
-				width: 1em;				
-				cursor: pointer;				
+				width: 1em;
+				cursor: pointer;
 
 				&:active {
 					opacity: 0.5;
@@ -136,7 +140,7 @@
 				}
 			}
 
-			>.arrow {	
+			>.arrow {
 				background-image: url('@{assets_path}/images/arrow-right.svg');
 				background-repeat: no-repeat;
 				background-size: contain;
@@ -172,7 +176,7 @@
 			>.relations_container {
 				// @see page.less
 			}
-			
+
 
 			>.branch {
 				display: block;
@@ -190,7 +194,7 @@
 	}
 
 
-	
+
 	canvas {
 		display: none;
 	}
@@ -211,8 +215,8 @@
 			display: inline-block;
 		}
 	}
-	
-	
+
+
 
 
 	// .form-group.submit {

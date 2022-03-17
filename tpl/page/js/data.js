@@ -1019,12 +1019,12 @@ page.parse_ts_web = function(rows) {
 * Parse rows data to use in tree_factory (thesaurus tables)
 * Table ts_thematic, ts_technique, ts_onomastic, ts_material
 */
-page.parse_tree_data = function(ar_rows, hilite_terms) {
+page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
 
 	const data = []
 
 	// sample
-		// childrens: "[{"type":"dd48","section_id":"2","section_tipo":"technique1","from_component_tipo":"hierarchy49"},{"type":"dd48","section_id":"3","section_tipo":"technique1","from_component_tipo":"hierarchy49"}]"
+		// children: "[{"type":"dd48","section_id":"2","section_tipo":"technique1","from_component_tipo":"hierarchy49"},{"type":"dd48","section_id":"3","section_tipo":"technique1","from_component_tipo":"hierarchy49"}]"
 		// code: "1191026"
 		// dd_relations: null
 		// descriptor: "yes"
@@ -1043,7 +1043,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 		// time: null
 		// tld: "technique1"
 
-	const ar_parse = ['parent','childrens','space','mib_bibliography'] //
+	const ar_parse = ['parent','children','space','mib_bibliography','term_data'] //
 	function decode_field(field) {
 		if (field) {
 			return JSON.parse(field)
@@ -1081,6 +1081,30 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 			// 	}
 			// }
 
+		// children unification format. Object to term_id
+			if (item.children) {
+				const current_ar_children = []
+				const children_length = item.children.length
+				for (let k = 0; k < children_length; k++) {
+					const current_child		= item.children[k]
+					const unfified_format	= typeof current_child==='object'
+						? current_child.section_tipo + '_' +  current_child.section_id
+						: current_child
+
+					// check safe children (existing)
+						const found = ar_rows.find(el => el.term_id===unfified_format)
+						if (!found) {
+							// console.log("Skip unsafe children:", unfified_format);
+							continue;
+						}
+
+					current_ar_children.push(unfified_format)
+				}
+				item.children = current_ar_children
+			}
+
+		// item.term_id = item.term_id+'' // force string always
+
 		data.push(item)
 	}
 
@@ -1089,7 +1113,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 	// update_children_data recursive
 		function update_children_data(data, row){
 
-			if ( ((!row.childrens || row.childrens.length===0) ) // && (!row.mib_bibliography || row.mib_bibliography.length===0)
+			if ( ((!row.children || row.children.length===0) ) // && (!row.mib_bibliography || row.mib_bibliography.length===0)
 				|| row.descriptor!=='yes') {
 
 				if (!row.parent) {
@@ -1099,9 +1123,9 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 
 				const parent_term_id	= row.parent[0];
 				const parent_row		= data.find(item => item.term_id===parent_term_id)
-				if (parent_row && parent_row.childrens && parent_row.childrens.length>0) {
+				if (parent_row && parent_row.children && parent_row.children.length>0) {
 
-					const child_key = parent_row.childrens.findIndex(el => el.section_tipo===row.tld && el.section_id===row.section_id)
+					const child_key = parent_row.children.findIndex(el => el.section_tipo===row.tld && el.section_id===row.section_id)
 					// console.log("child_key:",child_key, row.term_id, row);
 					if (child_key!==-1) {
 
@@ -1120,7 +1144,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 							}
 
 						// remove me as child
-						parent_row.childrens.splice(child_key, 1)
+						parent_row.children.splice(child_key, 1)
 
 						// recursion with parent
 						update_children_data(data, parent_row)
@@ -1140,9 +1164,19 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 
 			const row = data[i]
 
+			// skip root terms
+				// if(root_term) {
+
+				// 	if ( root_term.includes( row.term_id+'' ) ) {
+				// 		// console.log("row.term_id:",row.term_id, root_term);
+				// 		// console.log("/////////////////////////////////////////// row:",row);
+				// 		row.parent = ['hierarchy1_262']
+				// 	}
+				// }
+
 			const parent_term_id = (row.parent && row.parent[0]) ? row.parent[0] : false
 			if (!parent_term_id) {
-				console.warn("Ignored undefined parent_term_id:",row.term_id, row );
+				console.warn("Ignored undefined parent_term_id:", row.term_id, row);
 				// set to remove
 				term_id_to_remove.push(row.term_id)
 				continue
@@ -1188,7 +1222,7 @@ page.parse_tree_data = function(ar_rows, hilite_terms) {
 		}
 		function set_status_as_opened(data_clean, row, recursion) {
 			const parent_term_id	= row.parent[0]
-			const parent_row		= data_clean.find(item => item.term_id===parent_term_id)
+			const parent_row		= data_clean.find(item => item.term_id==parent_term_id)
 			if (parent_row) {
 				parent_row.status = "opened"
 				set_status_as_opened(data_clean, parent_row, true)

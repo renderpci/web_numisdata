@@ -48,7 +48,8 @@ dom_ready(function(){
 		table		: <?php echo json_encode($thesaurus_options->table) ?>,
 		root_term	: <?php echo json_encode($thesaurus_options->root_term) ?>,
 		term_id		: <?php echo json_encode($thesaurus_options->term_id) ?>,
-		rows_list	: document.getElementById('rows_list') 
-	})	
+		ar_fields	: <?php echo json_encode($thesaurus_options->ar_fields) ?>,
+		rows_list	: document.getElementById('rows_list')
+	})
 })
 </script>

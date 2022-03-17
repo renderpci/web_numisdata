@@ -1,4 +1,4 @@
-/*global $, tstring, page_globals, SHOW_DEBUG, page, Promise, common, document, DocumentFragment, tstring, console, form_factory, data_manager, tree_factory */
+/*global $, tstring, page_globals, SHOW_DEBUG, page, Promise, common, WEB_AREA, document, DocumentFragment, tstring, console, form_factory, data_manager, tree_factory */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -6,7 +6,7 @@
 
 
 var thesaurus =  {
-	
+
 
 	/**
 	* VARS
@@ -23,11 +23,11 @@ var thesaurus =  {
 		draw_delay	: 200, // ms
 
 		// form. instance of form_factory
-		form : null, 
+		form : null,
 
 		// list. instance of form_list
 		list : null,
-		
+
 		// map. instance of form_map
 		map : null,
 
@@ -49,8 +49,8 @@ var thesaurus =  {
 	/**
 	* SET_UP
 	*/
-	set_up : function(options) {
-		console.log("-> thesaurus set_up options:", options);
+	set_up : async function(options) {
+		// console.log("-> thesaurus set_up options:", options);
 
 		const self = this
 
@@ -58,7 +58,29 @@ var thesaurus =  {
 			self.table		= options.table; // self table (array)
 			self.root_term	= options.root_term; // self root_term (array)
 			self.term_id	= options.term_id
+			self.ar_fields	= options.ar_fields
 			const rows_list	= options.rows_list
+
+		// root_term catalog
+			// if (WEB_AREA==='mints_hierarchy') {
+
+			// 	self.root_term = await (async function(){
+
+			// 		data_manager.request({
+			// 			dedalo_get	: 'records',
+			// 			db_name		: page_globals.WEB_DB,
+			// 			table		: 'catalog',
+			// 			ar_fields	: ['section_id'],
+			// 			lang		: page_globals.WEB_CURRENT_LANG_CODE,
+			// 			sql_filter	: 'parent_term_id=["hierarchy1_262"]',
+			// 			limit		: 0,
+			// 			count		: false
+			// 		})
+			// 		.then(function(response){
+			// 			console.log("response:",response);
+			// 		})
+			// 	}) ()
+			// }
 
 		// set view_mode default
 			self.view_mode = 'tree'
@@ -76,12 +98,12 @@ var thesaurus =  {
 			.then(function(){
 				rows_list.appendChild(spinner)
 			})
-	
+
 		// tree. load tree data and render tree nodes
 			self.load_tree_data({})
 			.then(function(response){
-				console.log("/// load_tree_data response:",response);
-				
+				// console.log("/// load_tree_data response:",response);
+
 				const render = self.render_data({
 					target		: rows_list,
 					ar_rows		: response.result,
@@ -106,48 +128,50 @@ var thesaurus =  {
 
 		const self = this
 
-		const default_fields = [
-			'section_id',
-			'term_id',
-			'term',
-			'childrens',
-			'code',
-			'dd_relations',
-			'descriptor',
-			'illustration',
-			'indexation',
-			'model',
-			'norder',
-			'parent',
-			'related',
-			'scope_note',
-			'space',
-			'time',
-			'tld',
-			'mib_bibliography'
-			// 'relations'
-		]
+		// const default_fields = [
+			// 	'section_id',
+			// 	'term_id',
+			// 	'term',
+			// 	'childrens',
+			// 	'code',
+			// 	'dd_relations',
+			// 	'descriptor',
+			// 	'illustration',
+			// 	'indexation',
+			// 	'model',
+			// 	'norder',
+			// 	'parent',
+			// 	'related',
+			// 	'scope_note',
+			// 	'space',
+			// 	'time',
+			// 	'tld',
+			// 	'mib_bibliography'
+			// 	// 'relations'
+			// ]
+
+		// options
+			const filter	= options.filter || null
+			const ar_fields	= options.ar_fields || self.ar_fields || ["*"]
+			const order		= options.order || "norder ASC"
+			const table		= options.table || self.table.join(',')
 
 		// sort vars
-			const filter	= options.filter || null
-			const ar_fields	= options.ar_fields || default_fields || ["*"]
-			const order		= options.order || "norder ASC"
-			const lang		= page_globals.WEB_CURRENT_LANG_CODE
-			const table		= options.table || self.table.join(',')
-		
+			const lang = page_globals.WEB_CURRENT_LANG_CODE
+
 		// parse_sql_filter
 			const group = []
 			const parse_sql_filter = function(filter){
 
 				if (filter) {
-					
+
 					const op		= Object.keys(filter)[0]
 					const ar_query	= filter[op]
-					
+
 					const ar_filter = []
 					const ar_query_length = ar_query.length
 					for (let i = 0; i < ar_query_length; i++) {
-						
+
 						const item = ar_query[i]
 
 						const item_op = Object.keys(item)[0]
@@ -178,6 +202,11 @@ var thesaurus =  {
 		// parsed_filters
 			const sql_filter = parse_sql_filter(filter)
 
+		// filter adds
+			const filter_end = WEB_AREA==='mints_hierarchy'
+				? (sql_filter ? " AND (term_table='mints')" : "(term_table='mints')")
+				: sql_filter
+
 		// debug
 			if(SHOW_DEBUG===true) {
 				// console.log("--- load_tree_data parsed sql_filter:")
@@ -185,19 +214,27 @@ var thesaurus =  {
 			}
 
 		// request
-			const js_promise = data_manager.request({
-				body : {
-					dedalo_get	: 'records',
-					db_name		: page_globals.WEB_DB,
-					table		: table,
-					ar_fields	: ar_fields,
-					lang		: lang,
-					sql_filter	: sql_filter,
-					limit		: 0,
-					// group	: (group.length>0) ? group.join(",") : null,
-					count		: false,
-					order		: order
+			const body = {
+				dedalo_get	: 'records',
+				db_name		: page_globals.WEB_DB,
+				table		: table,
+				ar_fields	: ar_fields,
+				lang		: lang,
+				sql_filter	: filter_end,
+				limit		: 0,
+				// group	: (group.length>0) ? group.join(",") : null,
+				count		: false,
+				order		: order
+			}
+			if (WEB_AREA==='mints_hierarchy') {
+				body.process_result	= {
+					fn				: 'process_result::add_parents_or_children',
+					columns_name	: ['parents']
 				}
+			}
+			console.log("body:",body);
+			const js_promise = data_manager.request({
+				body : body
 			})
 			// js_promise.then((response)=>{
 			// 	console.log("--- load_tree_data API response:",response);
@@ -205,7 +242,7 @@ var thesaurus =  {
 			// 		sessionStorage.setItem('tree_data', JSON.stringify(response.result));
 			// 	}
 			// })
-		
+
 
 		return js_promise
 	},//end load_tree_data
@@ -218,7 +255,7 @@ var thesaurus =  {
 	* @return bool
 	*/
 	render_data : function(options) {
-		
+
 		const self = this
 
 		return new Promise(function(resolve){
@@ -237,22 +274,26 @@ var thesaurus =  {
 			const root_term	= self.root_term
 
 			switch(view_mode) {
-				
+
 				default:
 				case 'tree':
 					const hilite_terms = self.term_id
 						? [self.term_id]
 						: null
-					self.data_clean	= page.parse_tree_data(ar_rows, hilite_terms) // prepares data to use in list
-						console.log("self.data_clean:",self.data_clean);
-					// temporal 
+					self.data_clean	= page.parse_tree_data(
+						ar_rows,
+						hilite_terms,
+						self.root_term
+					) // prepares data to use in list
+					console.log("self.data_clean:",self.data_clean);
+					// temporal
 						// console.log("self.data_clean:",self.data_clean);
 						// for (let i = 0; i < self.clean_data.length; i++) {
 						// 	const relations = self.clean_data[i]
 						// 	if (relations && relations.length>0) {
 						// 		const ar = []
 						// 		for (let h = 0; h < relations.length; h++) {
-									
+
 						// 			const id = relations[h].section_id + '_' + relations[h].section_tipo
 						// 			if (ar.indexOf(id)!==-1) {
 						// 				console.warn("Error. Duplicated itme:", id, self.clean_data[i]);
@@ -267,7 +308,8 @@ var thesaurus =  {
 						target		: target,
 						data		: self.data_clean,
 						root_term	: root_term,
-						set_hilite	: set_hilite
+						set_hilite	: set_hilite,
+						render_node : self.build_tree_node
 					})
 					self.tree.render()
 					.then(function(){
@@ -281,8 +323,324 @@ var thesaurus =  {
 
 
 	/**
+	* BUILD_TREE_NODE
+	* @return DOM node tree_node
+	*/
+	build_tree_node : function(row) {
+
+		const self = this // is 'tree_factory' instance
+		// console.log("row:",row);
+		// console.log("self:",self);
+
+		// node wrapper
+			const tree_node = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "tree_node",
+				id				: row.term_id
+			})
+
+			tree_node.term_id = row.term_id
+			tree_node.parent  = row.parent
+
+
+		// term
+			const term_value	= row.term //+ " <small>[" + row.term_id + "]</small>"
+			const to_hilite		= (row.hilite && row.hilite===true)
+			const term_css		= to_hilite===true ? " hilite" : ""
+			const term = common.create_dom_element({
+				element_type	: "span",
+				class_name		: "term" + term_css,
+				inner_html		: term_value,
+				parent			: tree_node
+			})
+
+			if (WEB_AREA==='mints_hierarchy') {
+				// link to mint
+				if (row.term_table && row.term_table==='mints' && row.term_data && row.term_data[0]) {
+
+					const link = common.create_dom_element({
+						element_type	: "a",
+						class_name		: "icon_link",
+						parent			: tree_node
+					})
+					link.addEventListener("click", function(){
+
+						const url = 'mint/' + row.term_data[0]
+						// window.location.href = url
+
+						const windowFeatures = "popup";
+						window.open(url, "mint", windowFeatures);
+					})
+				}
+			}
+			// self.scrolled = false
+			// if (to_hilite && self.scrolled===false) {
+			// 	// console.log("to_hilite:",row.term, row.term_id);
+			// 	common.when_in_dom(tree_node, function(){
+			// 		tree_node.scrollIntoView()
+			// 	})
+			// 	self.scrolled = true
+			// }
+
+		// nd
+			if (row.nd && row.nd.length>0) {
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "nd",
+					inner_html		: "[" + row.nd.join(", ") + "]",
+					parent			: tree_node
+				})
+			}
+
+		// illustration
+			if (row.illustration && row.illustration.length>0) {
+				common.create_dom_element({
+					element_type	: "img",
+					class_name		: "illustration",
+					src				: page_globals.__WEB_BASE_URL__ + row.illustration,
+					parent			: tree_node
+				})
+			}
+
+		// buttons
+			// button scope_note
+				if (row.scope_note && row.scope_note.length>0) {
+					const btn_scope_note = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "btn_scope_note",
+						parent			: tree_node
+					})
+					btn_scope_note.addEventListener("mousedown", function(){
+						if (this.classList.contains("open")) {
+							scope_note.classList.add("hide")
+							this.classList.remove("open")
+						}else{
+							scope_note.classList.remove("hide")
+							this.classList.add("open")
+						}
+					})
+				}
+
+			// button relations
+				let btn_relations
+				if (row.relations && row.relations.length>0) {
+					btn_relations = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "btn_relations",
+						// inner_html	: "Relations",
+						parent			: tree_node
+					})
+					btn_relations.addEventListener("mousedown", function(){
+						if (this.classList.contains("open")) {
+							relations_container.classList.add("hide")
+							this.classList.remove("open")
+						}else{
+							relations_container.classList.remove("hide")
+							this.classList.add("open")
+						}
+					})
+				}
+
+			// button indexation
+				let btn_indexation
+				if (row.indexation && row.indexation.length>0) {
+					btn_indexation = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "btn_indexation",
+						// inner_html	: "indexation",
+						parent			: tree_node
+					})
+					btn_indexation.addEventListener("mousedown", function(){
+						if (this.classList.contains("open")) {
+							indexation_container.classList.add("hide")
+							this.classList.remove("open")
+						}else{
+							indexation_container.classList.remove("hide")
+							this.classList.add("open")
+						}
+					})
+				}
+
+			// button children
+				if (row.children && row.children.length>0) {
+
+					const open_style = row.state==="opened" ? " open" : ""
+					const arrow = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "arrow" + open_style,
+						parent			: tree_node
+					})
+					arrow.addEventListener("mousedown", function(){
+						let new_state
+						if (this.classList.contains("open")) {
+							branch.classList.add("hide")
+							this.classList.remove("open")
+							// new_state
+							new_state = "closed"
+						}else{
+							branch.classList.remove("hide")
+							this.classList.add("open")
+							// new_state
+							new_state = "opened"
+						}
+
+						// state update
+						// const current_state = self.tree_state.find(item => item.id===row.term_id)
+						const current_state = self.tree_state[row.term_id]
+						if (current_state && current_state.state!==new_state) {
+							// current_state.state = new_state
+							self.tree_state[row.term_id] = new_state
+							// update sessionStorage tree_state var
+							sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+						}
+					})
+				}
+
+		// scope note wrapper
+			let scope_note
+			if (row.scope_note && row.scope_note.length>0) {
+
+				const hide_style = row.state==="opened" ? "" : " hide"
+
+				// scope_note
+					const scope_note_text = row.scope_note.replace(/^\s*<br\s*\/?>|<br\s*\/?>\s*$/g,'');
+					scope_note = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "scope_note hide",
+						inner_html		: scope_note_text,
+						parent			: tree_node
+					})
+			}
+
+		// relations wrapper
+			let relations_container
+			if (row.relations && row.relations.length>0) {
+
+				// relations_container
+					relations_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "relations_container hide",
+						parent			: tree_node
+					})
+
+					// Callback function to execute when mutations are observed
+					const callback = function(mutationsList, observer) {
+						// Use traditional 'for loops' for IE 11
+						for(let mutation of mutationsList) {
+							if (mutation.type==='attributes' && mutation.attributeName==='class') {
+									// console.log('The ' + mutation.attributeName + ' attribute was modified.');
+									// console.log("mutationsList:",mutationsList);
+									// console.log("mutationsList.target:",mutationsList[0].target);
+								if (!mutationsList[0].target.classList.contains("hide")) {
+
+									// draw nodes
+									self.render_relation_nodes(row, relations_container, self, false)
+
+									// Stop observing
+									observer.disconnect();
+								}
+							}
+						}
+					};
+
+					// Create an observer instance linked to the callback function
+					const observer = new MutationObserver(callback);
+
+					// Start observing the target node for configured mutations
+					observer.observe(relations_container, { attributes: true, childList: false, subtree: false });
+
+					// console.log("self.hilite_relations_limit:",self.hilite_relations_limit, self.hilite_relations_showed);
+
+					if (row.hilite===true && self.hilite_relations_showed<self.hilite_relations_limit) {
+						// relations_container.classList.remove("hide")
+						// btn_relations.click()
+						relations_container.classList.remove("hide")
+						btn_relations.classList.add("open")
+
+						// increment hilite_relations_showed until reach self.hilite_relations_limit
+						self.hilite_relations_showed++
+					}
+			}
+
+		// indexation wrapper
+			let indexation_container
+			if (row.indexation && row.indexation.length>0) {
+
+				// indexation_container
+					indexation_container = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "indexation_container hide",
+						parent			: tree_node
+					})
+
+					// Callback function to execute when mutations are observed
+					const callback = function(mutationsList, observer) {
+						// Use traditional 'for loops' for IE 11
+						for(let mutation of mutationsList) {
+							if (mutation.type==='attributes' && mutation.attributeName==='class') {
+									// console.log('The ' + mutation.attributeName + ' attribute was modified.');
+									// console.log("mutationsList:",mutationsList);
+									// console.log("mutationsList.target:",mutationsList[0].target);
+								if (!mutationsList[0].target.classList.contains("hide")) {
+
+									// draw nodes
+									self.render_indexation_nodes(row, indexation_container, self)
+
+									// Stop observing
+									observer.disconnect();
+								}
+							}
+						}
+					};
+
+					// Create an observer instance linked to the callback function
+					const observer = new MutationObserver(callback);
+
+					// Start observing the target node for configured mutations
+					observer.observe(indexation_container, { attributes: true, childList: false, subtree: false });
+
+					// console.log("self.hilite_indexation_limit:",self.hilite_indexation_limit, self.hilite_indexation_showed);
+
+					if (row.hilite===true && self.hilite_indexation_showed<self.hilite_indexation_limit) {
+						// indexation_container.classList.remove("hide")
+						// btn_indexation.click()
+						indexation_container.classList.remove("hide")
+						btn_indexation.classList.add("open")
+
+						// increment hilite_indexation_showed until reach self.hilite_indexation_limit
+						self.hilite_indexation_showed++
+					}
+			}
+
+		// children wrapper
+			let branch
+			if (row.children && row.children.length>0) {
+
+				const hide_style = row.state==="opened" ? "" : " hide"
+
+				// branch
+					branch = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "branch" + hide_style,
+						parent			: tree_node
+					})
+
+				tree_node.branch = branch
+
+			}else{
+
+				tree_node.branch = null
+			}
+
+
+		return tree_node
+	},//end build_tree_node
+
+
+
+	/**
 	* RENDER_FORM
-	* Create logic and view of search 
+	* Create logic and view of search
 	*/
 	render_form : function(options) {
 
@@ -291,11 +649,11 @@ var thesaurus =  {
 		return new Promise(function(resolve){
 
 			const fragment = new DocumentFragment()
-			
+
 			// form_factory instance
 				self.form = self.form || new form_factory()
-				
-			// inputs		
+
+			// inputs
 
 				// global_search
 					const global_search_container = common.create_dom_element({
@@ -318,7 +676,7 @@ var thesaurus =  {
 							callback	: function(form_item) {
 								const node_input = form_item.node_input
 								self.activate_autocomplete(node_input) // node_input is the form_item.node_input
-							}					
+							}
 						})
 					// button hide toggle advanced
 						// const button_show_advanced = common.create_dom_element({
@@ -331,8 +689,8 @@ var thesaurus =  {
 						// button_show_advanced.addEventListener("click", function(){
 						// 	advanced_search_container.classList.toggle("hide")
 						// })
-				
-			
+
+
 			// submit button
 				const submit_group = common.create_dom_element({
 					element_type	: "div",
@@ -352,7 +710,7 @@ var thesaurus =  {
 					self.form_submit()
 				})
 
-			
+
 			// form_node
 				self.form.node = common.create_dom_element({
 					element_type	: "form",
@@ -361,7 +719,7 @@ var thesaurus =  {
 				})
 				self.form.node.appendChild(fragment)
 
-			
+
 			// add node
 				options.container.appendChild(self.form.node)
 
@@ -377,49 +735,49 @@ var thesaurus =  {
 	activate_autocomplete : function(element) {
 
 		const self = this
-		
+
 		// (!) define current_form_item in this scope to allow set and access from different places
 		let current_form_item
-		
+
 		const cache = {}
 		$(element).autocomplete({
 			delay 	 : 150,
 			minLength: 1,
 			source 	 : function( request, response ) {
-				
+
 				const term = request.term
-				
+
 				// (!) fix selected form_item (needed to access from select)
 				current_form_item	= self.form.form_items[element.id]
 				const q_column		= current_form_item.q_column // Like 'term'
-					
+
 				// search
 					self.search_rows({
 						q			: term,
 						q_column	: q_column,
 						limit		: 25
-					})			
+					})
 					.then((api_response) => {
 
-						// return results in standard format (label, value)	
+						// return results in standard format (label, value)
 
 						const ar_result = []
 						const len  		= api_response.result.length
 						for (let i = 0; i < len; i++) {
-							
+
 							const item = api_response.result[i]
 
 							ar_result.push({
 								label : item.label,
 								value : item.value
 							})
-							
+
 							// const current_ar_value = (item.name.indexOf("[")===0)
 							// 	? JSON.parse(item.name)
 							// 	: [item.name]
-															
+
 							// for (let j = 0; j < current_ar_value.length; j++) {
-							
+
 							// 	const item_name = current_ar_value[j]
 							// 	// const item_name = item.name.replace(/[\["|"\]]/g, '')
 
@@ -437,7 +795,7 @@ var thesaurus =  {
 							// if (filter[op].length===1) {
 								// cache[ term ] = ar_result
 							// }
-						
+
 						// debug
 							if(SHOW_DEBUG===true) {
 								console.log("--- autocomplete api_response:",api_response);
@@ -450,11 +808,11 @@ var thesaurus =  {
 			// When a option is selected in list
 			select: function( event, ui ) {
 				// prevent set selected value to autocomplete input
-				event.preventDefault();		
+				event.preventDefault();
 
 				// add_selected_value . Create input and button nodes and add it to current_form_item
-				self.form.add_selected_value(current_form_item, ui.item.label, ui.item.value)		
-				
+				self.form.add_selected_value(current_form_item, ui.item.label, ui.item.value)
+
 				// reset input value
 				this.value = ''
 
@@ -509,8 +867,8 @@ var thesaurus =  {
 		const self = this
 
 		return new Promise(function(resolve){
-			const t0 = performance.now()			
-	
+			const t0 = performance.now()
+
 			const q				= options.q
 			const q_column		= options.q_column
 			const q_selected	= options.q_selected || null
@@ -526,7 +884,7 @@ var thesaurus =  {
 					nd			: item.nd
 				}
 				return element
-			})			
+			})
 
 			// find_text
 				let counter = 1
@@ -543,7 +901,7 @@ var thesaurus =  {
 
 							// remove accents from text
 							const text_normalized = row[q_column].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-							
+
 							const regex	= RegExp(q, 'i')
 							find = regex.test(text_normalized)
 
@@ -552,7 +910,7 @@ var thesaurus =  {
 									for (let k = 0; k < row.nd.length; k++) {
 										// console.log("row.nd[k]:",row.nd[k]);
 										const text_normalized = row.nd[k].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-							
+
 										find = regex.test(text_normalized)
 
 										if (find===true) {
@@ -561,7 +919,7 @@ var thesaurus =  {
 									}
 								}
 						}
-					
+
 					// q_selected try. Check user selections from autocomplete
 						if (!find && q_selected) {
 							for (let i = 0; i < q_selected.length; i++) {
@@ -590,7 +948,7 @@ var thesaurus =  {
 						const parent_row		= self.data_clean.find(el => el.term_id===parent_term_id)
 						const parent_label		= parent_row ? (" (" + parent_row.term +")") : ''
 						const nd_text			= item.nd ? (' ['+item.nd.join(', ')+']') : ''
-					
+
 					const label = item.term + nd_text + parent_label
 
 					const element = {
@@ -619,7 +977,7 @@ var thesaurus =  {
 	* Form submit launch search
 	*/
 	form_submit : function() {
-		
+
 		const self = this
 
 		// filter. Is built looking at form input values
@@ -627,8 +985,8 @@ var thesaurus =  {
 			const form_items	= self.form.form_items
 			const form_item		= form_items.term
 				console.log("form_items:",form_items);
-				console.log("form_item:",form_item);			
-			
+				console.log("form_item:",form_item);
+
 		// search rows exec against API
 			const js_promise = self.search_rows({
 				q			: form_item.q,
@@ -676,8 +1034,8 @@ var thesaurus =  {
 							}
 							return row
 						})
-						
-						// render_data						
+
+						// render_data
 							self.render_data({
 								target		: rows_list_node,
 								ar_rows		: ar_rows,
@@ -686,8 +1044,8 @@ var thesaurus =  {
 							.then(function(){
 								spinner.remove()
 							})
-					})					
-			})		
+					})
+			})
 
 
 		return js_promise

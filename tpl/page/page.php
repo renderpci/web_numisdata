@@ -87,7 +87,7 @@
 				$html  = '';
 				$html .= PHP_EOL . '<li role="'.$menu_element->web_path.'">';
 				$web_path = $menu_element->web_path==='main_home' ? '' : $menu_element->web_path;
-				if ($menu_element->active==='no') {
+				if (isset($menu_element->active) && $menu_element->active==='no') {
 					$html .= '<span class="unactive">'.$menu_element->term.'</span>';
 				}else{
 					$html .= '<a href="'.__WEB_ROOT_WEB__.'/'.$web_path.'">'.$menu_element->term.'</a>';

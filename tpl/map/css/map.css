@@ -31,6 +31,10 @@
   padding-top: 0.5em;
   display: block;
 }
+.mint_line {
+  margin-bottom: -1em;
+  margin-top: 1em;
+}
 .rows_list {
   padding-top: 0;
   min-height: 50vh;

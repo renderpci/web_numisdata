@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, map_factory, data_manager, event_manager, form_factory */
+/*global tstring, page_globals, SHOW_DEBUG, common, page, map_factory, data_manager, event_manager, form_factory, catalog_row_fields */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -887,7 +887,7 @@ var map = {
 		const global_data_item	= options.global_data_item
 		const types_rows		= options.types_rows
 		const coins_rows		= options.coins_rows
-		const info				= options.info
+		// const info			= options.info
 
 		const fragment = new DocumentFragment()
 
@@ -917,138 +917,163 @@ var map = {
 				parent			: title_line
 			})
 
-		common.create_dom_element({
-			element_type	: "div",
-			class_name		: "golden-separator",
-			parent			: fragment
-		})
-
-		// types list
-		if (types_rows && types_rows.length>0) {
-
-			const types_wrap = common.create_dom_element({
+		// separator horinzontal
+			common.create_dom_element({
 				element_type	: "div",
-				class_name		: "types_wrap",
+				class_name		: "golden-separator",
 				parent			: fragment
 			})
 
-			function cross_coins(coins_rows, coin_references) {
-				// console.log("coins_rows:",coins_rows);
-				// console.log("coin_references:",coin_references);
+		// types list
+			if (types_rows && types_rows.length>0) {
 
-				const ar_found_coin_row = []
-				for (let i = coin_references.length - 1; i >= 0; i--) {
-					const coin_section_id = coin_references[i]
-					const found_coin_row = coins_rows.find(function(el){
-						return el.section_id==coin_section_id
-					})
-					if (found_coin_row) {
-						ar_found_coin_row.push(found_coin_row)
+				const types_wrap = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "types_wrap",
+					parent			: fragment
+				})
+
+				function cross_coins(coins_rows, coin_references) {
+					// console.log("coins_rows:",coins_rows);
+					// console.log("coin_references:",coin_references);
+
+					const ar_found_coin_row = []
+					for (let i = coin_references.length - 1; i >= 0; i--) {
+						const coin_section_id = coin_references[i]
+						const found_coin_row = coins_rows.find(function(el){
+							return el.section_id==coin_section_id
+						})
+						if (found_coin_row) {
+							ar_found_coin_row.push(found_coin_row)
+						}
 					}
+					return ar_found_coin_row
 				}
-				return ar_found_coin_row
+
+				let last_mint_label = null
+				// sort types_rows by mint name to allow group by
+				types_rows.sort((a, b) => (a.p_mint > b.p_mint) ? 1 : -1)
+
+				// catalog_row_fields
+					for (let i = 0; i < types_rows.length; i++) {
+
+						const type_row = types_rows[i]
+
+						// cross_coins
+							const ar_found_coin_row = type_row.coin_references
+								? cross_coins(coins_rows, type_row.coin_references)
+								: []
+							// console.log("ar_found_coin_row:",ar_found_coin_row, ar_found_coin_row.length);
+							// console.log("type_row:",type_row);
+
+						// mint grouper (only non already mints)
+							if (item_type!=='mint') {
+
+								const mint_label = type_row.p_mint && Array.isArray(type_row.p_mint)
+									? type_row.p_mint.join(' - ')
+									: null
+								if (mint_label && mint_label!==last_mint_label) {
+									// mint_line
+									common.create_dom_element({
+										element_type	: "div",
+										class_name		: "mint_line line-tittle golden-color",
+										inner_html		: mint_label,
+										parent			: types_wrap
+									})
+
+									last_mint_label = mint_label
+								}
+							}
+
+						// type node
+							const type_row_node = catalog_row_fields.draw_item(type_row)
+							types_wrap.appendChild(type_row_node)
+
+						// debug info
+							// if(SHOW_DEBUG===true) {
+							// 	let t = ''
+							// 	t +='-global_data_item types_list ('+info.types_list.length+'): ' + JSON.stringify(info.types_list, null, 2)
+							// 	t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)
+							// 	t +='<br>-Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
+							// 	t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) )
+							// 	t +='<br>-Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
+
+							// 	const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
+							// 	common.create_dom_element({
+							// 		element_type	: "div",
+							// 		class_name		: "debug_info " + debug_show,
+							// 		inner_html		: t,
+							// 		parent			: type_row_node
+							// 	})
+							// }
+
+						// coins nodes
+							const ar_found_coin_row_length = ar_found_coin_row.length
+							if (ar_found_coin_row_length>0) {
+
+								const coins_wrap = common.create_dom_element({
+									element_type	: "div",
+									class_name		: "coins_wrap",
+									parent			: types_wrap
+								})
+
+								// button show coins
+									const button_show_coins = common.create_dom_element({
+										element_type	: "div",
+										class_name		: "button_show_coins",
+										inner_html		: (tstring.coins || "Coins") + " (" + ar_found_coin_row_length +")",
+										parent			: coins_wrap
+									})
+									button_show_coins.addEventListener("click", function(){
+										coins_list.classList.toggle("hide")
+										this.classList.toggle("opened")
+									})
+
+								// coins list
+									const coins_list = common.create_dom_element({
+										element_type	: "div",
+										class_name		: "coins_list gallery",
+										parent			: coins_wrap
+									})
+
+								// row nodes
+									for (let k = 0; k < ar_found_coin_row.length; k++) {
+										const coin_row	= ar_found_coin_row[k];
+										const coin_node	= type_row_fields.draw_coin(coin_row)
+										coins_list.appendChild(coin_node)
+									}
+							}
+					}
+
+				// catalog draw_rows
+					// catalog.draw_rows({
+					// 	target	: types_wrap,
+					// 	ar_rows	: types_rows
+					// })
+
+				// mint draw_types
+					// mint.draw_types({
+					// 	target	: types_wrap,
+					// 	ar_rows	: {
+					// 		children : types_rows
+					// 	}
+					// })
+			}else{
+
+				// debug info
+					if(SHOW_DEBUG===true) {
+						let t = 'found types '+ JSON.stringify(types_rows, null, 2)
+						t +='<br>found coins '+ JSON.stringify(coins_rows.map(el=>el.section_id), null, 2)
+						t += '<br>map_global <pre>' + JSON.stringify(global_data_item, null, 3) + '</pre>'
+						common.create_dom_element({
+							element_type	: "div",
+							class_name		: "debug_info ",
+							inner_html		: t,
+							parent			: fragment
+						})
+					}
 			}
 
-			// catalog_row_fields
-				for (let i = 0; i < types_rows.length; i++) {
-
-					const type_row = types_rows[i]
-
-					// cross_coins
-						const ar_found_coin_row = type_row.coin_references
-							? cross_coins(coins_rows, type_row.coin_references)
-							: []
-						// console.log("ar_found_coin_row:",ar_found_coin_row, ar_found_coin_row.length);
-						// console.log("type_row:",type_row);
-
-					// type node
-						const type_row_node = catalog_row_fields.draw_item(type_row)
-						types_wrap.appendChild(type_row_node)
-
-					// debug info
-						// if(SHOW_DEBUG===true) {
-						// 	let t = ''
-						// 	t +='-global_data_item types_list ('+info.types_list.length+'): ' + JSON.stringify(info.types_list, null, 2)
-						// 	t +='<br>-global_data_item coins_list ('+info.coins_list.length+'): ' + JSON.stringify(info.coins_list, null, 2)
-						// 	t +='<br>-Catalog '+type_row.section_id+' Type '+type_row.term_data+' coins: '+JSON.stringify(type_row.coin_references)
-						// 	t +='<br>-'+tstring[item_type]+' '+global_data_item.ref_section_id+' coins_rows: '+JSON.stringify( coins_rows.map(function(el){return el.section_id}) )
-						// 	t +='<br>-Cross coins ('+ar_found_coin_row.length+'): '+JSON.stringify( ar_found_coin_row.map(function(el){return el.section_id}) )
-
-						// 	const debug_show = ar_found_coin_row.length>0 ? 'hide' : ''
-						// 	common.create_dom_element({
-						// 		element_type	: "div",
-						// 		class_name		: "debug_info " + debug_show,
-						// 		inner_html		: t,
-						// 		parent			: type_row_node
-						// 	})
-						// }
-
-					// coins nodes
-						const ar_found_coin_row_length = ar_found_coin_row.length
-						if (ar_found_coin_row_length>0) {
-
-							const coins_wrap = common.create_dom_element({
-								element_type	: "div",
-								class_name		: "coins_wrap",
-								parent			: types_wrap
-							})
-
-							// button show coins
-								const button_show_coins = common.create_dom_element({
-									element_type	: "div",
-									class_name		: "button_show_coins",
-									inner_html		: (tstring.coins || "Coins") + " (" + ar_found_coin_row_length +")",
-									parent			: coins_wrap
-								})
-								button_show_coins.addEventListener("click", function(){
-									coins_list.classList.toggle("hide")
-									this.classList.toggle("opened")
-								})
-
-							// coins list
-								const coins_list = common.create_dom_element({
-									element_type	: "div",
-									class_name		: "coins_list gallery",
-									parent			: coins_wrap
-								})
-
-							// row nodes
-								for (let k = 0; k < ar_found_coin_row.length; k++) {
-									const coin_row	= ar_found_coin_row[k];
-									const coin_node	= type_row_fields.draw_coin(coin_row)
-									coins_list.appendChild(coin_node)
-								}
-						}
-				}
-
-			// catalog draw_rows
-				// catalog.draw_rows({
-				// 	target	: types_wrap,
-				// 	ar_rows	: types_rows
-				// })
-
-			// mint draw_types
-				// mint.draw_types({
-				// 	target	: types_wrap,
-				// 	ar_rows	: {
-				// 		children : types_rows
-				// 	}
-				// })
-		}else{
-
-			// debug info
-				if(SHOW_DEBUG===true) {
-					let t = 'found types '+ JSON.stringify(types_rows, null, 2)
-					t +='<br>found coins '+ JSON.stringify(coins_rows.map(el=>el.section_id), null, 2)
-					t += '<br>map_global <pre>' + JSON.stringify(global_data_item, null, 3) + '</pre>'
-					const info = common.create_dom_element({
-						element_type	: "div",
-						class_name		: "debug_info ",
-						inner_html		: t,
-						parent			: fragment
-					})
-				}
-		}
 
 		return fragment
 	},//end render_types_list

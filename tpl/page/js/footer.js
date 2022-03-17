@@ -156,10 +156,11 @@ var footer =  {
 						}
 
 					// image
+						const image_src = image.replace('.jpg','.png')
 						common.create_dom_element({
 							element_type	: 'img',
 							class_name		: 'footer_image_item',
-							src				: image,
+							src				: image_src,
 							title			: label,
 							parent			: link
 						})

@@ -31,7 +31,7 @@ var page = {
 					options	: {
 						maxZoom: 11
 					},
-					default	: true			
+					default	: true
 				},
 				{
 					name	: "OSM",
@@ -71,7 +71,16 @@ var page = {
 					shadowSize		: [41, 41], // size of the shadow
 					iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
 					shadowAnchor	: [0, 20],  // the same for the shadow
-					popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+					popupAnchor		: [12, -20], // point from which the popup should open relative to the iconAnchor
+					path : { // polygons case style
+						weight		: 3, // Stroke width in pixels
+						opacity		: 1, // Stroke opacity
+						color		: '#fe1500',  // Stroke color
+						lineJoin	: 'bevel', // A string that defines shape to be used at the corners of the stroke.
+						fill		: false,
+						fillColor	: '#fe1500', // Fill color. Defaults to the value of the color option
+						fillOpacity	: 0.7 // Fill opacity
+					}
 				},
 				findspot : {
 					iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/orange.png?3",
@@ -80,7 +89,16 @@ var page = {
 					shadowSize		: [41, 41], // size of the shadow
 					iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
 					shadowAnchor	: [0, 20],  // the same for the shadow
-					popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+					popupAnchor		: [12, -20], // point from which the popup should open relative to the iconAnchor
+					path : { // polygons case style
+						weight		: 3, // Stroke width in pixels
+						opacity		: 1, // Stroke opacity
+						color		: '#fdb314',  // Stroke color
+						lineJoin	: 'bevel', // A string that defines shape to be used at the corners of the stroke.
+						fill		: false,
+						fillColor	: '#fdb314', // Fill color. Defaults to the value of the color option
+						fillOpacity	: 0.7 // Fill opacity
+					}
 				},
 				hoard : {
 					iconUrl			: page_globals.__WEB_TEMPLATE_WEB__ + "/assets/images/map/green.png?3",
@@ -89,7 +107,16 @@ var page = {
 					shadowSize		: [41, 41], // size of the shadow
 					iconAnchor		: [10, 19], // point of the icon which will correspond to marker's location
 					shadowAnchor	: [0, 20],  // the same for the shadow
-					popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
+					popupAnchor		: [12, -20], // point from which the popup should open relative to the iconAnchor
+					path : { // polygons case style
+						weight		: 3, // Stroke width in pixels
+						opacity		: 1, // Stroke opacity
+						color		: '#fdb314',  // Stroke color
+						lineJoin	: 'bevel', // A string that defines shape to be used at the corners of the stroke.
+						fill		: false,
+						fillColor	: '#fdb314', // Fill color. Defaults to the value of the color option
+						fillOpacity	: 0.7 // Fill opacity
+					}
 				}
 			}
 		},
@@ -118,8 +145,8 @@ var page = {
 		// debug_info
 			let showing_debug
 			document.addEventListener("keydown", function(e){
-				
-				// toogle debug info 
+
+				// toogle debug info
 				if (e.ctrlKey===true && e.key==='d') {
 					const all_debug_info = document.querySelectorAll('.debug_info')
 					if (all_debug_info) {
@@ -148,21 +175,21 @@ var page = {
 	* HILITE_LANG
 	*/
 	hilite_lang : function(lang) {
-		
+
 		const page_lang_selector = document.getElementById("page_lang_selector")
 		if (page_lang_selector) {
-			
+
 			// Lang selected
 				const nodes = page_lang_selector.querySelectorAll("a")
 				for (let i = 0; i < nodes.length; i++) {
 					if ( nodes[i].href.indexOf(lang) !== -1 ) {
-						nodes[i].classList.add("selected")						
+						nodes[i].classList.add("selected")
 					}
 				}
 
 			// icon globe events
 				const lang_globe = document.getElementById('lang_globe')
-				lang_globe.addEventListener('click', function(){										
+				lang_globe.addEventListener('click', function(){
 					page_lang_selector.classList.toggle("hide")
 				})
 		}
@@ -549,7 +576,7 @@ var page = {
 		return value.replace(/\/dedalo\/media\/svg\//g, page_globals.__WEB_MEDIA_BASE_URL__ + "/dedalo/media/svg/")
 	},//end parse_legend_svg
 
-	
+
 
 	/**
 	* REMOVE_GAPS
@@ -730,7 +757,7 @@ var page = {
 			group.sort( (a,b) => {return collator.compare(a.title , b.title)});
 
 		const build_pop_item = function(group_data){
-			
+
 			// group_data vars
 				const section_id	= group_data.section_id
 				const title			= group_data.title || "Undefined title " + section_id
@@ -881,11 +908,11 @@ var page = {
 	* Filters drop down list items to show a filtered list depending on the filtering string
 	*/
 	filter_drop_down_list : function(array, filter_string) {
-		
-		return array.filter(function(el) {  
-			const el_normalized = el.value.normalize('NFD').replace(/[\u0300-\u036f]/g, "")     
+
+		return array.filter(function(el) {
+			const el_normalized = el.value.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
 			const filtered = (el.value.toLowerCase().indexOf(filter_string.toLowerCase()) > -1) || (el_normalized.toLowerCase().indexOf(filter_string.toLowerCase()) > -1)
-			return filtered	
+			return filtered
 		})
 	},//end filter_drop_down_list
 
@@ -893,12 +920,12 @@ var page = {
 
 	/**
 	* SEARCH_FRAGMENT_IN_TEXT
-	* @return 
+	* @return
 	*/
 		// search_fragment_in_text : function(q, value, limit) {
-			
+
 		// 	function search(q, text) {
-				
+
 		// 		if (q!=="") {
 		// 			const re		= new RegExp(q,"gi"); // search for all instances
 		// 			const newText	= text.replace(re, `<mark>${q}</mark>`);
@@ -964,7 +991,7 @@ var page = {
 
 		// 		// cut text at first and last spaces
 		// 		text = text_slice.slice(first_space, last_space)
-				
+
 		// 		// hilite the q word
 		// 		// text = search(q, text)
 
@@ -979,7 +1006,7 @@ var page = {
 		// 		// text = truncate(value, limit, null)
 		// 		text = ''
 		// 	}
-			
+
 
 		// 	return text
 		// },//end search_fragment_in_text

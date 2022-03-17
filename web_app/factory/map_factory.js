@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, event_manager, common, L */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -340,6 +340,17 @@ function map_factory() {
 							},
 							onEachFeature : function(feature, layer) {
 								layer.bindPopup(popup)
+							},
+							style : function() {
+								// see: https://leafletjs.com/SlavaUkraini/reference.html#path-stroke
+								return element.marker_icon.path || null
+								// return {
+								// 	weight		: 3, // Stroke width in pixels
+								// 	opacity		: 1, // Stroke opacity
+								// 	color		: 'orange',  // Stroke color
+								// 	fillColor	: 'orange', // Fill color. Defaults to the value of the color option
+								// 	fillOpacity	: 0.7 // Fill opacity
+							 	// };
 							}
 						})
 

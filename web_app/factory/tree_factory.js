@@ -10,14 +10,14 @@ function tree_factory() {
 	// vars
 		// target. DOM element where timeline section is placed
 			this.target	= null
-		
+
 		// data. Database parsed rows data to create the map
 			this.data = null
 
 		// root_term. root nodes for tree
 			this.root_term = null
 
-		// caller. Insatance that call here (ussually thesaurus.js)
+		// caller. Instance that call here (usually thesaurus.js)
 			this.caller
 
 
@@ -26,79 +26,146 @@ function tree_factory() {
 	* INIT
 	*/
 	this.init = function(options) {
+		const t0 = performance.now()
 		// console.log("-- tree_factory init options:", options);
-		
+
 		const self = this
+
+		// options
+			const target		= options.target || null
+			const data			= options.data
+			const caller		= options.caller
+			const root_term		= options.root_term
+			const set_hilite	= options.set_hilite || false
+			const render_node	= options.render_node || self.build_tree_node
 
 		// fix vars
 
 		// target. DOM element where map is placed
-			self.target = options.target
-		
-		// data. Preparsed data from rows. Contains items with properties 'lat', 'lon', and 'data' like [{lat: lat, lon: lon, data: []}]
-			self.data = options.data
+			self.target = target
+
+		// data. Pre-parsed data from rows. Contains items with properties 'lat', 'lon', and 'data' like [{lat: lat, lon: lon, data: []}]
+			self.data = data
 
 		// caller
-			self.caller = options.caller
+			self.caller = caller
+
+		// root_term
+			self.root_term = root_term
 
 		// set_hilite
-			self.set_hilite = options.set_hilite || false
-				// console.log("self.set_hilite:",self.set_hilite);
+			self.set_hilite = set_hilite
 
-		// hilite_relations_limit. When limit is reached, no more relations are opened automaticly
+		// hilite_relations_limit. When limit is reached, no more relations are opened automatically
 			self.hilite_relations_limit		= 15
-			self.hilite_relations_showed	= 0 // incremented each time a relation is showed automactily untili maximun allowed
+			self.hilite_relations_showed	= 0 // incremented each time a relation is showed automatically until maximum allowed
 
-		// hilite_indexation_limit. When limit is reached, no more indexation are opened automaticly
+		// hilite_indexation_limit. When limit is reached, no more indexation are opened automatically
 			self.hilite_indexation_limit	= 15
-			self.hilite_indexation_showed	= 0 // incremented each time a indexation is showed automactily untili maximun allowed
+			self.hilite_indexation_showed	= 0 // incremented each time a indexation is showed automatically until maximum allowed
 
-		// tree_state
+		// set_render_node function
+			self.render_node = render_node
+
+		// tree_state (array way)
+			// const session_tree_state = sessionStorage.getItem("tree_state")
+			// if (session_tree_state && !self.set_hilite) {
+
+			// 	self.tree_state = JSON.parse(session_tree_state)
+
+			// 	const data_length = self.data.length
+			// 	for (let i = 0; i < data_length; i++) {
+			// 		// set state
+			// 		const current_session_item = self.tree_state.find(item => item.id===self.data[i].term_id)
+			// 		if (current_session_item) {
+			// 			self.data[i].state = current_session_item.state
+			// 		}
+			// 	}
+			// 	// console.log(">>>>>> self.tree_state from session cache:", self.tree_state);
+
+			// }else{
+
+			// 	self.tree_state = []
+			// 	const data_length = self.data.length
+			// 	for (let i = 0; i < data_length; i++) {
+
+			// 		// open root terms by default
+			// 			if (root_term.indexOf(self.data[i].term_id)!==-1) {
+			// 				self.data[i].status = 'opened';
+			// 			}
+
+			// 		const current_state = self.data[i].status || "closed"
+
+			// 		// set state default for all
+			// 		self.data[i].state = current_state
+
+			// 		// add
+			// 		self.tree_state.push({
+			// 			id		: self.data[i].term_id,
+			// 			state	: current_state
+			// 		})
+			// 	}
+
+			// 	// if (self.set_hilite!==true) {
+			// 		sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+			// 	// }
+
+			// 	// console.log(">>>>>> self.tree_state calculated new:", self.tree_state);
+			// }
+
+		// tree_state (object way)
 			const session_tree_state = sessionStorage.getItem("tree_state")
 			if (session_tree_state && !self.set_hilite) {
 
 				self.tree_state = JSON.parse(session_tree_state)
+				// console.log("_______self.tree_state:",self.tree_state);
 
-				const data_length = self.data.length
-				for (let i = 0; i < data_length; i++) {
+				for(const term_id in self.tree_state) {
 					// set state
-					const current_session_item = self.tree_state.find(item => item.id===self.data[i].term_id)					
-					if (current_session_item) {
-						self.data[i].state = current_session_item.state
-					}				 				
+					const current_session_item_state = self.tree_state[term_id]
+					const found = self.data.find(el => el.term_id===term_id)
+					if (found) {
+						found.state = current_session_item_state
+					}
 				}
-				// console.log(">>>>>> self.tree_state from session cache:", self.tree_state);	
+				// console.log(">>>>>> self.tree_state from session cache:", self.tree_state);
 
 			}else{
-				
-				self.tree_state = []
+
+				self.tree_state = {}
 				const data_length = self.data.length
 				for (let i = 0; i < data_length; i++) {
 
-					const current_state = self.data[i].status || "closed"						
+					const item = self.data[i]
+
+					// open root terms by default
+						if (root_term.indexOf(item.term_id)!==-1) {
+							item.status = 'opened';
+						}
+
+					const current_state = item.status || "closed"
 
 					// set state default for all
-					self.data[i].state = current_state
+					item.state = current_state
+
 					// add
-					self.tree_state.push({
-						id		: self.data[i].term_id,
-						state	: current_state
-					})
+					if (current_state==='opened') {
+						self.tree_state[item.term_id] = current_state
+					}
 				}
 
 				// if (self.set_hilite!==true) {
-					sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));	
-				// }				
+					sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+				// }
 
-				// console.log(">>>>>> self.tree_state calculated new:", self.tree_state);		
-			}			
-
-		// rows
-			self.root_term = options.root_term		
+				// console.log(">>>>>> self.tree_state calculated new:", self.tree_state);
+			}
+			// console.log("session_tree_state:", JSON.parse(session_tree_state));
+			// console.log("init tree performance.now()-t0 r:",  performance.now()-t0);
 
 		// keyboard set
 			// document.addEventListener("keyup", function(e){
-				
+
 			// 	switch(e.keyCode) {
 			// 		case 40 : // arrow down
 			// 		// case 39 : // arrow right
@@ -131,96 +198,172 @@ function tree_factory() {
 
 	/**
 	* RENDER
+	* Generates de tree DOM nodes iterating all data
 	*/
-	this.render = function(options) {
-		// console.log("-- render options:",options);
-		
+	this.render = function() {
+
 		const self = this
 
 		const target	= self.target
 		const data		= self.data
 		const root_term	= self.root_term
-		
-		const js_promise = new Promise(function(resolve){			
+
+
+		const js_promise = new Promise(function(resolve){
 
 			const fragment = new DocumentFragment();
+
+			// render tree nodes
+				const tree_nodes	= []
+				const tree_object	= {}
+				// build DOM nodes
+					const t0 = performance.now()
+					const data_length = data.length
+					for (let i = 0; i < data_length; i++) {
+
+						const row = data[i]
+
+						// descriptor. prevent non descriptor to be included
+							if (row.descriptor && row.descriptor!=='yes') {
+								console.warn("Skipped build_tree_node of term ND :", row.term_id, row.term);
+								continue;
+							}
+
+						const tree_node = self.render_node(row, self)
+
+						// tree_nodes.push(tree_node)
+						tree_object[row.term_id] = tree_node
+					}
+
+				// debug
+					if(SHOW_DEBUG===true) {
+						const time			= performance.now()-t0
+						const n_nodes		= Object.keys(tree_object).length
+						const average_node	= time / n_nodes
+						console.log("__Time time build dom nodes ms:", time, 'n_nodes:',n_nodes, 'average node ms:',average_node);
+					}
+
+			// hierarchize nodes (array way)
+				// const t1 = performance.now()
+				// const tree_nodes_length = tree_nodes.length
+				// for (let i = 0; i < tree_nodes_length; i++) {
+
+				// 	const tree_node	= tree_nodes[i]
+				// 	const term_id	= tree_node.term_id
+
+				// 	if (root_term.indexOf(term_id)!==-1) {
+
+				// 		// root tree_node
+				// 		tree_wrapper.appendChild(tree_node)
+
+				// 	}else{
+
+				// 		// others
+				// 		const parent = tree_node.parent
+				// 			? tree_node.parent[0]
+				// 			: null
+
+				// 		if (!parent) {
+				// 			console.log("skip non parent defined tree_node:", tree_node);
+				// 			continue
+				// 		}
+
+				// 		const parent_tree_node = tree_nodes.find(item => item.term_id===parent)
+				// 		if (parent_tree_node && parent_tree_node.branch) {
+				// 			// try {
+				// 				parent_tree_node.branch.appendChild(tree_node)
+				// 			// }catch(_error) {
+				// 				// console.warn("tree_node:",tree_node, _error);
+				// 			// }
+				// 		}
+				// 	}
+				// }
+				// console.log("performance.now()-t1 hierarchize dom nodes:", performance.now()-t1);
+
+			// hierarchze nodes (object way)
+				const t2 = performance.now()
+				for(const term_id in tree_object) {
+
+					const tree_node	= tree_object[term_id]
+
+					if (!root_term) {
+						// root term is not defined case
+
+						const parent = tree_node.parent ? tree_node.parent[0] : null
+						if (!parent) {
+							console.warn("Added non parent defined tree_node:", tree_node);
+							fragment.appendChild(tree_node)
+						}else{
+
+							if(tree_object[parent]) {
+								tree_object[parent].branch.appendChild(tree_node)
+							}else{
+								fragment.appendChild(tree_node)
+									console.log("Direct to fragment:", term_id, "parent",parent);
+							}
+						}
+
+					}else{
+						// root term is defined (on init) case
+
+						if (root_term.indexOf(term_id)!==-1) {
+
+							// root tree_node
+							fragment.appendChild(tree_node)
+
+						}else{
+
+							// others
+							const parent = tree_node.parent ? tree_node.parent[0] : null
+							if (!parent) {
+								console.log("skip non parent defined tree_node:", tree_node);
+								continue
+							}
+
+							if(tree_object[parent] && tree_object[parent].branch) {
+								tree_object[parent].branch.appendChild(tree_node)
+							}
+						}
+					}
+				}
+				// debug
+					if(SHOW_DEBUG===true) {
+						console.log("__Time performance.now()-t2 hierarchize dom nodes:", performance.now()-t2);
+					}
+
 
 			// tree_wrapper. Create the tree wrapper and insert into parent node 'self.target')
 				const tree_wrapper = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "tree_wrapper",
-					parent			: fragment
+					class_name		: "tree_wrapper"
 				})
+				tree_wrapper.appendChild(fragment)
 
-			// render tree nodes
-				const tree_nodes = []
-
-				// build dom nodes
-					const data_length = data.length
-					for (let i = 0; i < data_length; i++) {
-						
-						const row = data[i]
-
-						tree_nodes.push(
-							self.build_tree_node(row)
-						)
-					}
-
-			// hierarchize nodes
-				const tree_nodes_length = tree_nodes.length
-				for (let i = 0; i < tree_nodes_length; i++) {
-					
-					const tree_node	= tree_nodes[i]
-					const term_id	= tree_node.term_id
-
-					if (root_term.indexOf(term_id)!==-1) {
-						
-						// root tree_node
-						tree_wrapper.appendChild(tree_node)
-					
-					}else{
-						
-						// others
-						const parent = tree_node.parent
-							? tree_node.parent[0]
-							: null
-
-						if (!parent) {
-							console.log("skip non parent defined tree_node:", tree_node);
-							continue
-						}
-						
-						const parent_tree_node = tree_nodes.find(item => item.term_id===parent)
-						if (parent_tree_node) {
-							parent_tree_node.branch.appendChild(tree_node)
-						}
-					}
-				}
-			
-
-			resolve(fragment)
+			resolve(tree_wrapper)
 
 		})
 		.then(function(response){
-			
-			// append finished gragment to target DOM
-				target.appendChild(response)
 
-			// scroll to hilite
-				if (self.set_hilite===true) {
-					common.when_in_dom(target, function(){
-						// find first hilited term
-						const tree_node = target.querySelector(".term.hilite")
-						// scroll document to hilited term (first founded at DOM)
-						if (tree_node) {
-							tree_node.scrollIntoView({behavior: "auto", block: "center", inline: "nearest"})
-						}
-					})				
-				}
+			if (target) {
+				// append finished node to target DOM
+					target.appendChild(response)
+
+				// scroll to hilite
+					if (self.set_hilite===true) {
+						common.when_in_dom(target, function(){
+							// find first hilited term
+							const tree_node = target.querySelector(".term.hilite")
+							// scroll document to hilited term (first founded at DOM)
+							if (tree_node) {
+								tree_node.scrollIntoView({behavior: "auto", block: "center", inline: "nearest"})
+							}
+						})
+					}
+			}
 
 			return response
 		})
-		
+
 
 		return js_promise
 	}//end render
@@ -234,7 +377,7 @@ function tree_factory() {
 	this.build_tree_node = function(row) {
 
 		const self = this
-		
+
 		// node wrapper
 			const tree_node = common.create_dom_element({
 				element_type	: "div",
@@ -263,7 +406,17 @@ function tree_factory() {
 			// 		tree_node.scrollIntoView()
 			// 	})
 			// 	self.scrolled = true
-			// }		
+			// }
+
+		// nd
+			if (row.nd && row.nd.length>0) {
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "nd",
+					inner_html		: "[" + row.nd.join(", ") + "]",
+					parent			: tree_node
+				})
+			}
 
 		// buttons
 			// button scope_note
@@ -323,47 +476,47 @@ function tree_factory() {
 						}
 					})
 				}
-			
-			// // button children
-			// 	if (row.childrens && row.childrens.length>0) {
 
-			// 		const open_style = row.state==="opened" ? " open" : ""
+			// button children
+				if (row.children && row.children.length>0) {
 
-			// 		const arrow = common.create_dom_element({
-			// 			element_type	: "span",
-			// 			class_name		: "arrow" + open_style,
-			// 			parent			: tree_node
-			// 		})
-			// 		arrow.addEventListener("mousedown", function(){
-			// 			let new_state
-			// 			if (this.classList.contains("open")) {
-			// 				branch.classList.add("hide")
-			// 				this.classList.remove("open")
-			// 				// new_state
-			// 				new_state = "closed"
-			// 			}else{
-			// 				branch.classList.remove("hide")
-			// 				this.classList.add("open")
-			// 				// new_state
-			// 				new_state = "opened"
-			// 			}
-						
-			// 			// state update
-			// 			const current_state = self.tree_state.find(item => item.id===row.term_id)
-			// 			if (current_state && current_state.state!==new_state) {
-			// 				current_state.state = new_state
-			// 				// update sessionStorage tree_state var
-			// 				sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
-			// 			}
-			// 		})
-			// 	}
+					const open_style = row.state==="opened" ? " open" : ""
+
+					const arrow = common.create_dom_element({
+						element_type	: "span",
+						class_name		: "arrow" + open_style,
+						parent			: tree_node
+					})
+					arrow.addEventListener("mousedown", function(){
+						let new_state
+						if (this.classList.contains("open")) {
+							branch.classList.add("hide")
+							this.classList.remove("open")
+							// new_state
+							new_state = "closed"
+						}else{
+							branch.classList.remove("hide")
+							this.classList.add("open")
+							// new_state
+							new_state = "opened"
+						}
+
+						// state update
+						const current_state = self.tree_state.find(item => item.id===row.term_id)
+						if (current_state && current_state.state!==new_state) {
+							current_state.state = new_state
+							// update sessionStorage tree_state var
+							sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
+						}
+					})
+				}
 
 		// scope note wrapper
-			let scope_note		
+			let scope_note
 			if (row.scope_note && row.scope_note.length>0) {
 
 				const hide_style = row.state==="opened" ? "" : " hide"
-								
+
 				// scope_note
 					const scope_note_text = row.scope_note.replace(/^\s*<br\s*\/?>|<br\s*\/?>\s*$/g,'');
 					scope_note = common.create_dom_element({
@@ -394,10 +547,10 @@ function tree_factory() {
 									// console.log("mutationsList:",mutationsList);
 									// console.log("mutationsList.target:",mutationsList[0].target);
 								if (!mutationsList[0].target.classList.contains("hide")) {
-									
+
 									// draw nodes
-									self.render_relation_nodes(row, relations_container, self)
-									
+									self.render_relation_nodes(row, relations_container, self, false)
+
 									// Stop observing
 									observer.disconnect();
 								}
@@ -444,10 +597,10 @@ function tree_factory() {
 									// console.log("mutationsList:",mutationsList);
 									// console.log("mutationsList.target:",mutationsList[0].target);
 								if (!mutationsList[0].target.classList.contains("hide")) {
-									
+
 									// draw nodes
 									self.render_indexation_nodes(row, indexation_container, self)
-									
+
 									// Stop observing
 									observer.disconnect();
 								}
@@ -474,46 +627,12 @@ function tree_factory() {
 					}
 			}
 
-			// button children
-				if (row.childrens && row.childrens.length>0) {
-
-					const open_style = row.state==="opened" ? " open" : ""
-
-					const arrow = common.create_dom_element({
-						element_type	: "span",
-						class_name		: "arrow" + open_style,
-						parent			: tree_node
-					})
-					arrow.addEventListener("mousedown", function(){
-						let new_state
-						if (this.classList.contains("open")) {
-							branch.classList.add("hide")
-							this.classList.remove("open")
-							// new_state
-							new_state = "closed"
-						}else{
-							branch.classList.remove("hide")
-							this.classList.add("open")
-							// new_state
-							new_state = "opened"
-						}
-						
-						// state update
-						const current_state = self.tree_state.find(item => item.id===row.term_id)
-						if (current_state && current_state.state!==new_state) {
-							current_state.state = new_state
-							// update sessionStorage tree_state var
-							sessionStorage.setItem('tree_state', JSON.stringify(self.tree_state));
-						}
-					})
-				}
-
 		// children wrapper
 			let branch
-			if (row.childrens && row.childrens.length>0) {
+			if (row.children && row.children.length>0) {
 
 				const hide_style = row.state==="opened" ? "" : " hide"
-								
+
 				// branch
 					branch = common.create_dom_element({
 						element_type	: "div",
@@ -538,60 +657,125 @@ function tree_factory() {
 	* RENDER_RELATION_NODES
 	* @return promise
 	*/
-	this.render_relation_nodes = function(row, relations_container, self) {
-		
+	this.render_relation_nodes = function(row, relations_container, self, view_in_context, limit) {
+		// console.log("--> render_relation_nodes row:",row);
 		return new Promise(function(resolve){
-		
-			// draw nodes
-			const relation_item_promises = []
-			for (let i = 0; i < row.relations.length; i++) {
-				const relation_item_promise = self.build_relation_item({
-					data	: row.relations[i],
-					parent	: relations_container,
-					row		: row
-				})
-				relation_item_promises.push(relation_item_promise)
+
+			if (!row) {
+				console.warn("Invalid row: ", row);
+				console.trace()
+				resolve(false)
 			}
-			
-			// All promises done
-			// Low resolution images are loaded. Change src with the hi-res version
-			Promise.all(relation_item_promises).then((image_nodes) => {
-				// console.log("All promisses are resolved!",image_nodes);
-				
-				for (let i = 0; i < image_nodes.length; i++) {											
-					// show
-					// image_nodes[i].classList.add("loaded")
 
-					// replace image file (thumb) with quality '1.5MB'																							
-					// image_nodes[i].src = image_nodes[i].src.replace('/thumb','/0.125MB')
-										
-					// reassign background color
-					// const bg_color_rgb = image_nodes[i].style.backgroundColor
-					// image_nodes[i].style.backgroundColor = bg_color_rgb
-				}				
-			});
+			if (!row.relations || row.relations.length<1) {
+				resolve(false)
+			}
 
-			resolve(true)		
+			// safari does not implement yet images loading lazy. Because this, limit max items smaller
+				// const ua			= navigator.userAgent.toLowerCase()
+				// const is_safari	= (ua.indexOf('safari')!==-1 && ua.indexOf('chrome')===-1)
+
+			limit					= !isNaN(limit) ? limit : 100
+			let vieved				= 0
+			const relations_length	= row.relations.length
+
+			// iterate function
+				function iterate(from, to) {
+
+					const fragment = new DocumentFragment()
+
+					const ar_promises = []
+					for (let i = from; i < to; i++) {
+						ar_promises.push(
+							self.build_relation_item({
+								data : row.relations[i]
+							})
+						)
+					}
+
+					Promise.all(ar_promises).then((values) => {
+
+						// add each rendered relation_item
+							for (let i = 0; i < values.length; i++) {
+								const relation_item = values[i]
+								fragment.appendChild(relation_item)
+							}
+
+						// add/move link to view in context
+							if (view_in_context===true) {
+								const view_in_context = relations_container.querySelector('.view_in_context') || common.create_dom_element({
+									element_type	: "a",
+									href			: page_globals.__WEB_ROOT_WEB__ + '/thesaurus/' + row.term_id,
+									class_name		: "relation_item view_in_context",
+									target			: "_blank",
+									title			: "Thesaurus " + row.term
+								})
+								fragment.appendChild(view_in_context)
+							}
+
+						// load more button
+							if (to<(relations_length-1)) {
+
+								vieved = vieved + (to - from)
+
+								const more_node = common.create_dom_element({
+									element_type	: "div",
+									class_name		: "more_node btn btn-light btn-block primary relation_item",
+									parent			: fragment
+								})
+								more_node.offset = to
+
+								more_node.addEventListener("click", function(){
+									const _from	= this.offset + 1
+									const _to	= ((_from + limit) < relations_length) ? (_from + limit) : relations_length
+									iterate(_from, _to)
+
+									this.remove()
+								})
+
+								const label = (tstring['load_more'] || "Load more..") +  " <small>[" + vieved + " "+ tstring.of +" " + relations_length + "]</small>"
+								const more_label = common.create_dom_element({
+									element_type	: "span",
+									inner_html		: label,
+									parent			: more_node
+								})
+							}
+
+						// append to parent
+							relations_container.appendChild(fragment)
+
+						resolve(true)
+					});
+				}
+
+			// first, iterate elements from zero to limit
+				const to = limit < relations_length ? limit : relations_length
+				iterate(0, to)
+
 		})
-	};//end render_relation_nodes	
+	};//end render_relation_nodes
 
 
 
 	/**
 	* BUILD_RELATION_ITEM
-	* Build and append relation_item to options parent element
+	* Build DOM node relation_item
 	* @return promise
 	*/
 	this.build_relation_item = function(options) {
-		
+
 		const self = this
+
+		// options
+			const data	= options.data
+
 
 		return new Promise(function(resolve){
 
-			const parent	= options.parent
-			const data		= options.data
-			const image		= data.image
-			const title		= data.title			
+			const image_url	= data.image_url
+			const thumb_url	= data.thumb_url
+			const title		= data.title
+			const path 		= data.path || data.table
 
 			const title_text = title
 				? title
@@ -600,20 +784,10 @@ function tree_factory() {
 			const relation_item = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "relation_item",
-				title			: title_text + (SHOW_DEBUG ? (" [" + options.data.table + " " + options.data.section_tipo + " " + options.data.section_id + "]") : ''),
-				parent			: parent
-			})
+				title			: title_text + (SHOW_DEBUG ? (" [" + path + " " + options.data.section_tipo + " " + options.data.section_id + "]") : '')			})
 
 			// img
-				const image_url = image
-					? common.get_media_engine_url(image, 'image')
-					: __WEB_TEMPLATE_WEB__ + '/assets/images/default.jpg'
-
-				const thumb_url = image
-					? common.get_media_engine_url(image, 'image', 'thumb')
-					: __WEB_TEMPLATE_WEB__ + '/assets/images/default_thumb.jpg'
-
-				page.build_image_with_background_color(thumb_url, relation_item, null)
+				page.build_image_with_background_color(thumb_url, relation_item)
 				.then(function(response){
 
 					const img = response.img
@@ -622,23 +796,15 @@ function tree_factory() {
 					relation_item.appendChild(img)
 
 					// image click event
-					img.addEventListener("click", function(){
-						// open image in  new tab (provisional)
-							// const image	= new Image();
-							// 	  image.src	= image_url // .replace('/1.5MB/', '/original/')
-							// const new_window = window.open("")
-							// 	  new_window.document.write(image.outerHTML)
-							// 	  new_window.focus();
+					img.addEventListener("mousedown", function(){
 						// open detail file in another window
-							const template = (data.table==='pictures')
-								? 'picture'
-								: 'object'
-							const url = page_globals.__WEB_ROOT_WEB__ + "/" + template + "/" + data.section_id
+							const url = page_globals.__WEB_ROOT_WEB__ + "/" + path + "/" + data.section_id
 							const new_window = window.open(url)
 								  new_window.focus();
 					})
-					resolve(img)
-				})			
+				})
+
+			resolve(relation_item)
 		})
 	};//end build_relation_item
 
@@ -651,10 +817,10 @@ function tree_factory() {
 	this.render_indexation_nodes = function(row, indexation_container, self) {
 		if(SHOW_DEBUG===true) {
 			console.log("-- render_indexation_nodes row:",row);
-		}	
-		
+		}
+
 		return new Promise(function(resolve){
-		
+
 			if (!row.indexation || row.indexation.length<1) {
 				resolve(false)
 			}
@@ -679,7 +845,7 @@ function tree_factory() {
 
 					// iterate groups
 						for(const section_top_id in groups){
-												
+
 							const data_video_items		= groups[section_top_id]
 							const relation_item_promise	= self.build_indexation_item({
 								data_video_items	: data_video_items,
@@ -698,7 +864,7 @@ function tree_factory() {
 					// 		const relation_item_promise = self.build_indexation_item({
 					// 			indexation	: row.indexation[i],
 					// 			data		: response.result[i],
-					// 			parent		: indexation_container								
+					// 			parent		: indexation_container
 					// 		})
 					// 		indexation_item_promises.push(relation_item_promise)
 					// 	}
@@ -707,7 +873,7 @@ function tree_factory() {
 					resolve(true)
 				})
 		})
-	};//end render_indexation_nodes	
+	};//end render_indexation_nodes
 
 
 
@@ -718,18 +884,18 @@ function tree_factory() {
 	*/
 	this.build_indexation_item = function(options) {
 		console.warn("-- build_indexation_item options:", options);
-		
+
 		const self = this
 
 		return new Promise(function(resolve){
 
 			// por acabar !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					
+
 			const parent			= options.parent
 			const data_video_items	= options.data_video_items
 			const data_interview	= options.data_interview
 			const term				= options.term
-			
+
 			const av_section_id = data_video_items[0].section_id
 
 			const indexation_item = common.create_dom_element({
@@ -757,7 +923,7 @@ function tree_factory() {
 					// image click event
 					img.addEventListener("click", function(){
 
-					
+
 						event_manager.publish('open_video', {
 							mode				: 'indexation', // indexation | tapes
 							data_interview		: data_interview,
@@ -788,9 +954,9 @@ function tree_factory() {
 						})
 						*/
 					})
-					
+
 					resolve(img)
-				})			
+				})
 		})
 	};//end build_indexation_item
 
@@ -801,15 +967,15 @@ function tree_factory() {
 	* @return promise
 	*/
 	this.get_thesaurus_children = function(item_terms) {
-		
+
 		return new Promise(function(resolve){
 
 			const term_id = item_terms.join(',')
-			
+
 			// request
 			data_manager.request({
 				body : {
-					dedalo_get			: 'thesaurus_childrens',
+					dedalo_get			: 'thesaurus_children',
 					db_name				: page_globals.WEB_DB,
 					lang				: page_globals.WEB_CURRENT_LANG_CODE,
 					ar_fields			: ['term_id'],

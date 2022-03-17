@@ -197,9 +197,9 @@ var catalog = {
 
 		// first search
 			if(psqo && psqo.length>1){
-				
+
 				// if psqo is received, recreate the original search into the current form and submit
-				const decoded_psqo = psqo_factory.decode_psqo(psqo)					
+				const decoded_psqo = psqo_factory.decode_psqo(psqo)
 				if (decoded_psqo) {
 
 					self.form.parse_psqo_to_form(decoded_psqo)
@@ -1084,12 +1084,12 @@ var catalog = {
 				filter			: filter,
 				limit			: 0,
 				process_result	: {
-					fn 		: 'process_result::add_parents_and_children_recursive',
-					columns : [{name : "parents"}]
+					fn		: 'process_result::add_parents_and_children_recursive',
+					columns	: [{name : "parents"}]
 				}
 			})
 			.then((parsed_data)=>{
-				
+
 				// draw
 				// clean container_rows_list and add_spinner
 					while (container_rows_list.hasChildNodes()) {
@@ -1103,7 +1103,7 @@ var catalog = {
 						target  : self.rows_list_container,
 						ar_rows : parsed_data
 					})
-					.then(function(){						
+					.then(function(){
 						self.export_data_container.classList.remove("hide")
 					})
 			})

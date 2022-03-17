@@ -394,12 +394,28 @@ var thesaurus =  {
 
 		// illustration
 			if (row.illustration && row.illustration.length>0) {
-				common.create_dom_element({
+				const image = common.create_dom_element({
 					element_type	: "img",
 					class_name		: "illustration",
 					src				: page_globals.__WEB_BASE_URL__ + row.illustration,
 					parent			: tree_node
 				})
+				// image.addEventListener("click", function(e){
+				// 	image.classList.toggle('big')
+				// })
+				const outsideClickListener = (event) => {
+					const target = event.target;
+					if (target===image) {
+						console.log("target:",target);
+						image.classList.toggle('big')
+					}else{
+						image.classList.remove('big')
+					}
+				}
+				// const removeClickListener = () => {
+				// 	document.removeEventListener('click', outsideClickListener)
+				// }
+				document.addEventListener('click', outsideClickListener)
 			}
 
 		// buttons

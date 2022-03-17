@@ -103,8 +103,18 @@
 
 			img.illustration {
 				display: inline-block;
-				vertical-align: bottom;
+				vertical-align: middle;
 				margin-left: 0.333rem;
+				height: 2rem;
+				// transition: max-height 0.15s ease-out;
+				transition:transform 0.3s ease-out;
+				background-color: #ffffff;
+				cursor: pointer;
+
+				&.big {
+					transform: scale(5);
+					z-index: 9999;
+				}
 			}
 
 			>.nd {

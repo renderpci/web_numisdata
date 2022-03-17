@@ -184,7 +184,7 @@ var map = {
 		// events
 			event_manager.subscribe('map_selected_marker', map_selected_marker)
 			function map_selected_marker(options){
-				console.log("///-> map_selected_marker options:",options);
+				// console.log("///-> map_selected_marker options:",options);
 
 				const selected_element = typeof options.item.group[0]!=="undefined"
 					? options.item.group[0]
@@ -205,7 +205,7 @@ var map = {
 					// render related types list
 						self.load_map_selection_info(selected_element)
 						.then(function(response){
-							console.log("--> load_map_selection_info response:",response);
+							// console.log("--> load_map_selection_info response:",response);
 							if (response) {
 								const types_list_node = self.render_types_list({
 									global_data_item	: response.global_data_item,
@@ -513,7 +513,7 @@ var map = {
 										// update form_item sql_filter value on every slider change
 										form_item.sql_filter = "(date_in >= " + ui.values[0] + " AND date_in <= "+ui.values[1]+")"; // AND (dating_end <= " + ui.values[1] + " OR dating_end IS NULL)
 										form_item.q = ui.value
-										console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
+										// console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
 									}
 								});
 						})
@@ -605,8 +605,8 @@ var map = {
 					? '(' + parsed_filter + ')'
 					: null
 				if(SHOW_DEBUG===true) {
-					console.log("-> coins form_submit filter:",filter);
-					console.log("-> coins form_submit sql_filter:",sql_filter);
+					// console.log("-> coins form_submit filter:",filter);
+					// console.log("-> coins form_submit sql_filter:",sql_filter);
 				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
@@ -637,7 +637,7 @@ var map = {
 				if (api_response.result) {
 
 					self.current_map_global_data = self.distribute_coins(api_response.result)
-						console.log("self.current_map_global_data:",self.current_map_global_data);
+						// console.log("self.current_map_global_data:",self.current_map_global_data);
 
 					// fix
 						// self.map_global_data = self.current_map_global_data
@@ -833,7 +833,7 @@ var map = {
 					}
 				})
 				.then((api_response)=>{
-					console.log("-> load_map_selection_info api_response:", api_response);
+					// console.log("-> load_map_selection_info api_response:", api_response);
 
 					const catalog_response = api_response.result.find(function(el){
 						return el.id==='catalog_request'
@@ -1107,7 +1107,7 @@ var map = {
 				body : request_body
 			})
 			.then(function(api_response){
-				console.log("-> get_range_years api_response:",api_response);
+				// console.log("-> get_range_years api_response:",api_response);
 
 				let min = 0
 				let max = 0

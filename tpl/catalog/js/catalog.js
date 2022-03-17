@@ -789,7 +789,7 @@ var catalog = {
 										// update form_item sql_filter value on every slider change
 										form_item.sql_filter = "(ref_date_in >= " + ui.values[0] + " AND ref_date_in <= "+ui.values[1]+")"; // AND (ref_date_end <= " + ui.values[1] + " OR ref_date_end IS NULL)
 										form_item.q = ui.value
-										console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
+										// console.warn("-----> change range form_item.sql_filter:", form_item.sql_filter);
 									}
 								});
 						})
@@ -1439,8 +1439,8 @@ var catalog = {
 
 			// debug
 				if(SHOW_DEBUG===true) {
-					console.log("--- search_rows parsed sql_filter:")
-					console.log(sql_filter)
+					// console.log("--- search_rows parsed sql_filter:")
+					// console.log(sql_filter)
 				}
 
 			// request
@@ -1696,7 +1696,7 @@ var catalog = {
 				body : request_body
 			})
 			.then(function(api_response){
-				console.log("-> get_catalog_range_years api_response:",api_response);
+				// console.log("-> get_catalog_range_years api_response:",api_response);
 
 				let min = 0
 				let max = 0

@@ -78,8 +78,16 @@
 }
 .tree_wrapper .tree_node img.illustration {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-left: 0.333rem;
+  height: 2rem;
+  transition: transform 0.3s ease-out;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+.tree_wrapper .tree_node img.illustration.big {
+  transform: scale(5);
+  z-index: 9999;
 }
 .tree_wrapper .tree_node > .nd {
   font-size: 0.8em;

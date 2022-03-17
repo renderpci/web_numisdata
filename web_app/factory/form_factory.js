@@ -610,8 +610,8 @@ function form_factory() {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("self.form_items:",self.form_items);
-				console.log("ar_query_elements:",ar_query_elements);
+				// console.log("self.form_items:",self.form_items);
+				// console.log("ar_query_elements:",ar_query_elements);
 			}
 
 		// empty form case
@@ -730,7 +730,7 @@ function form_factory() {
 		if(global_key==='$and' || global_key==='$or'){
 			// set global oprators value
 				if (!recursion) {
-					console.log("//----- SET global_key:",global_key);
+					// console.log("//----- SET global_key:",global_key);
 					self.set_operator_node_value(global_key)
 				}
 
@@ -1002,7 +1002,7 @@ function form_factory() {
 						if (filter[op].length===1) {
 							if ( term in cache ) {
 								if(SHOW_DEBUG===true) {
-									console.warn("Returning values from cache:", cache[term])
+									// console.warn("Returning values from cache:", cache[term])
 								}
 								response( cache[ term ] );
 								return;
@@ -1263,8 +1263,8 @@ function form_factory() {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("self.form_items:",self.form_items);
-				console.log("ar_query_elements:",ar_query_elements);
+				// console.log("self.form_items:",self.form_items);
+				// console.log("ar_query_elements:",ar_query_elements);
 			}
 
 		// empty form case
@@ -1284,7 +1284,7 @@ function form_factory() {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("-> form_to_sql_filter filter:",filter)
+				// console.log("-> form_to_sql_filter filter:",filter)
 			}
 
 		// sql_filter

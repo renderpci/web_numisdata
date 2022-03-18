@@ -122,6 +122,13 @@ input.form-control:not(:placeholder-shown) {
   margin-bottom: 1.25em;
   margin-top: 0.25em;
 }
+.form-inline input[type="text"],
+.form-inline input[type="password"],
+.form-inline input[type="email"],
+.form-inline select {
+  height: 2.5em;
+  border-bottom: solid 1px #eeeeee;
+}
 .form-inline .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -132,7 +139,6 @@ input.form-control:not(:placeholder-shown) {
   flex: 0 1 25%;
   align-self: baseline;
   padding: 0;
-  padding-top: 0.5em;
   padding-right: 1em;
 }
 @media screen and (max-width: 736px) {
@@ -1088,7 +1094,7 @@ nav ul {
 }
 #footer > section {
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 #footer > section h2 {
   font-family: 'Raleway', sans-serif;
@@ -1127,6 +1133,7 @@ nav ul {
   margin: 0;
   padding: 0;
   flex: 1 1;
+  line-height: 1.6em;
 }
 #footer .inner .footer-section-wrapper > ul {
   margin-bottom: 0.5rem;
@@ -1150,6 +1157,7 @@ nav ul {
 }
 #footer .inner .footer-section-wrapper img.footer_image_item {
   width: 100%;
+  object-position: left;
   object-fit: contain;
   max-height: 6rem;
   filter: sepia(100%) saturate(0) brightness(50%);
@@ -1176,7 +1184,7 @@ nav ul {
   margin-top: 1em;
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: left;
   width: 90%;
   height: 4em;
   filter: sepia(100%) saturate(0) brightness(50%);

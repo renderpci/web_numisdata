@@ -16,6 +16,9 @@
 #wrapper {
   overflow-x: hidden;
 }
+#wrapper #main {
+  display: block;
+}
 .map_container.map {
   height: 50vh;
   margin-bottom: 0;
@@ -23,9 +26,7 @@
   overflow: hidden;
 }
 .full_width {
-  width: calc(100vw - 16px);
-  margin-left: calc(-50vw + 50% + 8px);
-  margin-right: calc(-50vw + 50%);
+  background-color: #4fd4fd;
 }
 #main .inner .result .line-tittle {
   margin-left: 0 !important;

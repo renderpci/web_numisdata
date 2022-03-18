@@ -667,7 +667,12 @@
 			opacity: 0;
 			visibility: hidden;
 		}
-
+		a {
+			color: #cccccc;
+			&:hover {
+				color: @color_gold_logo !important;  // rojo
+			}
+		}
 		>section {
 			width: 100%;
 			text-align: left;
@@ -704,6 +709,15 @@
 				justify-content: space-evenly;
 				align-items: flex-start;
 
+				>ul:first-child{
+					width: 125%;
+				}
+
+				>ul:nth-child(4), >ul:nth-child(5){
+					width: 65%;
+				}
+
+
 				ul {
 					margin: 0;
 					width: 100%;
@@ -714,7 +728,7 @@
 						margin: 0;
 						padding: 0;
 						flex: 1 1;
-						line-height: 1.6em;
+						line-height: 1.2em;
 					}
 				}
 
@@ -739,7 +753,7 @@
 				}
 
 				.footer-links-a {
-					font-size: 1.15rem;
+					font-size: 1rem;
 				}
 
 				img.footer_image_item {
@@ -747,7 +761,7 @@
 					object-position: left;
 					object-fit: contain;
 					max-height: 6rem;
-					filter: sepia(100%) saturate(0) brightness(50%);
+					// filter: sepia(100%) saturate(0) brightness(50%);
 					opacity: 0.75;
 					transition: all 0.35s linear;
 

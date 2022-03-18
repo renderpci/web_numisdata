@@ -413,7 +413,7 @@ var coins =  {
 			self.form.item_factory({
 				id				: "countermark_obverse_data",
 				name			: "countermark_obverse_data",
-				// class_name		: 'hide',
+				class_name		: 'hide',
 				label			: "countermark_obverse_data",
 				q_column		: "countermark_obverse_data",
 				q_selected_eq	: 'LIKE',
@@ -427,7 +427,7 @@ var coins =  {
 			self.form.item_factory({
 				id				: "countermark_reverse_data",
 				name			: "countermark_reverse_data",
-				// class_name		: 'hide',
+				class_name		: 'hide',
 				label			: "countermark_reverse_data",
 				q_column		: "countermark_reverse_data",
 				q_selected_eq	: 'LIKE',

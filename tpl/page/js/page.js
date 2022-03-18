@@ -510,9 +510,9 @@ var page = {
 
 		if(target) {
 			const image = common.create_dom_element({
-				element_type 	: "img",
-				class_name 		: "spinner_svg",
-				src 			: page_globals.__WEB_ROOT_WEB__ + "/tpl/assets/images/spinner.svg"
+				element_type	: "img",
+				class_name		: "spinner_svg",
+				src				: page_globals.__WEB_ROOT_WEB__ + "/tpl/assets/images/spinner.svg"
 			})
 			target.appendChild(image)
 		}else{

@@ -1088,7 +1088,7 @@ nav ul {
 }
 #footer > section {
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 #footer > section h2 {
   font-family: 'Raleway', sans-serif;
@@ -1127,6 +1127,7 @@ nav ul {
   margin: 0;
   padding: 0;
   flex: 1 1;
+  line-height: 1.6em;
 }
 #footer .inner .footer-section-wrapper > ul {
   margin-bottom: 0.5rem;
@@ -1150,6 +1151,7 @@ nav ul {
 }
 #footer .inner .footer-section-wrapper img.footer_image_item {
   width: 100%;
+  object-position: left;
   object-fit: contain;
   max-height: 6rem;
   filter: sepia(100%) saturate(0) brightness(50%);
@@ -1176,7 +1178,7 @@ nav ul {
   margin-top: 1em;
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: left;
   width: 90%;
   height: 4em;
   filter: sepia(100%) saturate(0) brightness(50%);

@@ -1081,7 +1081,8 @@ page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
 			// 	}
 			// }
 
-		// children unification format. Object to term_id
+		// children unification format. Object to term_id.
+		// From locator like '[{section_tipo:oh1,section_id:1}]' to 'oh1_1'
 			if (item.children) {
 				const current_ar_children = []
 				const children_length = item.children.length
@@ -1103,59 +1104,57 @@ page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
 				item.children = current_ar_children
 			}
 
-		// item.term_id = item.term_id+'' // force string always
-
 		data.push(item)
 	}
 
 	const term_id_to_remove = []
 
 	// update_children_data recursive
-		function update_children_data(data, row){
+		// function update_children_data(data, row){
 
-			if ( ((!row.children || row.children.length===0) ) // && (!row.mib_bibliography || row.mib_bibliography.length===0)
-				|| row.descriptor!=='yes') {
+		// 	if ( ((!row.children || row.children.length===0) ) // && (!row.mib_bibliography || row.mib_bibliography.length===0)
+		// 		|| row.descriptor!=='yes') {
 
-				if (!row.parent) {
-					console.warn("parent not found for row:",row );
-					return true
-				}
+		// 		if (!row.parent) {
+		// 			console.warn("parent not found for row:",row );
+		// 			return true
+		// 		}
 
-				const parent_term_id	= row.parent[0];
-				const parent_row		= data.find(item => item.term_id===parent_term_id)
-				if (parent_row && parent_row.children && parent_row.children.length>0) {
+		// 		const parent_term_id	= row.parent[0];
+		// 		const parent_row		= data.find(item => item.term_id===parent_term_id)
+		// 		if (parent_row && parent_row.children && parent_row.children.length>0) {
 
-					const child_key = parent_row.children.findIndex(el => el.section_tipo===row.tld && el.section_id===row.section_id)
-					// console.log("child_key:",child_key, row.term_id, row);
-					if (child_key!==-1) {
+		// 			const child_key = parent_row.children.findIndex(el => el.section_tipo===row.tld && el.section_id===row.section_id)
+		// 			// console.log("child_key:",child_key, row.term_id, row);
+		// 			if (child_key!==-1) {
 
-						const term = row.term
+		// 				const term = row.term
 
-						// ND cases. Before remove, add ND term to parent
-							if (row.descriptor==='no') {
-								if (parent_row.nd) {
-									parent_row.nd.push(term)
-									parent_row.nd_term_id.push(row.term_id) // useful for search
-								}else{
-									parent_row.nd = [term]
-									parent_row.nd_term_id = [row.term_id]
-								}
-								// console.log("parent_row.nd:", parent_row.nd, parent_row.term_id, row.term_id);
-							}
+		// 				// ND cases. Before remove, add ND term to parent
+		// 					if (row.descriptor==='no') {
+		// 						if (parent_row.nd) {
+		// 							parent_row.nd.push(term)
+		// 							parent_row.nd_term_id.push(row.term_id) // useful for search
+		// 						}else{
+		// 							parent_row.nd = [term]
+		// 							parent_row.nd_term_id = [row.term_id]
+		// 						}
+		// 						// console.log("parent_row.nd:", parent_row.nd, parent_row.term_id, row.term_id);
+		// 					}
 
-						// remove me as child
-						parent_row.children.splice(child_key, 1)
+		// 				// remove me as child
+		// 				parent_row.children.splice(child_key, 1)
 
-						// recursion with parent
-						update_children_data(data, parent_row)
-					}
-				}
-				// set to remove
-				term_id_to_remove.push(row.term_id)
-			}
+		// 				// recursion with parent
+		// 				update_children_data(data, parent_row)
+		// 			}
+		// 		}
+		// 		// set to remove
+		// 		term_id_to_remove.push(row.term_id)
+		// 	}
 
-			return true
-		}
+		// 	return true
+		// }
 
 	// remove unused terms
 		const data_length = ar_rows_length
@@ -1166,7 +1165,6 @@ page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
 
 			// skip root terms
 				// if(root_term) {
-
 				// 	if ( root_term.includes( row.term_id+'' ) ) {
 				// 		// console.log("row.term_id:",row.term_id, root_term);
 				// 		// console.log("/////////////////////////////////////////// row:",row);

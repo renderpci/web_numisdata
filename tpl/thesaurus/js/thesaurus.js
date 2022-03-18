@@ -1,4 +1,4 @@
-/*global $, tstring, page_globals, SHOW_DEBUG, page, Promise, common, WEB_AREA, document, DocumentFragment, tstring, console, form_factory, data_manager, tree_factory */
+/*global $, tstring, page_globals, SHOW_DEBUG, page, psqo_factory, Promise, common, WEB_AREA, document, DocumentFragment, tstring, console, form_factory, data_manager, tree_factory */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -285,7 +285,9 @@ var thesaurus =  {
 						hilite_terms,
 						self.root_term
 					) // prepares data to use in list
-					console.log("self.data_clean:",self.data_clean);
+					if(SHOW_DEBUG===true) {
+						console.log("self.data_clean:",self.data_clean);
+					}
 					// temporal
 						// console.log("self.data_clean:",self.data_clean);
 						// for (let i = 0; i < self.clean_data.length; i++) {
@@ -309,7 +311,7 @@ var thesaurus =  {
 						data		: self.data_clean,
 						root_term	: root_term,
 						set_hilite	: set_hilite,
-						render_node : self.build_tree_node
+						render_node : self.render_tree_node
 					})
 					self.tree.render()
 					.then(function(){
@@ -323,10 +325,10 @@ var thesaurus =  {
 
 
 	/**
-	* BUILD_TREE_NODE
+	* RENDER_TREE_NODE
 	* @return DOM node tree_node
 	*/
-	build_tree_node : function(row) {
+	render_tree_node : function(row) {
 
 		const self = this // is 'tree_factory' instance
 		// console.log("row:",row);
@@ -354,25 +356,192 @@ var thesaurus =  {
 				parent			: tree_node
 			})
 
-			if (WEB_AREA==='mints_hierarchy') {
-				// link to mint
-				if (row.term_table && row.term_table==='mints' && row.term_data && row.term_data[0]) {
+			switch (WEB_AREA) {
+				case 'mints_hierarchy':
+					// link to mint
+					if (row.term_table && row.term_table==='mints' && row.term_data && row.term_data[0]) {
 
-					const link = common.create_dom_element({
-						element_type	: "a",
-						class_name		: "icon_link",
-						parent			: tree_node
-					})
-					link.addEventListener("click", function(){
+						const link = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "icon_link",
+							parent			: term
+						})
+						link.addEventListener("click", function(){
 
-						const url = 'mint/' + row.term_data[0]
-						// window.location.href = url
+							const url = 'mint/' + row.term_data[0]
+							// const windowFeatures = "popup";
+							window.open(url, "mint", null);
+						})
+					}
+					break;
 
-						const windowFeatures = "popup";
-						window.open(url, "mint", windowFeatures);
-					})
-				}
+				case 'symbols':
+					// catalog
+					if (row.illustration && row.illustration.length>0) {
+						// ref_type_symbol_obverse_data
+						// ref_type_symbol_reverse_data
+						const link_symbols = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "icon_link",
+							parent			: term
+						})
+						link_symbols.addEventListener("click", function(){
+
+							const filter = {
+							  "$or": [
+								{
+								  "$and": [
+									{
+									  "$and": [
+										{
+										  "id": "ref_type_symbol_obverse_data",
+										  "field": "ref_type_symbol_obverse_data",
+										  "q": ""+row.section_id+"",
+										  "q_type": "q",
+										  "op": "LIKE"
+										}
+									  ]
+									}
+								  ]
+								},
+								{
+								  "$and": [
+									{
+									  "$and": [
+										{
+										  "id": "ref_type_symbol_reverse_data",
+										  "field": "ref_type_symbol_reverse_data",
+										  "q": ""+row.section_id+"",
+										  "q_type": "q",
+										  "op": "LIKE"
+										}
+									  ]
+									}
+								  ]
+								}
+							  ]
+							};
+							const encoded_psqo = psqo_factory.encode_psqo(filter)
+							const url = 'catalog/?psqo=' + encoded_psqo
+							// const windowFeatures = "popup";
+							window.open(url, "mint", null);
+						})
+					}
+					break;
+
+				case 'iconography':
+					// catalog
+					if (!row.children || row.children.length===0) {
+						// ref_type_design_obverse_iconography_data
+						// ref_type_design_reverse_iconography_data
+						const link_iconography = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "icon_link",
+							parent			: term
+						})
+						link_iconography.addEventListener("click", function(){
+
+							const filter = {
+							  "$or": [
+								{
+								  "$and": [
+									{
+									  "$and": [
+										{
+										  "id": "ref_type_design_obverse_iconography_data",
+										  "field": "ref_type_design_obverse_iconography_data",
+										  "q": ""+row.section_id+"",
+										  "q_type": "q",
+										  "op": "LIKE"
+										}
+									  ]
+									}
+								  ]
+								},
+								{
+								  "$and": [
+									{
+									  "$and": [
+										{
+										  "id": "ref_type_design_reverse_iconography_data",
+										  "field": "ref_type_design_reverse_iconography_data",
+										  "q": ""+row.section_id+"",
+										  "q_type": "q",
+										  "op": "LIKE"
+										}
+									  ]
+									}
+								  ]
+								}
+							  ]
+							};
+							const encoded_psqo = psqo_factory.encode_psqo(filter)
+							const url = 'catalog/?psqo=' + encoded_psqo
+							// const windowFeatures = "popup";
+							window.open(url, "mint", null);
+						})
+					}
+					break;
+
+				case 'countermarks':
+					// to coins
+					if (row.illustration && row.illustration.length>0) {
+						// countermark_obverse_data
+						// countermark_reverse_data
+						const link_countermarks = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "icon_link",
+							parent			: term
+						})
+						link_countermarks.addEventListener("click", function(){
+
+							const filter = {
+							  "$or": [
+								{
+								  "$and": [
+									{
+									  "$and": [
+										{
+										  "id": "countermark_obverse_data",
+										  "field": "countermark_obverse_data",
+										  "q": ""+row.section_id+"",
+										  "q_type": "q",
+										  "op": "LIKE"
+										}
+									  ]
+									}
+								  ]
+								},
+								{
+								  "$and": [
+									{
+									  "$and": [
+										{
+										  "id": "countermark_reverse_data",
+										  "field": "countermark_reverse_data",
+										  "q": ""+row.section_id+"",
+										  "q_type": "q",
+										  "op": "LIKE"
+										}
+									  ]
+									}
+								  ]
+								}
+							  ]
+							};
+							const encoded_psqo = psqo_factory.encode_psqo(filter)
+							const url = 'coins/?psqo=' + encoded_psqo
+							// const windowFeatures = "popup";
+							window.open(url, "mint", null);
+						})
+					}
+					break;
+
+				default:
+					// nothing to do
+					break;
 			}
+
 			// self.scrolled = false
 			// if (to_hilite && self.scrolled===false) {
 			// 	// console.log("to_hilite:",row.term, row.term_id);
@@ -406,7 +575,6 @@ var thesaurus =  {
 				const outsideClickListener = (event) => {
 					const target = event.target;
 					if (target===image) {
-						console.log("target:",target);
 						image.classList.toggle('big')
 					}else{
 						image.classList.remove('big')
@@ -650,7 +818,7 @@ var thesaurus =  {
 
 
 		return tree_node
-	},//end build_tree_node
+	},//end render_tree_node
 
 
 

@@ -46,6 +46,7 @@
 <script>
 dom_ready(function(){
 	coins.set_up({
+		psqo			: <?php echo json_encode($psqo) ?>,
 		form_container	: document.getElementById('form_container'),
 		rows_container	: document.getElementById('rows_container')
 	})

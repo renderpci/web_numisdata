@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, coins*/
+/*global tstring, form_factory, psqo_factory, list_factory, coins_row_fields, SHOW_DEBUG, common, page, data_manager, event_manager */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -21,6 +21,7 @@ var coins =  {
 		rows_container	: null,
 
 
+
 	/**
 	* SET_UP
 	* When the HTML page is loaded
@@ -33,12 +34,7 @@ var coins =  {
 		// options
 			self.form_container	= options.form_container
 			self.rows_container	= options.rows_container
-
-
-		// form
-			self.form		= new form_factory()
-			const form_node	= self.render_form()
-			self.form_container.appendChild(form_node)
+			const psqo			= options.psqo
 
 		// pagination
 			self.pagination = {
@@ -48,6 +44,32 @@ var coins =  {
 				n_nodes	: 8
 			}
 
+		// form
+			self.form		= new form_factory()
+			const form_node	= self.render_form()
+			self.form_container.appendChild(form_node)
+
+		// form submit
+			if(psqo && psqo.length>1){
+
+				// if psqo is received, recreate the original search into the current form and submit
+				const decoded_psqo = psqo_factory.decode_psqo(psqo)
+				if (decoded_psqo) {
+
+					self.form.parse_psqo_to_form(decoded_psqo)
+
+					self.form_submit(form_node, {
+						scroll_result : true
+					})
+				}//end if (decoded_psqo)
+
+			}else{
+
+				// autoload first time
+				self.form_submit()
+			}
+
+
 		// events
 			event_manager.subscribe('paginate', paginate)
 			function paginate(offset) {
@@ -56,9 +78,6 @@ var coins =  {
 				// submit again
 				self.form_submit()
 			}
-
-		//autoload first time
-			self.form_submit()	
 
 
 		return true
@@ -74,7 +93,7 @@ var coins =  {
 		const self = this
 
 		const fragment = new DocumentFragment()
-		
+
 		const form_row = common.create_dom_element({
 			element_type	: "div",
 			class_name 		: "form-row fields",
@@ -99,7 +118,6 @@ var coins =  {
 					})
 				}
 			})
-
 
 		// collection
 			self.form.item_factory({
@@ -196,22 +214,22 @@ var coins =  {
 				}
 			})
 
-		// // technique
-		// 	self.form.item_factory({
-		// 		id 			: "technique",
-		// 		name 		: "technique",
-		// 		q_column 	: "ref_type_technique",
-		// 		q_table 	: "types",
-		// 		label		: tstring.technique || "technique",
-		// 		is_term 	: false,
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'catalog'
-		// 			})
-		// 		}
-		// 	})
+		// technique
+			// 	self.form.item_factory({
+			// 		id 			: "technique",
+			// 		name 		: "technique",
+			// 		q_column 	: "ref_type_technique",
+			// 		q_table 	: "types",
+			// 		label		: tstring.technique || "technique",
+			// 		is_term 	: false,
+			// 		parent		: form_row,
+			// 		callback	: function(form_item) {
+			// 			self.form.activate_autocomplete({
+			// 				form_item	: form_item,
+			// 				table		: 'catalog'
+			// 			})
+			// 		}
+			// 	})
 
 		// denomination
 			self.form.item_factory({
@@ -263,7 +281,6 @@ var coins =  {
 				}
 			})
 
-
 		// findspot
 			self.form.item_factory({
 				id			: "findspot",
@@ -282,22 +299,21 @@ var coins =  {
 				}
 			})
 
-
-		// // public_info
-		// 	self.form.item_factory({
-		// 		id 			: "public_info",
-		// 		name 		: "public_info",
-		// 		q_column 	: "public_info",
-		// 		label		: tstring.public_info || "Public info",
-		// 		is_term 	: false,
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'coins'
-		// 			})
-		// 		}
-		// 	})
+		// public_info
+			// 	self.form.item_factory({
+			// 		id 			: "public_info",
+			// 		name 		: "public_info",
+			// 		q_column 	: "public_info",
+			// 		label		: tstring.public_info || "Public info",
+			// 		is_term 	: false,
+			// 		parent		: form_row,
+			// 		callback	: function(form_item) {
+			// 			self.form.activate_autocomplete({
+			// 				form_item	: form_item,
+			// 				table		: 'coins'
+			// 			})
+			// 		}
+			// 	})
 
 		// countermark_obverse
 			self.form.item_factory({
@@ -333,23 +349,23 @@ var coins =  {
 				}
 			})
 
-		// // equivalents
-		// 	self.form.item_factory({
-		// 		id			: "equivalents",
-		// 		name		: "equivalents",
-		// 		q_column	: "ref_type_equivalents",
-		// 		eq_in		: "%",
-		// 		eq_out		: "%",
-		// 		label		: tstring.equivalents || "equivalents",
-		// 		is_term		: false,
-		// 		parent		: form_row,
-		// 		callback	: function(form_item) {
-		// 			self.form.activate_autocomplete({
-		// 				form_item	: form_item,
-		// 				table		: 'types'
-		// 			})
-		// 		}
-		// 	})
+		// equivalents
+			// 	self.form.item_factory({
+			// 		id			: "equivalents",
+			// 		name		: "equivalents",
+			// 		q_column	: "ref_type_equivalents",
+			// 		eq_in		: "%",
+			// 		eq_out		: "%",
+			// 		label		: tstring.equivalents || "equivalents",
+			// 		is_term		: false,
+			// 		parent		: form_row,
+			// 		callback	: function(form_item) {
+			// 			self.form.activate_autocomplete({
+			// 				form_item	: form_item,
+			// 				table		: 'types'
+			// 			})
+			// 		}
+			// 	})
 
 		// bibliography_author
 			self.form.item_factory({
@@ -392,7 +408,35 @@ var coins =  {
 					})
 				}
 			})
-			
+
+		// countermark_obverse_data
+			self.form.item_factory({
+				id				: "countermark_obverse_data",
+				name			: "countermark_obverse_data",
+				class_name		: 'hide',
+				label			: "countermark_obverse_data",
+				q_column		: "countermark_obverse_data",
+				q_selected_eq	: 'LIKE',
+				eq_in			: '%"',
+				eq_out			: '"%',
+				is_term			: false,
+				parent			: form_row
+			})
+
+		// countermark_reverse_data
+			self.form.item_factory({
+				id				: "countermark_reverse_data",
+				name			: "countermark_reverse_data",
+				class_name		: 'hide',
+				label			: "countermark_reverse_data",
+				q_column		: "countermark_reverse_data",
+				q_selected_eq	: 'LIKE',
+				eq_in			: '%"',
+				eq_out			: '"%',
+				is_term			: false,
+				parent			: form_row
+			})
+
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -444,7 +488,7 @@ var coins =  {
 	form_submit : function() {
 
 		const self = this
-		
+
 		const form_node = self.form.node
 		if (!form_node) {
 			return new Promise(function(resolve){
@@ -468,8 +512,8 @@ var coins =  {
 			const ar_fields	= ['*']
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
-			const count		= true			
-			const order		= "type IS NULL, type"
+			const count		= true
+			const order		= "type IS NULL, type ASC"
 			// const resolve_portals_custom = {"mint_data" : "mints"}
 
 			// sql_filter
@@ -482,7 +526,7 @@ var coins =  {
 					: null
 				if(SHOW_DEBUG===true) {
 					console.log("-> coins form_submit sql_filter:",sql_filter);
-				}					
+				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
 				// 		// loading ends
@@ -504,15 +548,15 @@ var coins =  {
 					order			: order,
 					process_result	: null,
 					resolve_portals_custom	: {
-						"image_obverse_data"	: "images", 
+						"image_obverse_data" : "images",
 					}
 				}
 			})
 			.then(function(api_response){
-				console.log("--------------- api_response:",api_response);
+				// console.log("--------------- api_response:",api_response);
 
 				coins_row_fields.last_type = null
-				
+
 				// parse data
 					const data	= page.parse_coin_data(api_response.result)
 					const total	= api_response.total
@@ -524,7 +568,7 @@ var coins =  {
 						rows_container.classList.remove("loading")
 						resolve(null)
 					}
-				
+
 				// loading end
 					(function(){
 						while (rows_container.hasChildNodes()) {
@@ -532,7 +576,7 @@ var coins =  {
 						}
 						rows_container.classList.remove("loading")
 					})()
-				
+
 				// render
 					self.list = self.list || new list_factory() // creates / get existing instance of list
 					self.list.init({
@@ -565,15 +609,14 @@ var coins =  {
 	* This function is a callback defined when list_factory is initialized (!)
 	* @param object data (db row parsed)
 	* @param object caller (instance of class caller like coin)
-	* @return DocumentFragment node 
+	* @return DocumentFragment node
 	*/
 	list_row_builder : function(data, caller){
 
 		return coins_row_fields.draw_item(data)
-	
 	}//end list_row_builder
 
 
 
-	
+
 }//end coins

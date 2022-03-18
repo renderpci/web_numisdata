@@ -1311,6 +1311,7 @@ nav ul {
 }
 .spinner_svg {
   max-height: 200px;
+  width: 100%;
 }
 a.image_link {
   text-decoration: none;

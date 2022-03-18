@@ -182,7 +182,7 @@
 
 // suffix
 	define('CSS_SUFFIX', '');
-	define('JS_SUFFIX' , ''); // -min
+	define('JS_SUFFIX' , '-min'); // -min
 
 
 

@@ -801,6 +801,62 @@ var catalog = {
 				}
 			})
 
+		// ref_type_design_obverse_iconography_data
+			self.form.item_factory({
+				id				: "ref_type_design_obverse_iconography_data",
+				name			: "ref_type_design_obverse_iconography_data",
+				class_name		: 'hide',
+				label			: "ref_type_design_obverse_iconography_data",
+				q_column		: "ref_type_design_obverse_iconography_data",
+				q_selected_eq	: 'LIKE',
+				eq_in			: '%"',
+				eq_out			: '"%',
+				is_term			: false,
+				parent			: form_row
+			})
+
+		// ref_type_design_reverse_iconography_data
+			self.form.item_factory({
+				id				: "ref_type_design_reverse_iconography_data",
+				name			: "ref_type_design_reverse_iconography_data",
+				class_name		: 'hide',
+				label			: "ref_type_design_reverse_iconography_data",
+				q_column		: "ref_type_design_reverse_iconography_data",
+				q_selected_eq	: 'LIKE',
+				eq_in			: '%"',
+				eq_out			: '"%',
+				is_term			: false,
+				parent			: form_row
+			})
+
+		// ref_type_symbol_obverse_data
+			self.form.item_factory({
+				id				: "ref_type_symbol_obverse_data",
+				name			: "ref_type_symbol_obverse_data",
+				class_name		: 'hide',
+				label			: "ref_type_symbol_obverse_data",
+				q_column		: "ref_type_symbol_obverse_data",
+				q_selected_eq	: 'LIKE',
+				eq_in			: '%"',
+				eq_out			: '"%',
+				is_term			: false,
+				parent			: form_row
+			})
+
+		// ref_type_symbol_reverse_data
+			self.form.item_factory({
+				id				: "ref_type_symbol_reverse_data",
+				name			: "ref_type_symbol_reverse_data",
+				class_name		: 'hide',
+				label			: "ref_type_symbol_reverse_data",
+				q_column		: "ref_type_symbol_reverse_data",
+				q_selected_eq	: 'LIKE',
+				eq_in			: '%"',
+				eq_out			: '"%',
+				is_term			: false,
+				parent			: form_row
+			})
+
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",

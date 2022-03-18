@@ -1,3 +1,6 @@
+/*global tstring, form_factory, list_factory, psqo_factory, SHOW_DEBUG, common, page, data_manager, event_manager */
+/*eslint no-undef: "error"*/
+
 "use strict";
 
 
@@ -331,20 +334,20 @@ var mints =  {
 							new_body.limit		= 0
 							new_body.offset		= 0
 							new_body.count		= false
-							new_body.ar_fields	= ['section_id'] 
-														
+							new_body.ar_fields	= ['section_id']
+
 							return data_manager.request({
 								body : new_body
 							})
-							.then(function(response){								
+							.then(function(response){
 								const ar_id = response.result
 									? response.result.map(el => el.section_id)
-									: null							
+									: null
 								return(ar_id)
 							})
 						  })()
 					ar_id_promise.then(function(ar_id){
-							console.log("********** ar_id:",ar_id);
+						// console.log("********** ar_id:",ar_id);
 					})
 			})
 

@@ -31,20 +31,20 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/browser.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/breakpoints.min.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/util.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/util'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main'.JS_SUFFIX.'.js';
 		//page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.poptrox.min.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/image_gallery.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/image_gallery'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/lz-string/lz-string.min.js';
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/lz-string/base64-string.js';
 
 
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page_render.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data_export.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/biblio_row_fields.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/page_render'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/data_export'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/biblio_row_fields'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/paginator'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/page/js/app-min.js';
 
 

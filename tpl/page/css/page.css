@@ -1092,6 +1092,12 @@ nav ul {
   opacity: 0;
   visibility: hidden;
 }
+#footer a {
+  color: #cccccc;
+}
+#footer a:hover {
+  color: #b7996d !important;
+}
 #footer > section {
   width: 100%;
   text-align: left;
@@ -1123,6 +1129,13 @@ nav ul {
   justify-content: space-evenly;
   align-items: flex-start;
 }
+#footer .inner .footer-section-wrapper > ul:first-child {
+  width: 125%;
+}
+#footer .inner .footer-section-wrapper > ul:nth-child(4),
+#footer .inner .footer-section-wrapper > ul:nth-child(5) {
+  width: 65%;
+}
 #footer .inner .footer-section-wrapper ul {
   margin: 0;
   width: 100%;
@@ -1133,7 +1146,7 @@ nav ul {
   margin: 0;
   padding: 0;
   flex: 1 1;
-  line-height: 1.6em;
+  line-height: 1.2em;
 }
 #footer .inner .footer-section-wrapper > ul {
   margin-bottom: 0.5rem;
@@ -1153,14 +1166,13 @@ nav ul {
   font-size: 1.4rem;
 }
 #footer .inner .footer-section-wrapper .footer-links-a {
-  font-size: 1.15rem;
+  font-size: 1rem;
 }
 #footer .inner .footer-section-wrapper img.footer_image_item {
   width: 100%;
   object-position: left;
   object-fit: contain;
   max-height: 6rem;
-  filter: sepia(100%) saturate(0) brightness(50%);
   opacity: 0.75;
   transition: all 0.35s linear;
 }

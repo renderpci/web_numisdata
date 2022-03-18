@@ -122,6 +122,13 @@ input.form-control:not(:placeholder-shown) {
   margin-bottom: 1.25em;
   margin-top: 0.25em;
 }
+.form-inline input[type="text"],
+.form-inline input[type="password"],
+.form-inline input[type="email"],
+.form-inline select {
+  height: 2.5em;
+  border-bottom: solid 1px #eeeeee;
+}
 .form-inline .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -132,7 +139,6 @@ input.form-control:not(:placeholder-shown) {
   flex: 0 1 25%;
   align-self: baseline;
   padding: 0;
-  padding-top: 0.5em;
   padding-right: 1em;
 }
 @media screen and (max-width: 736px) {

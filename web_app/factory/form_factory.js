@@ -691,8 +691,8 @@ function form_factory() {
 						filter_line = "MATCH (" + item_field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
 					}else{
 						filter_line = (item_field.indexOf("AS")!==-1 || (item.wrapper && item.wrapper.length>0))
-							? "" +item_field+""  +" "+ item.op +" "+ item.value + (" AND "+item_field+"!=''")
-							: "`"+item_field+"`" +" "+ item.op +" "+ item.value	+ (" AND `"+item_field+"`!=''")
+							? "(" +item_field+""  +" "+ item.op +" "+ item.value + (" AND "+item_field+"!='')")
+							: "(`"+item_field+"`" +" "+ item.op +" "+ item.value	+ (" AND `"+item_field+"`!='')")
 					}
 
 					ar_filter.push(filter_line)

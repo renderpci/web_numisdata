@@ -79,7 +79,9 @@ var page = {
 						lineJoin	: 'bevel', // A string that defines shape to be used at the corners of the stroke.
 						fill		: false,
 						fillColor	: '#fe1500', // Fill color. Defaults to the value of the color option
-						fillOpacity	: 0.7 // Fill opacity
+						fillOpacity	: 0.7, // Fill opacity
+						dashArray 	: '5',
+						// className 	: 'map_stroke'
 					}
 				},
 				findspot : {
@@ -97,7 +99,9 @@ var page = {
 						lineJoin	: 'bevel', // A string that defines shape to be used at the corners of the stroke.
 						fill		: false,
 						fillColor	: '#fdb314', // Fill color. Defaults to the value of the color option
-						fillOpacity	: 0.7 // Fill opacity
+						fillOpacity	: 0.7, // Fill opacity
+						dashArray 	: '5',
+						// className 	: 'map_stroke'
 					}
 				},
 				hoard : {
@@ -115,7 +119,9 @@ var page = {
 						lineJoin	: 'bevel', // A string that defines shape to be used at the corners of the stroke.
 						fill		: false,
 						fillColor	: '#fdb314', // Fill color. Defaults to the value of the color option
-						fillOpacity	: 0.7 // Fill opacity
+						fillOpacity	: 0.7, // Fill opacity
+						dashArray 	: '5',
+						// className 	: 'map_stroke'
 					}
 				}
 			}
@@ -741,7 +747,7 @@ var page = {
 	* Build DOM nodes to insert into map pop-up
 	*/
 	map_popup_builder : function(item) {
-		// console.log("-> map_popup_builder item:",item);
+		// console.log("-------------> map_popup_builder item:",item);
 
 		const self = this
 

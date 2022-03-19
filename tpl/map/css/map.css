@@ -28,6 +28,9 @@
 .full_width {
   background-color: #4fd4fd;
 }
+.map_stroke {
+  stroke-dasharray: 0.5em;
+}
 #main .inner .result .line-tittle {
   margin-left: 0 !important;
   font-size: 1.75em;

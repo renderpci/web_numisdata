@@ -1,0 +1,37 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+		<!-- Main -->
+			<div id="main">
+				<div class="inner">
+					<!-- main_container -->
+						<div id="main_container" class="main_container"></div>
+				</div>
+			</div>
+
+		<!-- Footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
+<script>
+dom_ready(function(){
+	// set up
+	<?php echo $cwd ?>.set_up({
+		row				: <?php echo json_encode($this->row) ?>,
+		main_container	: document.getElementById('main_container')
+	});
+})
+</script>

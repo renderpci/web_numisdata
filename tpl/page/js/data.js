@@ -1232,40 +1232,85 @@ page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
 }//end parse_tree_data
 
 
+/**
+* PARSE_ACTIVITY_DATA
+*	Parse users activity data
+* @param array rows
+* @return array rows
+*/
+page.parse_activity_data = function(data) {
+
+	if (!Array.isArray(data)) {
+		data = [data]
+	}
+
+	const parsed_data = []
+
+	try {
+
+		if(!data) {
+			return data
+		}
+
+		for (let i = 0; i < data.length; i++) {
+
+			const row = data[i]
+
+			if (row.parsed===true) {
+				parsed_data.push(row)
+				continue;
+			}
+
+			row.activity = row.activity
+				? JSON.parse(row.activity)
+				: null
+
+			row.parsed = true
+
+			parsed_data.push(row)
+		}//end for (let i = 0; i < data.length; i++)
+
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("data:", data);
+	}
+
+
+	return parsed_data
+};//end parse_activity_data
+
+
 
 /**
 * GET_ALL_ID_UNLIMITED
 * @return promise - array
 */
-this.get_all_id_unlimited = function(body) {
+	// page.get_all_id_unlimited = function(body) {
 
-	const ar_id_promise = (limit===0 && offset===0)
-		? Promise.resolve( data.map(el => el.section_id) ) // use existing
-		: (()=>{
-			// create a unlimited search
-			const new_body		= Object.assign({}, body)
-			new_body.limit		= 0
-			new_body.offset		= 0
-			new_body.count		= false
-			new_body.ar_fields	= ['section_id']
+	// 	const ar_id_promise = (limit===0 && offset===0)
+	// 		? Promise.resolve( data.map(el => el.section_id) ) // use existing
+	// 		: (()=>{
+	// 			// create a unlimited search
+	// 			const new_body		= Object.assign({}, body)
+	// 			new_body.limit		= 0
+	// 			new_body.offset		= 0
+	// 			new_body.count		= false
+	// 			new_body.ar_fields	= ['section_id']
 
-			return data_manager.request({
-				body : new_body
-			})
-			.then(function(response){
-				const ar_id = response.result
-					? response.result.map(el => el.section_id)
-					: null
-				return(ar_id)
-			})
-		  })()
-	ar_id_promise.then(function(ar_id){
-			console.log("********** ar_id:",ar_id);
-	})
-
-
-};//end get_all_id_unlimited
-
-
+	// 			return data_manager.request({
+	// 				body : new_body
+	// 			})
+	// 			.then(function(response){
+	// 				const ar_id = response.result
+	// 					? response.result.map(el => el.section_id)
+	// 					: null
+	// 				return(ar_id)
+	// 			})
+	// 		  })()
+	// 	ar_id_promise.then(function(ar_id){
+	// 			console.log("********** ar_id:",ar_id);
+	// 	})
+	// }//end get_all_id_unlimited
 
 

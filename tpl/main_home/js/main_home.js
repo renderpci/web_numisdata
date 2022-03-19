@@ -288,22 +288,30 @@ var main_home =  {
 					const item = api_response.result[0]
 
 					// link and labels values
-						const mint = (item.mint)
+						const mint = (item && item.mint)
 							? item.mint+' | '
 							: ''
 
-						const mint_number = (item.mint_number)
+						const mint_number = (item && item.mint_number)
 							? item.mint_number+'/'
 							: ''
 
-						const denomination = (item.denomination)
+						const denomination = (item && item.denomination)
 							? " | "+item.denomination
 							: ''
 
-						const item_text = mint + item.catalogue + " " + mint_number + item.number
+						const catalogue = (item && item.catalogue)
+							? item.catalogue
+							: ''
+
+						const number =  (item && item.number)
+							? item.number
+							: ''
+
+						const item_text = mint + catalogue + " " + mint_number + number
 
 
-						const type_url = (item.section_id)
+						const type_url = (item && item.section_id)
 							? page_globals.__WEB_ROOT_WEB__+"/type/" + item.section_id
 							: "#"
 

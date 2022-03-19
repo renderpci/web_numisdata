@@ -84,8 +84,6 @@ var mint = {
 								// 	ar_rows	: result
 								// })
 
-								console.log(result[0])
-
 								//RESTORE term_section_id info
 								for (let i=0;i<result.length;i++){
 									result[i].catalog_info = result[i].term_section_id
@@ -266,7 +264,7 @@ var mint = {
 			})
 			.then(function(response){
 				// console.log("++++++++++++ request_body:",request_body);
-				 console.log("get_types_data2 API response:",response);
+				 // console.log("get_types_data2 API response:",response);
 
 				const parsed_data = response.result
 					? page.parse_catalog_data(response.result)

@@ -15,7 +15,7 @@ var coin_row = {
 
 	draw_coin : function(row) {
 		if(SHOW_DEBUG===true) {
-			console.log("-- draw_coin row:",row)
+			// console.log("-- draw_coin row:",row)
 		}
 
 		const self = this
@@ -82,7 +82,6 @@ var coin_row = {
 
 						for (let i = 0; i < row.ref_auction_group.length; i++) {
 							const auction = row.ref_auction_group[i]
-							console.log(row)
 							let auctionGalleryAttributes = ""
 						// name
 							if (auction.name) {

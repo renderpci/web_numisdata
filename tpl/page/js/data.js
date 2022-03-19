@@ -891,7 +891,8 @@ page.parse_map_global_data = function(ar_rows) {
 				const types_list_total = row.types_list ? row.types_list.length : 0;
 
 				const title = '<span class="note">'+(tstring[name] || name)+'</span> ' + row.name
-				const description = (tstring.coins || 'Coins') + ': ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ': ' + types_list_total
+				// const description = (tstring.coins || 'Coins') + ': ' + coins_list_total +'<br>'+ (tstring.types || 'Types') + ': ' + types_list_total
+				const description = (tstring.coins || 'Coins') + ': ' + coins_list_total
 
 				const item_data = {
 					section_id			: row.section_id,

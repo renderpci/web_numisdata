@@ -80,7 +80,7 @@ var page = {
 						fill		: false,
 						fillColor	: '#fe1500', // Fill color. Defaults to the value of the color option
 						fillOpacity	: 0.7, // Fill opacity
-						dashArray 	: '5',
+						dashArray 	: '5'
 						// className 	: 'map_stroke'
 					}
 				},
@@ -100,7 +100,7 @@ var page = {
 						fill		: false,
 						fillColor	: '#fdb314', // Fill color. Defaults to the value of the color option
 						fillOpacity	: 0.7, // Fill opacity
-						dashArray 	: '5',
+						dashArray 	: '5'
 						// className 	: 'map_stroke'
 					}
 				},
@@ -120,7 +120,7 @@ var page = {
 						fill		: false,
 						fillColor	: '#fdb314', // Fill color. Defaults to the value of the color option
 						fillOpacity	: 0.7, // Fill opacity
-						dashArray 	: '5',
+						dashArray 	: '5'
 						// className 	: 'map_stroke'
 					}
 				}
@@ -266,7 +266,7 @@ var page = {
 		image_obj.style.opacity = 0;
 		var actual_image = document.createElement("img")
 			actual_image.src = image_obj.style.backgroundImage.replace(/"/g,"").replace(/url\(|\)$/ig, "")
-			actual_image.addEventListener("load", function(e){
+			actual_image.addEventListener("load", function(){
 				//console.log(e);
 				var width  = this.width;
 				var height  = this.height;
@@ -314,9 +314,9 @@ var page = {
 			}
 
 		// debug
-			if(SHOW_DEBUG===true) {
-				console.log("scrollbar:",scrollbar);
-			}
+			// if(SHOW_DEBUG===true) {
+				// console.log("scrollbar:", scrollbar);
+			// }
 
 		// footer
 			const footer = document.getElementById("footer")

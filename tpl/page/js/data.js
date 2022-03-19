@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, common, page*/
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -16,7 +16,6 @@
 * @return object row | array rows
 */
 page.parse_type_data = function(data) {
-	// console.log("------------> parse_type_data data:",data);
 
 	const self = this
 
@@ -980,7 +979,6 @@ page.parse_iri_data = function(data) {
 
 
 
-
 /**
 * PARSE_TS_WEB
 * @return
@@ -1020,7 +1018,7 @@ page.parse_ts_web = function(rows) {
 * Parse rows data to use in tree_factory (thesaurus tables)
 * Table ts_thematic, ts_technique, ts_onomastic, ts_material
 */
-page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
+page.parse_tree_data = function(ar_rows, hilite_terms) {
 
 	const data = []
 
@@ -1216,21 +1214,22 @@ page.parse_tree_data = function(ar_rows, hilite_terms, root_term) {
 				}
 
 			if (row.hilite===true) {
-				set_status_as_opened(data_clean, row, false)
+				set_status_as_opened(data_clean, row)
 			}
 		}
-		function set_status_as_opened(data_clean, row, recursion) {
+		function set_status_as_opened(data_clean, row) {
 			const parent_term_id	= row.parent[0]
 			const parent_row		= data_clean.find(item => item.term_id==parent_term_id)
 			if (parent_row) {
 				parent_row.status = "opened"
-				set_status_as_opened(data_clean, parent_row, true)
+				set_status_as_opened(data_clean, parent_row)
 			}
 		}
 
 
 	return data_clean
 }//end parse_tree_data
+
 
 
 /**

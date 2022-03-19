@@ -1,3 +1,6 @@
+/*global tstring, page_globals, SHOW_DEBUG, event_manager, data_manager, page */
+/*eslint no-undef: "error"*/
+
 "use strict";
 
 
@@ -31,9 +34,9 @@ var coin = {
 			const contact_form_button = page.create_suggestions_button()
 			self.export_data_container.appendChild(contact_form_button)
 
-		// trigger render coin with current options.section_id 
+		// trigger render coin with current options.section_id
 			if (self.section_id || self.section_id<1) {
-				
+
 				// search by section_id
 					self.get_row_data({
 						section_id : self.section_id
@@ -47,13 +50,13 @@ var coin = {
 							// row . Note data is an array of one row, already parsed
 								const row = data[0];
 
-							// render row nodes 
+							// render row nodes
 								self.render_row({
 									target	: target,
 									row		: row
 								})
 								.then(function(){
-									
+
 									// activate images gallery light box
 										const images_gallery_container = target.querySelector('.gallery')
 										page.activate_images_gallery(images_gallery_container)
@@ -61,12 +64,12 @@ var coin = {
 									// show export buttons
 										self.export_data_container.classList.remove('hide')
 								})
-						}		
+						}
 					})
 			}else{
 				console.error("Invalid section_id: ", options);
 			}
-	
+
 		// navigate across records group
 			// document.onkeyup = function(e) {
 			// 	if (e.which == 37) { // arrow left <-
@@ -75,7 +78,7 @@ var coin = {
 			// 	}else if (e.which == 39) { // arrow right ->
 			// 		let button = document.getElementById("go_next")
 			// 		if (button) button.click()
-			// 	}		
+			// 	}
 			// }
 
 
@@ -116,19 +119,19 @@ var coin = {
 					resolve_portals_custom	: {
 						type_data			: 'types',
 						bibliography_data	: 'bibliographic_references',
-						image_obverse_data 	: 'images', 
+						image_obverse_data 	: 'images',
 						// images_obverse	: 'images_obverse',
 						// images_reverse	: 'images_reverse'
 					}
-				}			
-			
+				}
+
 			// request
 			return data_manager.request({
 				body : request_body
 			})
 			.then(function(api_response){
 				console.log("--> coins get_row_data api_response:", api_response);
-				
+
 				// parse server data
 					const data = page.parse_coin_data(api_response.result)
 
@@ -141,7 +144,7 @@ var coin = {
 
 				resolve(data)
 			})
-		})		
+		})
 	},//end get_row_data
 
 
@@ -163,7 +166,7 @@ var coin = {
 		// debug
 			if(SHOW_DEBUG===true) {
 				console.log("coin row:",row);
-			}	
+			}
 
 		return new Promise(function(resolve){
 
@@ -174,7 +177,7 @@ var coin = {
 
 			// draw row coin
 				const coin_row_wrapper = coin_row.draw_coin(row)
-			
+
 			// container final fragment add
 				container.appendChild(coin_row_wrapper)
 
@@ -184,5 +187,5 @@ var coin = {
 	},//end render_row
 
 
-	
+
 }//end coin

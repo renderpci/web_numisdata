@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, item, common, page, forms, document, DocumentFragment, tstring, console, tree_factory, map_factory */
+/*global tstring, page_globals, common, page, DocumentFragment, tstring */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -157,7 +157,7 @@ var catalog_row_fields = {
 									style : 'small legend_obverse_box'
 								})
 							)
-						}						
+						}
 						self.node_factory(item, "ref_type_legend_transcription_obverse", legend_obverse, null, null)
 
 					// reverse
@@ -184,7 +184,7 @@ var catalog_row_fields = {
 					self.node_factory(item, "ref_type_equivalents", type_container, null, null)
 
 					// images
-						
+
 						const mint_number = (item.ref_mint_number)
 						? item.ref_mint_number+'/'
 						: ''
@@ -198,15 +198,15 @@ var catalog_row_fields = {
 							: 15
 
 						const coins_images_container = common.create_dom_element({
-							  element_type 	: "div",
-							  class_name 	: "coins_images_container",
-							  parent 		: type_container,
+							element_type	: "div",
+							class_name		: "coins_images_container",
+							parent			: type_container
 						})
 
 						const coins_images = common.create_dom_element({
-							  element_type 	: "div",
-							  class_name 	: "coins_images",
-							  parent 		: coins_images_container,
+							element_type	: "div",
+							class_name		: "coins_images",
+							parent			: coins_images_container
 						})
 						coins_images.style.width = (diameter * 4 ) + 'mm'
 
@@ -218,12 +218,12 @@ var catalog_row_fields = {
 								parent			: coins_images
 							})
 							const img_obverse = common.create_dom_element({
-								  element_type 	: "img",
-								  class_name 	: "image_obverse",
-								  src 			: item.ref_coins_image_obverse_thumb,
-								  title 		: item.section_id,
-								  dataset 		: {caption: "MIB " + mint_number + c_name  },
-								  parent 		: image_link_obverse
+								element_type	: "img",
+								class_name		: "image_obverse",
+								src				: item.ref_coins_image_obverse_thumb,
+								title			: item.section_id,
+								dataset			: {caption: "MIB " + mint_number + c_name  },
+								parent			: image_link_obverse
 							})
 							img_obverse.style.width = (diameter * 2 ) + 'mm'
 							img_obverse.hires = item.ref_coins_image_obverse
@@ -238,12 +238,12 @@ var catalog_row_fields = {
 								parent			: coins_images
 							})
 							const img_reverse = common.create_dom_element({
-								  element_type 	: "img",
-								  class_name 	: "image_reverse",
-								  src 			: item.ref_coins_image_reverse_thumb,
-								  title 		: item.section_id,
-								  //dataset 		: {caption: type_number},
-								  parent 		: image_link_reverse
+								element_type	: "img",
+								class_name		: "image_reverse",
+								src				: item.ref_coins_image_reverse_thumb,
+								title			: item.section_id,
+								//dataset		: {caption: type_number},
+								parent			: image_link_reverse
 							})
 							img_reverse.style.width = (diameter * 2 ) + 'mm'
 							img_reverse.hires = item.ref_coins_image_reverse
@@ -253,23 +253,23 @@ var catalog_row_fields = {
 						if (window.matchMedia) {
 							window.matchMedia('print').addListener(function(mql) {
 								 if (mql.matches) {
-									coins_images.style.width 	= (diameter * 2 ) + 'mm'
-									img_obverse.style.width 	= (diameter * 1 ) + 'mm'
-									img_reverse.style.width 	= (diameter * 1 ) + 'mm'
+									coins_images.style.width	= (diameter * 2 ) + 'mm'
+									img_obverse.style.width		= (diameter * 1 ) + 'mm'
+									img_reverse.style.width		= (diameter * 1 ) + 'mm'
 								}
-								 if (!mql.matches) {
-								 	coins_images.style.width 	= (diameter * 4 ) + 'mm'
+								if (!mql.matches) {
+									coins_images.style.width 	= (diameter * 4 ) + 'mm'
 									img_obverse.style.width 	= (diameter * 2 ) + 'mm'
 									img_reverse.style.width 	= (diameter * 2 ) + 'mm'
-								 }
+								}
 							})
 						}
 
 					const collection_auction = common.create_dom_element({
-							  element_type 	: "div",
-							  class_name 	: "collection_auction",
-							  parent 		: type_container
-						})
+						element_type	: "div",
+						class_name		: "collection_auction",
+						parent			: type_container
+					})
 					self.node_factory(item, "ref_coins_collection", collection_auction, null, null)
 					self.node_factory(item, "ref_coins_auction", collection_auction, null, null)
 				}
@@ -278,10 +278,10 @@ var catalog_row_fields = {
 
 			case "mints":
 				common.create_dom_element({
-					  element_type 	: "div",
-					  class_name 	: "mint",
-					  text_content 	: item.term, // + " [" + term_table + "]",
-					  parent 		: fragment
+					element_type	: "div",
+					class_name		: "mint",
+					text_content	: item.term, // + " [" + term_table + "]",
+					parent			: fragment
 				})
 
 				if (item.term_section_id) {
@@ -297,17 +297,17 @@ var catalog_row_fields = {
 
 			default:
 				common.create_dom_element({
-					  element_type 	: "div",
-					  class_name 	: term_table+'_value',
-					  text_content 	: item.term, // + " [" + term_table + "]",
-					  parent 		: fragment
+					element_type	: "div",
+					class_name		: term_table+'_value',
+					text_content	: item.term, // + " [" + term_table + "]",
+					parent			: fragment
 				})
 				break;
 		}//end switch
 
 		const node = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "row_node "+term_table,
+			element_type	: "div",
+			class_name		: "row_node "+term_table
 		})
 		node.appendChild(fragment)
 
@@ -370,7 +370,7 @@ var catalog_row_fields = {
 					// 				clean.push(ar[i])
 					// 			}
 					// 			return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
-					// 		})()						
+					// 		})()
 
 					// 	const a_term = common.create_dom_element({
 					// 		element_type	: "a",
@@ -404,7 +404,7 @@ var catalog_row_fields = {
 		}
 
 		return false
-	},//end node_factory
+	}//end node_factory
 
 
 

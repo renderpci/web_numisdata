@@ -1,4 +1,4 @@
-/*global tstring, form_factory, psqo_factory, list_factory, coins_row_fields, SHOW_DEBUG, common, page, data_manager, event_manager */
+/*global tstring, form_factory, psqo_factory, list_factory, coins_row_fields, Promise, SHOW_DEBUG, common, page, data_manager, event_manager */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -525,7 +525,7 @@ var coins =  {
 					? '(' + parsed_filter + ')'
 					: null
 				if(SHOW_DEBUG===true) {
-					console.log("-> coins form_submit sql_filter:",sql_filter);
+					// console.log("-> coins form_submit sql_filter:",sql_filter);
 				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
@@ -548,7 +548,7 @@ var coins =  {
 					order			: order,
 					process_result	: null,
 					resolve_portals_custom	: {
-						"image_obverse_data" : "images",
+						'image_obverse_data' : 'images'
 					}
 				}
 			})
@@ -565,7 +565,7 @@ var coins =  {
 					self.pagination.offset	= offset
 
 					if (!data) {
-						rows_container.classList.remove("loading")
+						rows_container.classList.remove('loading')
 						resolve(null)
 					}
 
@@ -574,7 +574,7 @@ var coins =  {
 						while (rows_container.hasChildNodes()) {
 							rows_container.removeChild(rows_container.lastChild);
 						}
-						rows_container.classList.remove("loading")
+						rows_container.classList.remove('loading')
 					})()
 
 				// render
@@ -595,9 +595,9 @@ var coins =  {
 			})
 
 			// scrool to head result
-			const div_result = document.querySelector(".rows_container")
+			const div_result = document.querySelector('.rows_container')
 			if (div_result) {
-				div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+				div_result.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
 			}
 		})
 	},//end form_submit
@@ -611,7 +611,7 @@ var coins =  {
 	* @param object caller (instance of class caller like coin)
 	* @return DocumentFragment node
 	*/
-	list_row_builder : function(data, caller){
+	list_row_builder : function(data){
 
 		return coins_row_fields.draw_item(data)
 	}//end list_row_builder

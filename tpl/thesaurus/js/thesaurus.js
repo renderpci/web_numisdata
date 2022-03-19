@@ -49,7 +49,7 @@ var thesaurus =  {
 	/**
 	* SET_UP
 	*/
-	set_up : async function(options) {
+	set_up : function(options) { // async
 		// console.log("-> thesaurus set_up options:", options);
 
 		const self = this
@@ -232,7 +232,6 @@ var thesaurus =  {
 					columns_name	: ['parents']
 				}
 			}
-			console.log("body:",body);
 			const js_promise = data_manager.request({
 				body : body
 			})
@@ -279,14 +278,14 @@ var thesaurus =  {
 				case 'tree':
 					const hilite_terms = self.term_id
 						? [self.term_id]
-						: null
+						: null;
 					self.data_clean	= page.parse_tree_data(
 						ar_rows,
 						hilite_terms,
 						self.root_term
 					) // prepares data to use in list
 					if(SHOW_DEBUG===true) {
-						console.log("self.data_clean:",self.data_clean);
+						// console.log("self.data_clean:",self.data_clean);
 					}
 					// temporal
 						// console.log("self.data_clean:",self.data_clean);
@@ -982,8 +981,8 @@ var thesaurus =  {
 
 						// debug
 							if(SHOW_DEBUG===true) {
-								console.log("--- autocomplete api_response:",api_response);
-								console.log("autocomplete ar_result:",ar_result);
+								// console.log("--- autocomplete api_response:",api_response);
+								// console.log("autocomplete ar_result:",ar_result);
 							}
 
 						response(ar_result)
@@ -1165,11 +1164,9 @@ var thesaurus =  {
 		const self = this
 
 		// filter. Is built looking at form input values
-			// const filter = self.build_filter()
+			// const filter		= self.build_filter()
 			const form_items	= self.form.form_items
 			const form_item		= form_items.term
-				console.log("form_items:",form_items);
-				console.log("form_item:",form_item);
 
 		// search rows exec against API
 			const js_promise = self.search_rows({
@@ -1182,14 +1179,13 @@ var thesaurus =  {
 
 				// debug
 					if(SHOW_DEBUG===true) {
-						console.log("--- form_submit response:",response)
+						// console.log("--- form_submit response:",response)
 					}
 
 				const to_hilite = response.result.map(el => el.value)
 
 				// remove self.term_id to avoid hilite again
 					self.term_id = null
-
 
 				// rows_list_node
 					const rows_list_node	= document.getElementById('rows_list')

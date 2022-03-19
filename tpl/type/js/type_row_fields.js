@@ -108,8 +108,8 @@ var type_row_fields = {
 				)
 			}else{
 				common.create_dom_element({
-					element_type 	: "div",
-					parent 			: wrapper
+					element_type	: "div",
+					parent			: sides_wrapper
 				})
 			}
 
@@ -316,8 +316,6 @@ var type_row_fields = {
 
 	dedalo_link : function(item, section_tipo) {
 
-		const self = this
-
 		const dedalo_link = common.create_dom_element({
 			element_type	: "a",
 			class_name		: "section_id go_to_dedalo",
@@ -332,8 +330,6 @@ var type_row_fields = {
 
 
 	default : function(item, name, fn) {
-
-		const self = this
 
 		// line
 			const line = common.create_dom_element({
@@ -403,8 +399,6 @@ var type_row_fields = {
 
 	label : function(item, name) {
 
-		const self = this
-
 		// line
 			const line = common.create_dom_element({
 				element_type	: "div",
@@ -425,8 +419,6 @@ var type_row_fields = {
 
 
 	catalog_hierarchy : function(item, name) {
-
-		const self = this
 
 		// line
 			const line = common.create_dom_element({
@@ -499,7 +491,6 @@ var type_row_fields = {
 
 
 	creators : function(item, name) {
-		const self = this
 
 		// line
 			const line = common.create_dom_element({
@@ -541,7 +532,6 @@ var type_row_fields = {
 				text_creators.push(creator.trim())
 			}
 
-
 			common.create_dom_element({
 				element_type 	: "span",
 				class_name 		: "creators",
@@ -554,6 +544,7 @@ var type_row_fields = {
 
 		return line
 	},//end creators
+
 
 
 	image : function(item, name) {
@@ -578,14 +569,14 @@ var type_row_fields = {
 			})
 
 			common.create_dom_element({
-				element_type 	: "img",
-				class_name 		: "image",
-				src 			: url,
-				title 			: item.number,
-				dataset 		: {
-									caption: self.type +' | '+self.equivalents
-								},
-				parent 			: image_link
+				element_type	: "img",
+				class_name		: "image",
+				src				: url,
+				title			: item.number,
+				dataset			: {
+					caption : self.type + ' | '+self.equivalents
+				},
+				parent			: image_link
 			})
 		}
 
@@ -899,7 +890,7 @@ var type_row_fields = {
 			for (let i = 0; i < ar_nodes_length; i++) {
 				// separator
 				if (i>0 && i<ar_nodes_length) {
-					const node = common.create_dom_element({
+					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "info_value separator",
 						text_content	: " | ",
@@ -925,7 +916,6 @@ var type_row_fields = {
 				element_type	: "div",
 				class_name		: "info_line " + name
 			})
-
 
 		// function draw_coin(data, container) {
 
@@ -1152,7 +1142,7 @@ var type_row_fields = {
 				for (let j = 0; j < coins_length; j++) {
 					const coin_section_id	= coins[j]
 
-					const coin_data			= item.ref_coins_union.find(element => element.section_id==coin_section_id)
+					const coin_data = item.ref_coins_union.find(element => element.section_id==coin_section_id)
 					if (coin_data) {
 						// draw_coin(coin_data, typology_coins)
 						const coin_node = self.draw_coin(coin_data)
@@ -1168,6 +1158,7 @@ var type_row_fields = {
 
 
 	draw_coin : function(data) {
+
 		const self = this
 
 		// load_hires. When thumb is loaded, this event is triggered
@@ -1441,8 +1432,6 @@ var type_row_fields = {
 				})
 			}
 
-
-
 		// countermarks
 			const countermarks = common.create_dom_element({
 				element_type	: "div",
@@ -1553,8 +1542,6 @@ var type_row_fields = {
 		// },
 
 	draw_bibliographic_reference : function(data) {
-
-		const self = this
 
 		const bib_fragment = new DocumentFragment;
 
@@ -1963,7 +1950,6 @@ var type_row_fields = {
 			if (map_data.length>0) {
 				common.when_in_dom(map_container, draw_map)
 				function draw_map() {
-
 					self.caller.draw_map({
 						container		: map_container,
 						map_position	: null, // use default position
@@ -1981,8 +1967,6 @@ var type_row_fields = {
 
 
 	mint : function(item) {
-
-		const self = this
 
 		// line
 		const line = common.create_dom_element({
@@ -2015,8 +1999,6 @@ var type_row_fields = {
 
 
 	authors_alt : function(item) {
-
-		const self = this
 
 		// line
 		const line = common.create_dom_element({
@@ -2135,8 +2117,6 @@ var type_row_fields = {
 
 	editor : function(item) {
 
-		const self = this
-
 		// line
 		const line = common.create_dom_element({
 			element_type	: "div",
@@ -2165,7 +2145,7 @@ var type_row_fields = {
 
 	title_secondary : function(item) {
 
-		const typology = this.get_typology(item)
+		// const typology = this.get_typology(item)
 
 		// title_secondary
 			const title_secondary = item.title_secondary || ""
@@ -2195,8 +2175,6 @@ var type_row_fields = {
 
 	magazine : function(item) {
 
-		const self = this
-
 		// line
 		const line = common.create_dom_element({
 			element_type	: "div",
@@ -2222,8 +2200,6 @@ var type_row_fields = {
 
 
 	serie : function(item) {
-
-		const self = this
 
 		// line
 		const line = common.create_dom_element({
@@ -2254,8 +2230,6 @@ var type_row_fields = {
 
 	copy : function(item) {
 
-		const self = this
-
 		// line
 		const line = common.create_dom_element({
 			element_type	: "div",
@@ -2282,8 +2256,6 @@ var type_row_fields = {
 
 
 	physical_description : function(item) {
-
-		const self = this
 
 		// line
 		const line = common.create_dom_element({
@@ -2390,8 +2362,6 @@ var type_row_fields = {
 
 	place : function(item) {
 
-		const self = this
-
 		// line
 		const line = common.create_dom_element({
 			element_type	: "div",
@@ -2417,8 +2387,6 @@ var type_row_fields = {
 
 	descriptors : function(item) {
 
-		const self = this
-
 		// line
 		const line = common.create_dom_element({
 			element_type	: "div",
@@ -2443,8 +2411,6 @@ var type_row_fields = {
 
 
 	typology_name : function(item) {
-
-		const self = this
 
 		// line
 		const line = common.create_dom_element({
@@ -2476,8 +2442,6 @@ var type_row_fields = {
 	// 	data_ref: STRING type of the item in DB ex: material_data
 	create_float_prompt : function (item, parentNode, data_ref){
 
-		const self = this
-
 		if (item[data_ref] && item[data_ref].length>0) {
 
 			parentNode.classList.add("active-pointer");
@@ -2491,19 +2455,17 @@ var type_row_fields = {
 				parent 			: main_node
 			})
 
-			if (data_ref==="material_data"){
-				var url_label = item.material;
-			} else {
-				var url_label = item[data_ref][0].term;
-			}
+			const url_label = (data_ref==="material_data")
+				? item.material
+				: item[data_ref][0].term;
 
 			const psqo = [{
-				"$and":[{
-						field		: item[data_ref][0].table,
-						value		: url_label, // Like '%${form_item.q}%'
-						op			: '=', // default is 'LIKE'
-					}]
+				"$and" : [{
+					field	: item[data_ref][0].table,
+					value	: url_label, // Like '%${form_item.q}%'
+					op		: '=' // default is 'LIKE'
 				}]
+			}]
 			// console.log("form_factory", psqo_factory);
 			const parse_psqo = psqo_factory.encode_psqo(psqo)
 			const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?psqo="+ parse_psqo

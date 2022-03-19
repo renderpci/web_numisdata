@@ -27,42 +27,51 @@ var users =  {
 		const self = this
 
 		// options
-			const row		= options.row
-			const container	= options.main_container
+			const row				= options.row
+			const container			= options.main_container
+			const list_container	= options.list_container
 
 
-		// spinner on
-			const spinner = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "spinner",
-				parent			: container
-			})
+		// ts_web row
+			if (container) {
 
-		// parse ts_web data
-			const parsed_row = page.parse_ts_web(row)[0]
+				// parse ts_web data
+					const parsed_row = page.parse_ts_web(row)[0]
 
-		// render
-			self.render_row(parsed_row)
-			.then(function(node){
+				// render
+					self.render_row(parsed_row)
+					.then(function(node){
 
-				container.appendChild(node)
+						container.appendChild(node)
 
-				// event publish template_render_end
-					event_manager.publish('template_render_end', {
-						item	: container
+						// event publish template_render_end
+							event_manager.publish('template_render_end', {
+								item	: container
+							})
+					})
+			}
+
+		// list_editors
+			if (list_container) {
+
+				// spinner on
+					const spinner = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "spinner",
+						parent			: list_container
 					})
 
-				spinner.remove()
-			})
+				// users data request
+					self.get_users_data()
+					.then(function(parsed_data){
+						const graph_nodes = self.render_users_data({
+							parsed_data : parsed_data
+						})
+						container.appendChild(graph_nodes)
 
-		// users data request
-			self.get_users_data()
-			.then(function(parsed_data){
-				const graph_nodes = self.render_users_data({
-					parsed_data : parsed_data
-				})
-				container.appendChild(graph_nodes)
-			})
+						spinner.remove()
+					})
+			}
 
 
 		return true
@@ -180,62 +189,59 @@ var users =  {
 			}
 			// console.log("editors:",editors);
 
+			// draw_editors_list function
+				const draw_editors_list = function(list_raw) {
 
-			const draw_editors_list = function(list_raw) {
+					// sort list alphabetically
+						const list = list_raw.sort(function(a, b) {
+							return a.label.localeCompare(b.label, undefined, {
+								numeric		: true,
+								sensitivity	: 'base'
+							})
+						});
 
-				// sort list alphabetically
-					const list = list_raw.sort(function(a, b) {
-						return a.label.localeCompare(b.label, undefined, {
-							numeric		: true,
-							sensitivity	: 'base'
-						})
-					});
+					const fragment = new DocumentFragment()
 
-				const fragment = new DocumentFragment()
+					// iterate
+						const editors_length = list.length
+						for (let i = 0; i < editors_length; i++) {
 
-				// iterate
-					const editors_length = list.length
-					for (let i = 0; i < editors_length; i++) {
+							const item = list[i]
+							// console.log("item:",item);
 
-						const item = list[i]
-						// console.log("item:",item);
+							common.create_dom_element({
+								element_type	: "div",
+								class_name		: "editor_name",
+								inner_html		: item.label,
+								parent			: fragment
+							})
+						}
 
-						common.create_dom_element({
-							element_type	: "div",
-							class_name		: "editor_name",
-							inner_html		: item.label,
+					return fragment
+				}
+
+			// iterate end render all editor types
+				for(const type in editors) {
+
+					// block
+						const block = common.create_dom_element({
+							element_type	: 'div',
+							class_name		: 'editors_block',
 							parent			: fragment
 						})
-					}
 
-				return fragment
-			}
-
-
-			for(const type in editors) {
-
-				// block
-					const block = common.create_dom_element({
-						element_type	: 'div',
-						class_name		: 'editors_block',
-						parent			: fragment
-					})
-
-				// title
-					common.create_dom_element({
-						element_type	: 'h1',
-						class_name		: 'title',
-						inner_html		: tstring[type] || type,
-						parent			: block
-					})
-				// editors list
-					block.appendChild(
-						draw_editors_list(editors[type])
-					)
-			}
-
-
-
+					// title
+						common.create_dom_element({
+							element_type	: 'h1',
+							class_name		: 'title',
+							inner_html		: tstring[type] || type,
+							parent			: block
+						})
+					// editors list
+						block.appendChild(
+							draw_editors_list(editors[type])
+						)
+				}
 
 
 		return fragment

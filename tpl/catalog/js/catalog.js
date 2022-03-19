@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, catalog_row_fields, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, Promise, event_manager, catalog_row_fields, psqo_factory, $, common, page, form_factory, data_manager */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -35,7 +35,7 @@ var catalog = {
 		const self = this
 
 		// options
-			const global_search			= options.global_search
+			// const global_search		= options.global_search
 			const rows_list_container	= options.rows_list_container
 			const export_data_container	= options.export_data_container
 			const form_items_container	= options.form_items_container
@@ -1552,9 +1552,9 @@ var catalog = {
 		return new Promise(function(resolve){
 
 			// pagination vars
-				const total		= self.search_options.total
-				const limit		= self.search_options.limit
-				const offset	= self.search_options.offset
+				// const total		= self.search_options.total
+				// const limit		= self.search_options.limit
+				// const offset	= self.search_options.offset
 
 			// container select and clean container div
 				const container = target
@@ -1566,8 +1566,8 @@ var catalog = {
 					while (container.hasChildNodes()) {
 						container.removeChild(container.lastChild);
 					}
-
-					const node_no_results_found = common.create_dom_element({
+					// node_no_results_found
+					common.create_dom_element({
 						element_type	: 'div',
 						class_name		: "no_results_found",
 						inner_html		: tstring.no_results_found || "No results found",
@@ -1585,51 +1585,51 @@ var catalog = {
 				// page.add_spinner(container)
 
 			// const render_nodes = async () => {
-			async function render_nodes() {
+				const render_nodes = async function() {
 
-				const fragment = new DocumentFragment();
+					const fragment = new DocumentFragment();
 
-				const ar_mints = ar_rows.filter(item => item.term_table==='mints')
+					const ar_mints = ar_rows.filter(item => item.term_table==='mints')
 
-				const ar_parent = []
-				for (let i = 0; i < ar_mints.length; i++) {
-					const parent = (ar_mints[i].parent && typeof ar_mints[i].parent[0]!=="undefined")
-						? ar_mints[i].parent[0]
-						: null
-					const mint_parent = parent
-						? ar_rows.find(item => item.section_id==parent)
-						: null
-					if(!mint_parent){
-						console.warn("mint don't have public parent:",ar_mints[i]);
-						continue
+					const ar_parent = []
+					for (let i = 0; i < ar_mints.length; i++) {
+						const parent = (ar_mints[i].parent && typeof ar_mints[i].parent[0]!=="undefined")
+							? ar_mints[i].parent[0]
+							: null
+						const mint_parent = parent
+							? ar_rows.find(item => item.section_id==parent)
+							: null
+						if(!mint_parent){
+							console.warn("mint don't have public parent:",ar_mints[i]);
+							continue
+						}
+						// check if the parent is inside the ar_aprents, if not push inside else nothing
+						const unique_parent = ar_parent.find(item => item.section_id==parent)
+						if(typeof unique_parent==='undefined'){
+							ar_parent.push(mint_parent)
+						}
 					}
-					// check if the parent is inside the ar_aprents, if not push inside else nothing
-					const unique_parent = ar_parent.find(item => item.section_id==parent)
-					if(typeof unique_parent==='undefined'){
-						ar_parent.push(mint_parent)
+					// create the nodes with the unique parents: ar_parents
+					for (let i = 0; i < ar_parent.length; i++) {
+						// render_mints
+						self.get_children(ar_rows, ar_parent[i], fragment)
 					}
-				}
-				// create the nodes with the unique parents: ar_parents
-				for (let i = 0; i < ar_parent.length; i++) {
-					const render_mints = self.get_children(ar_rows, ar_parent[i], fragment)
-				}
 
-				// sort rows
-					// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
-					// ar_rows.sort( (a,b) => {
-					// 		let order_a = a.autoria +" "+ a.fecha_publicacion
-					// 		let order_b = b.autoria +" "+ b.fecha_publicacion
-					// 		//console.log("order_a",order_a, order_b);
-					// 		//console.log(collator.compare(order_a , order_b));
-					// 	return collator.compare(order_a , order_b)
-					// });
+					// sort rows
+						// let collator = new Intl.Collator('es',{ sensitivity: 'base', ignorePunctuation:true});
+						// ar_rows.sort( (a,b) => {
+						// 		let order_a = a.autoria +" "+ a.fecha_publicacion
+						// 		let order_b = b.autoria +" "+ b.fecha_publicacion
+						// 		//console.log("order_a",order_a, order_b);
+						// 		//console.log(collator.compare(order_a , order_b));
+						// 	return collator.compare(order_a , order_b)
+						// });
 
-				return fragment
-			}
+					return fragment
+				}
 
 			render_nodes()
 			.then(fragment => {
-
 
 				while (container.hasChildNodes()) {
 					container.removeChild(container.lastChild);
@@ -1661,8 +1661,8 @@ var catalog = {
 
 		// wrapper
 			const catalog_row_wrapper = common.create_dom_element({
-				  element_type 	: "div",
-				  class_name 	: "children_contanier",
+				element_type	: "div",
+				class_name		: "children_contanier"
 			})
 			parent_node.appendChild( catalog_row_wrapper )
 
@@ -1704,8 +1704,6 @@ var catalog = {
 
 	render_rows : function(row_object, ar_rows){
 
-		const self = this
-
 		// Build dom row
 		// item row_object
 			// const row_object = ar_rows[i]
@@ -1730,8 +1728,6 @@ var catalog = {
 	* @return
 	*/
 	get_catalog_range_years : function() {
-
-		const self = this
 
 		return new Promise(function(resolve){
 
@@ -1778,7 +1774,7 @@ var catalog = {
 				resolve(data)
 			})
 		})
-	},//end get_catalog_range_years
+	}//end get_catalog_range_years
 
 
 

@@ -1,3 +1,7 @@
+/*global tstring, common, page */
+/*eslint no-undef: "error"*/
+
+
 "use strict";
 
 
@@ -9,7 +13,7 @@ var mint_row = {
 	draw_type_item : function(row) {
 
 		const self = this
-		
+
 		// wrapper
 			const wrapper = common.create_dom_element({
 				element_type	: "div",
@@ -31,7 +35,7 @@ var mint_row = {
 					const type_group_text = type_number_value.split(",")
 
 					// term_line
-						const term_line = common.create_dom_element({
+						common.create_dom_element({
 							element_type	: "div",
 							class_name		: "term_line bold type_group",
 							// inner_html	: row.term,
@@ -45,7 +49,7 @@ var mint_row = {
 							parent 			: wrapper
 						})
 						wrapper.container = current_container_type
-				
+
 				}else{
 					// case final type
 
@@ -63,11 +67,12 @@ var mint_row = {
 				// 	class_name		: "type_item " + row.term_table,
 				// 	parent 			: wrapper
 				// })
-			
+
 				break;
 
 			default:
-				const current_item_regular = common.create_dom_element({
+				// current_item_regular
+				common.create_dom_element({
 					element_type	: "div",
 					inner_html		: row.term,
 					class_name		: "term_line " + row.term_table,
@@ -174,8 +179,8 @@ var mint_row = {
 				element_type	: "a",
 				class_name		: "image_link",
 				// href			: common.local_to_remote_path(row.ref_coins_image_obverse),
-				href			: row.ref_coins_image_obverse,		
-				parent			: img_wrap,
+				href			: row.ref_coins_image_obverse,
+				parent			: img_wrap
 			})
 
 			const diameter = row.ref_type_averages_diameter
@@ -218,7 +223,7 @@ var mint_row = {
 			class_name 		: "info_wrap",
 			parent 			: row_type
 		})
-		
+
 		const type_info = []
 		if (row.ref_type_material && row.ref_type_material.length>0) {
 			type_info.push(row.ref_type_material)
@@ -227,10 +232,10 @@ var mint_row = {
 			type_info.push(row.ref_type_denomination)
 		}
 		if (row.ref_type_averages_weight) {
-			let averages_weight = page.render_weight_value(row) 
+			let averages_weight = page.render_weight_value(row)
 
 			if (row.ref_type_total_weight_items){
-				averages_weight += " (" + row.ref_type_total_weight_items + ")" 
+				averages_weight += " (" + row.ref_type_total_weight_items + ")"
 			}
 			type_info.push(averages_weight)
 		}
@@ -238,7 +243,7 @@ var mint_row = {
 			let averages_diameter = page.render_diameter_value(row)
 
 			if (row.ref_type_total_diameter_items){
-				averages_diameter += " (" + row.ref_type_total_diameter_items + ")" 
+				averages_diameter += " (" + row.ref_type_total_diameter_items + ")"
 			}
 			type_info.push(averages_diameter)
 		}
@@ -351,7 +356,7 @@ var mint_row = {
 
 		//Equivalents
 
-		
+
 		let equivalents_arr = ""
 		if (row.ref_type_equivalents) {
 			equivalents_arr = row.ref_type_equivalents.split("<br>")
@@ -361,7 +366,7 @@ var mint_row = {
 			}
 			equivalents_arr = equivalents_arr.join(' | ')
 
-		} 
+		}
 
 		common.create_dom_element ({
 			element_type 	: "p",

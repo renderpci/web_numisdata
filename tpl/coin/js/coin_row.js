@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, item, common, page, forms, document, DocumentFragment, tstring, console, tree_factory, map_factory */
+/*global tstring, page_globals, SHOW_DEBUG, dedalo_logged, common, page, forms, document, DocumentFragment, tstring, console, tree_factory, map_factory */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -90,7 +90,7 @@ var coin_row = {
 							}
 						// ref_auction_date
 							if (auction.date) {
-								auctionGalleryAttributes += " " + auction.date		
+								auctionGalleryAttributes += " " + auction.date
 							}
 						// number
 							if (auction.number) {
@@ -99,7 +99,7 @@ var coin_row = {
 
 						// lot
 							if (row.number) {
-								auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ row.number		
+								auctionGalleryAttributes += ", "+(tstring.lot || 'lot') +" "+ row.number
 							}
 
 							image_obverse.setAttribute("data-caption",auctionGalleryAttributes)
@@ -195,7 +195,7 @@ var coin_row = {
 
 		//Auctions
 
-			
+
 			// const value_auctions = []
 
 			// if (row.ref_auction_group && row.ref_auction_group.length>0) {
@@ -233,11 +233,11 @@ var coin_row = {
 					if (auction.name) auction_label.push(auction.name)
 
 					auction_label.push(" ")
-		
+
 					if (auction.date) auction_label.push(auction.date)
 
 					auction_label.push(", ")
-	
+
 					if (auction.number) auction_label.push(auction.number || row.number)
 
 					auction_label.push(", ")
@@ -245,9 +245,9 @@ var coin_row = {
 					if (row.number){
 
 						auction_label.push(tstring.lot || "Lot")
-						auction_label.push(" "+row.number)	
-					} 
-						
+						auction_label.push(" "+row.number)
+					}
+
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "rigth-values",
@@ -256,7 +256,7 @@ var coin_row = {
 					})
 				}
 			}
-		
+
 
 			// if (row.number && row.number.length>0) {
 			// 	label_collection.push( tstring.number || "Number")

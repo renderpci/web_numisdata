@@ -1,3 +1,6 @@
+/*global $, page_globals, SHOW_DEBUG, paginator, page, biblio_row_fields, common, document, DocumentFragment, tstring, console */
+/*eslint no-undef: "error"*/
+/*jshint esversion: 6 */
 "use strict";
 
 
@@ -12,7 +15,7 @@ var biblio =  {
 	/**
 	* SET_UP
 	*/
-	set_up : function(options) {
+	set_up : function() {
 
 		const self = this
 
@@ -65,7 +68,7 @@ var biblio =  {
 		}
 
 		self.createExpandableBlock()
-		
+
 		return true
 	},//end set_up
 
@@ -74,7 +77,7 @@ var biblio =  {
 	/**
 	* SET_VALUE
 	*/
-	set_value : function(object, value, real_value) {
+	set_value : function(object, value) {
 
 		const container = document.getElementById(object.id + "_values")
 
@@ -160,7 +163,7 @@ var biblio =  {
 						limit			: element.dataset.limit || 30
 				}
 				if(SHOW_DEBUG===true) {
-					console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars, self.trigger_url);
+					// console.log("[biblio.activate_autocomplete] trigger_vars:", trigger_vars, self.trigger_url);
 				}
 
 				common.get_json_data(trigger_url, trigger_vars).then(function(response_data) {
@@ -383,7 +386,7 @@ var biblio =  {
 		// Http request directly in javascript to the API is possible too..
 		const js_promise = common.get_json_data(trigger_url, trigger_vars).then(function(response){
 				if(SHOW_DEBUG===true) {
-					console.log("[biblio.search_rows] get_json_data response:", response);
+					// console.log("[biblio.search_rows] get_json_data response:", response);
 				}
 
 				container.style.opacity = "1"
@@ -483,9 +486,9 @@ var biblio =  {
 			});
 
 		// self.search_options
-			const transcription_query = self.search_options.ar_query.find(function(el){
-				return el.name==="transcription"
-			}) || null
+			// const transcription_query = self.search_options.ar_query.find(function(el){
+			// 	return el.name==="transcription"
+			// }) || null
 
 		// rows build
 			for (let i = 0; i < ar_rows_length; i++) {
@@ -604,7 +607,7 @@ var biblio =  {
 						const search = self.search_rows(self.search_options)
 
 					// scroll page to navigato header
-						search.then(function(response){
+						search.then(function(){
 							const div_result = document.querySelector(".result")
 							if (div_result) {
 								div_result.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -634,12 +637,13 @@ var biblio =  {
 		return pagination_fragment
 	},//end draw_paginator
 
+
+
 	//Create an expandable block when text length is over 500
 	createExpandableBlock : function() {
 
-		const self = this
-		let textBlock = document.querySelector("#body-txt")
-		let nodeParent = document.querySelector("#body-txt-parent")
+		const textBlock		= document.querySelector("#body-txt")
+		const nodeParent	= document.querySelector("#body-txt-parent")
 		textBlock.classList.add("contracted-block");
 
 		const textBlockSeparator = common.create_dom_element({
@@ -663,7 +667,7 @@ var biblio =  {
 				separatorArrow.style.transform = "rotate(90deg)";
 			}
 		})
-	},
+	}//end createExpandableBlock
 
 
 

@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page, forms, document, DocumentFragment, common, console */
+/*global tstring, page_globals, SHOW_DEBUG, dedalo_logged, common, DocumentFragment, common */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 
@@ -98,7 +98,7 @@ var biblio_row_fields = {
 		const biblio_object = this.biblio_object
 
 		const line = common.create_dom_element({
-			element_type 	: "div",
+			element_type	: "div"
 		})
 
 		let final_date = ''
@@ -109,7 +109,7 @@ var biblio_row_fields = {
 			final_date = typeof(ar_date[0])!=="undefined"
 				? parseInt(ar_date[0])
 				: ''
-				final_date = final_date //+ "-" + parseInt(ar_date[1])
+				// final_date = final_date //+ "-" + parseInt(ar_date[1])
 
 			if( typeof(ar_date[2]!=="undefined") && parseInt(ar_date[2]) > 0 ) {
 				final_date = final_date + "-" + parseInt(ar_date[2])
@@ -525,12 +525,10 @@ var biblio_row_fields = {
 
 		const self = this
 
-		const biblio_object = this.biblio_object
-
 		// line
 			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "info_line descriptors"
+				element_type	: "div",
+				class_name		: "info_line descriptors"
 			})
 
 			const descriptors_list = value.split(' - ')
@@ -540,11 +538,11 @@ var biblio_row_fields = {
 				// const url = page_globals.__WEB_ROOT_WEB__ + '/biblio/' + '?descriptors=' + name
 
 				const link = common.create_dom_element({
-					element_type 	: "a",
-					class_name 		: "descriptors_link",
-					text_content 	: name,
-					// href 			: url,
-					parent 			: line
+					element_type	: "a",
+					class_name		: "descriptors_link",
+					text_content	: name,
+					// href			: url,
+					parent			: line
 				})
 				link.addEventListener("click", function(){
 					self.caller.search_item('descriptors', name)
@@ -557,9 +555,7 @@ var biblio_row_fields = {
 
 
 
-	transcription : function(value, q){
-
-		const self = this
+	transcription : function(value){
 
 		const fragment = new DocumentFragment()
 
@@ -576,15 +572,15 @@ var biblio_row_fields = {
 					class_name		: "occurrence",
 					parent			: fragment
 				})
-
-				const page_number_node = common.create_dom_element({
+				// page_number_node
+				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "page_number",
 					inner_html		: (tstring.page || 'Page') + ' ' + page_number,
 					parent			: occurrence
 				})
-
-				const fragm_node = common.create_dom_element({
+				// fragm_node
+				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "item_transcription",
 					inner_html		: fragm,
@@ -608,8 +604,6 @@ var biblio_row_fields = {
 
 
 	render_row_bibliography : function(row){
-
-		const self = this
 
 		// let biblio_object = this.biblio_object
 		let biblio_object = row
@@ -837,8 +831,8 @@ var biblio_row_fields = {
 
 		//parse bibliography data with Zenon references for extract only the first one
 		function parse_zenon_bibliography(data){
-			const biblio_data = data
-			const biblio_data_length = biblio_data.length;
+			const biblio_data			= data
+			// const biblio_data_length	= biblio_data.length;
 
 			for (const property in biblio_data){
 				if (typeof biblio_data[property] !== 'string') continue
@@ -857,7 +851,7 @@ var biblio_row_fields = {
 		}
 
 		return line
-	},//end render_row_bibliography
+	}//end render_row_bibliography
 
 
 

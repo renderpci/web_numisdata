@@ -24,13 +24,13 @@ var ui = {
 			})
 
 			// build menu in dom
-				
-				
+
+
 		},
 
 
 		draw_menu : (options) => {
-				
+
 				//common.create_dom_element({
 				//	element_type : "span",
 				//	class_name   : "fecha",
@@ -40,14 +40,9 @@ var ui = {
 
 		}
 
-	
-	}	
+
+	}
 	*/
-
-
-
-	
-	
 
 
 

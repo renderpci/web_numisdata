@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page, console, DocumentFragment  */
+/*global tstring, page_globals, SHOW_DEBUG, event_manager, map_factory, biblio_row_fields, data_manager, dedalo_logged, Promise, common, page, console, mint_row, DocumentFragment  */
 /*eslint no-undef: "error"*/
 
 
@@ -44,7 +44,7 @@ var mint = {
 				section_id : self.section_id
 			})
 			.then(function(response){
-				console.log("--> set_up get_row_data API response:",response.result);
+				// console.log("--> set_up get_row_data API response:",response.result);
 
 				// mint draw
 					const mint = response.result.find( el => el.id==='mint')
@@ -91,7 +91,7 @@ var mint = {
 									result[i].catalog_info = result[i].term_section_id
 									//result[i].term_section_id = result[i].term_section_id.section_id
 								}
-						
+
 								const types_node = self.draw_types2({
 									ar_rows			: result,
 									mint_section_id	: _mint_catalog.section_id
@@ -145,8 +145,6 @@ var mint = {
 	*/
 	get_row_data : function(options) {
 
-		const self = this
-
 		const section_id = options.section_id
 
 		// combined call
@@ -177,7 +175,7 @@ var mint = {
 						'authorship_data',
 						'authorship_names',
 						'authorship_surnames',
-						'authorship_roles',
+						'authorship_roles'
 					],
 					sql_filter				: "section_id = " + parseInt(section_id),
 					count					: false,
@@ -240,8 +238,6 @@ var mint = {
 	*/
 	get_types_data2 : function(options) {
 
-		const self = this
-
 		const section_id = options.section_id
 
 		return new Promise(function(resolve){
@@ -288,8 +284,6 @@ var mint = {
 	* @return
 	*/
 	draw_types2 : function(options) {
-
-		const self = this
 
 		// options
 			const ar_rows			= options.ar_rows
@@ -353,7 +347,7 @@ var mint = {
 						parent_node.container.appendChild(node)
 					}
 				}else{
-					console.log("node without parent:",node);
+					console.warn("node without parent:",node);
 				}
 			}
 
@@ -639,7 +633,7 @@ var mint = {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("Mint row_object:",row_object);
+				// console.log("Mint row_object:",row_object);
 			}
 
 		// container select and clean container div
@@ -747,18 +741,14 @@ var mint = {
 			}
 		// numismatic_comments
 			// if (row_object.numismatic_comments && row_object.numismatic_comments.length>0) {
-
 			// 	const numismatic_comments = row_object.numismatic_comments
 			// 	block_text_length += numismatic_comments.length;
-
 			// 	const numismatic_comments_block = common.create_dom_element({
 			// 		element_type	: "div",
 			// 		class_name		: "info_text_block",
 			// 		inner_html		: numismatic_comments,
 			// 		parent			: comments_wrap
 			// 	})
-
-
 			// }
 
 			if (block_text_length > 220) {createExpandableBlock(comments_wrap,line);}
@@ -769,7 +759,7 @@ var mint = {
 				const lineSeparator = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "info_line separator",
-					parent 			: line
+					parent			: line
 				})
 				//create the tittle block inside a red background
 				common.create_dom_element({
@@ -784,7 +774,7 @@ var mint = {
 					class_name		: "info_text_block",
 					parent			: line
 				})
-					console.log("row_object.bibliography_data:",row_object.bibliography_data);
+
 				const ref_biblio		= row_object.bibliography_data
 				const ref_biblio_length	= ref_biblio.length
 				for (let i = 0; i < ref_biblio_length; i++) {
@@ -814,8 +804,8 @@ var mint = {
 					// })
 					for (let i = 0; i < row_object.uri.length; i++) {
 
-						const el = row_object.uri[i]
-						const label	= el.label || "URI"
+						const el		= row_object.uri[i]
+						const label		= el.label || "URI"
 						const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
 
 						common.create_dom_element({
@@ -828,16 +818,12 @@ var mint = {
 					}
 				}
 
-
-
 		// container final add
 		container.appendChild(fragment)
 
-		return container
-
 
 		//Create an expandable block when text length is over 500
-		function createExpandableBlock (textBlock,nodeParent) {
+		function createExpandableBlock(textBlock,nodeParent) {
 
 			textBlock.classList.add("contracted-block");
 
@@ -864,8 +850,7 @@ var mint = {
 			})
 		}
 
-
-		return true
+		return container
 	},//end draw_row
 
 
@@ -1268,7 +1253,7 @@ var mint = {
 	draw_map : function(options) {
 
 		const self = this
-			
+
 		// options
 			const mint_map_data		= options.mint_map_data
 			const mint_popup_data	= options.mint_popup_data
@@ -1335,7 +1320,6 @@ var mint = {
 				}
 
 			// draw points
-					console.log("map_data_points:",map_data_points);
 				self.map.parse_data_to_map(map_data_points, null)
 				.then(function(){
 					container.classList.remove("hide_opacity")
@@ -1364,8 +1348,6 @@ var mint = {
 
 		const types = data.types
 
-			console.log("types:",types);
-
 		const ar_filter = []
 
 		for (let i = types.length - 1; i >= 0; i--) {
@@ -1381,33 +1363,33 @@ var mint = {
 			ar_calls.push ({
 				id		: "findspots",
 				options	: {
-					dedalo_get				: 'records',
-					table					: 'findspots',
-					db_name					: page_globals.WEB_DB,
-					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ["*"],
-					count					: false,
-					sql_filter				: sql_filter 
+					dedalo_get	: 'records',
+					table		: 'findspots',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields	: ["*"],
+					count		: false,
+					sql_filter	: sql_filter
 				}
 			})
 
 			ar_calls.push ({
 				id		: "hoards",
 				options	: {
-					dedalo_get				: 'records',
-					table					: 'hoards',
-					db_name					: page_globals.WEB_DB,
-					lang					: page_globals.WEB_CURRENT_LANG_CODE,
-					ar_fields				: ['*'],
-					count					: false,
-					sql_filter				: sql_filter
+					dedalo_get	: 'records',
+					table		: 'hoards',
+					db_name		: page_globals.WEB_DB,
+					lang		: page_globals.WEB_CURRENT_LANG_CODE,
+					ar_fields	: ['*'],
+					count		: false,
+					sql_filter	: sql_filter
 				}
 			})
 
 			const js_promise = data_manager.request({
 				body : {
-					dedalo_get 	: 'combi',
-					ar_calls 	: ar_calls
+					dedalo_get	: 'combi',
+					ar_calls	: ar_calls
 				}
 			})
 
@@ -1421,21 +1403,15 @@ var mint = {
 	* @return array data
 	*/
 	map_data : function(data, popup_data) {
-		// console.log("map_data data: ", data)
-
-		const self = this
 
 		const markerIcon = (function(){
 			switch(popup_data.type) {
 				case 'findspot':
 					return page.maps_config.markers.findspot
-					break;
 				case 'hoard':
 					return page.maps_config.markers.hoard
-					break;
 				default:
 					return page.maps_config.markers.mint
-					break;
 			}
 		})()
 
@@ -1460,7 +1436,7 @@ var mint = {
 		// console.log("--map_data map_points:",map_points);
 
 		return map_points
-	},//end map_data
+	}//end map_data
 
 
 

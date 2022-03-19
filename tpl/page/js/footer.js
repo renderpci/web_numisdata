@@ -97,6 +97,8 @@ var footer =  {
 			const children	= row.children
 			const menu		= row.menu || 'no'
 			const parent	= row.parent
+			const web_path	= row.web_path
+
 
 		const fragment = new DocumentFragment();
 
@@ -141,7 +143,7 @@ var footer =  {
 				// non root level case
 
 				// link / image
-				if (image && menu!=='yes') {
+				if (image && menu!=='yes' && web_path.indexOf('http')!==-1) {
 
 					// link
 						const link = common.create_dom_element({

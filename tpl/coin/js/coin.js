@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, event_manager, data_manager, page */
+/*global tstring, page_globals, SHOW_DEBUG, coin_row, event_manager, data_manager, Promise, page */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -119,7 +119,7 @@ var coin = {
 					resolve_portals_custom	: {
 						type_data			: 'types',
 						bibliography_data	: 'bibliographic_references',
-						image_obverse_data 	: 'images',
+						image_obverse_data	: 'images'
 						// images_obverse	: 'images_obverse',
 						// images_reverse	: 'images_reverse'
 					}
@@ -130,7 +130,7 @@ var coin = {
 				body : request_body
 			})
 			.then(function(api_response){
-				console.log("--> coins get_row_data api_response:", api_response);
+				// console.log("--> coins get_row_data api_response:", api_response);
 
 				// parse server data
 					const data = page.parse_coin_data(api_response.result)
@@ -165,7 +165,7 @@ var coin = {
 
 		// debug
 			if(SHOW_DEBUG===true) {
-				console.log("coin row:",row);
+				// console.log("coin row:",row);
 			}
 
 		return new Promise(function(resolve){
@@ -184,7 +184,7 @@ var coin = {
 
 			resolve(container)
 		})
-	},//end render_row
+	}//end render_row
 
 
 

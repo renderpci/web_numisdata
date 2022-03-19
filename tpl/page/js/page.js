@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, common, $, main_home, Tooltip */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -218,10 +218,10 @@ var page = {
 		}
 
 		const js_promise = common.get_json_data(this.trigger_url, trigger_vars, true).then(function(response){
-				console.log("[page.load_more_items] response", response);
+				// console.log("[page.load_more_items] response", response);
 
 				if (response===null) {
-					console.log("[page.load_more_items] Error. Null response");
+					console.warn("[page.load_more_items] Error. Null response");
 				}else{
 					var list_rows = document.createElement("div")
 						list_rows.innerHTML = response.html
@@ -336,7 +336,7 @@ var page = {
 
 		$(elements).each(function() {
 			new Tooltip($(this), {
-	    		placement: 'top',
+				placement	: 'top'
 	    	});
 		});
 	},//end activate_tooltips
@@ -347,7 +347,7 @@ var page = {
 	* BUILD_PAGINATOR_HTML
 	* Builds html of paginator from page_nodes
 	*/
-	build_paginator_html : function(page_nodes_data, container, goto_url) {
+	build_paginator_html : function(page_nodes_data, container) {
 
 		const self = this
 
@@ -391,56 +391,55 @@ var page = {
 					if (node.type==="extra") {
 						// extra (span)
 							class_name = node.type
-
-							const span = common.create_dom_element({
-								element_type 	: "span",
-								class_name 		: class_name,
-								text_content 	: label,
-								parent 			: wrapper_ul
+							// span
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: class_name,
+								text_content	: label,
+								parent			: wrapper_ul
 							})
 					}else{
 						// normal (link)
-							const a = common.create_dom_element({
-								element_type 	: "a",
-								class_name 		: class_name,
-								text_content 	: label,
-								dataset 		: {
-									offset : node.offset_value,
-									active : node.active
+							common.create_dom_element({
+								element_type	: "a",
+								class_name		: class_name,
+								text_content	: label,
+								dataset			: {
+									offset	: node.offset_value,
+									active	: node.active
 								},
-								parent 			: wrapper_ul
+								parent			: wrapper_ul
 							})
 
 							// link
 								if (node.active===true) {
-									/*
-									const params = {
-											offset 	: node.offset_value,
-											total 	: page_nodes_data.total
-										}
+									// const params = {
+									// 		offset 	: node.offset_value,
+									// 		total 	: page_nodes_data.total
+									// 	}
 
-									const method = typeof goto_url!=="undefined" ? goto_url : "paginator.goto_url"
-									a.addEventListener("click",function(e){
+									// const method = typeof goto_url!=="undefined" ? goto_url : "paginator.goto_url"
+									// a.addEventListener("click",function(e){
 
-										// exec function custom
-											const js_promise = new Promise(function(resolve) {
+									// 	// exec function custom
+									// 		const js_promise = new Promise(function(resolve) {
 
-												let response
-												if (typeof method==="function") {
-													response = method(params)
-												}else{
-													response = common.execute_function_by_name(method, window, params)
-												}
+									// 			let response
+									// 			if (typeof method==="function") {
+									// 				response = method(params)
+									// 			}else{
+									// 				response = common.execute_function_by_name(method, window, params)
+									// 			}
 
-												resolve(response)
-											});
+									// 			resolve(response)
+									// 		});
 
-											js_promise.then(function(response){
-												// console.log("response typeof:",typeof response, "- response instanceof:",response instanceof Promise);
-											})
+									// 		js_promise.then(function(response){
+									// 			// console.log("response typeof:",typeof response, "- response instanceof:",response instanceof Promise);
+									// 		})
 
-									},false) */
-								}
+									// },false)
+								}//end if (node.active===true)
 					}
 			}//end for loop
 
@@ -741,9 +740,6 @@ var page = {
 	* Build DOM nodes to insert into map pop-up
 	*/
 	map_popup_builder : function(item) {
-		// console.log("-> map_popup_builder item:",item);
-
-		const self = this
 
 		const popup_wrapper = common.create_dom_element({
 			element_type	: "div",
@@ -814,7 +810,7 @@ var page = {
 				// })
 
 			// text_title
-				const text_title = common.create_dom_element({
+				common.create_dom_element({
 					element_type	: "div",
 					class_name		: "text_title",
 					inner_html		: title,
@@ -827,7 +823,8 @@ var page = {
 					// 	element : text_title,
 					// 	content : description
 					// })
-					const text_description = common.create_dom_element({
+					// text_description
+					common.create_dom_element({
 						element_type	: "div",
 						class_name		: "text_description",
 						inner_html		: description,
@@ -914,7 +911,7 @@ var page = {
 			const filtered = (el.value.toLowerCase().indexOf(filter_string.toLowerCase()) > -1) || (el_normalized.toLowerCase().indexOf(filter_string.toLowerCase()) > -1)
 			return filtered
 		})
-	},//end filter_drop_down_list
+	}//end filter_drop_down_list
 
 
 

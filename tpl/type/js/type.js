@@ -1,4 +1,4 @@
-/*global get_label, page_globals, SHOW_DEBUG, DEDALO_CORE_URL*/
+/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields, data_manager, Promise */
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -27,7 +27,7 @@ var type =  {
 	* When the HTML page is loaded
 	*/
 	set_up : function(options) {
-	
+
 		const self = this
 
 		// options
@@ -52,7 +52,7 @@ var type =  {
 						section_id : self.section_id
 					})
 					.then(function(response){
-						
+
 						// container. clean container div
 							const container	= document.getElementById('row_detail')
 							while (container.hasChildNodes()) {
@@ -89,8 +89,8 @@ var type =  {
 									container.appendChild(row_wrapper)
 
 									const embeddedGallery = row_wrapper.querySelectorAll('a')
-									//hide default images
-									const currentImgs = row_wrapper.querySelector('.identify_coin_wrapper').remove()
+									// hide default images
+									row_wrapper.querySelector('.identify_coin_wrapper').remove()
 
 									const newGallery = Object.create(image_gallery);
 									newGallery.set_up_embedded ({
@@ -101,7 +101,7 @@ var type =  {
 
 								// activate images light box
 									const images_gallery_containers = row_wrapper.querySelectorAll('.gallery')
-									
+
 									if (images_gallery_containers) {
 										for (let i = 0; i < images_gallery_containers.length; i++) {
 											page.activate_images_gallery(images_gallery_containers[i])
@@ -137,8 +137,6 @@ var type =  {
 	* Call public API for row data based on current type section_id
 	*/
 	get_row_data : function(options) {
-
-		const self = this
 
 		// options
 			const section_id	= options.section_id
@@ -266,7 +264,7 @@ var type =  {
 	* @return array parsed_data
 	*/
 	parse_publication : function(data) {
-		
+
 		return page.parse_publication(data)
 	},//end parse_publication
 
@@ -278,8 +276,6 @@ var type =  {
 	* @return array parsed_data
 	*/
 	parse_ordered_coins : function(row) {
-
-		const self = this
 
 		const parsed_data	= []
 		const separator		= " | "
@@ -297,7 +293,7 @@ var type =  {
 			const parsed_item = {
 				typology_id	: typology_id,
 				typology	: typology[i] || null,
-				coins		: JSON.parse(ref_coins[i]) || null,
+				coins		: JSON.parse(ref_coins[i]) || null
 
 			}
 
@@ -356,8 +352,6 @@ var type =  {
 	*/
 	map_data : function(data) {
 
-		const self = this
-
 		const data_clean = []
 		for (let i = 0; i < data.length; i++) {
 
@@ -397,7 +391,7 @@ var type =  {
 
 		const popup_wrapper = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "popup_wrapper",
+			class_name		: "popup_wrapper"
 		})
 
 		// popup_item
@@ -429,7 +423,7 @@ var type =  {
 
 
 		return popup_wrapper
-	},//end map_popup_builder
+	}//end map_popup_builder
 
 
 

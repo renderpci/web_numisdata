@@ -17,6 +17,8 @@
 				<div class="inner">
 					<!-- main_container -->
 						<div id="main_container" class="main_container"></div>
+					<!-- list_container -->
+						<div id="list_container" class="list_container"></div>
 				</div>
 			</div>
 
@@ -31,7 +33,8 @@ dom_ready(function(){
 	// set up
 	<?php echo $cwd ?>.set_up({
 		row				: <?php echo json_encode($this->row) ?>,
-		main_container	: document.getElementById('main_container')
+		main_container	: document.getElementById('main_container'),
+		list_container	: document.getElementById('list_container')
 	});
 })
 </script>

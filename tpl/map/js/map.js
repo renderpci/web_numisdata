@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, map_factory, data_manager, event_manager, form_factory, catalog_row_fields */
+/*global tstring, page_globals, SHOW_DEBUG, common, page, $, type_row_fields, map_factory, Promise, data_manager, event_manager, form_factory, catalog_row_fields */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -662,6 +662,8 @@ var map = {
 
 				// loading ends
 					self.map_container.classList.remove("loading")
+
+				resolve(true)
 			})
 		})
 	},//end form_submit
@@ -933,7 +935,7 @@ var map = {
 					parent			: fragment
 				})
 
-				function cross_coins(coins_rows, coin_references) {
+				const cross_coins = function(coins_rows, coin_references) {
 					// console.log("coins_rows:",coins_rows);
 					// console.log("coin_references:",coin_references);
 
@@ -1086,22 +1088,20 @@ var map = {
 	*/
 	get_range_years : function() {
 
-		const self = this
-
 		return new Promise(function(resolve){
 
 			const ar_fields = ['id','section_id','MIN(date_in + 0) AS min','MAX(date_in + 0) AS max']
 
 			const request_body = {
-				dedalo_get		: 'records',
-				db_name			: page_globals.WEB_DB,
-				lang			: page_globals.WEB_CURRENT_LANG_CODE,
-				table			: 'coins',
-				ar_fields		: ar_fields,
-				limit			: 0,
-				count			: false,
-				offset			: 0,
-				order			: 'id ASC'
+				dedalo_get	: 'records',
+				db_name		: page_globals.WEB_DB,
+				lang		: page_globals.WEB_CURRENT_LANG_CODE,
+				table		: 'coins',
+				ar_fields	: ar_fields,
+				limit		: 0,
+				count		: false,
+				offset		: 0,
+				order		: 'id ASC'
 			}
 			data_manager.request({
 				body : request_body
@@ -1133,8 +1133,10 @@ var map = {
 				resolve(data)
 			})
 		})
-	},//end get_range_years
+	}//end get_range_years
 
 
 
 }//end coins
+
+

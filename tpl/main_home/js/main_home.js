@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, form_factory, data_manager */
+/*global tstring, page_globals, Promise, common, form_factory, data_manager, psqo_factory */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -64,14 +64,14 @@ var main_home =  {
 		})
 
 		// global_search
-			const global_search = self.form.item_factory({
-				id 			: "global_search",
-				name 		: "global_search",
+			self.form.item_factory({
+				id			: "global_search",
+				name		: "global_search",
 				label		: tstring.global_search || "global_search",
-				q_column 	: "global_search",
-				eq 			: "MATCH",
-				eq_in 		: "",
-				eq_out 		: "",
+				q_column	: "global_search",
+				eq			: "MATCH",
+				eq_in		: "",
+				eq_out		: "",
 				class_name	: 'global_search',
 				parent		: form_row,
 				callback	: function(form_item) {
@@ -87,9 +87,9 @@ var main_home =  {
 						eq_in			: "%",
 						eq_out			: "%",
 						is_term			: true,
-						node_input  	: form_item.node_input,
+						node_input		: form_item.node_input,
 						node_values		: form_item.node_values,
-						q_selected 		: form_item.q_selected,
+						q_selected		: form_item.q_selected,
 						parent			: form_row
 					}
 
@@ -197,13 +197,13 @@ var main_home =  {
 				}
 
 				const psqo = {
-					"$and":[{
-							id 			: 'global_search',
-							field		: 'global_search',
-							q			: value, // Like '%${form_item.q}%'
-							op			: '=', // default is 'LIKE'
-						}]
-					}
+					"$and" : [{
+						id		: 'global_search',
+						field	: 'global_search',
+						q		: value, // Like '%${form_item.q}%'
+						op		: '=' // default is 'LIKE'
+					}]
+				}
 				// console.log("form_factory", psqo_factory);
 				const safe_psqo		= psqo_factory.build_safe_psqo(psqo)
 				const parse_psqo 	= psqo_factory.encode_psqo(safe_psqo)
@@ -338,7 +338,7 @@ var main_home =  {
 			render_coin_image(self.ar_images)
 
 		return true
-	},//end main_coin_image
+	}//end main_coin_image
 
 
 

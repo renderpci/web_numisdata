@@ -782,7 +782,7 @@ page.parse_publication = function(data) {
 						magazine	: ref_publications_magazine[j] || null,
 						place		: ref_publications_place[j] || null,
 						title		: ref_publications_title[j] || null,
-						url			: ref_publications_url[j] || null,
+						url			: ref_publications_url[j] || null
 					}
 
 					reference._publications.push(parsed_item)

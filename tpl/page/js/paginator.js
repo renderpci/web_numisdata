@@ -1,3 +1,5 @@
+/*global common, tstring, SHOW_DEBUG */
+/*eslint no-undef: "error"*/
 "use strict";
 
 
@@ -47,39 +49,39 @@ var paginator =  {
 				id 			 : 'first'
 			})
 
-		// prev			
+		// prev
 			ar_nodes.push({
 				label 		 : tstring.prev || "Prev",
 				offset_value : (offset - limit)>0 ? (offset - limit) : 0,
 				type 		 : "navigator",
 				active 		 : (offset>=limit) ? true : false,
 				id 			 : 'previous'
-			})			
+			})
 
 		// intermediate
 			const n_pages 		= Math.ceil(total / limit)
 			const current_page 	= Math.ceil(offset/limit)+1
 			let n_pages_group 	= Math.ceil(n_nodes / 2)
-			
+
 			if (current_page<=n_pages_group) {
 				n_pages_group = (n_pages_group*2) -current_page+1
 			}
 
 			if(SHOW_DEBUG===true) {
 				// console.log("current_page:",current_page, "total:",total, "n_pages",n_pages, "limit:",limit, "offset:",offset,"n_nodes:",n_nodes,"n_pages_group:",n_pages_group);
-			}			
-			for (var i = 1; i <= n_pages; i++) {				
+			}
+			for (var i = 1; i <= n_pages; i++) {
 				//if ( i < (current_page-n_pages_group) || i > (current_page+n_pages_group)) {
 				//	continue
 				//}
-				
-				//if (i > (n_pages_group) && i < (n_pages-n_pages_group)) {		
-				//	continue;
-				//}	
 
-				const selected 	= ((i-1)===(offset/limit)) ? true : false; // offset===((i+1) * limit) ? true : false				
+				//if (i > (n_pages_group) && i < (n_pages-n_pages_group)) {
+				//	continue;
+				//}
+
+				const selected 	= ((i-1)===(offset/limit)) ? true : false; // offset===((i+1) * limit) ? true : false
 				const active 	= !selected
-			
+
 				// middle extra ...
 					//if (i===(current_page+1)) {
 					//	ar_nodes.push({
@@ -91,10 +93,10 @@ var paginator =  {
 					//	})
 					//}
 
-				const offset_value = ((i-1) * limit) 
+				const offset_value = ((i-1) * limit)
 
 				if( 	(i>=(current_page-n_pages_group) && i<=current_page)
-					|| 	(i>=(current_page-n_pages_group) && i<=(current_page+n_pages_group)) 
+					|| 	(i>=(current_page-n_pages_group) && i<=(current_page+n_pages_group))
 					) {
 
 					ar_nodes.push({
@@ -102,10 +104,10 @@ var paginator =  {
 						offset_value : offset_value,
 						type 		 : "page",
 						selected 	 : selected,
-						active 		 : active,						
+						active 		 : active,
 						id 			 : i
 					})
-				}				
+				}
 			}
 
 		// next
@@ -124,7 +126,7 @@ var paginator =  {
 				type 		 : "navigator",
 				active 		 : (offset < (total-limit)) ? true : false,
 				id 			 : 'last'
-			})	
+			})
 
 		// response object
 			const response = {
@@ -135,7 +137,7 @@ var paginator =  {
 				n_pages 	  : n_pages,
 				n_pages_group : n_pages_group,
 				current_page  : current_page,
-				ar_nodes 	  : ar_nodes			
+				ar_nodes 	  : ar_nodes
 			}
 
 		// debug
@@ -153,11 +155,11 @@ var paginator =  {
 	* Builds html of paginator from page_nodes
 	*/
 	build_paginator_html : function(page_nodes_data, container, callback) {
-		
+
 		const self = this
 
 		const fragment = new DocumentFragment();
-		
+
 		// iterate nodes (li)
 			const ar_nodes 		  = page_nodes_data.ar_nodes || []
 			const ar_nodes_length = ar_nodes.length
@@ -167,7 +169,7 @@ var paginator =  {
 				let class_name 	= ""
 				let label 		= node.label
 				switch(node.type){
-					case "navigator":						
+					case "navigator":
 						class_name = node.type + " " + node.id
 						break;
 
@@ -188,7 +190,7 @@ var paginator =  {
 				})
 
 				// link
-					if (node.active===true) {						
+					if (node.active===true) {
 						li.addEventListener("click", function(e){
 							// return window[method_name]({
 							// 	offset 	: node.offset_value,
@@ -200,7 +202,7 @@ var paginator =  {
 									offset 	: node.offset_value,
 									total 	: page_nodes_data.total
 								})
-							}						
+							}
 
 							return false
 						})
@@ -253,7 +255,7 @@ var paginator =  {
 	* Builds and return complete paginator dom node
 	*/
 	get_full_paginator : function(options) {
-		
+
 		const self = this
 
 		const total 	= options.total;
@@ -280,29 +282,30 @@ var paginator =  {
 	*/
 	get_totals_node : function(options) {
 
-		const total 	= options.total
-		const limit 	= options.limit
-		const offset 	= options.offset
-		const count 	= options.count
+		// options
+			const total		= options.total
+			const limit		= options.limit
+			const offset	= options.offset
+			const count		= options.count
 
-		const from 	= total==0 
+		const from 	= total==0
 			? 0
 			: Math.ceil(1 * offset) || 1
-		const to 	= offset + count		
+		const to 	= offset + count
 
-		const info = (total===0) 
+		const info = (total===0)
 			? tstring['showed'] + " " + total
 			: tstring['showed'] + " " + from + " " + tstring['to'] + " " + to + " " + tstring['of'] + " " + total
 
 		const totals_node = common.create_dom_element({
-			element_type 	: "div",
-			class_name 		: "totals",
-			text_content 	: info
-		})		
+			element_type	: "div",
+			class_name		: "totals",
+			text_content	: info
+		})
 
 
 		return totals_node
-	},//end get_totals_node
+	}//end get_totals_node
 
 
 

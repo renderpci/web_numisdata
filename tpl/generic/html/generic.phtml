@@ -15,13 +15,13 @@
 		<!-- Main -->
 			<div id="main">
 				<div class="inner">
-					
+
 					<!-- title -->
 						<h1><?php echo $title ?></h1>
 
 					<!-- main image -->
 						<?php /*<span class="image main"><img src="images/pic13.jpg" alt="" /></span>*/ ?>
-					
+
 					<!-- abstract -->
 						<p><?php echo $abstract ?></p>
 
@@ -42,7 +42,7 @@
 						</section>
 				</div>
 			</div>
-		
+
 		<!-- Footer -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
 
@@ -52,6 +52,7 @@
 <script>
 dom_ready(function(){
 	generic.set_up({
+		row						: <?php echo json_encode($this->row) ?>,
 		area_name				: <?php echo json_encode($area_name) ?>,
 		export_data_container	: document.getElementById('export_data')
 	})

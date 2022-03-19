@@ -267,6 +267,7 @@ var main_home =  {
 					table			: 'types',
 					// ar_fields	: ['*'],
 					ar_fields		: [
+						'mint',
 						'mint_number',
 						'catalogue',
 						'number',
@@ -287,29 +288,24 @@ var main_home =  {
 					const item = api_response.result[0]
 
 					// link and labels values
-						let item_text		= ""
-						let mint_number		= ""
-						let denomination	= ""
-						let type_url		= page_globals.__WEB_ROOT_WEB__+"/type/"
+						const mint = (item.mint)
+							? item.mint+' | '
+							: ''
 
-						if (item) {
-							mint_number = (item.mint_number)
-								? item.mint_number+'/'
-								: ''
+						const mint_number = (item.mint_number)
+							? item.mint_number+'/'
+							: ''
 
-							item_text = item.catalogue + " " + mint_number + item.number
+						const denomination = (item.denomination)
+							? " | "+item.denomination
+							: ''
 
-							denomination = (item.denomination)
-								? " | "+item.denomination
-								: ""
+						const item_text = mint + item.catalogue + " " + mint_number + item.number
 
-							type_url = (item.section_id)
-								? type_url+item.section_id
-								: "#"
 
-						}else{
-							type_url = "#"
-						}
+						const type_url = (item.section_id)
+							? page_globals.__WEB_ROOT_WEB__+"/type/" + item.section_id
+							: "#"
 
 					// image_wrapper DOM node
 						const image_wrapper = self.image_wrapper

@@ -174,11 +174,11 @@ var coins =  {
 
 		// type
 			self.form.item_factory({
-				id				: "type",
-				name			: "type",
-				q_column		: "type",
+				id				: "type_full_value",
+				name			: "type_full_value",
+				q_column		: "type_full_value",
 				label			: tstring.type || "type",
-				value_split		: ' | ',
+				value_split		: ' - ',
 				q_splittable	: true,
 				q_selected_eq	: 'LIKE',
 				eq_in			: "%",

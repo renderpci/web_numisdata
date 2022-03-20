@@ -23,20 +23,41 @@
 		label {
 			margin: 0;
 		}
-		.info_value {
 
+		.line-tittle-wrap {
+			.info_value {
+				display:inline-block;
+				margin-left: 0.5em;
+			}
+			.authorship{
+				margin-left: 0.7em;
+				font-size: 0.8em;
+				letter-spacing: 1px;
+			}
 		}
-		img {
-			max-height: 12em;
+		.info_text_block{
 			display: block;
-			margin: 1em;
-			margin-left: 0;
+			padding-bottom: 0.5rem !important;
+			padding-top: 0.5rem !important;
+
+  			br{
+				display: block;
+				margin: 1.2em 0;
+				content: " ";
+			}
+		}
+		.icon_link {
+			display: block;
+			margin-top: 0.5rem;
+			&:before {
+				margin-right: 0.5rem;
+			}
 		}
 	}
 
 	// map
 	.map_container {
-		// height: 60vh;		
+		// height: 60vh;
 		// font-size: 1rem;
 		// margin-bottom: 3em;
 		// background-color: @blue_ocean;
@@ -47,14 +68,14 @@
 		// wide
 		// width: 100vw;
 		// margin-left: calc(-50vw + 50%);
-		// margin-right: calc(-50vw + 50%);		
+		// margin-right: calc(-50vw + 50%);
 	}
-	
+
 	// mint types list
 	#types {
 		// background-color: #3d3d3d;
 		padding: 1em;
-		// color: white;	
+		// color: white;
 		border-radius: 0.25em;
 		margin-top: 1em;
 		border-radius: 0.25em;

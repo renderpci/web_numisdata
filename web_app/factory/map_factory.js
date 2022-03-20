@@ -76,12 +76,13 @@ function map_factory() {
 		const self = this
 
 		// options
-			const source_maps	= options.source_maps || self.source_maps
-			const popup_builder	= options.popup_builder || self.build_popup_content
-			const map_position	= options.map_position || self.initial_map_data
-			const map_container	= options.map_container
-			const legend		= options.legend || null
-			const popup_options	= options.popup_options || {
+			const source_maps		= options.source_maps || self.source_maps
+			const popup_builder		= options.popup_builder || self.build_popup_content
+			const map_position		= options.map_position || self.initial_map_data
+			const map_container		= options.map_container
+			const legend			= options.legend || null
+			const add_layer_control	= typeof options.add_layer_control==='undefined' ? true : options.add_layer_control
+			const popup_options		= options.popup_options || {
 				// maxWidth						Number	300	Max width of the popup, in pixels.
 				maxWidth : 420,
 				// minWidth						Number	50	Min width of the popup, in pixels.
@@ -112,15 +113,15 @@ function map_factory() {
 					popupAnchor		: [12, -20] // point from which the popup should open relative to the iconAnchor
 				})
 
-
 		// fix vars
-			self.source_maps	= source_maps
-			self.map_position	= map_position
-			self.map_container	= map_container
-			self.popup_builder	= popup_builder
-			self.popup_options	= popup_options
-			self.icon_main		= icon_main
-			self.legend			= legend
+			self.source_maps		= source_maps
+			self.map_position		= map_position
+			self.map_container		= map_container
+			self.popup_builder		= popup_builder
+			self.popup_options		= popup_options
+			self.icon_main			= icon_main
+			self.legend				= legend
+			self.add_layer_control	= add_layer_control
 
 
 		return self.render_base_map()
@@ -186,10 +187,17 @@ function map_factory() {
 				self.map_container_div = container
 
 			// map
-				self.map = new L.map(container, {layers: [default_layer], center: new L.LatLng(map_x, map_y), zoom: map_zoom});
+				self.map = new L.map(container, {
+					layers				: [default_layer],
+					center				: new L.LatLng(map_x, map_y),
+					zoom				: map_zoom,
+					fullscreenControl	: true // button fullscreen. Needs the plugin 'Leaflet.fullscreen.min.js'
+				});
 
 			// layer selector
-				self.layer_control = L.control.layers(base_maps).addTo(self.map);
+				if (self.add_layer_control) {
+					self.layer_control = L.control.layers(base_maps).addTo(self.map);
+				}
 
 			// disable zoom handlers
 				self.map.scrollWheelZoom.disable();

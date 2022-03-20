@@ -1,4 +1,4 @@
-/*global $, tstring, page_globals, SHOW_DEBUG, page, psqo_factory, Promise, common, WEB_AREA, document, DocumentFragment, tstring, console, form_factory, data_manager, tree_factory */
+/*global $, tstring, page_globals, SHOW_DEBUG, page, psqo_factory, __WEB_TEMPLATE_WEB__, Promise, common, WEB_AREA, document, DocumentFragment, tstring, console, form_factory, data_manager, tree_factory */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -104,14 +104,39 @@ var thesaurus =  {
 			.then(function(response){
 				// console.log("/// load_tree_data response:",response);
 
-				const render = self.render_data({
-					target		: rows_list,
-					ar_rows		: response.result,
-					set_hilite	: (self.term_id && self.term_id.length>0)
-				})
-				.then(function(){
-					spinner.remove()
-				})
+				// result check
+					if (!response.result) {
+						console.error(`Invalid API response!`);
+						return false
+					}
+
+				// check root_term
+					const root_term_length = self.root_term.length
+					for (let i = 0; i < root_term_length; i++) {
+						const term_id = self.root_term[i]
+						const found = response.result.find(el => el.term_id===term_id)
+						if (!found) {
+							console.error(`ERROR: Broken tree branch. Root term '${term_id}' not found! Check if it is published`);
+							common.create_dom_element({
+								element_type	: 'div',
+								class_name		: 'broken_branch no_results_found',
+								inner_html		: `Sorry. Broken branch <b>${term_id}</b>. Tree it is not available.`,
+								parent			: rows_list
+							})
+							spinner.remove()
+							return false
+						}
+					}
+
+				// render data
+					self.render_data({
+						target		: rows_list,
+						ar_rows		: response.result,
+						set_hilite	: (self.term_id && self.term_id.length>0)
+					})
+					.then(function(){
+						spinner.remove()
+					})
 			})
 
 
@@ -274,14 +299,14 @@ var thesaurus =  {
 
 			switch(view_mode) {
 
-				default:
 				case 'tree':
-					const hilite_terms = self.term_id
-						? [self.term_id]
-						: null;
+				default:
+					// const hilite_terms = (self.term_id)
+					// 	? [self.term_id]
+					// 	: null;
 					self.data_clean	= page.parse_tree_data(
 						ar_rows,
-						hilite_terms,
+						(self.term_id) ? [self.term_id] : null, // hilite_terms,
 						self.root_term
 					) // prepares data to use in list
 					if(SHOW_DEBUG===true) {
@@ -330,8 +355,6 @@ var thesaurus =  {
 	render_tree_node : function(row) {
 
 		const self = this // is 'tree_factory' instance
-		// console.log("row:",row);
-		// console.log("self:",self);
 
 		// node wrapper
 			const tree_node = common.create_dom_element({
@@ -339,10 +362,9 @@ var thesaurus =  {
 				class_name		: "tree_node",
 				id				: row.term_id
 			})
-
-			tree_node.term_id = row.term_id
-			tree_node.parent  = row.parent
-
+			// add properties to node
+			tree_node.term_id	= row.term_id
+			tree_node.parent	= row.parent
 
 		// term
 			const term_value	= row.term //+ " <small>[" + row.term_id + "]</small>"
@@ -355,6 +377,7 @@ var thesaurus =  {
 				parent			: tree_node
 			})
 
+		// links based on WEB_AREA value (mints_hierarchy, symbols, iconography, countermarks)
 			switch (WEB_AREA) {
 				case 'mints_hierarchy':
 					// link to mint
@@ -379,160 +402,310 @@ var thesaurus =  {
 					if (row.illustration && row.illustration.length>0) {
 						// ref_type_symbol_obverse_data
 						// ref_type_symbol_reverse_data
-						const link_symbols = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "icon_link",
-							parent			: term
-						})
-						link_symbols.addEventListener("click", function(){
 
-							const filter = {
-							  "$or": [
-								{
-								  "$and": [
-									{
-									  "$and": [
-										{
-										  "id": "ref_type_symbol_obverse_data",
-										  "field": "ref_type_symbol_obverse_data",
-										  "q": ""+row.section_id+"",
-										  "q_type": "q",
-										  "op": "LIKE"
+						// set node only when it is in DOM (to save browser resources)
+							const observer = new IntersectionObserver(function(entries) {
+								const entry = entries[1] || entries[0]
+								if (entry.isIntersecting===true || entry.intersectionRatio > 0) {
+									observer.disconnect();
+
+									// delegates chek task to worker. When finish, show link button if target result exists
+										const current_worker = new Worker(__WEB_TEMPLATE_WEB__ + '/thesaurus/js/worker.js');
+										const body = {
+											code		: page_globals.API_WEB_USER_CODE,
+											lang		: page_globals.WEB_CURRENT_LANG_CODE,
+											db_name		: page_globals.WEB_DB,
+											dedalo_get	: 'records',
+											table		: 'catalog',
+											ar_fields	: ['section_id'],
+											limit		: 1,
+											count		: false,
+											order		: 'lang ASC',
+											sql_filter	: `(ref_type_symbol_obverse_data LIKE '%"${row.section_id}"%' OR ref_type_symbol_reverse_data LIKE '%"${row.section_id}"%')`
 										}
-									  ]
-									}
-								  ]
-								},
-								{
-								  "$and": [
-									{
-									  "$and": [
-										{
-										  "id": "ref_type_symbol_reverse_data",
-										  "field": "ref_type_symbol_reverse_data",
-										  "q": ""+row.section_id+"",
-										  "q_type": "q",
-										  "op": "LIKE"
+										current_worker.postMessage({
+											url		: page_globals.JSON_TRIGGER_URL,
+											body	: body
+										});
+										current_worker.onmessage = function(e) {
+											current_worker.terminate()
+
+											const api_response = e.data
+											if (api_response.result && api_response.result.length>0) {
+												const link_symbols = common.create_dom_element({
+													element_type	: "a",
+													class_name		: "icon_link",
+													parent			: term
+												})
+												link_symbols.addEventListener("click", function(){
+
+													const filter = {
+													  "$or": [
+														{
+														  "$and": [
+															{
+															  "$and": [
+																{
+																  "id": "ref_type_symbol_obverse_data",
+																  "field": "ref_type_symbol_obverse_data",
+																  "q": ""+row.section_id+"",
+																  "q_type": "q",
+																  "op": "LIKE"
+																}
+															  ]
+															}
+														  ]
+														},
+														{
+														  "$and": [
+															{
+															  "$and": [
+																{
+																  "id": "ref_type_symbol_reverse_data",
+																  "field": "ref_type_symbol_reverse_data",
+																  "q": ""+row.section_id+"",
+																  "q_type": "q",
+																  "op": "LIKE"
+																}
+															  ]
+															}
+														  ]
+														}
+													  ]
+													};
+													const encoded_psqo = psqo_factory.encode_psqo(filter)
+													const url = 'catalog/?psqo=' + encoded_psqo
+													// const windowFeatures = "popup";
+													window.open(url, "mint", null);
+												})
+											}
 										}
-									  ]
-									}
-								  ]
 								}
-							  ]
-							};
-							const encoded_psqo = psqo_factory.encode_psqo(filter)
-							const url = 'catalog/?psqo=' + encoded_psqo
-							// const windowFeatures = "popup";
-							window.open(url, "mint", null);
-						})
+							}, { threshold: [0] });
+							observer.observe(term);
 					}
 					break;
 
 				case 'iconography':
 					// catalog
-					if (!row.children || row.children.length===0) {
+					// if (!row.children || row.children.length===0) {
 						// ref_type_design_obverse_iconography_data
 						// ref_type_design_reverse_iconography_data
-						const link_iconography = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "icon_link",
-							parent			: term
-						})
-						link_iconography.addEventListener("click", function(){
 
-							const filter = {
-							  "$or": [
-								{
-								  "$and": [
-									{
-									  "$and": [
-										{
-										  "id": "ref_type_design_obverse_iconography_data",
-										  "field": "ref_type_design_obverse_iconography_data",
-										  "q": ""+row.section_id+"",
-										  "q_type": "q",
-										  "op": "LIKE"
+						// set node only when it is in DOM (to save browser resources)
+							const observer = new IntersectionObserver(function(entries) {
+								const entry = entries[1] || entries[0]
+								if (entry.isIntersecting===true || entry.intersectionRatio > 0) {
+									observer.disconnect();
+
+									// delegates chek task to worker. When finish, show link button if target result exists
+										const current_worker = new Worker(__WEB_TEMPLATE_WEB__ + '/thesaurus/js/worker.js');
+										const body = {
+											code		: page_globals.API_WEB_USER_CODE,
+											lang		: page_globals.WEB_CURRENT_LANG_CODE,
+											db_name		: page_globals.WEB_DB,
+											dedalo_get	: 'records',
+											table		: 'catalog',
+											ar_fields	: ['section_id','ref_coins_image_obverse','ref_coins_image_reverse'],
+											limit		: 1,
+											count		: false,
+											order		: 'lang ASC',
+											sql_filter	: `(ref_type_design_obverse_iconography_data LIKE '%"${row.section_id}"%' OR ref_type_design_reverse_iconography_data LIKE '%"${row.section_id}"%')`
 										}
-									  ]
-									}
-								  ]
-								},
-								{
-								  "$and": [
-									{
-									  "$and": [
-										{
-										  "id": "ref_type_design_reverse_iconography_data",
-										  "field": "ref_type_design_reverse_iconography_data",
-										  "q": ""+row.section_id+"",
-										  "q_type": "q",
-										  "op": "LIKE"
+										current_worker.postMessage({
+											url		: page_globals.JSON_TRIGGER_URL,
+											body	: body
+										});
+										current_worker.onmessage = function(e) {
+											current_worker.terminate()
+
+											const api_response = e.data
+											if (api_response.result && api_response.result.length>0) {
+												const link_iconography = common.create_dom_element({
+													element_type	: "a",
+													class_name		: "icon_link",
+													parent			: term
+												})
+												link_iconography.addEventListener("click", function(){
+
+													const filter = {
+													  "$or": [
+														{
+														  "$and": [
+															{
+															  "$and": [
+																{
+																  "id": "ref_type_design_obverse_iconography_data",
+																  "field": "ref_type_design_obverse_iconography_data",
+																  "q": ""+row.section_id+"",
+																  "q_type": "q",
+																  "op": "LIKE"
+																}
+															  ]
+															}
+														  ]
+														},
+														{
+														  "$and": [
+															{
+															  "$and": [
+																{
+																  "id": "ref_type_design_reverse_iconography_data",
+																  "field": "ref_type_design_reverse_iconography_data",
+																  "q": ""+row.section_id+"",
+																  "q_type": "q",
+																  "op": "LIKE"
+																}
+															  ]
+															}
+														  ]
+														}
+													  ]
+													};
+													const encoded_psqo = psqo_factory.encode_psqo(filter)
+													const url = 'catalog/?psqo=' + encoded_psqo
+													// const windowFeatures = "popup";
+													window.open(url, "mint", null);
+												})
+
+												if (api_response.result[0].ref_coins_image_obverse) {
+													const url		= api_response.result[0].ref_coins_image_obverse
+													const url_thumb	= url.replace('/1.5MB/','/thumb/')
+													const image	= common.create_dom_element({
+														element_type	: "img",
+														class_name		: 'illustration thumb_image',
+														src				: page_globals.__WEB_BASE_URL__ + url_thumb,
+														parent			: term
+													})
+													const outsideClickListener = (event) => {
+														const target = event.target;
+														if (target===image) {
+															image.classList.toggle('big')
+															image.src = page_globals.__WEB_BASE_URL__ + url
+														}else{
+															image.classList.remove('big')
+															image.src = page_globals.__WEB_BASE_URL__ + url_thumb
+														}
+													}
+													// document event click
+													document.addEventListener('click', outsideClickListener)
+												}
+												if (api_response.result[0].ref_coins_image_reverse) {
+													const url		= api_response.result[0].ref_coins_image_reverse
+													const url_thumb	= url.replace('/1.5MB/','/thumb/')
+													const image	= common.create_dom_element({
+														element_type	: "img",
+														class_name		: 'illustration thumb_image',
+														src				: page_globals.__WEB_BASE_URL__ + url_thumb,
+														parent			: term
+													})
+													const outsideClickListener = (event) => {
+														const target = event.target;
+														if (target===image) {
+															image.classList.toggle('big')
+															image.src = page_globals.__WEB_BASE_URL__ + url
+														}else{
+															image.classList.remove('big')
+															image.src = page_globals.__WEB_BASE_URL__ + url_thumb
+														}
+													}
+													// document event click
+													document.addEventListener('click', outsideClickListener)
+												}
+											}
 										}
-									  ]
-									}
-								  ]
 								}
-							  ]
-							};
-							const encoded_psqo = psqo_factory.encode_psqo(filter)
-							const url = 'catalog/?psqo=' + encoded_psqo
-							// const windowFeatures = "popup";
-							window.open(url, "mint", null);
-						})
-					}
+							}, { threshold: [0] });
+							observer.observe(term);
+					// }
 					break;
 
 				case 'countermarks':
-					// to coins
+					// coins
 					if (row.illustration && row.illustration.length>0) {
 						// countermark_obverse_data
 						// countermark_reverse_data
-						const link_countermarks = common.create_dom_element({
-							element_type	: "a",
-							class_name		: "icon_link",
-							parent			: term
-						})
-						link_countermarks.addEventListener("click", function(){
 
-							const filter = {
-							  "$or": [
-								{
-								  "$and": [
-									{
-									  "$and": [
-										{
-										  "id": "countermark_obverse_data",
-										  "field": "countermark_obverse_data",
-										  "q": ""+row.section_id+"",
-										  "q_type": "q",
-										  "op": "LIKE"
+						// set node only when it is in DOM (to save browser resources)
+							const observer = new IntersectionObserver(function(entries) {
+								const entry = entries[1] || entries[0]
+								if (entry.isIntersecting===true || entry.intersectionRatio > 0) {
+									observer.disconnect();
+
+									// delegates chek task to worker. When finish, show link button if target result exists
+										const current_worker = new Worker(__WEB_TEMPLATE_WEB__ + '/thesaurus/js/worker.js');
+										const body = {
+											code		: page_globals.API_WEB_USER_CODE,
+											lang		: page_globals.WEB_CURRENT_LANG_CODE,
+											db_name		: page_globals.WEB_DB,
+											dedalo_get	: 'records',
+											table		: 'coins',
+											ar_fields	: ['section_id'],
+											limit		: 1,
+											count		: false,
+											order		: 'lang ASC',
+											sql_filter	: `(countermark_obverse_data LIKE '%"${row.section_id}"%' OR countermark_reverse_data LIKE '%"${row.section_id}"%')`
 										}
-									  ]
-									}
-								  ]
-								},
-								{
-								  "$and": [
-									{
-									  "$and": [
-										{
-										  "id": "countermark_reverse_data",
-										  "field": "countermark_reverse_data",
-										  "q": ""+row.section_id+"",
-										  "q_type": "q",
-										  "op": "LIKE"
+										current_worker.postMessage({
+											url		: page_globals.JSON_TRIGGER_URL,
+											body	: body
+										});
+										current_worker.onmessage = function(e) {
+											current_worker.terminate()
+
+											const api_response = e.data
+											if (api_response.result && api_response.result.length>0) {
+												const link_countermarks = common.create_dom_element({
+													element_type	: "a",
+													class_name		: "icon_link",
+													parent			: term
+												})
+												link_countermarks.addEventListener("click", function(){
+
+													const filter = {
+													  "$or": [
+														{
+														  "$and": [
+															{
+															  "$and": [
+																{
+																  "id": "countermark_obverse_data",
+																  "field": "countermark_obverse_data",
+																  "q": ""+row.section_id+"",
+																  "q_type": "q",
+																  "op": "LIKE"
+																}
+															  ]
+															}
+														  ]
+														},
+														{
+														  "$and": [
+															{
+															  "$and": [
+																{
+																  "id": "countermark_reverse_data",
+																  "field": "countermark_reverse_data",
+																  "q": ""+row.section_id+"",
+																  "q_type": "q",
+																  "op": "LIKE"
+																}
+															  ]
+															}
+														  ]
+														}
+													  ]
+													};
+													const encoded_psqo = psqo_factory.encode_psqo(filter)
+													const url = 'coins/?psqo=' + encoded_psqo
+													// const windowFeatures = "popup";
+													window.open(url, "mint", null);
+												})
+											}
 										}
-									  ]
-									}
-								  ]
 								}
-							  ]
-							};
-							const encoded_psqo = psqo_factory.encode_psqo(filter)
-							const url = 'coins/?psqo=' + encoded_psqo
-							// const windowFeatures = "popup";
-							window.open(url, "mint", null);
-						})
+							}, { threshold: [0] });
+							observer.observe(term);
 					}
 					break;
 
@@ -541,6 +714,7 @@ var thesaurus =  {
 					break;
 			}
 
+		// scroll
 			// self.scrolled = false
 			// if (to_hilite && self.scrolled===false) {
 			// 	// console.log("to_hilite:",row.term, row.term_id);
@@ -550,7 +724,7 @@ var thesaurus =  {
 			// 	self.scrolled = true
 			// }
 
-		// nd
+		// nd (no descriptor)
 			if (row.nd && row.nd.length>0) {
 				common.create_dom_element({
 					element_type	: "span",
@@ -560,7 +734,7 @@ var thesaurus =  {
 				})
 			}
 
-		// illustration
+		// illustration (svg)
 			if (row.illustration && row.illustration.length>0) {
 				const image = common.create_dom_element({
 					element_type	: "img",
@@ -568,9 +742,6 @@ var thesaurus =  {
 					src				: page_globals.__WEB_BASE_URL__ + row.illustration,
 					parent			: tree_node
 				})
-				// image.addEventListener("click", function(e){
-				// 	image.classList.toggle('big')
-				// })
 				const outsideClickListener = (event) => {
 					const target = event.target;
 					if (target===image) {
@@ -579,9 +750,7 @@ var thesaurus =  {
 						image.classList.remove('big')
 					}
 				}
-				// const removeClickListener = () => {
-				// 	document.removeEventListener('click', outsideClickListener)
-				// }
+				// document event click
 				document.addEventListener('click', outsideClickListener)
 			}
 
@@ -653,29 +822,31 @@ var thesaurus =  {
 						class_name		: "arrow" + open_style,
 						parent			: tree_node
 					})
-					arrow.addEventListener("mousedown", function(){
-						let new_state
-						if (this.classList.contains("open")) {
-							branch.classList.add("hide")
-							this.classList.remove("open")
-							// new_state
-							new_state = "closed"
-						}else{
-							branch.classList.remove("hide")
-							this.classList.add("open")
-							// new_state
-							new_state = "opened"
-						}
+					arrow.addEventListener("mousedown", function(e){
+						e.stopPropagation()
 
-						// state update
-						// const current_state = self.tree_state.find(item => item.id===row.term_id)
-						const current_state = self.tree_state[row.term_id]
-						if (current_state && current_state.state!==new_state) {
-							// current_state.state = new_state
-							self.tree_state[row.term_id] = new_state
-							// update sessionStorage tree_state var
-							sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
-						}
+						// state  set based on current classList contains open/hide
+							let new_state
+							if (this.classList.contains("open")) {
+								branch.classList.add("hide")
+								this.classList.remove("open")
+								// new_state
+								new_state = "closed"
+							}else{
+								branch.classList.remove("hide")
+								this.classList.add("open")
+								// new_state
+								new_state = "opened"
+							}
+
+						// state update (sessionStorage)
+							const current_state = self.tree_state[row.term_id]
+							if (current_state!==new_state) {
+								// current_state.state = new_state
+								self.tree_state[row.term_id] = new_state
+								// update sessionStorage tree_state var
+								sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
+							}
 					})
 				}
 

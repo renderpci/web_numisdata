@@ -20,9 +20,9 @@ export const data_manager = function() {
 */
 data_manager.prototype.request = async function(options) {
 
-	console.log("++++ data_manager request options:", options);
+	// console.log("++++ data_manager request options:", options);
 
-	const url			= options.url || page_globals.JSON_TRIGGER_URL
+	let url				= options.url || null
 	const method		= options.method || 'POST' // *GET, POST, PUT, DELETE, etc.
 	const mode			= options.mode || 'cors' // no-cors, cors, *same-origin
 	const cache			= options.cache || 'no-cache' // *default, no-cache, reload, force-cache, only-if-cached
@@ -32,17 +32,27 @@ data_manager.prototype.request = async function(options) {
 	const referrer		= options.referrer || 'no-referrer' // no-referrer, *client
 	const body			= options.body // body data type must match "Content-Type" header
 
+	// page_globals check for workers
+		const page_globals = typeof window.page_globals!=='undefined'
+			? window.page_globals
+			: null
+
+	// url
+		if (!url && page_globals) {
+			url = page_globals.JSON_TRIGGER_URL
+		}
+
 	// code defaults
-		if (!body.code) {
+		if (!body.code && page_globals) {
 			body.code = page_globals.API_WEB_USER_CODE
 		}
 	// lang defaults
-		if (!body.lang) {
+		if (!body.lang && page_globals) {
 			body.lang = page_globals.WEB_CURRENT_LANG_CODE
 		}
 
 	// db_name defaults
-		if (!body.db_name && page_globals.WEB_DB) {
+		if (!body.db_name && page_globals && page_globals.WEB_DB) {
 			body.db_name = page_globals.WEB_DB
 		}
 

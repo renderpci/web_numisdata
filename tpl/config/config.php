@@ -26,12 +26,12 @@
 
 	// __web_base_url__ . absolute url base to target web. Used to build absolute calls to elements
 		define('__WEB_BASE_URL__', ($source_data_api==='remote')
-			? 'https://mib.numisdata.org'
+			? 'https://monedaiberica.org'
 			: 'http://monedaiberica:8080'
 		);
 
 	// media base url
-		define('__WEB_MEDIA_BASE_URL__', 'https://mib.numisdata.org');
+		define('__WEB_MEDIA_BASE_URL__', 'https://monedaiberica.org');
 
 	// __web_root_web__
 		// $parts = explode('/',$_SERVER['REQUEST_URI']);

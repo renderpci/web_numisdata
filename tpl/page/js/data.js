@@ -192,32 +192,55 @@ page.parse_mint_data = function(data) {
 
 /**
 * PARSE_HOARD_DATA
+*	Parse hoards and founds data
+* @param array rows
+* @return array rows
 */
 page.parse_hoard_data = function(data) {
-	const self = this
 
-	// array case
-		if (Array.isArray(data)) {
-			const new_data = []
-			for (let i = 0; i < data.length; i++) {
-				new_data.push( page.parse_hoard_data(data[i]) )
-			}
-			return new_data
+	if (!Array.isArray(data)) {
+		data = [data]
+	}
+
+	const parsed_data = []
+
+	try {
+
+		if(!data) {
+			return data
 		}
 
-	const row = data
+		for (let i = 0; i < data.length; i++) {
 
-	if (typeof row !== 'object') {
-		console.log("parse_hoard_data row:",row);
-		console.trace()
+			const row = data[i]
+
+			if (row.parsed===true) {
+				parsed_data.push(row)
+				continue;
+			}
+
+			row.map = row.map
+				? JSON.parse(row.map)
+				: null
+
+			row.coins = row.coins
+				? JSON.parse(row.coins)
+				: null
+
+			row.parsed = true
+
+			parsed_data.push(row)
+		}//end for (let i = 0; i < data.length; i++)
+
+
+	} catch (error) {
+		console.error("ERROR CATCH " , error);
+		console.warn("data:", data);
 	}
 
-	if (!row || row.parsed) {
-		return row
-	}
 
-	return row
-}//end parse_hoard_data
+	return parsed_data
+};//end parse_hoard_data
 
 
 

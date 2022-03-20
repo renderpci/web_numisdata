@@ -1,7 +1,5 @@
 /*global tstring, page_globals, SHOW_DEBUG, event_manager, map_factory, biblio_row_fields, data_manager, dedalo_logged, Promise, common, page, console, mint_row, DocumentFragment  */
 /*eslint no-undef: "error"*/
-
-
 "use strict";
 
 
@@ -14,18 +12,20 @@ var mint = {
 	*/
 		section_id				: null,
 		export_data_container	: null,
+		row_detail				: null,
 
 
 	/**
 	* SET_UP
+	* When the HTML page is loaded
 	*/
 	set_up : function(options) {
 
 		const self = this
 
-
 		// options
 			self.export_data_container	= options.export_data_container
+			self.row_detail				= options.row_detail
 			self.section_id				= options.section_id
 
 		// export_data_buttons added once
@@ -33,7 +33,7 @@ var mint = {
 			self.export_data_container.appendChild(export_data_buttons)
 			self.export_data_container.classList.add('hide')
 
-		//suggestions_form_button
+		// suggestions_form_button
 			const contact_form_button = page.create_suggestions_button()
 			self.export_data_container.appendChild(contact_form_button)
 
@@ -51,7 +51,7 @@ var mint = {
 					const mint_data = page.parse_mint_data(mint.result[0])
 
 					self.draw_row({
-						target	: document.getElementById('row_detail'),
+						target	: self.row_detail,
 						ar_rows	: [mint_data]
 					})
 
@@ -120,6 +120,9 @@ var mint = {
 					self.export_data_container.classList.remove('hide')
 			})
 		}
+		else{
+			self.row_detail.innerHTML = 'Error. Invalid section_id'
+		}
 
 		// navigate records group
 			// document.onkeyup = function(e) {
@@ -140,6 +143,7 @@ var mint = {
 	/**
 	* GET_ROW_DATA
 	* Get dabase mint row from table mints and catalog
+	* @return promise
 	*/
 	get_row_data : function(options) {
 
@@ -652,11 +656,11 @@ var mint = {
 			if (dedalo_logged===true) {
 
 				const link = common.create_dom_element({
-					element_type 	: "a",
-					class_name 		: "section_id go_to_dedalo",
-					text_content 	: row_object.section_id,
-					href 			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
-					parent 			: line
+					element_type	: "a",
+					class_name		: "section_id go_to_dedalo",
+					text_content	: row_object.section_id,
+					href			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
+					parent			: line
 				})
 				link.setAttribute('target', '_blank');
 			}
@@ -664,57 +668,57 @@ var mint = {
 		// name & place
 			if (row_object.name && row_object.name.length>0) {
 
-				const lineTittleWrap = common.create_dom_element({
-					element_type	: "div",
-					class_name		: "line-tittle-wrap",
-					parent 			: line
-				})
+				// line
+					const lineTittleWrap = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "line-tittle-wrap",
+						parent			: line
+					})
 
-				let name = row_object.name
-
-				common.create_dom_element({
-					element_type 	: "div",
-					class_name 		: "line-tittle golden-color",
-					text_content 	: name,
-					parent 			: lineTittleWrap
-				})
-
-			// place
-				if (row_object.place && row_object.place.length>0) {
-
-					const place = "| "+row_object.place;
+				// name
+					const name = row_object.name
 					common.create_dom_element({
 						element_type 	: "div",
-						class_name 		: "info_value",
-						text_content 	: place,
+						class_name 		: "line-tittle golden-color",
+						text_content 	: name,
 						parent 			: lineTittleWrap
 					})
-				}
 
-			// authorship
-				if (row_object.authorship_names && row_object.authorship_names.length>0) {
+				// place
+					if (row_object.place && row_object.place.length>0) {
 
-					const ar_names = row_object.authorship_names.split('|');
-					const ar_surnames = row_object.authorship_surnames.split('|');
-					const ar_roles = row_object.authorship_roles.split('|');
-
-					const authorship_length = ar_names.length
-					for (let i = 0; i < authorship_length; i++) {
-						const name		= ar_names[i].trim().toUpperCase()
-						const surname	= ar_surnames[i].trim().toUpperCase()
-						const rol		= ar_roles[i].trim()
-
-						const authorship = name + ' ' + surname+ ' | ' +rol
+						const place = "| "+row_object.place;
 						common.create_dom_element({
-							element_type 	: "div",
-							class_name 		: "authorship",
-							text_content 	: authorship,
-							parent 			: lineTittleWrap
+							element_type	: "div",
+							class_name		: "info_value",
+							text_content	: place,
+							parent			: lineTittleWrap
 						})
 					}
-				}
 
-			}
+				// authorship
+					if (row_object.authorship_names && row_object.authorship_names.length>0) {
+
+						const ar_names = row_object.authorship_names.split('|');
+						const ar_surnames = row_object.authorship_surnames.split('|');
+						const ar_roles = row_object.authorship_roles.split('|');
+
+						const authorship_length = ar_names.length
+						for (let i = 0; i < authorship_length; i++) {
+							const name		= ar_names[i].trim().toUpperCase()
+							const surname	= ar_surnames[i].trim().toUpperCase()
+							const rol		= ar_roles[i].trim()
+
+							const authorship = name + ' ' + surname+ ' | ' +rol
+							common.create_dom_element({
+								element_type 	: "div",
+								class_name 		: "authorship",
+								text_content 	: authorship,
+								parent 			: lineTittleWrap
+							})
+						}
+					}
+			}//end if (row_object.name && row_object.name.length>0)
 
 			const comments_wrap = common.create_dom_element({
 				element_type	: "div",

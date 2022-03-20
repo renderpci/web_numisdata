@@ -1,6 +1,6 @@
 <?php
 
-// bibio
+// mint
 
 	// css
 		// page::$css_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.css';
@@ -8,7 +8,7 @@
 			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css',
 			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/MarkerCluster.css'
 		);
-		
+
 
 	// js
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
@@ -17,7 +17,7 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/leaflet.markercluster.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/mints/js/mints'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/mint/js/mint_row'.JS_SUFFIX.'.js';
-	
+
 	// area name
 		$area_name 	= $_GET['area_name'];
 		$ar_parts 	= explode('/', $area_name);
@@ -30,5 +30,5 @@
 		$title 			= $this->get_element_from_template_map('title', $template_map->{$mode});
 		$abstract  		= $this->get_element_from_template_map('abstract', $template_map->{$mode});
 		$body  			= $this->get_element_from_template_map('body', $template_map->{$mode});
-		$ar_image  		= $this->get_element_from_template_map('image', $template_map->{$mode});	
+		$ar_image  		= $this->get_element_from_template_map('image', $template_map->{$mode});
 

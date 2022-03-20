@@ -1,9 +1,7 @@
 /*global tstring, common, page */
 /*eslint no-undef: "error"*/
-
-
+/*jshint esversion: 6 */
 "use strict";
-
 
 
 var mint_row = {

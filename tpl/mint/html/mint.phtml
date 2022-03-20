@@ -13,7 +13,6 @@
 		<!-- header -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
 
-
 		<!-- main -->
 			<div id="main">
 				<div class="inner">
@@ -21,10 +20,6 @@
 					<!-- title -->
 						<h1><?php echo $title ?></h1>
 						<div class="golden-separator"></div>
-					<!-- Form -->
-					<section class="form">
-						<?php # include($cwd.'_search.phtml') ?>
-					</section>
 
 					<!-- Result -->
 						<section class="result">
@@ -33,10 +28,8 @@
 							<div id="types"></div>
 							<div id="export_data" class="export_data_container"></div>
 						</section>
-
 				</div>
 			</div>
-
 
 		<!-- footer -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
@@ -48,7 +41,8 @@
 dom_ready(function(){
 	mint.set_up({
 		section_id				: '<?php echo $section_id ?>',
-		export_data_container	: document.getElementById('export_data')
+		export_data_container	: document.getElementById('export_data'),
+		row_detail				: document.getElementById('row_detail')
 	})
 })
 </script>

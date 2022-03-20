@@ -1,2 +1,2 @@
 <?php # WEB_VERSION
-define('WEB_VERSION', '2.0.5');
+define('WEB_VERSION', '2.0.6');

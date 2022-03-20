@@ -330,8 +330,6 @@ var thesaurus =  {
 	render_tree_node : function(row) {
 
 		const self = this // is 'tree_factory' instance
-		// console.log("row:",row);
-		// console.log("self:",self);
 
 		// node wrapper
 			const tree_node = common.create_dom_element({
@@ -339,10 +337,9 @@ var thesaurus =  {
 				class_name		: "tree_node",
 				id				: row.term_id
 			})
-
-			tree_node.term_id = row.term_id
-			tree_node.parent  = row.parent
-
+			// add properties to node
+			tree_node.term_id	= row.term_id
+			tree_node.parent	= row.parent
 
 		// term
 			const term_value	= row.term //+ " <small>[" + row.term_id + "]</small>"
@@ -355,6 +352,7 @@ var thesaurus =  {
 				parent			: tree_node
 			})
 
+		// links based on WEB_AREA value (mints_hierarchy, symbols, iconography, countermarks)
 			switch (WEB_AREA) {
 				case 'mints_hierarchy':
 					// link to mint
@@ -541,6 +539,7 @@ var thesaurus =  {
 					break;
 			}
 
+		// scroll
 			// self.scrolled = false
 			// if (to_hilite && self.scrolled===false) {
 			// 	// console.log("to_hilite:",row.term, row.term_id);
@@ -550,7 +549,7 @@ var thesaurus =  {
 			// 	self.scrolled = true
 			// }
 
-		// nd
+		// nd (no descriptor)
 			if (row.nd && row.nd.length>0) {
 				common.create_dom_element({
 					element_type	: "span",
@@ -560,7 +559,7 @@ var thesaurus =  {
 				})
 			}
 
-		// illustration
+		// illustration (svg)
 			if (row.illustration && row.illustration.length>0) {
 				const image = common.create_dom_element({
 					element_type	: "img",
@@ -568,9 +567,6 @@ var thesaurus =  {
 					src				: page_globals.__WEB_BASE_URL__ + row.illustration,
 					parent			: tree_node
 				})
-				// image.addEventListener("click", function(e){
-				// 	image.classList.toggle('big')
-				// })
 				const outsideClickListener = (event) => {
 					const target = event.target;
 					if (target===image) {
@@ -579,9 +575,7 @@ var thesaurus =  {
 						image.classList.remove('big')
 					}
 				}
-				// const removeClickListener = () => {
-				// 	document.removeEventListener('click', outsideClickListener)
-				// }
+				// document event click
 				document.addEventListener('click', outsideClickListener)
 			}
 
@@ -653,29 +647,31 @@ var thesaurus =  {
 						class_name		: "arrow" + open_style,
 						parent			: tree_node
 					})
-					arrow.addEventListener("mousedown", function(){
-						let new_state
-						if (this.classList.contains("open")) {
-							branch.classList.add("hide")
-							this.classList.remove("open")
-							// new_state
-							new_state = "closed"
-						}else{
-							branch.classList.remove("hide")
-							this.classList.add("open")
-							// new_state
-							new_state = "opened"
-						}
+					arrow.addEventListener("mousedown", function(e){
+						e.stopPropagation()
 
-						// state update
-						// const current_state = self.tree_state.find(item => item.id===row.term_id)
-						const current_state = self.tree_state[row.term_id]
-						if (current_state && current_state.state!==new_state) {
-							// current_state.state = new_state
-							self.tree_state[row.term_id] = new_state
-							// update sessionStorage tree_state var
-							sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
-						}
+						// state  set based on current classList contains open/hide
+							let new_state
+							if (this.classList.contains("open")) {
+								branch.classList.add("hide")
+								this.classList.remove("open")
+								// new_state
+								new_state = "closed"
+							}else{
+								branch.classList.remove("hide")
+								this.classList.add("open")
+								// new_state
+								new_state = "opened"
+							}
+
+						// state update (sessionStorage)
+							const current_state = self.tree_state[row.term_id]
+							if (current_state!==new_state) {
+								// current_state.state = new_state
+								self.tree_state[row.term_id] = new_state
+								// update sessionStorage tree_state var
+								sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
+							}
 					})
 				}
 

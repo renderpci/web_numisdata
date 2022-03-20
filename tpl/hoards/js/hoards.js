@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, coins*/
+/*global tstring, hoards_row_fields, SHOW_DEBUG, common, page, event_manager, data_manager, list_factory, form_factory */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -21,6 +21,7 @@ var hoards =  {
 		rows_container	: null,
 
 
+
 	/**
 	* SET_UP
 	* When the HTML page is loaded
@@ -33,7 +34,6 @@ var hoards =  {
 		// options
 			self.form_container	= options.form_container
 			self.rows_container	= options.rows_container
-
 
 		// form
 			self.form		= new form_factory()
@@ -57,6 +57,8 @@ var hoards =  {
 				self.form_submit()
 			}
 
+		// first list
+			self.form_submit()
 
 		return true
 	},//end set_up
@@ -71,13 +73,13 @@ var hoards =  {
 		const self = this
 
 		const fragment = new DocumentFragment()
-		
+
 		const form_row = common.create_dom_element({
 			element_type	: "div",
 			class_name 		: "form-row fields",
 			parent 			: fragment
 		})
-		
+
 		// section_id
 			self.form.item_factory({
 				id			: "section_id",
@@ -176,7 +178,7 @@ var hoards =  {
 	form_submit : function() {
 
 		const self = this
-		
+
 		const form_node = self.form.node
 		if (!form_node) {
 			return new Promise(function(resolve){
@@ -200,7 +202,7 @@ var hoards =  {
 			const ar_fields	= ['*']
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
-			const count		= true			
+			const count		= true
 			const order		= "name"
 			const resolve_portals_custom = {
 				"bibliography_data" : "bibliographic_references"
@@ -216,7 +218,7 @@ var hoards =  {
 					: null
 				if(SHOW_DEBUG===true) {
 					console.log("-> coins form_submit sql_filter:",sql_filter);
-				}					
+				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){
 				// 		// loading ends
@@ -241,11 +243,12 @@ var hoards =  {
 				}
 			})
 			.then(function(api_response){
-				console.log("--------------- api_response:",api_response);
-				
+				// console.log("--------------- api_response:",api_response);
+
 				// parse data
 					const data	= page.parse_hoard_data(api_response.result)
 					const total	= api_response.total
+					console.log("data:",data);
 
 					self.pagination.total	= total
 					self.pagination.offset	= offset
@@ -254,7 +257,7 @@ var hoards =  {
 						rows_container.classList.remove("loading")
 						resolve(null)
 					}
-				
+
 				// loading end
 					(function(){
 						while (rows_container.hasChildNodes()) {
@@ -262,7 +265,7 @@ var hoards =  {
 						}
 						rows_container.classList.remove("loading")
 					})()
-				
+
 				// render
 					self.list = self.list || new list_factory() // creates / get existing instance of list
 					self.list.init({
@@ -295,15 +298,14 @@ var hoards =  {
 	* This function is a callback defined when list_factory is initialized (!)
 	* @param object data (db row parsed)
 	* @param object caller (instance of class caller like coin)
-	* @return DocumentFragment node 
+	* @return DocumentFragment node
 	*/
-	list_row_builder : function(data, caller){
-		
+	list_row_builder : function(data){
+
 		return hoards_row_fields.draw_item(data)
-	
 	}//end list_row_builder
 
 
 
-	
+
 }//end coins

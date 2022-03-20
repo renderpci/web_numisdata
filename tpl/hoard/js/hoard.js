@@ -1,3 +1,5 @@
+/*global tstring, page_globals, SHOW_DEBUG,  map_factory, common, dedalo_logged, data_manager,  biblio_row_fields,  page, console,  DocumentFragment  */
+/*eslint no-undef: "error"*/
 "use strict";
 
 
@@ -5,11 +7,15 @@
 var hoard =  {
 
 
+	/**
+	* VARS
+	*/
+		section_id				: null,
+		export_data_container	: null,
+		row_detail				: null,
 
-	// trigger_url 	: page_globals.__WEB_TEMPLATE_WEB__ + "/hoard/trigger.hoard.php",
-	search_options 	: {},
-
-	map : null,
+		search_options			: {},
+		map						: null,
 
 
 	/**
@@ -20,40 +26,51 @@ var hoard =  {
 
 		const self = this
 
-		const row_detail =  document.getElementById('row_detail')
+		// options
+			self.export_data_container	= options.export_data_container
+			self.row_detail				= options.row_detail
+			self.section_id				= options.section_id
 
-		// trigger render hoard with current options.section_id 
-			if (typeof options.section_id!=="undefined" && options.section_id>0) {
-				
-				// search by section_id			
-					const search = self.get_row_data({
-						section_id : options.section_id
-					})
-					.then(function(response){
-						console.log("[set_up->get_row_data] response:",response);
+		// export_data_buttons added once
+			// const export_data_buttons = page.render_export_data_buttons()
+			// self.export_data_container.appendChild(export_data_buttons)
+			// self.export_data_container.classList.add('hide')
 
-						if (response.result && response.result.length>0) {
+		// suggestions_form_button
+			// const contact_form_button = page.create_suggestions_button()
+			// self.export_data_container.appendChild(contact_form_button)
 
-							// row draw
-								self.draw_row({
-									target  : row_detail,
-									ar_rows : response.result
-								})
-								.then(function(){
-									// map draw. Init default map
-									const map_data = JSON.parse(response.result[0].map)
-									self.draw_map({
-										map_data : map_data
-									})	
-								})
-						}else{
-							row_detail.innerHTML = 'Sorry. Empty result for section_id: ' + options.section_id
-						}
-					})
-			}else{
-				row_detail.innerHTML = 'Error. Invalid section_id'
-			}
-	
+		if (self.section_id) {
+
+			// search by section_id
+				self.get_row_data({
+					section_id : options.section_id
+				})
+				.then(function(ar_rows){
+					console.log("[set_up->get_row_data] ar_rows:",ar_rows);
+
+					if (ar_rows && ar_rows.length>0) {
+
+						// row draw
+							self.draw_row({
+								target  : self.row_detail,
+								ar_rows : ar_rows
+							})
+
+						// map draw. Init default map
+							const map_data = ar_rows[0].map
+							self.draw_map({
+								map_data : map_data
+							})
+
+					}else{
+						self.row_detail.innerHTML = 'Sorry. Empty result for section_id: ' + self.section_id
+					}
+				})
+		}else{
+			self.row_detail.innerHTML = 'Error. Invalid section_id'
+		}
+
 		// navigate across records group
 			// document.onkeyup = function(e) {
 			// 	if (e.which == 37) { // arrow left <-
@@ -62,7 +79,7 @@ var hoard =  {
 			// 	}else if (e.which == 39) { // arrow right ->
 			// 		let button = document.getElementById("go_next")
 			// 		if (button) button.click()
-			// 	}		
+			// 	}
 			// }
 
 		return true
@@ -74,31 +91,44 @@ var hoard =  {
 	* GET_ROW_DATA
 	* @return promise
 	*/
-	get_row_data : function(options) {
+	get_row_data : async function(options) {
 
-		const self = this
+		// options
+			const section_id = options.section_id
 
-		const section_id	= options.section_id
-		const ar_fields		= ['*']
-		const sql_filter	= 'section_id=' + parseInt(section_id);
+		// short vars
+			const ar_fields		= ['*']
+			const sql_filter	= 'section_id=' + parseInt(section_id);
 
 		// request
-		return data_manager.request({
-			body : {
-				dedalo_get		: 'records',
-				db_name			: page_globals.WEB_DB,
-				lang			: page_globals.WEB_CURRENT_LANG_CODE,
-				table			: 'hoards',
-				ar_fields		: ar_fields,
-				sql_filter		: sql_filter,
-				limit			: 1,
-				count			: false,
-				offset			: 0,
-				resolve_portals_custom	: {
-					coins_data : 'coins'
+			return data_manager.request({
+				body : {
+					dedalo_get		: 'records',
+					db_name			: page_globals.WEB_DB,
+					lang			: page_globals.WEB_CURRENT_LANG_CODE,
+					table			: 'hoards',
+					ar_fields		: ar_fields,
+					sql_filter		: sql_filter,
+					limit			: 1,
+					count			: false,
+					offset			: 0,
+					resolve_portals_custom	: {
+						coins_data			: 'coins',
+						bibliography_data	: 'bibliographic_references'
+					}
 				}
-			}
-		})
+			})
+			.then(function(api_response){
+
+				if (!api_response.result) {
+					console.warn("Empty result:", api_response);
+					return null
+				}
+
+				const ar_rows = page.parse_hoard_data(api_response.result)
+
+				return ar_rows
+			})
 	},//end get_row_data
 
 
@@ -111,39 +141,197 @@ var hoard =  {
 
 		const self = this
 
-		return new Promise(function(resolve){
+		// options
+			const row_object	= options.ar_rows[0]
+			const container 	= options.target
 
-			// options
-				const row_object	= options.ar_rows[0]
-				const container 	= options.target
+		// check row_object
+		if (!row_object) {
+			console.warn("Warning! draw_row row_object no found in options");
+			return null;
+		}
 
-				console.log("draw_row row_object:", row_object)
+		// fix row_object
+			self.row_object = row_object
 
-			// fix row_object
-				self.row_object = row_object
+		// debug
+			if(SHOW_DEBUG===true) {
+				// console.log("coin row_object:",row_object);
+			}
 
-			// debug
-				if(SHOW_DEBUG===true) {
-					console.log("coin row_object:",row_object);
+		// container. clean container div
+			while (container.hasChildNodes()) {
+				container.removeChild(container.lastChild);
+			}
+
+		const fragment = new DocumentFragment();
+
+		// // draw row wrapper
+		// 	const hoard_row_wrapper = hoard_row.draw_hoard(row_object)
+		// 	fragment.appendChild(hoard_row_wrapper)
+
+		// // container final fragment add
+		// 	container.appendChild(fragment)
+
+		// line
+			const line = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "",
+				parent 			: fragment
+			})
+
+		// section_id
+			if (dedalo_logged===true) {
+				const link = common.create_dom_element({
+					element_type	: "a",
+					class_name		: "section_id go_to_dedalo",
+					text_content	: row_object.section_id,
+					href			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row_object.section_id,
+					parent			: line
+				})
+				link.setAttribute('target', '_blank');
+			}
+
+		// name & place
+			if (row_object.name && row_object.name.length>0) {
+
+				// line
+					const lineTittleWrap = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "line-tittle-wrap",
+						parent			: line
+					})
+
+				// name
+					common.create_dom_element({
+						element_type	: "div",
+						class_name		: "line-tittle golden-color",
+						text_content	: row_object.name,
+						parent			: lineTittleWrap
+					})
+
+				// place
+					if (row_object.place && row_object.place.length>0) {
+
+						const place = "| "+row_object.place;
+						common.create_dom_element({
+							element_type	: "div",
+							class_name		: "info_value",
+							text_content	: place,
+							parent			: lineTittleWrap
+						})
+					}
+			}//end if (row_object.name && row_object.name.length>0)
+
+		// total_coins
+			if (row_object.coins && row_object.coins.length>0) {
+				const n_coins = row_object.coins.length
+				common.create_dom_element ({
+					element_type	: 'div',
+					class_name		: 'info_text_block',
+					inner_html		: (tstring.total_coins || 'Total coins') + ': ' + n_coins,
+					parent			: fragment
+				})
+			}
+
+		// public_info
+			if (row_object.public_info) {
+				common.create_dom_element ({
+					element_type	: 'div',
+					class_name		: 'info_text_block',
+					inner_html		: row_object.public_info,
+					parent			: fragment
+				})
+			}
+
+		// bibliography_data
+			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
+				//create the graphical red line that divide blocks
+				const lineSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_line separator",
+					parent			: fragment
+				})
+				//create the tittle block inside a red background
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "big_label",
+					text_content	: tstring.bibliographic_references || "Bibliographic references",
+					parent			: lineSeparator
+				})
+
+				const bibliography_block = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "info_text_block",
+					parent			: fragment
+				})
+
+				const ref_biblio		= row_object.bibliography_data
+				const ref_biblio_length	= ref_biblio.length
+				for (let i = 0; i < ref_biblio_length; i++) {
+
+					// build full ref biblio node
+					const biblio_row_node = biblio_row_fields.render_row_bibliography(ref_biblio[i])
+
+					const biblio_row_wrapper = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "bibliographic_reference",
+						parent			: bibliography_block
+					})
+					biblio_row_wrapper.appendChild(biblio_row_node)
 				}
 
-			// container. clean container div
-				while (container.hasChildNodes()) {
-					container.removeChild(container.lastChild);
-				}
+				createExpandableBlock(bibliography_block, fragment);
+			}
 
-			const fragment = new DocumentFragment();	
+			// Create an expandable block when text length is over 500
+			function createExpandableBlock(textBlock, nodeParent) {
 
-			// draw row wrapper
-				const hoard_row_wrapper = hoard_row.draw_hoard(row_object)				
-				fragment.appendChild(hoard_row_wrapper)			
+				textBlock.classList.add("contracted-block");
 
-			// container final fragment add
-				container.appendChild(fragment)
+				const textBlockSeparator = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "text-block-separator",
+					parent 			: nodeParent
+				})
+
+				const separatorArrow = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "separator-arrow",
+					parent 			: textBlockSeparator
+				})
+
+				textBlockSeparator.addEventListener("click",function(){
+					if (textBlock.classList.contains("contracted-block")){
+						textBlock.classList.remove ("contracted-block");
+						separatorArrow.style.transform = "rotate(-90deg)";
+					} else {
+						textBlock.classList.add("contracted-block");
+						separatorArrow.style.transform = "rotate(90deg)";
+					}
+				})
+			}//end createExpandableBlock
+
+		// link
+			if (row_object.link) {
+				common.create_dom_element ({
+					element_type	: 'a',
+					class_name		: 'icon_link info_value',
+					inner_html		: row_object.link,
+					href			: row_object.link,
+					target			: '_blank',
+					parent			: fragment
+				})
+			}
+			console.log("row_object:",row_object);
 
 
-			resolve(container)
-		})
+
+		// container final add
+			container.appendChild(fragment)
+
+
+		return fragment
 	},//end draw_row
 
 
@@ -176,7 +364,9 @@ var hoard =  {
 		.then(function(){
 			container.classList.remove("hide_opacity")
 		})
-		
+
+		// container.classList.remove("hide_opacity")
+
 
 		return true
 	},//end draw_map
@@ -188,10 +378,8 @@ var hoard =  {
 	* @return array data
 	*/
 	map_data : function(data) {
-		
-		const self = this
 
-		console.log("--map_data data:",data);
+		// console.log("--map_data data:",data);
 
 		const ar_data = Array.isArray(data)
 			? data
@@ -199,7 +387,7 @@ var hoard =  {
 
 		const data_clean = []
 		for (let i = 0; i < ar_data.length; i++) {
-			
+
 			const item = {
 				lat			: ar_data[i].lat,
 				lon			: ar_data[i].lon,
@@ -213,11 +401,11 @@ var hoard =  {
 			data_clean.push(item)
 		}
 
-		console.log("--map_data data_clean:",data_clean);
+		// console.log("--map_data data_clean:",data_clean);
 
 		return data_clean
 	},//end map_data
 
 
-	
+
 }//end type

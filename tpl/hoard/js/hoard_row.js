@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, item, common, page, forms, document, DocumentFragment, tstring, console, tree_factory, map_factory */
+/*global tstring, SHOW_DEBUG, common, dedalo_logged, DocumentFragment, tstring */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -12,11 +12,7 @@ var hoard_row= {
 
 
 	draw_hoard : function(row) {
-		if(SHOW_DEBUG===true) {
-			// console.log("-- draw_hoard row:",row)
-		}
 
-		const self = this
 
 		const fragment = new DocumentFragment();
 		if (!row) {
@@ -25,9 +21,9 @@ var hoard_row= {
 
 		// line
 			const line = common.create_dom_element({
-				element_type 	: "div",
-				class_name 		: "",
-				parent 			: fragment
+				element_type	: "div",
+				class_name		: "",
+				parent			: fragment
 			})
 
 
@@ -35,11 +31,11 @@ var hoard_row= {
 			if (dedalo_logged===true) {
 
 				const link = common.create_dom_element({
-					element_type 	: "a",
-					class_name 		: "section_id go_to_dedalo",
-					text_content 	: row.section_id,
-					href 			: '/dedalo/lib/dedalo/main/?t=numisdata5&id=' + row.section_id,
-					parent 			: line
+					element_type	: "a",
+					class_name		: "section_id go_to_dedalo",
+					inner_html		: row.section_id,
+					href			: '/dedalo/lib/dedalo/main/?t=numisdata5&id=' + row.section_id,
+					parent			: line
 				})
 				link.setAttribute('target', '_blank');
 			}
@@ -48,18 +44,18 @@ var hoard_row= {
 			if (row.name && row.name.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.name || "Name",
-					parent 			: line
+					element_type	: "label",
+					class_name		: "",
+					inner_html		: tstring.name || "Name",
+					parent			: line
 				})
 
 				const name = row.name
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: name,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: name,
+					parent			: line
 				})
 			}
 
@@ -69,16 +65,16 @@ var hoard_row= {
 				common.create_dom_element({
 					element_type 	: "label",
 					class_name 		: "",
-					text_content 	: tstring.place || "Place",
+					inner_html 	: tstring.place || "Place",
 					parent 			: line
 				})
 
 				const place = row.place
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: place,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: place,
+					parent			: line
 				})
 			}
 
@@ -86,18 +82,17 @@ var hoard_row= {
 			if (row.public_info && row.public_info.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.public_info || "Public info",
-					parent 			: line
+					element_type	: "label",
+					inner_html		: tstring.public_info || "Public info",
+					parent			: line
 				})
 
 				const public_info = row.public_info
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: public_info,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: public_info,
+					parent			: line
 				})
 			}
 
@@ -105,18 +100,17 @@ var hoard_row= {
 			if (row.link && row.link.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.link || "Link",
-					parent 			: line
+					element_type	: "label",
+					inner_html		: tstring.link || "Link",
+					parent			: line
 				})
 
 				const link = row.link
 				common.create_dom_element({
-					element_type 	: "span",
-					class_name 		: "info_value",
-					text_content 	: link,
-					parent 			: line
+					element_type	: "span",
+					class_name		: "info_value",
+					inner_html		: link,
+					parent			: line
 				})
 			}
 
@@ -124,13 +118,13 @@ var hoard_row= {
 			if (row.bibliography && row.bibliography.length>0) {
 
 				common.create_dom_element({
-					element_type 	: "label",
-					class_name 		: "",
-					text_content 	: tstring.bibliografia || "Bibliography",
-					parent 			: line
+					element_type	: "label",
+					class_name		: "",
+					inner_html		: tstring.bibliografia || "Bibliography",
+					parent			: line
 				})
 
-				const bibliography = common.clean_gaps(row.bibliography) // , splitter=" | ", joinner=", "				
+				const bibliography = common.clean_gaps(row.bibliography) // , splitter=" | ", joinner=", "
 				common.create_dom_element({
 					element_type	: "span",
 					class_name		: "info_value",

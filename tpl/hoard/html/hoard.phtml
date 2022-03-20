@@ -13,24 +13,24 @@
 		<!-- header -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
 
-
 		<!-- main -->
 			<div id="main">
 				<div class="inner">
 
 					<!-- title -->
 						<h1><?php echo $title ?></h1>
+						<div class="golden-separator"></div>
 
 
 					<!-- Result -->
 						<section class="result">
 							<div id="row_detail"> <span>Loading row..</span> </div>
 							<div id="map_container" class="map_container hide_opacity map"></div>
+							<div id="export_data" class="export_data_container"></div>
 						</section>
 
 				</div>
 			</div>
-
 
 		<!-- footer -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
@@ -41,7 +41,9 @@
 <script>
 dom_ready(function(){
 	hoard.set_up({
-		section_id : '<?php echo $section_id ?>'
+		section_id				: '<?php echo $section_id ?>',
+		export_data_container	: document.getElementById('export_data'),
+		row_detail				: document.getElementById('row_detail')
 	})
 })
 </script>

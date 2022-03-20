@@ -57,6 +57,9 @@ var hoard =  {
 								ar_rows : ar_rows
 							})
 
+						// self row fix
+							self.row = ar_rows[0]
+
 						// map draw. Init default map
 							const map_data = ar_rows[0].map
 							self.draw_map({
@@ -365,8 +368,6 @@ var hoard =  {
 			container.classList.remove("hide_opacity")
 		})
 
-		// container.classList.remove("hide_opacity")
-
 
 		return true
 	},//end draw_map
@@ -379,7 +380,9 @@ var hoard =  {
 	*/
 	map_data : function(data) {
 
-		// console.log("--map_data data:",data);
+		const self = this
+
+		// console.log("--map_data data:",data, self.row);
 
 		const ar_data = Array.isArray(data)
 			? data
@@ -394,8 +397,8 @@ var hoard =  {
 				marker_icon	: page.maps_config.markers.hoard,
 				data		: {
 					section_id	: null,
-					title		: '',
-					description	: ''
+					title		: self.row.name, // provisional
+					description	: ' '
 				}
 			}
 			data_clean.push(item)

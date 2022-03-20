@@ -54,7 +54,36 @@ var hoards_row_fields = {
 									source_maps			: page.maps_config.source_maps,
 									add_layer_control	: false // removes layer selector button
 								})
-								container.classList.remove("hide_opacity")
+								// draw points
+								const map_data = function(data) {
+
+									const ar_data = Array.isArray(data)
+										? data
+										: [data]
+
+									const data_clean = []
+									for (let i = 0; i < ar_data.length; i++) {
+
+										const item = {
+											lat			: ar_data[i].lat,
+											lon			: ar_data[i].lon,
+											marker_icon	: page.maps_config.markers.hoard,
+											data		: {
+												section_id	: null,
+												title		: row.name, // provisional
+												description	: ' '
+											}
+										}
+										data_clean.push(item)
+									}
+
+									return data_clean
+								}
+								const map_data_clean = map_data(row.map) // prepares data to used in map
+								map.parse_data_to_map(map_data_clean, null)
+								.then(function(){
+									container.classList.remove("hide_opacity")
+								})
 							}
 						}, { threshold: [0] });
 						observer.observe(map_wrapper);

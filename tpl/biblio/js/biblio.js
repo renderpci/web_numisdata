@@ -172,7 +172,7 @@ var biblio =  {
 					// }
 
 					let result_final = []
-					if (element.id==='descriptors') {
+					if (element.id==='descriptors_rec') {
 
 						const len = response_data.result.length
 						for (let i = 0; i < len; i++) {

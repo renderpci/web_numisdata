@@ -30,7 +30,7 @@ var tstring=<?php echo $titles;?>;
 __WEB_TEMPLATE_WEB__='<?php echo __WEB_TEMPLATE_WEB__ ?>';
 BASE_LINKS='<?php echo ''. BASE_LINKS ?>';
 IS_PRODUCTION=<?php echo json_encode(IS_PRODUCTION) ?>;
-const dedalo_logged = document.cookie.indexOf('dedalo_logged')!==-1 ? true : false;
+const dedalo_logged = typeof document!=='undefined' && document.cookie.indexOf('dedalo_logged')!==-1 ? true : false;
 function dom_ready(fn) {
 	if (document.readyState!=='loading'){
 		fn();

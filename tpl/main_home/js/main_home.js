@@ -166,6 +166,8 @@ var main_home =  {
 		return form_node
 	},//end render_form
 
+
+
 	/**
 	* FORM_SUBMIT
 	*/
@@ -218,6 +220,8 @@ var main_home =  {
 		})
 	},//end form_submit
 
+
+
 	/**
 	* MAIN COIN IMAGE
 	*/
@@ -258,14 +262,13 @@ var main_home =  {
 
 				const rnd_number		= Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
 				const coin_filename		= img_arr[rnd_number].url // "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
-				const coin_url			= coin_filename // "/dedalo/media/image/1.5MB/0/"+coin_filename
-				const sql_filter		= "ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"'"
+				const coin_url			= coin_filename // Ex. '/dedalo/media/image/1.5MB/0/'+coin_filename
+				const sql_filter		= "(ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"')"
 				const request_body = {
 					dedalo_get		: 'records',
 					db_name			: page_globals.WEB_DB,
 					lang			: page_globals.WEB_CURRENT_LANG_CODE,
 					table			: 'types',
-					// ar_fields	: ['*'],
 					ar_fields		: [
 						'mint',
 						'mint_number',
@@ -310,7 +313,6 @@ var main_home =  {
 
 						const item_text = mint + catalogue + " " + mint_number + number
 
-
 						const type_url = (item && item.section_id)
 							? page_globals.__WEB_ROOT_WEB__+"/type/" + item.section_id
 							: "#"
@@ -321,12 +323,21 @@ var main_home =  {
 						image_wrapper.href = type_url
 
 					// coin_img
-						common.create_dom_element ({
+						const image_url = page_globals.__WEB_MEDIA_BASE_URL__ + coin_url
+						const thumb_url = image_url.replace('/1.5MB/','/thumb/')
+						console.log("image_url:",image_url);
+						const image_big = common.create_dom_element ({
 							element_type	: "img",
 							class_name		: "main-coin-image",
-							src				: page_globals.__WEB_MEDIA_BASE_URL__+coin_url,
+							src				: thumb_url,
 							parent			: image_wrapper
 						})
+						const img_loader = document.createElement('img')
+						img_loader.addEventListener("load", function(){
+							image_big.src = image_url
+							img_loader.remove()
+						})
+						img_loader.src = image_url
 
 					// coin text
 						common.create_dom_element({

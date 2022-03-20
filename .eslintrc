@@ -1,8 +1,9 @@
 {
   "globals": {
-    // Put things like jQuery, etc
+     // Put things like jQuery, etc
     "jQuery": true,
-    "$": true
+    "$": true,
+    "Promise": true
   },
   "env": {
     "es6": true,

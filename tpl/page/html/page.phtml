@@ -25,7 +25,8 @@
 
 	<?php echo $css_links ?>
 	<?php // analytics
-	if(__WEB_ROOT_WEB__==='/v1') {
+	// if(__WEB_ROOT_WEB__==='/v1') {
+	if(IS_PRODUCTION===true) {
 		include $base_path . '/html/matomo_analytics.inc';
 	}
 	?>

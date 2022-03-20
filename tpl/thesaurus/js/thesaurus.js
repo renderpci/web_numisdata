@@ -104,14 +104,39 @@ var thesaurus =  {
 			.then(function(response){
 				// console.log("/// load_tree_data response:",response);
 
-				const render = self.render_data({
-					target		: rows_list,
-					ar_rows		: response.result,
-					set_hilite	: (self.term_id && self.term_id.length>0)
-				})
-				.then(function(){
-					spinner.remove()
-				})
+				// result check
+					if (!response.result) {
+						console.error(`Invalid API response!`);
+						return false
+					}
+
+				// check root_term
+					const root_term_length = self.root_term.length
+					for (let i = 0; i < root_term_length; i++) {
+						const term_id = self.root_term[i]
+						const found = response.result.find(el => el.term_id===term_id)
+						if (!found) {
+							console.error(`ERROR: Broken tree branch. Root term '${term_id}' not found! Check if it is published`);
+							common.create_dom_element({
+								element_type	: "div",
+								class_name		: "broken_branch",
+								inner_html		: `Sorry. Broken branch <b>${term_id}</b>. Tree it is not available.`,
+								parent			: rows_list
+							})
+							spinner.remove()
+							return false
+						}
+					}
+
+				// render data
+					self.render_data({
+						target		: rows_list,
+						ar_rows		: response.result,
+						set_hilite	: (self.term_id && self.term_id.length>0)
+					})
+					.then(function(){
+						spinner.remove()
+					})
 			})
 
 

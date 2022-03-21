@@ -113,6 +113,7 @@ var hoards_row_fields = {
 						href			: hoard_uri,
 						inner_html		: row.name + hoard_uri_text,
 						class_name		: 'name',
+						target			: '_blank',
 						parent			: title_wrap
 					})
 

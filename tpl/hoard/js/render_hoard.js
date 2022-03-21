@@ -190,6 +190,28 @@ var render_hoard = {
 
 
 	/**
+	* DRAW_TYPES_LIST_NODE
+	*/
+	draw_types_list_node : function(options) {
+
+		// options
+			const response = options.response // API response
+
+		// render data
+			const types_list_node = map.render_types_list({
+				global_data_item	: response.global_data_item,
+				types_rows			: response.types_rows,
+				coins_rows			: response.coins_rows,
+				info				: response.info
+			})
+
+
+		return types_list_node
+	},//end draw_types_list_node
+
+
+
+	/**
 	* DRAW_HOARD_OLD
 	*/
 		// draw_hoard_OLD : function(row) {

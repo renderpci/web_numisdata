@@ -220,6 +220,9 @@ var hoard =  {
 		map.load_map_selection_info(selected_element, global_data_item)
 		.then(function(response) {
 			// console.log("--> load_map_selection_info response:",response);
+
+			spinner.remove()
+
 			if (response) {
 
 				// set node only when it is in DOM (to save browser resources)
@@ -228,16 +231,12 @@ var hoard =  {
 				// 	if (entry.isIntersecting===true || entry.intersectionRatio > 0) {
 				// 		observer.disconnect();
 
-						// render data
-						const types_list_node = map.render_types_list({
-							global_data_item	: response.global_data_item,
-							types_rows			: response.types_rows,
-							coins_rows			: response.coins_rows,
-							info				: response.info
+					// render data
+						const types_list_node = render_hoard.draw_types_list_node({
+							response : response
 						})
 						rows_container.appendChild(types_list_node)
 
-						spinner.remove()
 				// 	}
 				// }, { threshold: [0] });
 				// observer.observe(rows_container);
@@ -247,8 +246,6 @@ var hoard =  {
 						const images_gallery_containers = rows_container
 						page.activate_images_gallery(images_gallery_containers, true)
 					},600)
-			}else{
-				spinner.remove()
 			}
 		})
 

@@ -175,7 +175,8 @@ var render_hoard = {
 			map_position	: map_position,
 			popup_builder	: page.map_popup_builder,
 			popup_options	: page.maps_config.popup_options,
-			source_maps		: page.maps_config.source_maps
+			source_maps		: page.maps_config.source_maps,
+			legend			: page.render_map_legend
 		})
 		// draw points
 		// const map_data_clean = self.map_data(map_data) // prepares data to used in map

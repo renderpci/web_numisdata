@@ -227,6 +227,10 @@ page.parse_hoard_data = function(data) {
 				? JSON.parse(row.coins)
 				: null
 
+			row.types = row.types
+				? JSON.parse(row.types)
+				: null
+
 			row.parsed = true
 
 			parsed_data.push(row)

@@ -186,56 +186,68 @@ var map = {
 			function map_selected_marker(options){
 				// console.log("///-> map_selected_marker options:",options);
 
-				const selected_element = typeof options.item.group[0]!=="undefined"
-					? options.item.group[0]
-					: null
-				if (selected_element) {
+				// options
+					const selected_element = typeof options.item.group[0]!=="undefined"
+						? options.item.group[0]
+						: null
 
-					// clean container
-						while (self.rows_container.hasChildNodes()) {
-							self.rows_container.removeChild(self.rows_container.lastChild);
+				// check selected_element
+					if (!selected_element) {
+						return null
+					}
+
+				// clean container
+					while (self.rows_container.hasChildNodes()) {
+						self.rows_container.removeChild(self.rows_container.lastChild);
+					}
+					// page.add_spinner(self.rows_container)
+					const spinner = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "spinner",
+						parent			: self.rows_container
+					})
+
+				// render related types list
+					// resolved map_global_data
+						const map_global_data = self.current_map_global_data.find(function(el){
+							return el.section_id==selected_element.term_id
+						})
+					// load_map_selection_info
+					self.load_map_selection_info(selected_element, map_global_data)
+					.then(function(response){
+						// console.log("--> load_map_selection_info response:",response);
+						if (response) {
+							const types_list_node = self.render_types_list({
+								global_data_item	: response.global_data_item,
+								types_rows			: response.types_rows,
+								coins_rows			: response.coins_rows,
+								info				: response.info
+							})
+							self.rows_container.appendChild(types_list_node)
+							// page.remove_spinner(self.rows_container)
+							spinner.remove()
+
+							// activate images lightbox
+								setTimeout(function(){
+									const images_gallery_containers = self.rows_container
+									page.activate_images_gallery(images_gallery_containers, true)
+								},600)
+
+						}else{
+							// page.remove_spinner(self.rows_container)
+							spinner.remove()
 						}
-						// page.add_spinner(self.rows_container)
-						const spinner = common.create_dom_element({
-							element_type	: "div",
-							class_name		: "spinner",
-							parent			: self.rows_container
-						})
 
-					// render related types list
-						self.load_map_selection_info(selected_element)
-						.then(function(response){
-							// console.log("--> load_map_selection_info response:",response);
-							if (response) {
-								const types_list_node = self.render_types_list({
-									global_data_item	: response.global_data_item,
-									types_rows			: response.types_rows,
-									coins_rows			: response.coins_rows,
-									info				: response.info
-								})
-								self.rows_container.appendChild(types_list_node)
-								// page.remove_spinner(self.rows_container)
-								spinner.remove()
+						// scroll map at top
+							self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
 
-								// activate images lightbox
-									setTimeout(function(){
-										const images_gallery_containers = self.rows_container
-										page.activate_images_gallery(images_gallery_containers, true)
-									},600)
+						// show export buttons
+							self.export_data_container.classList.remove('hide')
+					})
 
-							}else{
-								// page.remove_spinner(self.rows_container)
-								spinner.remove()
-							}
+				return true
+			}//end map_selected_marker
 
-							// scroll map at top
-								self.map_container.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
-
-							// show export buttons
-								self.export_data_container.classList.remove('hide')
-						})
-				}
-			}
 
 		return true
 	},//end set_up
@@ -632,7 +644,7 @@ var map = {
 				}
 			})
 			.then(function(api_response){
-				// console.log("--------------- form_submit api_response:",api_response);
+				// console.log("--------------- form_submit api_response:", api_response);
 
 				if (api_response.result) {
 
@@ -759,25 +771,25 @@ var map = {
 
 	/**
 	* LOAD_MAP_SELECTION_INFO
-	* @return
+	* @param object item (database row)
+	* @param object global_data_item
+	* 	mint-findspot-hoard row data
+	* @return promise
 	*/
-	load_map_selection_info : function(item) {
+	load_map_selection_info : function(item, global_data_item) {
 
-		const self = this
+		// const self = this
 
 		return new Promise(function(resolve){
 
 			// mint-findspot-hoard row data
-				const global_data_item = self.current_map_global_data.find(function(el){
-					return el.section_id==item.term_id
-				})
 				if (!global_data_item || !global_data_item.types_list || global_data_item.types_list.length<1) {
 					console.warn("Ignored invalid item. Not found item or item.types_list in global_data! ", item.name, item);
 					resolve(false)
 					return false;
 				}
-				const coins_list	= global_data_item.coins_list
-				const types_list	= global_data_item.types_list
+				const coins_list	= global_data_item.coins_list || []
+				const types_list	= global_data_item.types_list || []
 
 			const ar_calls = []
 
@@ -819,7 +831,7 @@ var map = {
 					offset		: 0,
 					order		: null,
 					resolve_portals_custom	: {
-						"bibliography_data"				: "bibliographic_references"
+						"bibliography_data" : "bibliographic_references"
 					}
 				}
 				ar_calls.push({
@@ -836,6 +848,12 @@ var map = {
 				})
 				.then((api_response)=>{
 					// console.log("-> load_map_selection_info api_response:", api_response);
+
+					if (!api_response.result) {
+						console.warn("-> load_map_selection_info api_response:", api_response);
+						resolve(false)
+						return false
+					}
 
 					const catalog_response = api_response.result.find(function(el){
 						return el.id==='catalog_request'
@@ -899,32 +917,36 @@ var map = {
 			parent			: fragment
 		})
 
-		// title line
-			const title_line = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "line-tittle-wrap",
-				parent			: wrapper
-			})
-			let item_type
-			switch(global_data_item.table){
-				case 'mints'	: item_type = 'mint';		break;
-				case 'hoards'	: item_type = 'hoard';		break;
-				case 'findspots': item_type = 'findspot';	break;
-			}
-			const title = '<span class="note">' + tstring[item_type] + ': </span>' + global_data_item.name
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "line-tittle golden-color",
-				inner_html		: title,
-				parent			: title_line
-			})
+		let item_type
 
-		// separator horinzontal
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "golden-separator",
-				parent			: fragment
-			})
+		// title line
+			if (global_data_item.table) {
+				const title_line = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "line-tittle-wrap",
+					parent			: wrapper
+				})
+				switch(global_data_item.table){
+					case 'mints'	: item_type = 'mint';		break;
+					case 'hoards'	: item_type = 'hoard';		break;
+					case 'findspots': item_type = 'findspot';	break;
+				}
+				const title = '<span class="note">' + tstring[item_type] + ': </span>' + global_data_item.name
+				common.create_dom_element({
+					element_type	: "div",
+					class_name		: "line-tittle golden-color",
+					inner_html		: title,
+					parent			: title_line
+				})
+
+				// separator horinzontal
+					common.create_dom_element({
+						element_type	: "div",
+						class_name		: "golden-separator",
+						parent			: fragment
+					})
+			}
+
 
 		// types list
 			if (types_rows && types_rows.length>0) {

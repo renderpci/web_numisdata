@@ -9,7 +9,8 @@
 		array_unshift(page::$css_ar_url,
 			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css',
 			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/MarkerCluster.css',
-			__WEB_TEMPLATE_WEB__ . '/catalog/css/catalog.css',
+			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/fullscreen/leaflet.fullscreen.css',
+			__WEB_TEMPLATE_WEB__ . '/catalog/css/catalog.css'
 			// __WEB_TEMPLATE_WEB__ . '/mint/css/mint.css'
 		);
 

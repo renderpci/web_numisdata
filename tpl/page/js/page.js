@@ -917,7 +917,42 @@ var page = {
 			const filtered = (el.value.toLowerCase().indexOf(filter_string.toLowerCase()) > -1) || (el_normalized.toLowerCase().indexOf(filter_string.toLowerCase()) > -1)
 			return filtered
 		})
-	}//end filter_drop_down_list
+	},//end filter_drop_down_list
+
+
+
+	/**
+	* CREATE_EXPANDABLE_BLOCK
+	* Create an expandable block when text length is over 500
+	*/
+	create_expandable_block : function(textBlock, nodeParent) {
+
+		textBlock.classList.add("contracted-block");
+
+		const textBlockSeparator = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "text-block-separator",
+			parent 			: nodeParent
+		})
+
+		const separatorArrow = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "separator-arrow",
+			parent 			: textBlockSeparator
+		})
+
+		textBlockSeparator.addEventListener("click",function(){
+			if (textBlock.classList.contains("contracted-block")){
+				textBlock.classList.remove ("contracted-block");
+				separatorArrow.style.transform = "rotate(-90deg)";
+			} else {
+				textBlock.classList.add("contracted-block");
+				separatorArrow.style.transform = "rotate(90deg)";
+			}
+		})
+
+		return true
+	}//end create_expandable_block
 
 
 

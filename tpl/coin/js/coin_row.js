@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, dedalo_logged, common, page, forms, document, DocumentFragment, tstring, console, tree_factory, map_factory */
+/*global tstring, page_globals, SHOW_DEBUG, dedalo_logged, common, page, biblio_row_fields, DocumentFragment, tstring */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -17,8 +17,6 @@ var coin_row = {
 		if(SHOW_DEBUG===true) {
 			// console.log("-- draw_coin row:",row)
 		}
-
-		const self = this
 
 		const fragment = new DocumentFragment();
 		if (!row) {
@@ -159,7 +157,7 @@ var coin_row = {
 					})
 				}
 
-		// COLLECTION - FORMER - NUMBER
+		// collection - former - number
 			const label_collection = []
 			const value_collection = []
 
@@ -192,18 +190,13 @@ var coin_row = {
 				parent			: info_container
 			})
 
-		//Auctions
-
-
+		// auctions
 			// const value_auctions = []
-
 			// if (row.ref_auction_group && row.ref_auction_group.length>0) {
-
 			// 	for (let i=0;i<row.ref_auction_group.length;i++){
 			// 		if (row.ref_auction_group[i].name.length>0){
 			// 			label_auctions.push(tstring.auction || "Auction")
 			// 			value_auctions.push(row.ref_auction_group[i].name)
-
 			// 			if (row.ref_auction_group[i].number && row.ref_auction_group[i].number.length>0) {
 			// 				label_auctions.push(tstring.number || "Number")
 			// 				value_auctions.push(row.ref_auction_group[i].number)
@@ -254,7 +247,7 @@ var coin_row = {
 						parent 			: info_container
 					})
 				}
-			}
+			}//end if (row.ref_auction_group)
 
 
 			// if (row.number && row.number.length>0) {
@@ -269,9 +262,8 @@ var coin_row = {
 			// 	parent			: info_container
 			// })
 
-		//equivalents auctions
+		// equivalents auctions
 			const value_equivalents = []
-
 			if (row.ref_related_coin_auction_group && row.ref_related_coin_auction_group.length>0) {
 
 				for (let i=0;i<row.ref_related_coin_auction_group.length;i++){
@@ -281,7 +273,6 @@ var coin_row = {
 
 						if (row.ref_related_coin_auction_group[i].number && row.ref_related_coin_auction_group[i].number.length>0) {
 							current_value_equivalents.push(row.ref_related_coin_auction_group[i].number)
-
 						}
 					}
 					value_equivalents.push(current_value_equivalents.join(' | '))
@@ -294,12 +285,10 @@ var coin_row = {
 				parent			: info_container
 			})
 
-
-
-		// MINT + MINT NUMBER + TYPE
-			//label
-			// const label_mint 		= tstring.mint || "Mint"
-			// const label_number 		= tstring.number_abv || "nº"
+		// mint + mint number + type
+			// label
+			// const label_mint		= tstring.mint || "Mint"
+			// const label_number	= tstring.number_abv || "nº"
 			const label_type_name 	= tstring.type || "Type"
 
 			const label_type = label_type_name
@@ -363,9 +352,7 @@ var coin_row = {
 				})
 			}
 
-
-
-			//value
+			// value
 			const mint = (type_section.mint)
 				? type_section.mint
 				: ''
@@ -399,7 +386,7 @@ var coin_row = {
 				parent			: info_container
 			})
 
-			for (var i = 0; i < row.catalogue_type_mint.length; i++) {
+			for (let i = 0; i < row.catalogue_type_mint.length; i++) {
 				const catalogue = row.catalogue_type_mint[i]
 				if(catalogue === 'MIB') continue;
 
@@ -409,13 +396,9 @@ var coin_row = {
 					inner_html		: catalogue+' '+row.type[i],
 					parent			: info_container
 				})
-
 			}
 
-
-
-
-		// OBVERSE
+		// obverse
 			common.create_dom_element({
 				element_type	: "label",
 				class_name		: "left-labels",
@@ -434,9 +417,8 @@ var coin_row = {
 						text_content	: tstring.design || "design",
 						parent			: info_container
 					})
-
-					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_obverse"+"&label="+design_obverse+"&value="+design_obverse;
-					const prompt_label = common.create_dom_element({
+					const catalog_url	= page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_obverse"+"&label="+design_obverse+"&value="+design_obverse;
+					const prompt_label	= common.create_dom_element({
 						element_type	: "a",
 						class_name		: "rigth-values",
 						inner_html 		: design_obverse,
@@ -445,7 +427,6 @@ var coin_row = {
 					})
 				}
 
-		//
 			// symbol_obverse
 				const symbol_obverse = typeof type_section!=="undefined"
 					? type_section.symbol_obverse
@@ -457,7 +438,6 @@ var coin_row = {
 						text_content	: tstring.symbol || "symbol",
 						parent			: info_container
 					})
-
 					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=symbol_obverse"+"&label="+symbol_obverse+"&value="+symbol_obverse;
 					const prompt_label = common.create_dom_element({
 						element_type	: "a",
@@ -506,7 +486,6 @@ var coin_row = {
 					})
 				}
 
-
 			// countermark_obverse
 				if (row.countermark_obverse && row.countermark_obverse.length>0) {
 					common.create_dom_element({
@@ -522,15 +501,15 @@ var coin_row = {
 					info_container.appendChild(current_node)
 				}
 
-		//REVERSE
+		// reverse
 			common.create_dom_element({
-						element_type	: "label",
-						class_name		: "left-labels",
-						text_content	: tstring.reverse.toUpperCase() || "REVERSE",
-						parent			: info_container
+				element_type	: "label",
+				class_name		: "left-labels",
+				text_content	: tstring.reverse.toUpperCase() || "REVERSE",
+				parent			: info_container
 			})
 
-		// design_reverse
+			// design_reverse
 				const design_reverse = typeof type_section!=="undefined"
 					? type_section.design_reverse
 					: null
@@ -541,7 +520,6 @@ var coin_row = {
 						text_content	: tstring.design || "design",
 						parent			: info_container
 					})
-
 					const catalog_url = page_globals.__WEB_ROOT_WEB__+"/catalog/?item_type=design_reverse"+"&label="+design_reverse+"&value="+design_reverse;
 					const prompt_label = common.create_dom_element({
 						element_type	: "a",
@@ -552,7 +530,7 @@ var coin_row = {
 					})
 				}
 
-				// symbol_reverse
+			// symbol_reverse
 				const symbol_reverse = typeof type_section!=="undefined"
 					? type_section.symbol_reverse
 					: null
@@ -571,7 +549,7 @@ var coin_row = {
 					})
 				}
 
-				// legend_reverse
+			// legend_reverse
 				const legend_reverse = typeof type_section!=="undefined"
 					? type_section.legend_reverse
 					: null
@@ -589,7 +567,7 @@ var coin_row = {
 					info_container.appendChild(legend_node)
 				}
 
-				// legend_reverse_transcription
+			// legend_reverse_transcription
 				const legend_reverse_transcription = typeof type_section!=="undefined"
 					? type_section.legend_reverse_transcription
 					: null
@@ -600,7 +578,6 @@ var coin_row = {
 						text_content	: tstring.transcription || "Transcription",
 						parent			: info_container
 					})
-
 					const prompt_label = common.create_dom_element({
 						element_type	: "span",
 						class_name		: "rigth-values",
@@ -609,7 +586,7 @@ var coin_row = {
 					})
 				}
 
-				// countermark_reverse
+			// countermark_reverse
 				if (row.countermark_reverse && row.countermark_reverse.length>0) {
 					common.create_dom_element({
 						element_type	: "label",
@@ -624,7 +601,7 @@ var coin_row = {
 					info_container.appendChild(current_node)
 				}
 
-		// MEASURES
+		// measures
 
 			// weight
 				if (row.weight && row.weight.length>0) {
@@ -688,7 +665,7 @@ var coin_row = {
 				}
 
 
-		//FIND TYPE
+		// find type
 			if (row.find_type && row.find_type.length>0) {
 				common.create_dom_element({
 					element_type	: "label",
@@ -704,23 +681,23 @@ var coin_row = {
 				})
 			}
 
-		// HOARD
-				if (row.hoard && row.hoard.length>0) {
-					common.create_dom_element({
-						element_type	: "label",
-						class_name		: "left-labels",
-						text_content	: tstring.hoard || "hoard",
-						parent			: info_container
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "rigth-values",
-						inner_html		: row.hoard,
-						parent			: info_container
-					})
-				}
+		// hoard
+			if (row.hoard && row.hoard.length>0) {
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.hoard || "hoard",
+					parent			: info_container
+				})
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.hoard,
+					parent			: info_container
+				})
+			}
 
-		// FINDS
+		// finds
 			// findspot_place
 				if (row.findspot_place && row.findspot_place.length>0) {
 					common.create_dom_element({
@@ -752,45 +729,45 @@ var coin_row = {
 					})
 				}
 
-		// PUBLIC INFO
-				if (row.public_info && row.public_info.length>1 && row.public_info!=='<br data-mce-bogus="1">') {
-					common.create_dom_element({
-						element_type	: "label",
-						class_name		: "left-labels",
-						text_content	: tstring.public_info || "public_info",
-						parent			: info_container
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "rigth-values",
-						inner_html		: row.public_info,
-						parent			: info_container
-					})
-				}
+		// public info
+			if (row.public_info && row.public_info.length>1 && row.public_info!=='<br data-mce-bogus="1">') {
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.public_info || "public_info",
+					parent			: info_container
+				})
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.public_info,
+					parent			: info_container
+				})
+			}
 
-		// URI
-				const uri = row.mib_uri
-				const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> MIB </a> '
-				if (row.mib_uri && row.mib_uri.length>0) {
-					common.create_dom_element({
-						element_type	: "label",
-						class_name		: "left-labels",
-						text_content	: tstring.uri || "uri",
-						parent			: info_container
-					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "rigth-values",
-						inner_html		: uri_text,
-						parent			: info_container
-					})
-				}
+		// uri
+			const uri = row.mib_uri
+			const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> MIB </a> '
+			if (row.mib_uri && row.mib_uri.length>0) {
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.uri || "uri",
+					parent			: info_container
+				})
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: uri_text,
+					parent			: info_container
+				})
+			}
 
 			// other permanent uri
 				if (row.uri && row.uri.length>0) {
 					for (let i = 0; i < row.uri.length; i++) {
 
-						const currentUri = row.uri[i]
+						const currentUri		= row.uri[i]
 						const currentUri_text	= '<a class="icon_link info_value" target="_blank" href="'+currentUri.value+'"> '+currentUri.label+'</a> '
 
 						// common.create_dom_element({
@@ -799,7 +776,6 @@ var coin_row = {
 						// 	text_content	: (tstring.uri || "uri"),
 						// 	parent			: info_container
 						// })
-
 						common.create_dom_element({
 							element_type	: "span",
 							class_name		: "rigth-values",
@@ -817,7 +793,7 @@ var coin_row = {
 					}
 				}
 
-		// BIBLIOGRAPHY -- DESACTIVADA. POR REVISAR EL FORMATO !!! ---
+		// bibliography -- desactivada. por revisar el formato !!! ---
 				if (row.bibliography_data && row.bibliography_data.length>0) {
 
 					// const group = common.create_dom_element({
@@ -867,152 +843,152 @@ var coin_row = {
 	},//end draw_coin
 
 
-	//
+
 	// default : function(name, value, label, fn) {
-	//
-	// 	const self = this
-	//
-	// 	// line
-	// 		const line = common.create_dom_element({
-	// 			element_type	: "div",
-	// 			class_name		: "info_line " + name
-	// 		})
-	//
-	// 	if (value && value.length>0) {
-	//
-	// 		// label
-	// 			if (label) {
-	// 				common.create_dom_element({
-	// 					element_type 	: "label",
-	// 					class_name 		: "",
-	// 					text_content 	: label,
-	// 					parent 			: line
-	// 				})
-	// 			}
-	//
-	// 		// value
-	// 			const item_text = (typeof fn==="function")
-	// 				? fn(value)
-	// 				: page.remove_gaps(value, " | ")
-	//
-	// 			common.create_dom_element({
-	// 				element_type	: "span",
-	// 				class_name		: "info_value",
-	// 				inner_html		: item_text.trim(),
-	// 				parent			: line
-	// 			})
-	// 	}
-	//
-	// 	return line
-	// },//end default
-	//
-	//
-	//
-	// image : function(item, name) {
-	//
-	// 	const self = this
-	//
-	// 	// line
-	// 		const line = common.create_dom_element({
-	// 			element_type	: "div",
-	// 			class_name		: "info_line inline " + name
-	// 		})
-	//
-	// 	if (item[name] && item[name].length>0) {
-	//
-	// 		common.create_dom_element({
-	// 			element_type 	: "img",
-	// 			class_name 		: "image " + name,
-	// 			src 			: item[name],
-	// 			parent 			: line
-	// 		})
-	// 	}
-	//
-	//
-	// 	return line
-	// },//end image
-	//
-	//
-	//
-	// identify_coin : function(item, name) {
-	//
-	// 	const self = this
-	//
-	// 	// line
-	// 		const line = common.create_dom_element({
-	// 			element_type	: "div",
-	// 			class_name		: "info_line inline " + name
-	// 		})
-	//
-	// 	const ar_str_coins = page.split_data(item.ref_coins, ' | ')
-	//
-	// 	const ar_coins = []
-	// 	for (var i = 0; i < ar_str_coins.length; i++) {
-	// 		ar_coins.push(JSON.parse(ar_str_coins[i]))
-	// 	}
-	// 	const identify_coin_id = ar_coins[0][0]
-	// 	const identify_coin = item.ref_coins_union.find(item => item.section_id === identify_coin_id)
-	//
-	// 	if (identify_coin) {
-	//
-	// 		common.create_dom_element({
-	// 			element_type 	: "span",
-	// 			class_name 		: name,
-	// 			text_content 	: identify_coin.ref_auction,
-	// 			parent 			: line
-	// 		})
-	//
-	// 		// final_date
-	// 			const split_time 	= (identify_coin.ref_auction_date)
-	// 				? identify_coin.ref_auction_date.split(' ')
-	// 				: [""]
-	// 			const split_date 	= split_time[0].split('-')
-	// 			const correct_date 	= split_date.reverse()
-	// 			const final_date 	= correct_date.join("-")
-	//
-	// 			if (final_date) {
-	// 				common.create_dom_element({
-	// 					element_type 	: "span",
-	// 					class_name 		: name,
-	// 					text_content 	: " | "+final_date,
-	// 					parent 			: line
-	// 				})
-	// 			}
-	//
-	// 		// ref_auction_number
-	// 			if(identify_coin.ref_auction_number){
-	// 				common.create_dom_element({
-	// 					element_type 	: "span",
-	// 					class_name 		: name,
-	// 					text_content 	: ", "+(tstring.n || "nº") +" "+ identify_coin.ref_auction_number,
-	// 					parent 			: line
-	// 				})
-	// 			}
-	//
-	// 		// size_text. weight / dies / diameter
-	// 			const ar_beats = []
-	// 			if (identify_coin.weight && identify_coin.weight.length>0) {
-	// 				ar_beats.push( identify_coin.weight + " g" )
-	// 			}
-	// 			if (identify_coin.dies && identify_coin.dies.length>0) {
-	// 				ar_beats.push( identify_coin.dies + " h" )
-	// 			}
-	// 			if (identify_coin.diameter && identify_coin.diameter.length>0) {
-	// 				ar_beats.push( identify_coin.diameter + " mm" )
-	// 			}
-	// 			const size_text = ar_beats.join("; ")
-	//
-	// 		common.create_dom_element({
-	// 			element_type 	: "span",
-	// 			class_name 		: name,
-	// 			text_content 	: " ("+size_text+")",
-	// 			parent 			: line
-	// 		})
-	// 	}
-	//
-	//
-	// 	return line
-	// },//end image
+		//
+		// 	const self = this
+		//
+		// 	// line
+		// 		const line = common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "info_line " + name
+		// 		})
+		//
+		// 	if (value && value.length>0) {
+		//
+		// 		// label
+		// 			if (label) {
+		// 				common.create_dom_element({
+		// 					element_type 	: "label",
+		// 					class_name 		: "",
+		// 					text_content 	: label,
+		// 					parent 			: line
+		// 				})
+		// 			}
+		//
+		// 		// value
+		// 			const item_text = (typeof fn==="function")
+		// 				? fn(value)
+		// 				: page.remove_gaps(value, " | ")
+		//
+		// 			common.create_dom_element({
+		// 				element_type	: "span",
+		// 				class_name		: "info_value",
+		// 				inner_html		: item_text.trim(),
+		// 				parent			: line
+		// 			})
+		// 	}
+		//
+		// 	return line
+		// },//end default
+		//
+		//
+		//
+		// image : function(item, name) {
+		//
+		// 	const self = this
+		//
+		// 	// line
+		// 		const line = common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "info_line inline " + name
+		// 		})
+		//
+		// 	if (item[name] && item[name].length>0) {
+		//
+		// 		common.create_dom_element({
+		// 			element_type 	: "img",
+		// 			class_name 		: "image " + name,
+		// 			src 			: item[name],
+		// 			parent 			: line
+		// 		})
+		// 	}
+		//
+		//
+		// 	return line
+		// },//end image
+		//
+		//
+		//
+		// identify_coin : function(item, name) {
+		//
+		// 	const self = this
+		//
+		// 	// line
+		// 		const line = common.create_dom_element({
+		// 			element_type	: "div",
+		// 			class_name		: "info_line inline " + name
+		// 		})
+		//
+		// 	const ar_str_coins = page.split_data(item.ref_coins, ' | ')
+		//
+		// 	const ar_coins = []
+		// 	for (var i = 0; i < ar_str_coins.length; i++) {
+		// 		ar_coins.push(JSON.parse(ar_str_coins[i]))
+		// 	}
+		// 	const identify_coin_id = ar_coins[0][0]
+		// 	const identify_coin = item.ref_coins_union.find(item => item.section_id === identify_coin_id)
+		//
+		// 	if (identify_coin) {
+		//
+		// 		common.create_dom_element({
+		// 			element_type 	: "span",
+		// 			class_name 		: name,
+		// 			text_content 	: identify_coin.ref_auction,
+		// 			parent 			: line
+		// 		})
+		//
+		// 		// final_date
+		// 			const split_time 	= (identify_coin.ref_auction_date)
+		// 				? identify_coin.ref_auction_date.split(' ')
+		// 				: [""]
+		// 			const split_date 	= split_time[0].split('-')
+		// 			const correct_date 	= split_date.reverse()
+		// 			const final_date 	= correct_date.join("-")
+		//
+		// 			if (final_date) {
+		// 				common.create_dom_element({
+		// 					element_type 	: "span",
+		// 					class_name 		: name,
+		// 					text_content 	: " | "+final_date,
+		// 					parent 			: line
+		// 				})
+		// 			}
+		//
+		// 		// ref_auction_number
+		// 			if(identify_coin.ref_auction_number){
+		// 				common.create_dom_element({
+		// 					element_type 	: "span",
+		// 					class_name 		: name,
+		// 					text_content 	: ", "+(tstring.n || "nº") +" "+ identify_coin.ref_auction_number,
+		// 					parent 			: line
+		// 				})
+		// 			}
+		//
+		// 		// size_text. weight / dies / diameter
+		// 			const ar_beats = []
+		// 			if (identify_coin.weight && identify_coin.weight.length>0) {
+		// 				ar_beats.push( identify_coin.weight + " g" )
+		// 			}
+		// 			if (identify_coin.dies && identify_coin.dies.length>0) {
+		// 				ar_beats.push( identify_coin.dies + " h" )
+		// 			}
+		// 			if (identify_coin.diameter && identify_coin.diameter.length>0) {
+		// 				ar_beats.push( identify_coin.diameter + " mm" )
+		// 			}
+		// 			const size_text = ar_beats.join("; ")
+		//
+		// 		common.create_dom_element({
+		// 			element_type 	: "span",
+		// 			class_name 		: name,
+		// 			text_content 	: " ("+size_text+")",
+		// 			parent 			: line
+		// 		})
+		// 	}
+		//
+		//
+		// 	return line
+		// },//end image
 
 
 

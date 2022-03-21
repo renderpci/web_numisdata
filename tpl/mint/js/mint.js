@@ -753,7 +753,10 @@ var mint = {
 			// 	})
 			// }
 
-			if (block_text_length > 220) {createExpandableBlock(comments_wrap,line);}
+			if (block_text_length > 220) {
+				// createExpandableBlock(comments_wrap, line);
+				page.create_expandable_block(comments_wrap, line)
+			}
 
 		// bibliography_data
 			if (row_object.bibliography_data && row_object.bibliography_data.length>0) {
@@ -792,7 +795,8 @@ var mint = {
 					biblio_row_wrapper.appendChild(biblio_row_node)
 				}
 
-				createExpandableBlock(bibliography_block,line);
+				// createExpandableBlock(bibliography_block,line);
+				page.create_expandable_block(bibliography_block, line)
 			}
 
 			// other permanent uri
@@ -812,7 +816,6 @@ var mint = {
 
 						common.create_dom_element({
 							element_type	: "span",
-							class_name		: "",
 							inner_html		: uri_text,
 							parent			: line
 						})
@@ -824,33 +827,34 @@ var mint = {
 		container.appendChild(fragment)
 
 
-		//Create an expandable block when text length is over 500
-		function createExpandableBlock(textBlock,nodeParent) {
+		// Create an expandable block when text length is over 500
+		// MOVED TO PAGE
+			// function createExpandableBlock(textBlock,nodeParent) {
 
-			textBlock.classList.add("contracted-block");
+			// 	textBlock.classList.add("contracted-block");
 
-			const textBlockSeparator = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "text-block-separator",
-				parent 			: nodeParent
-			})
+			// 	const textBlockSeparator = common.create_dom_element({
+			// 		element_type	: "div",
+			// 		class_name		: "text-block-separator",
+			// 		parent 			: nodeParent
+			// 	})
 
-			const separatorArrow = common.create_dom_element({
-				element_type	: "div",
-				class_name		: "separator-arrow",
-				parent 			: textBlockSeparator
-			})
+			// 	const separatorArrow = common.create_dom_element({
+			// 		element_type	: "div",
+			// 		class_name		: "separator-arrow",
+			// 		parent 			: textBlockSeparator
+			// 	})
 
-			textBlockSeparator.addEventListener("click",function(){
-				if (textBlock.classList.contains("contracted-block")){
-					textBlock.classList.remove ("contracted-block");
-					separatorArrow.style.transform = "rotate(-90deg)";
-				} else {
-					textBlock.classList.add("contracted-block");
-					separatorArrow.style.transform = "rotate(90deg)";
-				}
-			})
-		}
+			// 	textBlockSeparator.addEventListener("click",function(){
+			// 		if (textBlock.classList.contains("contracted-block")){
+			// 			textBlock.classList.remove ("contracted-block");
+			// 			separatorArrow.style.transform = "rotate(-90deg)";
+			// 		} else {
+			// 			textBlock.classList.add("contracted-block");
+			// 			separatorArrow.style.transform = "rotate(90deg)";
+			// 		}
+			// 	})
+			// }
 
 		return container
 	},//end draw_row

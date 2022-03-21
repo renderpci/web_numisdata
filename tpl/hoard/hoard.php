@@ -7,7 +7,9 @@
 		array_unshift(page::$css_ar_url,
 			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.css',
 			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/MarkerCluster.css',
-			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/fullscreen/leaflet.fullscreen.css'
+			__WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/fullscreen/leaflet.fullscreen.css',
+			__WEB_TEMPLATE_WEB__ . '/catalog/css/catalog.css',
+			__WEB_TEMPLATE_WEB__ . '/map/css/map.css',
 		);
 
 	// js
@@ -16,7 +18,10 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/leaflet.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/leaflet.markercluster.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/fullscreen/Leaflet.fullscreen.min.js';
-		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/hoard_row'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/map/js/map'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog_row_fields'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/type/js/type_row_fields'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/' . $cwd . '/js/render_hoard'.JS_SUFFIX.'.js';
 
 	// area name
 		$area_name 	= $_GET['area_name'];

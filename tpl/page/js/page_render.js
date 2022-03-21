@@ -326,11 +326,7 @@ page.render_export_data_buttons = function() {
 };//end render_export_data_buttons
 
 
-
-/**
-* CREATE_SUGGESTIONS_BUTTON
-*/
-page.create_suggestions_button = function() {
+page.create_suggestions_button = function(){
 
 	let currentUrl = "";
 
@@ -452,30 +448,17 @@ page.create_suggestions_button = function() {
 	}//end createForm
 
 	return fragment
-};//end create_suggestions_button
+};
 
 
 
-/**
-* REMOVEFORM
-*/
-page.removeForm = function() {
-
+page.removeForm = function(){
 	document.querySelector(".cancel-button").removeEventListener("click",page.removeForm)
 	document.querySelector("#popup-container").remove()
+};
 
-	return true
-};//end removeForm
-
-
-
-/**
-* HANDLEFORM
-* @param string currentUrl
-* @return promise
-*/
-page.handleForm = function(currentUrl) {
-
+page.handleForm = function(currentUrl){
+	//event.preventDefault()
 	document.querySelector('#error-msn').textContent = ""
 	const currentForm = document.querySelector('#contact-form')
 	// console.log(currentForm.querySelector('#fname').value)
@@ -487,11 +470,10 @@ page.handleForm = function(currentUrl) {
 		const email		= currentForm.querySelector('#fmail').value
 		const message	= currentForm.querySelector('#fmessage').value
 
-	// url
-		const url = (currentUrl != null && currentUrl.length>0)
-			? currentUrl
-			: window.location.href
-
+	let url = window.location.href
+	if (currentUrl != null && currentUrl.length>0){
+		url = currentUrl
+	}
 	// row data
 		const body = {
 			mail : {
@@ -510,9 +492,8 @@ page.handleForm = function(currentUrl) {
 
 	// request
 		return new Promise(function(resolve){
-
-			const success_msn	= "Mensaje enviado correctamente, gracias."
-			const error_msn		= "Ha ocurrido un error. Por favor, prueba más tarde."
+			const success_msn = "Mensaje enviado correctamente, gracias."
+			const error_msn = "Ha ocurrido un error. Por favor, prueba más tarde."
 
 			data_manager.request({
 				url		: __WEB_TEMPLATE_WEB__ + '/assets/lib/sendmail/send.php',
@@ -530,16 +511,18 @@ page.handleForm = function(currentUrl) {
 				}
 			})
 		})
-};//end handleForm
+};
 
 
 
 /**
 * RENDER_LEGEND
 * Genericunified legend renderer
-* @return DOM node legend_node
+* @return promise : DOM node
 */
 page.render_legend = function(options) {
+
+	const self = this
 
 	// options
 		const value = options.value || ''
@@ -578,17 +561,15 @@ page.render_legend = function(options) {
 
 /**
 * RENDER_TYPE_LABEL
-* @param object row
-* @return string type_label
+* @return
 */
-page.render_type_label = function(row, section_id) {
+page.render_type_label = function(row) {
 
-	let type_label
+	let current_value
 
 	const mint_number = (row.ref_mint_number)
 		? row.ref_mint_number+'/'
 		: ''
-
 	if (row.term_section_id && !row.children) {
 
 		const ar		= row.term.split(", ")
@@ -601,8 +582,11 @@ page.render_type_label = function(row, section_id) {
 					clean.push(ar[i])
 				}
 				return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
+			})()
 
-			  })()
+		const section_id = row.term_section_id && row.term_section_id.section_id
+				? row.term_section_id.section_id
+				: row.term_section_id
 
 		const a_term = common.create_dom_element({
 			element_type	: "a",
@@ -612,25 +596,22 @@ page.render_type_label = function(row, section_id) {
 			title			: "MIB " + mint_number + c_name + (ar.join(", ").trim()),
 			inner_html		: "MIB " + mint_number + c_name + keyword
 		})
-		type_label = a_term.outerHTML
+		current_value = a_term.outerHTML
 	}else{
-		type_label = "MIB " + mint_number + row.term
+		current_value = "MIB " + mint_number + row.term
 	}
 
-	return type_label
+	return current_value
 };//end render_type_label
 
 
 
 /**
 * RENDER_WEIGHT_VALUE
-* @param obejct row
-* @return string weight
+* @return
 */
 page.render_weight_value = function(row) {
-
 	const weight = row.ref_type_averages_weight.toFixed(2).replace(/\.?0+$/, "");
-
 	return weight.replace('.',',') + ' g'
 };//end render_weight_value
 
@@ -638,14 +619,9 @@ page.render_weight_value = function(row) {
 
 /**
 * RENDER_DIAMETER_VALUE
-* @param obejct row
-* @return string diameter
+* @return
 */
 page.render_diameter_value = function(row) {
-
 	const diameter = row.ref_type_averages_diameter.toFixed(2).replace(/\.?0+$/, "");
-
 	return diameter.replace('.',',') + ' mm'
 };//end render_diameter_value
-
-

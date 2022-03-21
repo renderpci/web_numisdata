@@ -383,7 +383,7 @@ var catalog_row_fields = {
 					// }else{
 					// 	current_value = "MIB " + mint_number + item[name]
 					// }
-					current_value = page.render_type_label(item, item.section_id)
+					current_value = page.render_type_label(item)
 					break;
 
 				default:

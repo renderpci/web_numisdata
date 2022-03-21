@@ -46,7 +46,7 @@ var hoard =  {
 					section_id : options.section_id
 				})
 				.then(function(ar_rows){
-					console.log("[set_up->get_row_data] ar_rows:",ar_rows);
+					// console.log("[set_up->get_row_data] ar_rows:",ar_rows);
 
 					if (ar_rows && ar_rows.length>0) {
 
@@ -243,10 +243,10 @@ var hoard =  {
 				// observer.observe(rows_container);
 
 				// activate images lightbox
-					// setTimeout(function(){
-					// 	const images_gallery_containers = rows_container
-					// 	page.activate_images_gallery(images_gallery_containers, true)
-					// },600)
+					setTimeout(function(){
+						const images_gallery_containers = rows_container
+						page.activate_images_gallery(images_gallery_containers, true)
+					},600)
 			}else{
 				spinner.remove()
 			}

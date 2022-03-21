@@ -28,7 +28,7 @@ var mint_row = {
 				if (row.children && row.children.length>0) {
 					// case type whith subtypes
 
-					const type_number_value = page.render_type_label(row)
+					const type_number_value = page.render_type_label(row, row.term_section_id.section_id)
 
 					const type_group_text = type_number_value.split(",")
 
@@ -124,7 +124,7 @@ var mint_row = {
 		// 	isSubtype = true
 		// }
 
-		const type_number_value = page.render_type_label(row)
+		const type_number_value = page.render_type_label(row, row.term_section_id.section_id)
 
 		//Type wrap
 		const row_type = common.create_dom_element({

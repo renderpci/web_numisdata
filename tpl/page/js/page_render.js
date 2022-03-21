@@ -581,7 +581,7 @@ page.render_legend = function(options) {
 * @param object row
 * @return string type_label
 */
-page.render_type_label = function(row) {
+page.render_type_label = function(row, section_id) {
 
 	let type_label
 
@@ -601,12 +601,13 @@ page.render_type_label = function(row) {
 					clean.push(ar[i])
 				}
 				return '<span class="keyword">, ' + clean.join(", ").trim() + '</span>'
+
 			  })()
 
 		const a_term = common.create_dom_element({
 			element_type	: "a",
 			class_name		: "a_term",
-			href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + row.term_section_id,
+			href			: page_globals.__WEB_ROOT_WEB__ + '/type/' + section_id,
 			target			: "_blank",
 			title			: "MIB " + mint_number + c_name + (ar.join(", ").trim()),
 			inner_html		: "MIB " + mint_number + c_name + keyword

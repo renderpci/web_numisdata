@@ -957,7 +957,8 @@ var map = {
 				types_rows.sort((a, b) => (a.p_mint > b.p_mint) ? 1 : -1)
 
 				// catalog_row_fields
-					for (let i = 0; i < types_rows.length; i++) {
+					// for (let i = 0; i < types_rows.length; i++) {
+					for (let i = types_rows.length - 1; i >= 0; i--) {
 
 						const type_row = types_rows[i]
 

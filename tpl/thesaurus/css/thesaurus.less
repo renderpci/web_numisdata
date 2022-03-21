@@ -1,10 +1,10 @@
 // Variables
-	@assets_path: "../../assets";
-	@fonts_path: "@{assets_path}/fonts";
-	@path_page: "../../page"; ;
+	@assets_path: '../../assets';
+	@fonts_path: '@{assets_path}/fonts';
+	@path_page: '../../page'; ;
 
 // Usage library
-	@import "@{path_page}/css/library.less";
+	@import '@{path_page}/css/library.less';
 
 
 
@@ -54,21 +54,24 @@
 		width: 100%;
 		padding: 2em;
 		padding-left: 0;
-
+		padding-right: 0;
 
 		// every level
 		.tree_node {
 			margin-left: 1.65em;
 
+			@media screen and (max-width: 625px) {
+				margin-left: 0.5rem;
+			}
+
 			>span {
 				vertical-align: text-bottom;
 				font-size: 1.15em;
-				// line-height: 1.15em;
 				line-height: 1.0em;
+				// height: 1em;
 				display: inline-block;
 				// padding: 0.15em;
 				user-select: none;
-				height: 1em;
 				margin-right: 0.25em;
 			}
 
@@ -103,16 +106,20 @@
 
 			img.illustration {
 				display: inline-block;
-				vertical-align: middle;
 				margin-left: 0.333rem;
 				height: 2rem;
+				vertical-align: middle;
 				// transition: max-height 0.15s ease-out;
 				transition:transform 0.3s ease-out;
 				background-color: #ffffff;
 				cursor: pointer;
 
+				@media screen and (max-width: 625px) {
+					height: 1.5rem;
+				}
+
 				&.big {
-					transform: scale(5);
+					transform: scale(6);
 					z-index: 9999;
 				}
 			}

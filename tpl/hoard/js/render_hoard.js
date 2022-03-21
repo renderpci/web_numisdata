@@ -1,4 +1,4 @@
-/*global tstring, biblio_row_fields, map_factory, common, page, dedalo_logged, DocumentFragment, tstring */
+/*global tstring, biblio_row_fields, hoards, map_factory, common, page, dedalo_logged, DocumentFragment, tstring */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
@@ -167,6 +167,8 @@ var render_hoard = {
 
 		// short vars
 			const map_position	= map_data
+			const row			= self.row
+			console.log("row:",row);
 
 		self.map = self.map || new map_factory() // creates / get existing instance of map
 		self.map.init({
@@ -177,7 +179,23 @@ var render_hoard = {
 			source_maps		: page.maps_config.source_maps
 		})
 		// draw points
-		const map_data_clean = self.map_data(map_data) // prepares data to used in map
+		// const map_data_clean = self.map_data(map_data) // prepares data to used in map
+		let map_data_clean
+		if (row.georef_geojson) {
+			// from geojson
+			const popup_data = {
+				section_id	: row.section_id,
+				title		: row.name,
+				description	: row.public_info.trim(),
+				type		: row.table==='findspots'
+					? 'findspot'
+					: 'hoard'
+			}
+			map_data_clean = hoards.map_data_geojson(row.georef_geojson, popup_data)
+		}else{
+			// from single map point
+			map_data_clean = hoards.map_data_point(row.map, row.name)
+		}
 		self.map.parse_data_to_map(map_data_clean, null)
 		.then(function(){
 			container.classList.remove("hide_opacity")

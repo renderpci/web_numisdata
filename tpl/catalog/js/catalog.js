@@ -265,7 +265,7 @@ var catalog = {
 
 
 		// global_search
-			const global_search = self.form.item_factory({
+			self.form.item_factory({
 				id 			: "global_search",
 				name 		: "global_search",
 				label		: tstring.global_search || "global_search",
@@ -806,13 +806,24 @@ var catalog = {
 				id				: "ref_type_design_obverse_iconography_data",
 				name			: "ref_type_design_obverse_iconography_data",
 				class_name		: 'hide',
-				label			: "ref_type_design_obverse_iconography_data",
+				label			: tstring.ref_type_design_obverse_iconography_data || "Design obverse iconography ID",
 				q_column		: "ref_type_design_obverse_iconography_data",
 				q_selected_eq	: 'LIKE',
 				eq_in			: '%"',
 				eq_out			: '"%',
 				is_term			: false,
-				parent			: form_row
+				parent			: form_row,
+				callback		: function(form_item) {
+					event_manager.subscribe('form_submit', fn_check_value)
+					function fn_check_value() {
+						if (form_item.q && form_item.q.length>0) {
+							form_item.node_input.parentNode.classList.remove('hide')
+							form_item.node_input.parentNode.querySelector('input').classList.remove('hide')
+						}else{
+							form_item.node_input.parentNode.classList.add('hide')
+						}
+					}
+				}
 			})
 
 		// ref_type_design_reverse_iconography_data
@@ -820,13 +831,24 @@ var catalog = {
 				id				: "ref_type_design_reverse_iconography_data",
 				name			: "ref_type_design_reverse_iconography_data",
 				class_name		: 'hide',
-				label			: "ref_type_design_reverse_iconography_data",
+				label			: tstring.ref_type_design_reverse_iconography_data || "Design reverse iconography ID",
 				q_column		: "ref_type_design_reverse_iconography_data",
 				q_selected_eq	: 'LIKE',
 				eq_in			: '%"',
 				eq_out			: '"%',
 				is_term			: false,
-				parent			: form_row
+				parent			: form_row,
+				callback		: function(form_item) {
+					event_manager.subscribe('form_submit', fn_check_value)
+					function fn_check_value() {
+						if (form_item.q && form_item.q.length>0) {
+							form_item.node_input.parentNode.classList.remove('hide')
+							form_item.node_input.parentNode.querySelector('input').classList.remove('hide')
+						}else{
+							form_item.node_input.parentNode.classList.add('hide')
+						}
+					}
+				}
 			})
 
 		// ref_type_symbol_obverse_data
@@ -834,13 +856,24 @@ var catalog = {
 				id				: "ref_type_symbol_obverse_data",
 				name			: "ref_type_symbol_obverse_data",
 				class_name		: 'hide',
-				label			: "ref_type_symbol_obverse_data",
+				label			: tstring.ref_type_symbol_obverse_data || "Symbol obverse ID",
 				q_column		: "ref_type_symbol_obverse_data",
 				q_selected_eq	: 'LIKE',
 				eq_in			: '%"',
 				eq_out			: '"%',
 				is_term			: false,
-				parent			: form_row
+				parent			: form_row,
+				callback		: function(form_item) {
+					event_manager.subscribe('form_submit', fn_check_value)
+					function fn_check_value() {
+						if (form_item.q && form_item.q.length>0) {
+							form_item.node_input.parentNode.classList.remove('hide')
+							form_item.node_input.parentNode.querySelector('input').classList.remove('hide')
+						}else{
+							form_item.node_input.parentNode.classList.add('hide')
+						}
+					}
+				}
 			})
 
 		// ref_type_symbol_reverse_data
@@ -848,13 +881,24 @@ var catalog = {
 				id				: "ref_type_symbol_reverse_data",
 				name			: "ref_type_symbol_reverse_data",
 				class_name		: 'hide',
-				label			: "ref_type_symbol_reverse_data",
+				label			: tstring.ref_type_symbol_reverse_data || "Symbol reverse ID",
 				q_column		: "ref_type_symbol_reverse_data",
 				q_selected_eq	: 'LIKE',
 				eq_in			: '%"',
 				eq_out			: '"%',
 				is_term			: false,
-				parent			: form_row
+				parent			: form_row,
+				callback		: function(form_item) {
+					event_manager.subscribe('form_submit', fn_check_value)
+					function fn_check_value() {
+						if (form_item.q && form_item.q.length>0) {
+							form_item.node_input.parentNode.classList.remove('hide')
+							form_item.node_input.parentNode.querySelector('input').classList.remove('hide')
+						}else{
+							form_item.node_input.parentNode.classList.add('hide')
+						}
+					}
+				}
 			})
 
 		// submit button
@@ -900,24 +944,24 @@ var catalog = {
 	* LOAD_MINT_LIST
 	* @return promise
 	*/
-		load_mint_list : function() {
+	load_mint_list : function() {
 
-			const js_promise = data_manager.request({
-				body : {
-					dedalo_get 	: 'records',
-					table 		: 'catalog',
-					ar_fields 	: ['section_id','term AS name','parents'],
-					// sql_fullselect : 'DISTINCT term, '
-					lang 		: page_globals.WEB_CURRENT_LANG_CODE,
-					limit 		: 0,
-					count 		: false,
-					order 		: 'term ASC',
-					sql_filter  : 'term_table=\'mints\''
-				}
-			})
+		const js_promise = data_manager.request({
+			body : {
+				dedalo_get 	: 'records',
+				table 		: 'catalog',
+				ar_fields 	: ['section_id','term AS name','parents'],
+				// sql_fullselect : 'DISTINCT term, '
+				lang 		: page_globals.WEB_CURRENT_LANG_CODE,
+				limit 		: 0,
+				count 		: false,
+				order 		: 'term ASC',
+				sql_filter  : 'term_table=\'mints\''
+			}
+		})
 
-			return js_promise
-		},//end load_mint_list
+		return js_promise
+	},//end load_mint_list
 
 
 
@@ -1145,6 +1189,8 @@ var catalog = {
 				}
 			})
 			.then((parsed_data)=>{
+
+				event_manager.publish('form_submit', parsed_data)
 
 				// draw
 				// clean container_rows_list and add_spinner

@@ -106,8 +106,9 @@ function form_factory() {
 		// grouper
 			const group = common.create_dom_element({
 				element_type	: 'div',
-				class_name 		: "form-group field " + form_item.class_name,
-				parent 			: parent
+				class_name		: "form-group field " + (form_item.class_name || ''),
+				title			: form_item.label,
+				parent			: parent
 			})
 
 		// input

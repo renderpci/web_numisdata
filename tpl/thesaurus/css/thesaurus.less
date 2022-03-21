@@ -68,7 +68,7 @@
 				vertical-align: text-bottom;
 				font-size: 1.15em;
 				line-height: 1.0em;
-				// height: 1em;
+				height: 1em;
 				display: inline-block;
 				// padding: 0.15em;
 				user-select: none;
@@ -78,6 +78,7 @@
 			>.term {
 				letter-spacing: 0.015em;
 				font-weight: 400;
+				height: unset;
 
 				&.hilite {
 					background-color: @color_gold_logo;
@@ -197,6 +198,7 @@
 			}
 
 			>.relations_container {
+
 				// @see page.less
 			}
 
@@ -210,6 +212,7 @@
 
 		// root level
 		>.tree_node {
+			margin-left: 0;
 			>.term {
 				font-weight: 600 !important;
 			}

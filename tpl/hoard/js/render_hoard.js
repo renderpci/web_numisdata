@@ -168,7 +168,6 @@ var render_hoard = {
 		// short vars
 			const map_position	= map_data
 			const row			= self.row
-			console.log("row:",row);
 
 		self.map = self.map || new map_factory() // creates / get existing instance of map
 		self.map.init({

@@ -40,6 +40,10 @@
 	}
 }
 
+#form_container {
+	min-height: 117px;
+}
+
 
 #search_form{
 	display: flex;
@@ -75,7 +79,9 @@
 	grid-template-rows: repeat(2, auto);
 	width: 100%;
 
-
+	@media screen and (max-width: 736px) {
+		display: block;
+	}
 
 	.img-wrapper {
 		position: relative;
@@ -86,6 +92,10 @@
 		grid-row-start:1;
 		grid-row-end: 5;
 		border-bottom: none;
+		min-height: 608px;
+		@media screen and (max-width: 736px) {
+			min-height: 20rem;
+		}
 
 		@media (max-width: 736px) {
 			width: 80%;
@@ -106,6 +116,10 @@
 			// font-weight: 600;
 			margin-right: 2.7em;
 		}
+	}
+
+	.column_right {
+		width: 100%;
 	}
 
 	p {

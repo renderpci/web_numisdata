@@ -19,6 +19,7 @@ var hoards =  {
 		// DOM items ready from page html
 		form_container	: null,
 		rows_container	: null,
+		table		: null,
 
 
 
@@ -34,6 +35,7 @@ var hoards =  {
 		// options
 			self.form_container	= options.form_container
 			self.rows_container	= options.rows_container
+			self.table		= options.table // hoards | findspots
 
 		// form
 			self.form		= new form_factory()
@@ -198,7 +200,9 @@ var hoards =  {
 
 		return new Promise(function(resolve){
 
-			const table		= 'hoards'
+			const table = self.table==='findspots' // hoards | findspots
+				? 'findspots'
+				: 'hoards'
 			const ar_fields	= ['*']
 			const limit		= self.pagination.limit
 			const offset	= self.pagination.offset
@@ -302,10 +306,86 @@ var hoards =  {
 	*/
 	list_row_builder : function(data){
 
-		return hoards_row_fields.draw_item(data)
-	}//end list_row_builder
+		return render_hoards.draw_item(data)
+	},//end list_row_builder
 
 
 
+	/**
+	* MAP_DATA_geojson
+	* Parses row.geojson points
+	* @return array map_points
+	*/
+	map_data_geojson : function(data, popup_data) {
+		// console.log("data:",data);
+		// console.log("popup_data:",popup_data);
 
-}//end coins
+		const markerIcon = (function(){
+			switch(popup_data.type) {
+				case 'findspot':
+					return page.maps_config.markers.findspot
+				case 'hoard':
+					return page.maps_config.markers.hoard
+				default:
+					return page.maps_config.markers.mint
+			}
+		})()
+
+		const ar_data = Array.isArray(data)
+			? data
+			: [data]
+
+		const map_points = []
+		for (let i = 0; i < ar_data.length; i++) {
+
+			const geojson = [ar_data[i]]
+
+			const item = {
+				lat			: null,
+				lon			: null,
+				geojson		: geojson,
+				marker_icon	: markerIcon,
+				data		: popup_data
+			}
+			map_points.push(item)
+		}
+		// console.log("--map_data_geojson map_points:",map_points);
+
+		return map_points
+	},//end map_data_geojson
+
+
+
+	/**
+	* MAP_DATA_POINT
+	* Parses row.map point
+	* @return object data_clean
+	*/
+	map_data_point : function(data, name) {
+
+		const ar_data = Array.isArray(data)
+			? data
+			: [data]
+
+		const data_clean = []
+		for (let i = 0; i < ar_data.length; i++) {
+
+			const item = {
+				lat			: ar_data[i].lat,
+				lon			: ar_data[i].lon,
+				marker_icon	: page.maps_config.markers.hoard,
+				data		: {
+					section_id	: null,
+					title		: name, // provisional
+					description	: ' '
+				}
+			}
+			data_clean.push(item)
+		}
+
+		return data_clean
+	},//end map_data_point
+
+
+
+}//end hoards

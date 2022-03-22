@@ -231,6 +231,11 @@ page.parse_hoard_data = function(data) {
 				? JSON.parse(row.types)
 				: null
 
+			row.georef_geojson = row.georef_geojson
+				? JSON.parse(row.georef_geojson)
+				: null
+
+
 			row.parsed = true
 
 			parsed_data.push(row)

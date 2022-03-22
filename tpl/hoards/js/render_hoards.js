@@ -1,11 +1,11 @@
-/*global page_globals, common, DocumentFragment, map_factory, tstring, page */
+/*global page_globals, common, DocumentFragment, map_factory, tstring, page, hoards */
 /*eslint no-undef: "error"*/
 /*jshint esversion: 6 */
 "use strict";
 
 
 
-var hoards_row_fields = {
+var render_hoards = {
 
 
 
@@ -55,31 +55,23 @@ var hoards_row_fields = {
 									add_layer_control	: false // removes layer selector button
 								})
 								// draw points
-								const map_data = function(data) {
-
-									const ar_data = Array.isArray(data)
-										? data
-										: [data]
-
-									const data_clean = []
-									for (let i = 0; i < ar_data.length; i++) {
-
-										const item = {
-											lat			: ar_data[i].lat,
-											lon			: ar_data[i].lon,
-											marker_icon	: page.maps_config.markers.hoard,
-											data		: {
-												section_id	: null,
-												title		: row.name, // provisional
-												description	: ' '
-											}
+									let map_data_clean
+									if (row.georef_geojson) {
+										// from geojson
+										const popup_data = {
+											section_id	: row.section_id,
+											title		: row.name,
+											description	: row.public_info.trim(),
+											type		: row.table==='findspots'
+												? 'findspot'
+												: 'hoard'
 										}
-										data_clean.push(item)
+										map_data_clean = hoards.map_data_geojson(row.georef_geojson, popup_data)
+									}else{
+										// from single map point
+										map_data_clean = hoards.map_data_point(row.map, row.name)
 									}
 
-									return data_clean
-								}
-								const map_data_clean = map_data(row.map) // prepares data to used in map
 								map.parse_data_to_map(map_data_clean, null)
 								.then(function(){
 									container.classList.remove("hide_opacity")
@@ -105,9 +97,12 @@ var hoards_row_fields = {
 				})
 
 				// name
-					const hoard_uri			= page_globals.__WEB_ROOT_WEB__ + '/hoard/' + row.section_id
+					const target_path = self.table==='findspots'
+						? 'findspo'
+						: 'hoard'
+					const hoard_uri = page_globals.__WEB_ROOT_WEB__ + '/'+target_path+'/' + row.section_id
 					// const hoard_uri_text	='<a class="icon_link" href="'+hoard_uri+'"></a>'
-					const hoard_uri_text	='<span class="icon_link"></span>'
+					const hoard_uri_text ='<span class="icon_link"></span>'
 					common.create_dom_element ({
 						element_type	: "a",
 						href			: hoard_uri,

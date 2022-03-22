@@ -99,6 +99,7 @@
     "related_types": "Related types",
     "reset": "Reset",
     "reverse": "Reverse",
+    "role": "Role",
     "search": "Search",
     "secondary_treatment": "Secondary treatment",
     "serial": "Series",
@@ -133,5 +134,12 @@
     "suggest_error" : "Suggestions / errors",
     "iconography_obverse" : "Iconography obverse",
     "iconography_reverse" : "Iconography reverse",
-    "dating" : "Dating"
+    "dating" : "Dating",
+    "gold" : "Gold",
+    "silver" : "Silver",
+    "bronze" : "Bronze",
+    "ref_type_design_obverse_iconography_data" : "Design obverse iconography ID",
+    "ref_type_design_reverse_iconography_data" : "Design reverse iconography ID",
+    "ref_type_symbol_obverse_data" : "Symbol obverse ID",
+    "ref_type_symbol_reverse_data" : "Symbol reverse ID"
 }

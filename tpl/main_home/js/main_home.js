@@ -325,7 +325,6 @@ var main_home =  {
 					// coin_img
 						const image_url = page_globals.__WEB_MEDIA_BASE_URL__ + coin_url
 						const thumb_url = image_url.replace('/1.5MB/','/thumb/')
-						console.log("image_url:",image_url);
 						const image_big = common.create_dom_element ({
 							element_type	: "img",
 							class_name		: "main-coin-image",
@@ -336,16 +335,18 @@ var main_home =  {
 						img_loader.addEventListener("load", function(){
 							image_big.src = image_url
 							img_loader.remove()
+
+							// coin text
+								common.create_dom_element({
+									element_type	: "p",
+									class_name		: "img-text",
+									text_content	: item_text + denomination,
+									parent			: image_wrapper
+								})
 						})
 						img_loader.src = image_url
 
-					// coin text
-						common.create_dom_element({
-							element_type	: "p",
-							class_name		: "img-text",
-							text_content	: item_text + denomination,
-							parent			: image_wrapper
-						})
+
 
 					spinner.remove()
 				})

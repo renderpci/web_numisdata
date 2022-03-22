@@ -904,20 +904,34 @@ var catalog = {
 		// submit button
 			const submit_group = common.create_dom_element({
 				element_type	: "div",
-				class_name 		: "form-group field button_submit",
-				parent 			: fragment
+				class_name		: "form-group field button_submit",
+				parent			: fragment
 			})
 			const submit_button = common.create_dom_element({
 				element_type	: "input",
-				type 			: "submit",
-				id 				: "submit",
-				value 			: tstring.search || "Search",
-				class_name 		: "btn btn-light btn-block primary",
-				parent 			: submit_group
+				type			: "submit",
+				id				: "submit",
+				value			: tstring.search || "Search",
+				class_name		: "btn btn-light btn-block primary",
+				parent			: submit_group
 			})
 			submit_button.addEventListener("click",function(e){
 				e.preventDefault()
 				self.form_submit(form)
+			})
+
+		// reset_button
+			const reset_button = common.create_dom_element({
+				element_type	: "input",
+				type 			: "button",
+				id 				: "button_reset",
+				value 			: tstring.reset || 'Reset',
+				class_name 		: "btn btn-light btn-block secondary button_reset",
+				parent 			: submit_group
+			})
+			reset_button.addEventListener("click",function(e){
+				e.preventDefault()
+				window.location.replace(window.location.pathname); // + window.location.search + window.location.hash
 			})
 
 		// operators

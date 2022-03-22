@@ -367,7 +367,7 @@ var catalog = {
 			self.form.item_factory({
 				id				: "role",
 				name			: "role",
-				label			: tstring.role || "role",
+				label			: tstring.role || "Role",
 				q_column		: "ref_type_creators_roles", //"p_creator",
 				// value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
 				value_split 	: '|',
@@ -485,7 +485,7 @@ var catalog = {
 				name			: "iconography_obverse",
 				label			: tstring.iconography_obverse || "iconography obverse",
 				q_column		: "ref_type_design_obverse_iconography",
-				value_split		: ' - ',
+				value_split		: ' | ',
 				q_splittable	: true,
 				q_selected_eq	: 'LIKE',
 				eq_in			: "%",
@@ -507,7 +507,7 @@ var catalog = {
 				name			: "iconography_reverse",
 				label			: tstring.iconography_reverse || "iconography reverse",
 				q_column		: "ref_type_design_reverse_iconography",
-				value_split		: ' - ',
+				value_split		: ' | ',
 				q_splittable	: true,
 				q_selected_eq	: 'LIKE',
 				eq_in			: "%",

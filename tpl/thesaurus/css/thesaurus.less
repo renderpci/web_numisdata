@@ -80,6 +80,7 @@
 				font-weight: 400;
 				height: unset;
 
+
 				&.hilite {
 					background-color: @color_gold_logo;
 					border-radius: 0.15em;
@@ -98,6 +99,10 @@
 							background-image: url('../../assets/images/icon_link_white.svg');
 						}
 					}
+
+					.illustration {
+						// mix-blend-mode: darken;
+					}
 				}
 
 				small {
@@ -114,14 +119,15 @@
 			}
 
 			img.illustration {
-				display: inline-block;
-				margin-left: 0.333rem;
-				height: 2rem;
-				vertical-align: middle;
-				// transition: max-height 0.15s ease-out;
-				transition:transform 0.3s ease-out;
 				background-color: #ffffff;
 				cursor: pointer;
+				display: inline-block;
+				height: 2rem;
+				margin-left: 0.333rem;
+				transition:transform 0.3s ease-out;
+				vertical-align: middle;
+				// transition: max-height 0.15s ease-out;
+				border-radius: 4px;
 
 				@media screen and (max-width: 625px) {
 					height: 1.5rem;
@@ -130,6 +136,7 @@
 				&.big {
 					transform: scale(6);
 					z-index: 9999;
+					// mix-blend-mode: unset !important;
 				}
 			}
 

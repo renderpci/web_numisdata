@@ -583,6 +583,14 @@ page.parse_catalog_data = function(data) {
 
 			row.ref_type_material = page.trim_char(row.ref_type_material, '|')
 
+			// replace bad separators ' - ' to ' | '
+			row.ref_type_design_obverse_iconography = row.ref_type_design_obverse_iconography
+				? row.ref_type_design_obverse_iconography.replace(' - ',' | ')
+				: null
+			// replace bad separators ' - ' to ' | '
+			row.ref_type_design_reverse_iconography = row.ref_type_design_reverse_iconography
+				? row.ref_type_design_reverse_iconography.replace(' - ',' | ')
+				: null
 
 			//
 			/*

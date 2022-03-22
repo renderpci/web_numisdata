@@ -126,8 +126,12 @@ var users =  {
 
 		// editor categories
 			const editors_type = {
-				bronze : {
+				diploma : {
 					min : 1,
+					max : 1000
+				},
+				bronze : {
+					min : 1001,
 					max : 20000
 				},
 				silver : {
@@ -154,7 +158,8 @@ var users =  {
 			const editors = {
 				gold	: [],
 				silver	: [],
-				bronze	: []
+				bronze	: [],
+				diploma	: []
 			}
 			const parsed_data_length = parsed_data.length
 			for (let i = 0; i < parsed_data_length; i++) {
@@ -174,16 +179,20 @@ var users =  {
 						case value_between(value, editors_type.silver.min, editors_type.silver.max, true):
 							editor_type = 'silver'
 							break;
+						case value_between(value, editors_type.bronze.min, editors_type.bronze.max, true):
+							editor_type = 'bronze'
+							break;
 						// case value_between(value, editors_type.bronze.min, editors_type.bronze.max, true):
 						default:
-							editor_type = 'bronze'
+							editor_type = 'diploma'
 							break;
 					}
 
 					editors[editor_type].push({
-						label	: row.full_name, // ex. string 'render'
-						value	: value, // ex. int 1987
-						type	: editor_type // ex string 'gold'
+						label			: row.full_name, // ex. string 'render'
+						observations	: row.observations, // ex. string 'render'
+						value			: value, // ex. int 1987
+						type			: editor_type // ex string 'gold'
 					})
 				}
 			}
@@ -194,7 +203,7 @@ var users =  {
 
 					// sort list alphabetically
 						const list = list_raw.sort(function(a, b) {
-							return a.label.localeCompare(b.label, undefined, {
+							return a.label.localeCompare(b.value, undefined, {
 								numeric		: true,
 								sensitivity	: 'base'
 							})
@@ -209,11 +218,21 @@ var users =  {
 							const item = list[i]
 							// console.log("item:",item);
 
-							common.create_dom_element({
+							const name = common.create_dom_element({
 								element_type	: "div",
 								class_name		: "editor_name",
 								inner_html		: item.label,
 								parent			: fragment
+							})
+							const observations = item.observations
+								? ' | ' +item.observations
+								: ''
+
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: "observations",
+								inner_html		: observations,
+								parent			: name
 							})
 						}
 

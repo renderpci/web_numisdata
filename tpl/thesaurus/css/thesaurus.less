@@ -87,10 +87,17 @@
 					padding-left: 0.35em;
 					padding-right: 0.35em;
 					vertical-align: text-top;
-					line-height: 0.65em;
+					height: 1.8em;
+					// line-height: 0.65em;
+					line-height: 100%;
 					color: white;
 					padding-top: 0.26em;
-					height: 1.8em;
+
+					a {
+						&:before {
+							background-image: url('../../assets/images/icon_link_white.svg');
+						}
+					}
 				}
 
 				small {
@@ -103,6 +110,7 @@
 
 			a.icon_link {
 				margin-left: 0.5rem;
+				margin-right: 0.33rem;
 			}
 
 			img.illustration {

@@ -19,7 +19,7 @@ var hoards =  {
 		// DOM items ready from page html
 		form_container	: null,
 		rows_container	: null,
-		table		: null,
+		table			: null,
 
 
 
@@ -35,7 +35,7 @@ var hoards =  {
 		// options
 			self.form_container	= options.form_container
 			self.rows_container	= options.rows_container
-			self.table		= options.table // hoards | findspots
+			self.table			= options.table // hoards | findspots
 
 		// form
 			self.form		= new form_factory()
@@ -305,6 +305,8 @@ var hoards =  {
 	* @return DocumentFragment node
 	*/
 	list_row_builder : function(data){
+
+		const self = this
 
 		return render_hoards.draw_item(data)
 	},//end list_row_builder

@@ -97,8 +97,8 @@ var render_hoards = {
 				})
 
 				// name
-					const target_path = self.table==='findspots'
-						? 'findspo'
+					const target_path = row.table==='findspots'
+						? 'findspot'
 						: 'hoard'
 					const hoard_uri = page_globals.__WEB_ROOT_WEB__ + '/'+target_path+'/' + row.section_id
 					// const hoard_uri_text	='<a class="icon_link" href="'+hoard_uri+'"></a>'

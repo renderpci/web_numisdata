@@ -202,12 +202,14 @@ var users =  {
 				const draw_editors_list = function(list_raw) {
 
 					// sort list alphabetically
-						const list = list_raw.sort(function(a, b) {
-							return a.label.localeCompare(b.value, undefined, {
-								numeric		: true,
-								sensitivity	: 'base'
-							})
-						});
+						const list = list_raw.sort((a,b)=> b.value - a.value);
+
+						// const list = list_raw.sort(function(a, b) {
+						// 	return a.value.localeCompare(b.value, undefined, {
+						// 		numeric		: true,
+						// 		sensitivity	: 'base'
+						// 	})
+						// });
 
 					const fragment = new DocumentFragment()
 

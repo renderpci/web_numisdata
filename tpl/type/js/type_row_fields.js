@@ -106,12 +106,13 @@ var type_row_fields = {
 						style : 'median legend_obverse_box'
 					})
 				)
-			}else{
-				common.create_dom_element({
-					element_type	: "div",
-					parent			: sides_wrapper
-				})
 			}
+			// else{
+			// 	common.create_dom_element({
+			// 		element_type	: "div",
+			// 		parent			: sides_wrapper
+			// 	})
+			// }
 
 		// legend_obverse_transcription
 			obverse_wrapper.appendChild(

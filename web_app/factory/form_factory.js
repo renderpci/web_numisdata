@@ -65,6 +65,7 @@ function form_factory() {
 			q_selected_eq	: options.q_selected_eq || "=", // default internal comparator used in autocomplete	with user picked values
 			q_column		: options.q_column, // like 'term'
 			q_column_filter	: options.q_column_filter, // overwrite q_column as filter column name
+			q_column_group	: options.q_column_group, // overwrite q_column as group column name (autocomplete)
 			q_splittable	: options.q_splittable || false, // depending on its value the item content will be splitted or not on loading it (see qdp catalog)
 			sql_filter		: options.sql_filter || null,
 			// special double filters
@@ -921,8 +922,9 @@ function form_factory() {
 
 				const term = request.term
 
-				const field			= form_item.q_name // Like 'mint'
-				const q_column		= form_item.q_column // Like 'term'
+				const field				= form_item.q_name // Like 'mint'
+				const q_column			= form_item.q_column // Like 'term'
+				const q_column_group	= form_item.q_column_group || q_column
 
 				// filter build
 					const op 	 = "$and"
@@ -940,7 +942,7 @@ function form_factory() {
 							field	: form_item.q_column_filter || q_column,
 							value	: `'${safe_value}'`,
 							op		: form_item.eq, // 'LIKE',
-							group	: q_column
+							group	: q_column_group // q_column
 						})
 
 					// optional second column 'term_table' search item. Add column name filter

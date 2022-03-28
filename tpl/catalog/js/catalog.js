@@ -529,7 +529,7 @@ var catalog = {
 				name			: "legend_obverse",
 				label			: tstring.legend_obverse || "legend obverse",
 				// q_column		: "ref_type_legend_obverse",
-				q_column		: "CONCAT(ref_type_legend_obverse, ', ', ref_type_legend_transcription_obverse) AS legend_obverse",
+				q_column		: "CONCAT(ref_type_legend_obverse, ', ', ref_type_legend_transcription_obverse)",
 				q_column_filter	: "ref_type_legend_transcription_obverse",
 				eq_in			: "%",
 				is_term			: false,

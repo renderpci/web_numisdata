@@ -1669,6 +1669,7 @@ var catalog = {
 							ar_parent.push(mint_parent)
 						}
 					}
+					self.parents = ar_parent
 					// create the nodes with the unique parents: ar_parents
 					for (let i = 0; i < ar_parent.length; i++) {
 						// render_mints
@@ -1728,6 +1729,12 @@ var catalog = {
 
 		if(children){
 			for (let i = 0; i < children.length; i++) {
+				const finded = self.parents.find(el => el.section_id == children[i])
+
+				if(finded){
+					continue
+				}
+
 				self.get_child(ar_rows, children[i], catalog_row_wrapper)
 			}
 		}
@@ -1738,6 +1745,7 @@ var catalog = {
 		const self = this
 
 		const row_object 	= ar_rows.find(item => item.section_id==section_id)
+
 		if (row_object) {
 			const row_node 	= self.render_rows(row_object, ar_rows)
 			parent_node.appendChild( row_node )

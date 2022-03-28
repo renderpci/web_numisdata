@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, common, page*/
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -107,7 +107,7 @@ function form_factory() {
 			const group = common.create_dom_element({
 				element_type	: 'div',
 				class_name		: "form-group field " + (form_item.class_name || ''),
-				title			: form_item.label,
+				title			: (form_item.is_term) ? (form_item.label + ' (is_term)') : form_item.label,
 				parent			: parent
 			})
 

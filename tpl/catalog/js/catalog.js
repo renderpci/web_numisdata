@@ -561,15 +561,16 @@ var catalog = {
 
 		// territory
 			self.form.item_factory({
-				id 			: "territory",
-				name 		: "territory",
-				label		: tstring.territory || "territory",
-				q_column 	: "p_territory",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: true,
-				parent		: form_row,
-				callback	: function(form_item) {
+				id				: "territory",
+				name			: "territory",
+				label			: tstring.territory || "territory",
+				q_column		: "p_territory",
+				q_selected_eq	: 'LIKE',
+				eq_in			: "%",
+				eq_out			: "%",
+				is_term			: true,
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
 						table		: 'catalog'
@@ -1729,6 +1730,7 @@ var catalog = {
 
 		if(children){
 			for (let i = 0; i < children.length; i++) {
+
 				const finded = self.parents.find(el => el.section_id == children[i])
 
 				if(finded){

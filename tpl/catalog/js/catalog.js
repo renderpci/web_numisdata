@@ -567,10 +567,9 @@ var catalog = {
 				name			: "territory",
 				label			: tstring.territory || "territory",
 				q_column		: "p_territory",
-				// eq_in		: "%",
-				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
-				eq				: "LIKE",
-				// q_table		: "ts_period",
+				q_selected_eq	: 'LIKE',
+				eq_in			: "%",
+				eq_out			: "%",
 				is_term			: true,
 				parent			: form_row,
 				callback		: function(form_item) {
@@ -1733,6 +1732,7 @@ var catalog = {
 
 		if(children){
 			for (let i = 0; i < children.length; i++) {
+
 				const finded = self.parents.find(el => el.section_id == children[i])
 
 				if(finded){

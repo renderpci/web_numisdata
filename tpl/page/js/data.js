@@ -759,7 +759,7 @@ page.parse_catalog_data = function(data) {
 		console.error("ERROR CATCH " , error);
 		console.warn("new_data:",new_data);
 	}
-	console.log("new_data:",new_data);
+	// console.log("new_data:",new_data);
 
 
 	return new_data

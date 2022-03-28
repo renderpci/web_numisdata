@@ -701,7 +701,7 @@ function form_factory() {
 					}else if (item.op==='MATCH') {
 						filter_line = "MATCH (" + item_field + ") AGAINST ("+item.value+" IN BOOLEAN MODE)"
 					}else{
-						filter_line = (item_field.indexOf("AS")!==-1 || (item.wrapper && item.wrapper.length>0))
+						filter_line = (item_field.indexOf("AS")!==-1 || item_field.indexOf("CONCAT")!==-1 || (item.wrapper && item.wrapper.length>0))
 							? "(" +item_field+""  +" "+ item.op +" "+ item.value + (" AND "+item_field+"!='')")
 							: "(`"+item_field+"`" +" "+ item.op +" "+ item.value	+ (" AND `"+item_field+"`!='')")
 					}
@@ -723,6 +723,7 @@ function form_factory() {
 				return ar_filter.join(" "+boolean_op+" ")
 			  })()
 			: null
+			// console.log("sql_filter:",sql_filter);
 
 		return sql_filter
 	}//end parse_sql_filter
@@ -1027,14 +1028,18 @@ function form_factory() {
 					// table resolved
 						const table_resolved = typeof table==="function" ? table() : table;
 
+					// field
+						const field_beats = q_column.split(' AS ')
+						const plain_field = field_beats[0]
+
 					// search
 						data_manager.request({
 							body : {
 								dedalo_get	: 'records',
 								table		: table_resolved,
-								ar_fields	: [q_column + " AS name"],
+								ar_fields	: [plain_field + " AS name"],
 								sql_filter	: sql_filter,
-								group		: q_column,
+								group		: plain_field, // q_column,
 								limit		: limit,
 								order		: order
 							}

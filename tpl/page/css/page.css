@@ -209,6 +209,9 @@ input.form-control:not(:placeholder-shown) {
   background-color: #f9f9f9;
   border: none !important;
   z-index: 9999;
+  width: auto !important;
+  max-width: 80vw;
+  min-width: 19%;
 }
 /**
 * FORM

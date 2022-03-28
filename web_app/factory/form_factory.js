@@ -496,8 +496,8 @@ function form_factory() {
 
 			// const current_group = []
 
-			// const group_op = (form_item.is_term===true) ? "$or" : "$and"
-			const group_op = operator_value || '$and'
+			const group_op = (form_item.is_term===true) ? "$or" : "$and"
+			// const group_op = operator_value || '$and'
 			const group = {}
 				  group[group_op] = []
 
@@ -508,8 +508,8 @@ function form_factory() {
 						continue;
 					}
 
-					// const c_group_op = '$and'
-					const c_group_op = operator_value || '$and'
+					const c_group_op = '$and'
+					// const c_group_op = operator_value || '$and'
 					const c_group = {}
 						  c_group[c_group_op] = []
 
@@ -572,7 +572,8 @@ function form_factory() {
 								? form_item.value_wrapper[0] + safe_value + form_item.value_wrapper[1]
 								: safe_value
 
-						const c_group_op = operator_value || '$and'
+						const c_group_op = '$and'
+						// const c_group_op = operator_value || '$and'
 						const c_group = {}
 							  c_group[c_group_op] = []
 

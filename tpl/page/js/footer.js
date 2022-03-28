@@ -92,8 +92,10 @@ var footer =  {
 					? row.images[0]
 					: page_globals.__WEB_BASE_URL__ + row.images[0]
 				: null
+			const url = (row.web_path.indexOf('http')===0)
+				? row.web_path
+				: page_globals.__WEB_ROOT_WEB__ + '/' + row.web_path
 			const label		= row.label
-			const url		= row.web_path
 			const children	= row.children
 			const menu		= row.menu || 'no'
 			const parent	= row.parent

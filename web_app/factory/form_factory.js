@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, SHOW_DEBUG, common, page*/
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -107,7 +107,7 @@ function form_factory() {
 			const group = common.create_dom_element({
 				element_type	: 'div',
 				class_name		: "form-group field " + (form_item.class_name || ''),
-				title			: form_item.label,
+				title			: (form_item.is_term) ? (form_item.label + ' (is_term)') : form_item.label,
 				parent			: parent
 			})
 
@@ -480,17 +480,24 @@ function form_factory() {
 	this.build_filter = function(options={}) {
 
 		const self = this
+		// console.log("self.operators_node:",self.operators_node);
 
 		// options
 			const form_items = options.form_items || self.form_items
 
+		// global operator
+			const operators_node = self.operators_node
+			const operator_value = (operators_node)
+				? operators_node.querySelector('input[name="operators"]:checked').value
+				: '$and'
 
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
 
-			const current_group = []
+			// const current_group = []
 
 			const group_op = (form_item.is_term===true) ? "$or" : "$and"
+			// const group_op = operator_value || '$and'
 			const group = {}
 				  group[group_op] = []
 
@@ -502,6 +509,7 @@ function form_factory() {
 					}
 
 					const c_group_op = '$and'
+					// const c_group_op = operator_value || '$and'
 					const c_group = {}
 						  c_group[c_group_op] = []
 
@@ -560,11 +568,12 @@ function form_factory() {
 							: value
 
 						// item_value
-							const item_value =  (form_item.value_wrapper && form_item.value_wrapper.length>1) // like [""]
+							const item_value = (form_item.value_wrapper && form_item.value_wrapper.length>1) // like [""]
 								? form_item.value_wrapper[0] + safe_value + form_item.value_wrapper[1]
 								: safe_value
 
-						const c_group_op = "$and"
+						const c_group_op = '$and'
+						// const c_group_op = operator_value || '$and'
 						const c_group = {}
 							  c_group[c_group_op] = []
 

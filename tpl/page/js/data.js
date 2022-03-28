@@ -1005,6 +1005,7 @@ page.parse_iri_data = function(data) {
 				const _url = new URL(url)
 				source = _url.hostname
 			}catch (error) {
+				console.log("url:",url);
 				console.warn(error);
 			}
 		}

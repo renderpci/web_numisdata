@@ -1675,11 +1675,30 @@ var type_row_fields = {
 					const full_uri	= page_globals.__WEB_BASE_URL__ + uri
 					const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> MIB </a>'
 					common.create_dom_element({
-						element_type	: "div",
+						element_type	: "span",
 						class_name		: "",
 						inner_html		: uri_text,
 						parent			: info
 					})
+
+
+				//collection uri
+					if (data.uri && data.uri.length>0) {
+						for (let i = 0; i < data.uri.length; i++) {
+
+							const el = data.uri[i]
+							const label	= el.label || "URI"
+							const uri_text	= '<a class="icon_link info_value" href="' + el.value + '" target="_blank"> ' + el.label  + '</a>'
+
+							common.create_dom_element({
+								element_type	: "span",
+								class_name		: "",
+								inner_html		: uri_text,
+								parent			: info
+							})
+
+						}
+					}
 				// hoard
 					common.create_dom_element({
 						element_type	: "div",

@@ -525,7 +525,8 @@ var coins =  {
 					? '(' + parsed_filter + ')'
 					: null
 				if(SHOW_DEBUG===true) {
-					// console.log("-> coins form_submit sql_filter:",sql_filter);
+					// console.log("-> filter:",filter);
+					console.log("-> coins form_submit sql_filter:",sql_filter);
 				}
 				// if (!sql_filter|| sql_filter.length<3) {
 				// 	return new Promise(function(resolve){

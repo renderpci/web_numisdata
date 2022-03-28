@@ -528,7 +528,8 @@ var catalog = {
 				id				: "legend_obverse",
 				name			: "legend_obverse",
 				label			: tstring.legend_obverse || "legend obverse",
-				q_column		: "ref_type_legend_obverse",
+				// q_column		: "ref_type_legend_obverse",
+				q_column		: "CONCAT(ref_type_legend_obverse, ', ', ref_type_legend_transcription_obverse) AS legend_obverse",
 				q_column_filter	: "ref_type_legend_transcription_obverse",
 				eq_in			: "%",
 				is_term			: false,
@@ -546,7 +547,8 @@ var catalog = {
 				id				: "legend_reverse",
 				name			: "legend_reverse",
 				label			: tstring.legend_reverse || "legend reverse",
-				q_column		: "ref_type_legend_reverse",
+				// q_column		: "ref_type_legend_reverse",
+				q_column		: "CONCAT(ref_type_legend_reverse, ', ', ref_type_legend_transcription_reverse)",
 				q_column_filter	: "ref_type_legend_transcription_reverse",
 				eq_in			: "%",
 				is_term			: false,
@@ -561,15 +563,17 @@ var catalog = {
 
 		// territory
 			self.form.item_factory({
-				id 			: "territory",
-				name 		: "territory",
-				label		: tstring.territory || "territory",
-				q_column 	: "p_territory",
-				eq_in 		: "%",
-				// q_table 	: "ts_period",
-				is_term 	: true,
-				parent		: form_row,
-				callback	: function(form_item) {
+				id				: "territory",
+				name			: "territory",
+				label			: tstring.territory || "territory",
+				q_column		: "p_territory",
+				// eq_in		: "%",
+				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
+				eq				: "LIKE",
+				// q_table		: "ts_period",
+				is_term			: true,
+				parent			: form_row,
+				callback		: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
 						table		: 'catalog'

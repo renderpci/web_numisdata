@@ -128,6 +128,7 @@ var coins =  {
 				eq			: "LIKE",
 				eq_in		: "%",
 				eq_out		: "%",
+				is_term		: true,
 				parent		: form_row,
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({

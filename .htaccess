@@ -7,12 +7,12 @@
 	RewriteEngine on
 
 # Redirect all calls from mib.numisdata.org to monedaiberica.org
-	RewriteCond %{HTTP_HOST} ^mib.numisdata.org [NC]
-	RewriteRule ^(.*)$ https://monedaiberica.org/$1 [L,R=301]
+	# RewriteCond %{HTTP_HOST} ^mib.numisdata.org [NC]
+	# RewriteRule ^(.*)$ https://monedaiberica.org/$1 [L,R=301]
 
 # RewriteBase / . Use the name of base directory like "/monedaiberica.org" for http://mujerymemoria/monedaiberica.org
 	#RewriteBase "/monedaiberica.org"
-	# Dynamic base. 
+	# Dynamic base.
 	# @see https://stackoverflow.com/questions/21062290/set-rewritebase-to-the-current-folder-path-dynamically
 	RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
 	RewriteRule ^(.*)$ - [E=BASE:%1]

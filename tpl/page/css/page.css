@@ -871,12 +871,12 @@ nav ul {
   height: 23em;
 }
 #header > .head_inner > a.logo {
-  border-bottom: #b93b3b 4px solid;
   background-color: #333333;
   background-image: url("../../assets/images/logo_head-06.svg");
   background-repeat: no-repeat;
   height: 5em;
   margin: 0;
+  margin-bottom: 1em;
 }
 #header > .head_inner > a.logo > .title {
   background-image: url("../../assets/images/logo_head-05.svg");

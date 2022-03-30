@@ -877,6 +877,7 @@ nav ul {
   height: 5em;
   margin: 0;
   margin-bottom: 1em;
+  box-shadow: 0px 3px 20px #a1a1a175;
 }
 #header > .head_inner > a.logo > .title {
   background-image: url("../../assets/images/logo_head-05.svg");

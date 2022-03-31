@@ -846,6 +846,9 @@ nav ul {
 .golden-color {
   color: #b7996d;
 }
+#header {
+  margin-bottom: 1.5rem;
+}
 #header .pre_alert {
   position: fixed;
   left: 0;
@@ -881,7 +884,6 @@ nav ul {
   background-repeat: no-repeat;
   height: 5em;
   margin: 0;
-  margin-bottom: 1em;
   box-shadow: 0px 3px 20px #a1a1a175;
 }
 #header > .head_inner > a.logo > .title {

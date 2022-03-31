@@ -33,23 +33,23 @@ var users =  {
 
 
 		// ts_web row
-			if (container) {
+			// if (container) {
 
-				// parse ts_web data
-					const parsed_row = page.parse_ts_web(row)[0]
+			// 	// parse ts_web data
+			// 		const parsed_row = page.parse_ts_web(row)[0]
 
-				// render
-					self.render_row(parsed_row)
-					.then(function(node){
+			// 	// render
+			// 		self.render_row(parsed_row)
+			// 		.then(function(node){
 
-						container.appendChild(node)
+			// 			container.appendChild(node)
 
-						// event publish template_render_end
-							event_manager.publish('template_render_end', {
-								item	: container
-							})
-					})
-			}
+			// 			// event publish template_render_end
+			// 				event_manager.publish('template_render_end', {
+			// 					item	: container
+			// 				})
+			// 		})
+			// }
 
 		// list_editors
 			if (list_container) {
@@ -58,7 +58,7 @@ var users =  {
 					const spinner = common.create_dom_element({
 						element_type	: "div",
 						class_name		: "spinner",
-						parent			: list_container
+						parent			: container
 					})
 
 				// users data request
@@ -68,6 +68,11 @@ var users =  {
 							parsed_data : parsed_data
 						})
 						container.appendChild(graph_nodes)
+
+						// event publish template_render_end
+							event_manager.publish('template_render_end', {
+								item	: container
+							})
 
 						spinner.remove()
 					})
@@ -292,44 +297,44 @@ var users =  {
 			const body		= row.cuerpo
 
 			// title
-				common.create_dom_element({
-					element_type	: "h1",
-					class_name		: "title",
-					inner_html		: title,
-					parent			: fragment
-				})
+				// common.create_dom_element({
+				// 	element_type	: "h1",
+				// 	class_name		: "title",
+				// 	inner_html		: title,
+				// 	parent			: fragment
+				// })
 
 			// abstract
-				if (abstract && abstract.length>0) {
-					common.create_dom_element({
-						element_type	: "p",
-						class_name		: "abstract",
-						inner_html		: abstract,
-						parent			: fragment
-					})
-				}
+				// if (abstract && abstract.length>0) {
+				// 	common.create_dom_element({
+				// 		element_type	: "p",
+				// 		class_name		: "abstract",
+				// 		inner_html		: abstract,
+				// 		parent			: fragment
+				// 	})
+				// }
 
 			// identify_image
-				if (row.identify_image && row.identify_image.length>0) {
+				// if (row.identify_image && row.identify_image.length>0) {
 
-					const image_url			= row.identify_image
-					const identify_image	= common.create_dom_element({
-						element_type	: "img",
-						class_name		: "identify_image",
-						src				: image_url,
-						parent			: fragment
-					})
-				}
+				// 	const image_url			= row.identify_image
+				// 	const identify_image	= common.create_dom_element({
+				// 		element_type	: "img",
+				// 		class_name		: "identify_image",
+				// 		src				: image_url,
+				// 		parent			: fragment
+				// 	})
+				// }
 
 			// body
-				if (body && body.length>0) {
-					common.create_dom_element({
-						element_type	: "section",
-						class_name		: "content",
-						inner_html		: body,
-						parent			: fragment
-					})
-				}
+				// if (body && body.length>0) {
+				// 	common.create_dom_element({
+				// 		element_type	: "section",
+				// 		class_name		: "content",
+				// 		inner_html		: body,
+				// 		parent			: fragment
+				// 	})
+				// }
 
 
 			resolve(fragment)

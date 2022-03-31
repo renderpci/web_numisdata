@@ -114,12 +114,12 @@ var research =  {
 			const body		= row.cuerpo
 
 			// title
-				common.create_dom_element({
-					element_type	: "h1",
-					class_name		: "title",
-					inner_html		: title,
-					parent			: fragment
-				})
+				// common.create_dom_element({
+				// 	element_type	: "h1",
+				// 	class_name		: "title",
+				// 	inner_html		: title,
+				// 	parent			: fragment
+				// })
 
 			// abstract
 				if (abstract && abstract.length>0) {

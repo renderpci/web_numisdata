@@ -16,9 +16,13 @@
 			<div id="main">
 				<div class="inner">
 
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
+						<div class="golden-separator"></div>
+
 					<!-- main_container -->
 						<div id="main_container" class="main_container"></div>
-					
+
 					<!-- swagger ui -->
 						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="position:absolute;width:0;height:0">
 						  <defs>
@@ -56,7 +60,7 @@
 						<div id="swagger-ui" class="swagger-ui hide"></div>
 				</div>
 			</div>
-		
+
 		<!-- Footer -->
 			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
 

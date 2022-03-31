@@ -105,9 +105,12 @@ var hoards =  {
 				eq_out		: "%",
 				parent		: form_row,
 				callback	: function(form_item) {
+					const table = self.table==='findspots' // hoards | findspots
+						? 'findspots'
+						: 'hoards'
 					self.form.activate_autocomplete({
 						form_item	: form_item,
-						table		: 'hoards'
+						table		: table
 					})
 				}
 			})
@@ -123,9 +126,12 @@ var hoards =  {
 				eq_out		: "%",
 				parent		: form_row,
 				callback	: function(form_item) {
+					const table = self.table==='findspots' // hoards | findspots
+						? 'findspots'
+						: 'hoards'
 					self.form.activate_autocomplete({
 						form_item	: form_item,
-						table		: 'hoards'
+						table		: table
 					})
 				}
 			})

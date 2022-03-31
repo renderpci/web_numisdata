@@ -1171,7 +1171,9 @@ var catalog = {
 
 
 		// build filter
-			const filter = self.form.build_filter()
+			const filter = self.form.build_filter({
+				form_items : form_items
+			})
 
 		// empty filter case
 			if (!filter || filter.length<1) {

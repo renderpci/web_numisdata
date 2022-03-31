@@ -261,7 +261,11 @@
 		background-image: url('../../assets/images/overlay_white.png');
 
 		#main {
-			min-height: 80vh;
+			// min-height: 74vh;
+			min-height: calc(100vh - 27.9rem);
+			@media screen and (max-width: 1280px){
+				min-height: calc(100vh - 24.9rem);
+			}
 			@media screen and (max-width: 736px){
 				//display: contents;
 			}

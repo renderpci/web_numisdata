@@ -32,7 +32,7 @@ var main_home =  {
 		// options
 			self.image_wrapper	= options.image_wrapper
 			self.form_container	= options.form_container
-			self.ar_images		= options.ar_images
+			self.ar_images		= options.ar_images || []
 
 
 		// form
@@ -261,7 +261,9 @@ var main_home =  {
 			function render_coin_image(img_arr){
 
 				const rnd_number		= Math.floor(Math.random() * ((img_arr.length) - 0)) + 0;
-				const coin_filename		= img_arr[rnd_number].url // "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
+				const coin_filename		= img_arr[rnd_number]
+					? img_arr[rnd_number].url // "rsc29_rsc170_"+img_arr[rnd_number]+".jpg"
+					: ''
 				const coin_url			= coin_filename // Ex. '/dedalo/media/image/1.5MB/0/'+coin_filename
 				const sql_filter		= "(ref_coins_image_reverse='"+coin_url+"' OR ref_coins_image_obverse='"+coin_url+"')"
 				const request_body = {

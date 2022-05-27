@@ -1,10 +1,10 @@
 // Variables
-	@assets_path: "../../assets";
-	@fonts_path: "@{assets_path}/fonts";
-	@page_path : "../../page";
+	@assets_path: '../../assets';
+	@fonts_path: '../../assets/fonts';
+	@page_path : '../../page';
 
 // Usage library
-	@import "@{page_path}/css/library.less";
+	@import '../../page/css/library.less';
 
 
 
@@ -1747,4 +1747,9 @@
 	  @randomColor: `Math.floor(Math.random()*16777215).toString(16)`;
 	  @colorHex: e(@randomColor);
 	  @color: ~"#@{colorHex}";
+	}
+
+// leaflet overwrite
+	.leaflet-touch .leaflet-bar a {
+		line-height: 1rem;
 	}

@@ -18,7 +18,7 @@ class json_web_data {
 	*/
 	public static function get_data($request_options) {
 		#debug_log(__METHOD__." request_options ". PHP_EOL . debug_backtrace()[1]['function'] .PHP_EOL. to_string($request_options) , 'DEBUG');
-		
+
 		$start_time = microtime(1);
 
 		$request_options = clone $request_options;
@@ -34,18 +34,18 @@ class json_web_data {
 		# Remove options lasn ad use as request specific var
 		$lang 	 = isset($request_options->lang) ? $request_options->lang : $options->WEB_CURRENT_LANG_CODE;
 		#unset($request_options->lang);
-		
+
 		# Remove options dedalo_get var and use as dir to url
 		$api_dir = $request_options->dedalo_get;
 		unset($request_options->dedalo_get);
 
-		# 
+		#
 		# URL . JSON URL IN SERVER SIDE
 		$url_base = $options->JSON_TRIGGER_URL . '' . $api_dir .'/';
 		$fields   = array(
 						"code"		=> $options->API_WEB_USER_CODE,
 						"db_name"	=> WEB_DB,
-						"options"	=> json_encode($request_options, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP ), // rawurlencode JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE 
+						"options"	=> json_encode($request_options, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP ), // rawurlencode JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 						);
 		$fields_pairs = array();
 		foreach ($fields as $key => $value) {
@@ -53,15 +53,15 @@ class json_web_data {
 		}
 		$fields_string = implode('&', $fields_pairs);
 		$url = $url_base . '?'. $fields_string;
-		
+
 		if(SHOW_DEBUG===true) {
 			#echo "<pre>D4 API call: $url</pre>";
 			#dump(null, ' url ++ '.to_string($url));
 		}
-		
+
 		#
 		# REQUEST CONTENT TO SERVER
-		$request_helper = 'curl';	# curl | http_post | file_get_contents 
+		$request_helper = 'curl';	# curl | http_post | file_get_contents
 		switch ($request_helper) {
 			case 'curl':
 				$dedalo_data_file 	= self::file_get_contents_curl($url_base, $fields_pairs, $fields_string);
@@ -71,17 +71,17 @@ class json_web_data {
 				$headers  			= $response['headers'];
 				$dedalo_data_file 	= $response['content'];
 					#dump($headers, ' $dedalo_data_file ++ '.to_string($url));
-				break;	
+				break;
 			case 'file_get_contents':
 			default:
 				$dedalo_data_file 	= file_get_contents($url);
 				break;
 		}
-	
+
 		#
 		# RECEIVED JSON DATA
 		$dedalo_data = json_decode( $dedalo_data_file, false, 512, JSON_UNESCAPED_UNICODE );
-			#dump($dedalo_data, ' dedalo_data ++ '.to_string($url)); die();			
+			#dump($dedalo_data, ' dedalo_data ++ '.to_string($url)); die();
 
 		if (!is_object($dedalo_data)) {
 			if (is_string($dedalo_data)) {
@@ -94,14 +94,14 @@ class json_web_data {
 				if(SHOW_DEBUG===true) {
 					$dedalo_data->debug = new stdClass();
 					$dedalo_data->debug->info = $info;
-				}				
+				}
 		}
 		#error_log( to_string($dedalo_data->debug) );
 
 		$dedalo_data->debug = isset($dedalo_data->debug) && is_object($dedalo_data->debug) ? $dedalo_data->debug : new stdClass();
 		$dedalo_data->debug->total_time = round(microtime(1)-$start_time,3);
 
-		
+
 		if(SHOW_DEBUG===true) {
 		# JS CONSOLE API RESPONSE
 		##$js  = '<script>';
@@ -144,7 +144,7 @@ class json_web_data {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	
+
 		# Session managements
 		#if (empty(session_save_path())) {
 		#	session_save_path('/tmp');
@@ -159,7 +159,7 @@ class json_web_data {
 
 		//execute post
 		$result = curl_exec($ch);
-	
+
 		//close connection
 		curl_close($ch);
 

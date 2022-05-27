@@ -24,7 +24,7 @@
 					<!-- Result -->
 						<section class="result">
 							<div id="row_detail"> <span>Loading row..</span> </div>
-							<div id="map_container" class="map_container hide_opacity map"></div>
+							<div id="map_container" class="map_container hide_opacity hide map"></div>
 							<div id="types"></div>
 							<div id="export_data" class="export_data_container"></div>
 						</section>
@@ -42,7 +42,8 @@ dom_ready(function(){
 	mint.set_up({
 		section_id				: '<?php echo $section_id ?>',
 		export_data_container	: document.getElementById('export_data'),
-		row_detail				: document.getElementById('row_detail')
+		row_detail				: document.getElementById('row_detail'),
+		map_container			: document.getElementById('map_container')
 	})
 })
 </script>

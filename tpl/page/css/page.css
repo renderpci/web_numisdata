@@ -25,7 +25,7 @@ form {
   position: relative;
 }
 span.form_input_label {
-  opacity: 0;
+  display: none;
 }
 input.form-control:not(:placeholder-shown) {
   border-bottom: 2px solid #be875a;
@@ -1902,5 +1902,8 @@ input[type=button].btn.button_contact.unactive {
   .print_hide {
     display: none !important;
   }
+}
+.leaflet-touch .leaflet-bar a {
+  line-height: 1rem;
 }
 /*# sourceMappingURL=page.css.map */

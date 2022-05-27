@@ -21,5 +21,3 @@
 
 	// body images fix url paths
 		$body = str_replace('../../../media', __WEB_BASE_URL__ . '/dedalo/media', $body);
-
-

@@ -1,0 +1,205 @@
+// PAGINATION
+
+@color_hover : #0e71b4; // #a98542; //
+
+
+// pagination
+	.pagination {
+		// background-color: #69E5BB;
+		display: flex;
+		flex-wrap: wrap;
+
+		// .paginator_wrapper {
+		// 	flex-wrap: wrap;
+		// 	width: 100%;
+		// 	position: relative;
+			
+		// 	>* {
+		// 		font-family: "Source Sans Pro", Helvetica, sans-serif;
+		// 	}
+
+		// 	.previous:before, .next:before {
+		// 		margin: 0;
+		// 	}
+
+			
+		// 	.first:before {
+		// 		font-family: FontAwesome;
+		// 		content: '\f104 \f104';
+		// 	}
+
+		// 	.last:before {
+		// 		font-family: FontAwesome;
+		// 		content: '\f105 \f105';
+		// 	}
+			
+		// 	>.navigator {
+		// 		text-decoration: none;
+		// 		padding: 0 1.75rem;
+		// 	}
+
+		// 	.total_records_info {
+		// 		font-family: unset;
+		// 		position: absolute;
+		// 		right: 0;
+		// 		line-height: 3rem;
+		// 		padding-left: 1em;
+
+		// 		@media screen and (max-width: 480px) {
+		// 			position: relative;
+		// 		}
+		// 	}
+		// }
+		>* {
+			flex: 2;
+		}
+
+
+		>.navigator {
+			display: -moz-inline-flex;
+			display: -webkit-inline-flex;
+			display: -ms-inline-flex;
+			display: inline-flex;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			cursor: default;
+			list-style: none;
+			margin: 0 0 2rem 2px;
+			padding: 0;
+
+			a, span, li {
+				-moz-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+				-webkit-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+				-ms-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+				transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+				// border: solid 2px #eeeeee;
+				border: solid 1px #cecbcb;
+				// outline: solid 1px #cecbcb;
+				display: inline-block;
+				//font-family: "Source Sans Pro", Helvetica, sans-serif;
+				// .font_sans;
+				font-size: 0.8rem;
+				font-weight: 900;
+				height: 3rem;
+				letter-spacing: 0.075em;
+				line-height: calc(3rem - 4px);
+				// margin-left: -2px;
+				min-width: 3rem;
+				position: relative;
+				text-align: center;
+				text-decoration: none;
+				text-transform: uppercase;
+				
+
+				@media screen and (max-width: 980px) {
+					font-size: 0.9rem;
+				}
+			}
+
+			a, li {
+				color: #212931 !important;
+				&:hover {
+					color: @color_hover !important;
+					border-color: @color_hover;
+					z-index: 1;
+				}
+			}
+			a:hover + a, a:hover + span {
+				border-left-color: @color_hover;
+			}
+
+			a.selected {
+				background-color: #eeeeee;
+
+				@media screen and (max-width: 625px) {
+					display: inline;
+				}
+			}
+
+			a, li {
+				&.unactive {
+					opacity: 0.5;
+					cursor: default;
+					pointer-events: none;
+				}					
+			}
+
+			span {
+				color: #eeeeee;
+			}
+
+			.next, .previous {
+				text-decoration: none;
+				padding: 0 1.75rem;
+
+				
+				@media screen and (max-width: 980px) {
+					font-size: 0;
+					padding:0;
+				}
+				
+			}
+
+			.page {
+
+				@media screen and (max-width: 625px) {
+					display: none;
+				}
+
+				@media screen and (max-width: 736px) {
+					width: 5vw;
+					min-width: auto;
+				}
+			}
+				
+			.next:after, .previous:before {
+				-moz-osx-font-smoothing: grayscale;
+				-webkit-font-smoothing: antialiased;
+				font-family: FontAwesome;
+				font-style: normal;
+				font-weight: normal;
+				text-transform: none !important;
+				display: inline !important;
+				color: inherit !important;
+
+				@media screen and (max-width: 980px) {
+					font-size: 2vw;
+				}
+
+			}
+
+			.previous:before {
+				content: '\f104';
+				margin-right: 0.9375em;
+
+				@media screen and (max-width: 980px) {
+					margin-right: 0;
+				}
+			}
+
+			.next:after {
+				content: '\f105';
+				// float: right;
+				margin-left: 0.9375em;
+
+				@media screen and (max-width: 980px) {
+					margin-left: 0;
+				}
+			}
+		}//end .navigator
+
+		>.spacer {
+			// background-color: #DF7465;
+			flex: 1 1;
+		}
+
+
+		>.totals {
+			// background-color: #E1D849;
+			text-align: right;
+			padding: 0.25em;
+		}//end .totals
+
+	}//end .pagination

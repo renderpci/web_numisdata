@@ -1,0 +1,136 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@path_page: "../../page"; ;
+
+// Usage library
+	// @import "@{path_page}/css/library.less";
+
+
+#wrapper {
+	//background-color: #333333;
+}
+
+#header {
+	.logo_big {
+		margin-bottom: -2em !important;
+		img{
+			height: 10em !important;
+		}
+	}
+}
+
+#main {
+	//background-color: #ffffff;
+	padding-top: 2.5em;
+	padding-bottom: 2em;
+	//border-radius: 8px;
+	margin-bottom: 1em;
+	h1 {
+		text-align: center;
+		//border-bottom: 1px solid #f0bf6f;
+	}
+}
+
+#form_container{
+	@media (max-width: 736px) {
+		grid-column-start: 1;
+		grid-column-end: 3;
+
+	}
+}
+
+#form_container {
+	min-height: 117px;
+}
+
+
+#search_form{
+	display: flex;
+	padding-top: 1em;
+
+	>* {
+		height: 3em;
+		// background-color: #f0bf6f;
+		// margin: 0;
+	}
+
+	.form-row {
+		width: 80%;
+	}
+
+	.form-group.field.button_submit {
+		margin-top: 0.75em;
+		margin-left: 2em;
+	}
+
+}
+
+.mint_form {
+	flex: 1 !important;
+	padding-right: 0 !important;
+}
+
+#main > .inner {
+	padding-bottom: 0 !important;
+	display: grid;
+	grid-gap: 1em;
+	grid-template-columns: repeat(2, 1fr);
+	// grid-template-rows: repeat(2, auto);
+	width: 100%;
+	margin-top: 2rem;
+
+	@media screen and (max-width: 736px) {
+		display: block;
+	}
+
+	.img-wrapper {
+		position: relative;
+		display: block;
+		width: 100%;
+		//margin-top: 2em;
+		margin:auto;
+		grid-row-start:1;
+		grid-row-end: 5;
+		border-bottom: none;
+		min-height: 608px;
+		@media screen and (max-width: 736px) {
+			min-height: 20rem;
+		}
+
+		@media (max-width: 736px) {
+			width: 80%;
+			grid-row-start: 5;
+			grid-row-end: 5;
+			grid-column-start: 1;
+			grid-column-end: 3;
+
+		}
+
+		img {
+			display: block;
+			width: 90%;
+		}
+
+		.img-text{
+			text-align: center;
+			// font-weight: 600;
+			margin-right: 2.7em;
+		}
+	}
+
+	.column_right {
+		width: 100%;
+	}
+
+	p {
+		grid-row-start:3;
+		grid-row-end: 5;
+
+		@media (max-width: 736px) {
+			grid-column-start: 1;
+			grid-column-end: 3;
+
+		}
+	}
+}

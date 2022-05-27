@@ -1,0 +1,46 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
+.content {
+  padding-top: 1rem;
+}
+.main_container {
+  position: relative;
+  display: block;
+  width: 100%;
+  clear: both;
+  min-height: 10rem;
+}
+.list_container {
+  position: relative;
+  display: block;
+  width: 100%;
+  clear: both;
+}
+.editors_block {
+  margin-top: 2rem;
+}
+.editors_block > h1 {
+  font-variant: small-caps;
+  color: #b7996d;
+  letter-spacing: 0.05em;
+  font-weight: 100;
+  font-size: 2em;
+  margin-bottom: 0em;
+}
+.editors_block .editor_name {
+  margin-left: 2rem;
+}
+/*# sourceMappingURL=users.css.map */

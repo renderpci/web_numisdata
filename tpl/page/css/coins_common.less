@@ -1,0 +1,82 @@
+/**
+* COINS LIST UNIFIED STYLES
+*/
+
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+.coins_list {
+	
+	display: flex;
+	flex-wrap: wrap;
+
+	.sorted_coin:last-child  {
+		border-right: none;
+	}
+	/*.sorted_coin:nth-child(3n){
+	// .sorted_coin:last-child(3n)  {
+		border-right: none;
+	}*/
+
+	.sorted_coin {
+		width : 33.33%;
+		margin-bottom: 0.5em;
+		// margin-right: 0.5em;
+		font-size: 80%;
+		border-right: 1px solid rgb(227, 227, 227);
+		// background-color: #f6f6f6;
+		padding: 0.5em;
+		border-radius: 4px;
+
+		.uri-text a{
+			@media screen and (min-width: 1680px){
+				font-size:90%;
+			}
+			@media screen and (max-width: 976px){
+				font-size:1.4vw;
+			}
+			@media screen and (max-width: 710px){
+				font-size:1.8vw;
+			}
+			@media screen and (max-width: 590px){
+				font-size:3vw;
+			}
+		}
+
+		.images_wrapper {
+			margin-bottom: 0.5em;
+			position: relative;
+
+			img {
+				width: 50%;
+				height: 200px;
+				object-fit: contain;
+				object-position: center;
+				background-color: white;
+			}
+		}
+
+		@media screen and (max-width: 976px){
+			width: 48% !important;
+		}
+
+		@media screen and (max-width: 590px){
+			flex:inherit;
+			width: 95% !important;
+			border-right:none;
+			margin-top: 1em;
+
+		}
+
+		div {
+			//font-size: 120%;
+		}
+
+	}
+}

@@ -1,0 +1,59 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+
+// changed url
+	$changed_url = [
+		'acercade'			=> 'project',
+		'proyecto'			=> 'project',
+		'recursos'			=> 'resources',
+		'equipo'			=> 'team',
+		'contribuciones'	=> 'collaborators',
+		'tecnologia'		=> 'technology',
+		'instituciones'		=> 'institutions',
+		'metodo'			=> 'method',
+		'personas'			=> 'people',
+		'iconografia'		=> 'iconography',
+		'financiacion'		=> 'financing',
+		'indice'			=> 'toc'
+	];
+	if (isset($changed_url[$this->area_name])) {
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: ".$changed_url[$this->area_name]);
+		exit();
+	}
+?>
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+		<!-- Main -->
+			<div id="main">
+				<div class="inner">
+
+					<!-- Top container -->
+						<div id="error_content" class="top_container">
+							<h2>Sorry. Page not found: <?php echo $this->area_name ?></h2>
+							<a href="<?php echo __WEB_ROOT_WEB__ ?>"><h1><?php echo tstring('home') ?></h1></a>
+						</div>
+
+				</div>
+			</div>
+
+		<!-- Footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
+<script>
+dom_ready(function(){
+	error.set_up()
+})
+</script>

@@ -1,0 +1,1 @@
+"use strict";var error={set_up:function(r){return console.error("Content not found:",WEB_AREA),!0}};

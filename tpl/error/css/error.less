@@ -1,0 +1,38 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+
+#wrapper {
+	background-color: @color_grey_dark;
+}
+
+
+// error_content div
+	#error_content {
+		padding: 40px;
+		border-radius: 4px;
+		// background-color: @color_gold_logo;
+		// background-image: url('../../assets/images/logo_mib_marron.svg');
+		// background-size: cover;
+		// background-repeat: no-repeat;
+		min-height: 500px;
+		height: 100vh;
+		color: #ffffff;
+		padding-top: 75px;
+		margin-bottom: 7em;
+
+		a {
+			color: #ffffff;
+			padding: 40px;
+
+			&:hover {
+				color: #111111 !important;
+			}
+		}
+	}

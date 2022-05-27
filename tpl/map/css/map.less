@@ -1,0 +1,131 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+
+	#wrapper {
+		overflow-x: hidden;
+
+		#main {
+			display: block;
+		}
+	}
+
+
+
+// map
+	.map_container.map {
+		// defined in page.map_common.less
+		height: 50vh;
+		margin-bottom: 0;
+		resize: vertical;
+		overflow: hidden;
+	}
+
+
+	.full_width {
+		// width: calc(100vw - 16px);
+		// margin-left: calc(-50vw + 50% + 8px);
+		// margin-right: calc(-50vw + 50%);
+		background-color: #4fd4fd;
+	}
+
+	.map_stroke{
+		stroke-dasharray: 0.5em;
+	}
+
+// line-tittle
+	#main .inner .result .line-tittle {
+		margin-left: 0 !important;
+		font-size: 1.75em;
+		padding-top: 0.5em;
+		display: block;
+	}
+
+	.mint_line {
+		margin-bottom: -1em;
+		margin-top: 1em;
+	}
+
+
+
+
+// rows_list
+	.rows_list {
+		padding-top: 0;
+		min-height: 50vh;
+		// background-color: #a8f5ca;
+
+
+		.line-tittle {
+
+
+			span.note {
+				color: #bebebe;
+				text-transform: uppercase;
+				margin-right: unset;
+			}
+		}
+
+		.types {
+			margin-top: 2em;
+			padding-top: 2em;
+
+			&:first-of-type {
+				margin-top: 0;
+				padding-top: 1em;
+			}
+		}
+
+		.coins_wrap {
+			display: block;
+
+			.button_show_coins {
+				// background-color: #d7f0e4;
+				padding: 0.5em;
+				padding-left: 1em;
+				padding-right: 1em;
+				display: block;
+				cursor: pointer;
+
+				&:after {
+					content: " ";
+					display: inline-block;
+					width: 1em;
+					height: 1em;
+					vertical-align: text-top;
+					background-image: url(../../assets/images/icon_arrow.svg);
+					background-repeat: no-repeat;
+					background-size: contain;
+					margin-left: 0.5em;
+					margin-top: 2px;
+				}
+
+				&.opened {
+					&:after {
+						transform: rotate(180deg);
+					}
+				}
+			}
+
+			.coins_list {
+				// background-color: #eed9a8;
+				// padding-left: 2em;
+				padding: 0;
+				padding-left: 1em;
+				// border: 1px solid @color_gold_logo;
+
+				.bibliographic_reference{
+					span {
+						margin: 0;
+					}
+				}
+			}
+		}
+
+	}

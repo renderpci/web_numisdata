@@ -1,0 +1,50 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+		<!-- main -->
+			<div id="main">
+				<div class="inner">
+
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
+						<div class="golden-separator"></div>
+
+					<!-- Result -->
+						<section class="result">
+							<div id="row_detail"> <span>Loading row..</span> </div>
+							<div id="map_container" class="map_container hide_opacity map"></div>
+							<section id="rows_container" class="rows_container result rows_list"></section>
+							<?php /*<div id="export_data" class="export_data_container"></div>*/ ?>
+						</section>
+
+				</div>
+			</div>
+
+		<!-- footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
+<script>
+dom_ready(function(){
+	hoard.set_up({
+		table					: '<?php echo $table ?>',
+		section_id				: '<?php echo $section_id ?>',
+		export_data_container	: document.getElementById('export_data'),
+		row_detail_container	: document.getElementById('row_detail')
+	})
+})
+</script>

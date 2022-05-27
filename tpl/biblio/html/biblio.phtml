@@ -1,0 +1,53 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+
+		<!-- Main -->
+			<div id="main">
+				<div class="inner">
+
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
+						<div class="golden-separator"></div>
+
+						<div class="block-expandable" id="body-txt-parent">
+							<div class="info_text_block" id="body-txt"><?php echo $body ?></div>
+						</div>
+
+					<!-- Form -->
+					<section class="form">
+						<?php include($cwd.'_search.phtml') ?>
+					</section>
+
+					<!-- Result -->
+						<section class="result">
+							<div id="biblio_rows_list"> <span>Loading rows..</span> </div>
+						</section>
+
+				</div>
+			</div>
+
+
+		<!-- Footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
+<script>
+dom_ready(function(){
+	biblio.set_up()
+})
+</script>

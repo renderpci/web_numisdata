@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+
+# Project : monedaiberica.org
+# @see https://getpostcookie.com/blog/url-rewriting-for-beginners/
+
+# Activate rewrite
+	RewriteEngine on
+
+# Redirect all calls from mib.numisdata.org to monedaiberica.org
+	# RewriteCond %{HTTP_HOST} ^mib.numisdata.org [NC]
+	# RewriteRule ^(.*)$ https://monedaiberica.org/$1 [L,R=301]
+
+# RewriteBase / . Use the name of base directory like "/monedaiberica.org" for http://monedaiberica.org
+	#RewriteBase "/monedaiberica.org"
+	# Dynamic base.
+	# @see https://stackoverflow.com/questions/21062290/set-rewritebase-to-the-current-folder-path-dynamically
+	RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+	RewriteRule ^(.*)$ - [E=BASE:%1]
+
+# RewriteCond $1 !^monedaiberica.org/
+# RewriteCond $1 /*web_app
+
+# Redirect exceptions. All calls to base directory will be redirect except this special list (tpl,web_app,dedalo,web)
+	RewriteCond $1 !^tpl/
+	RewriteCond $1 !^web_app/
+	RewriteCond $1 !^dedalo/
+	#RewriteCond $1 !^web/
+
+# Redirect all but exceptions
+	RewriteRule ^(.*)$ web_app/web/$1 [NS,L]
+	#RewriteRule ^(.*)$ https://monedaiberica.org/v1/web_app/web/$1 [NS,L]
+
+</IfModule>

@@ -1,0 +1,46 @@
+// Variables
+	@assets_path: '../../assets';
+	@fonts_path: '@{assets_path}/fonts';
+	@path_page: '../../page'; ;
+
+// Usage library
+	@import '@{path_page}/css/library.less';
+
+.content {
+	padding-top: 1rem;
+}
+
+
+.main_container {
+	position: relative;
+	display: block;
+	width: 100%;
+	clear: both;
+	min-height: 10rem;
+}
+
+
+.list_container {
+	position: relative;
+	display: block;
+	width: 100%;
+	clear: both;
+}
+
+
+.editors_block {
+	margin-top: 2rem;
+
+	>h1 {
+		font-variant: small-caps;
+		color: #b7996d;
+		letter-spacing: 0.05em;
+		font-weight: 100;
+		font-size: 2em;
+		margin-bottom: 0em;
+	}
+
+	.editor_name {
+		margin-left: 2rem;
+	}
+}

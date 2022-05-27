@@ -1,0 +1,1 @@
+"use strict";var search_thematic={setup:function(t){!0===SHOW_DEBUG&&console.log("Activated search_thematic"),window.ready((function(){document.getElementById("input_search").focus()}))},go_to_term:function(t,e){var o="search_thematic/?q="+e;window.location.href=o},reset_tree:function(t){var e=document.location.origin+document.location.pathname;document.location.href=e}};

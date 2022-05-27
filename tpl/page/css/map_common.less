@@ -1,0 +1,224 @@
+/**
+* FORM
+* Common forms css across all site.
+* Use the specific template to override or add specific features
+*/
+
+// Variables
+	@assets_path: "../../assets";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+
+// map
+	.map {
+		@map_height: 75vh;
+		position: relative;
+		height: @map_height;
+		// background-color: #aad3df;
+		// border: 1px solid @color_grey_outline;
+
+		font-size: 1rem;
+		margin-bottom: 3em;
+		background-color: @blue_ocean;
+		border-top: 1px solid #dcdcdc;
+		border-bottom: 1px solid #dcdcdc;
+		transition: opacity 0.5s ease-in-out 0.5s;
+
+
+		.map_legend {
+			display: flex;
+			position: absolute;
+			left: 0;
+			bottom: -1px;
+			z-index: 999;
+			background-color: rgb(255 255 255 / 78%);
+			padding: 0.5em;
+			padding-bottom: 0.25em;
+			padding-top: 0.25em;
+			line-height: 1em;
+			border-top-right-radius: 0.25em;		
+
+			.legend_item {
+				font-size: 0.95em;
+				margin-right: 0.5em;
+
+				&:last-of-type {
+					margin-right: 0;
+				}
+				img {
+					height: 1em;
+					vertical-align: bottom;
+					margin-left: 2px;
+				}
+			}
+		}
+		
+		.leaflet-container {
+			height: 100%;
+			width: 100%;			
+			
+			>.map_container {
+				// height: @map_height;
+				height: 100%;
+			}
+
+
+			.leaflet-popup--XXXX {
+				// height: 8em;
+
+				>.leaflet-popup-content-wrapper {
+					// height: 8em;
+
+					>.leaflet-popup-content {
+						// background-color: #6ce9bc;
+						// height: 8em;
+						max-height: calc(@map_height - 8em);
+						overflow-y: auto;
+
+						>.popup_wrapper {
+							position: relative;
+							// background-color: #e6ce69;
+							// height: 8em;
+							display: grid;
+							grid-template-columns: 1fr 1fr;	
+							grid-gap: 0.25em;
+							z-index: 9999999;
+
+
+							// content divs
+							>div.popup_item {
+								position: relative;
+								// background-color: #e8e974;
+								display: grid;
+								// grid-template-rows: 1fr auto;
+								justify-items: center;
+								align-items: start;
+								align-content: start;							
+								text-align: center;
+								width: 12em;
+								margin: 0;
+								// margin-top: 0.5em;
+								margin-bottom: 0.5em;
+
+								>div.image_wrapper {								
+									height: 7.5em;
+									cursor: pointer;
+									&:active {
+										opacity: 0.5;
+									}
+									
+									>img {
+										display: block;
+										width: 100%;
+										height: 100%;									
+										object-fit: contain;
+										opacity: 0;
+										transition: opacity 0.5s linear;							 	
+
+										&.loaded {
+											opacity: 1;
+										}
+									}
+								}
+								>div.text_title {
+									display: block;								
+									position: relative;
+									height: 100%;
+									min-height: 56px;
+									width: 100%;
+									// place-self: center stretch;
+									padding: 0.5em;
+									font-size: 15px;
+									cursor: default;
+								}
+							}
+
+
+
+							.more_node {
+								margin-top: 0.5em;
+							}
+						}
+					}
+				}
+			}
+
+			.map_popup {
+				// background-color: #e6b1e4;
+			}
+
+			.mycluster {
+				// background-color: #ffdf73;
+				// text-align: center;
+				// padding: 1em;
+				// border-radius: 20px;
+				// color: black;
+				// font-weight: 600;
+				// box-shadow: 3px 6px 6px 0px #ababab;
+
+				background-color: #fefefe96;
+				text-align: center;
+				padding: 1em;
+				border-radius: 20px;
+				color: black;
+				font-weight: 600;
+				box-shadow: 3px 3px 2px 0px #ababab;
+				backdrop-filter: blur(10px);
+			}
+
+		}
+	}
+
+
+
+// map_container
+	.map_container.leaflet-container {
+
+
+
+		// leaflet overwrite
+			// .leaflet-default-icon-path {
+			// 	background-image: url(@{assets_path}/images/marker-icon.png);
+			// }
+			.leaflet-control-layers-toggle {
+				background-image: url("@{assets_path}/images/map/layers.png");
+				width: 36px;
+				height: 36px;
+			}
+			.leaflet-retina .leaflet-control-layers-toggle {
+				background-image: url("@{assets_path}/images/map/layers-2x.png");
+				background-size: 26px 26px;
+			}
+	}
+
+
+
+// popup_item (map)
+	.popup_item {
+
+		>.text_title {
+			font-size: 1.15em;
+			padding-bottom: 0.5em;
+			font-weight: 500;
+		}
+
+		>.text_description {
+			max-height: 14em;
+			overflow-y: auto;
+			padding-right: 0.5em;
+		}
+
+		.note {
+			display: block;
+			color: #aeaeae;
+			font-weight: 300;
+			text-transform: uppercase;
+			letter-spacing: 3px;
+		}
+	}
+
+	

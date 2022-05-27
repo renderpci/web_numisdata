@@ -1,0 +1,202 @@
+///
+/// Phantom by HTML5 UP
+/// html5up.net | @ajlkn
+/// Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+///
+
+/* Footer */
+
+	#footer {
+		$gutter: _size(gutter);
+
+		@include padding(5em, 0, (0, 0, 3em, 0));
+		background-color: _palette(bg-alt);
+		// background-image: url('../../assets/images/overlay.png');
+		// color: #ffffff !important;
+
+		>.inner {
+			@include vendor('display', 'flex');
+			@include vendor('flex-wrap', 'wrap');
+			@include vendor('flex-direction', 'row');
+
+			padding: 0 !important;
+			max-width: initial !important;
+
+			> * > :last-child {
+				margin-bottom: 0;
+			}
+
+			section:nth-child(1) {
+				width: calc(66% - #{$gutter});
+				margin-right: $gutter;
+			}
+
+			section:nth-child(2) {
+				width: calc(33% - #{$gutter});
+				margin-left: $gutter;
+			}
+
+			.logos {
+				display: flex;
+				width: 100%;
+				list-style: none;
+				//background-color: #9FEB88;
+				height: 6em;
+				margin: 0;
+				padding: 0;
+				padding-left: 2em;
+				padding-right: 2em;
+				
+
+				>li {
+					//flex: 1 1 33%;
+					//background-color: #F0A66C;
+					position: relative;
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: center;
+					padding: 0;
+					flex: 1 1 25%;
+					margin: 0.5em;
+					
+					&.uni_val_hist {
+						background-image: url('../../assets/images/uni_val_hist.png');						
+					}
+					&.ministerio {
+						background-image: url('../../assets/images/logo_mciu.jpg');
+					}
+					&.mupreva {
+						background-image: url('../../assets/images/LogoMuseoNegroValencia.png');
+						//background-position-x: 73%;
+						flex: 1 1 12.5%;
+					}
+					&.render {
+						background-image: url('../../assets/images/logo_render_bn.png');
+						flex: 1 1 12.5%;
+					}
+
+					>a {
+						position: absolute;
+						width: 100%;
+						height: 100%;
+						background-color: #ffffff;
+						opacity: 0;
+						border: none;
+					}
+				}				
+				
+			}
+
+			.copyright {
+				width: 100%;
+				padding: 0;
+				margin-top: 5em;
+				list-style: none;
+				font-size: 0.8em;
+				color: transparentize(_palette(fg), 0.5);
+
+				display: flex;
+    			justify-content: center;
+
+				a {
+					color: inherit;
+
+					&:hover {
+						color: #ffffff !important;
+					}
+				}
+
+				li {
+					display: inline-block;
+					border-left: solid 1px transparentize(_palette(fg), 0.85);
+					line-height: 1;
+					padding: 0 0 0 1em;
+					margin: 0 0 0 1em;
+
+					&:first-child {
+						border-left: 0;
+						padding-left: 0;
+						margin-left: 0;
+					}
+				}
+			}
+		}
+
+		@include breakpoint('<=large') {
+			$gutter: _size(gutter) * 0.5;
+
+			@include padding(5em, 0);
+
+			> .inner {
+				section:nth-child(1) {
+					width: calc(66% - #{$gutter});
+					margin-right: $gutter;
+				}
+
+				section:nth-child(2) {
+					width: calc(33% - #{$gutter});
+					margin-left: $gutter;
+				}
+			}
+		}
+
+		@include breakpoint('<=medium') {
+			$gutter: _size(gutter);
+
+			> .inner {
+				section:nth-child(1) {
+					width: 66%;
+					margin-right: 0;
+				}
+
+				section:nth-child(2) {
+					width: calc(33% - #{$gutter});
+					margin-left: $gutter;
+				}
+			}
+		}
+
+		@include breakpoint('<=small') {
+			@include padding(3em, 0);
+
+			> .inner {
+				@include vendor('flex-direction', 'column');
+
+				section:nth-child(1) {
+					width: 100%;
+					margin-right: 0;
+					margin: 3em 0 0 0;
+				}
+
+				section:nth-child(2) {
+					@include vendor('order', '-1');
+					width: 100%;
+					margin-left: 0;
+				}
+
+				.copyright {
+					margin-top: 3em;
+				}
+			}
+		}
+
+		@include breakpoint('<=xsmall') {
+			> .inner {
+				.copyright {
+					margin-top: 3em;
+
+					li {
+						border-left: 0;
+						padding-left: 0;
+						margin: 0.75em 0 0 0;
+						display: block;
+						line-height: inherit;
+
+						&:first-child {
+							margin-top: 0;
+						}
+					}
+				}
+			}
+		}
+	}

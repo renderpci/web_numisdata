@@ -1,0 +1,195 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
+#rows_list {
+  min-height: 14em;
+  position: relative;
+}
+#rows_list.list {
+  height: 50vh;
+  min-height: 640px;
+  border: 1px solid green;
+  background-color: #dae8dc;
+}
+#rows_list.map {
+  height: 50vh;
+  min-height: 640px;
+  border: 1px solid red;
+  background-color: #eeeeee;
+}
+#rows_list.timeline {
+  height: 50vh;
+  min-height: 640px;
+  border: 1px solid orange;
+}
+.tree_wrapper {
+  width: 100%;
+  padding: 2em;
+  padding-left: 0;
+  padding-right: 0;
+}
+.tree_wrapper .tree_node {
+  margin-left: 1.65em;
+}
+@media screen and (max-width: 625px) {
+  .tree_wrapper .tree_node {
+    margin-left: 0.5rem;
+  }
+}
+.tree_wrapper .tree_node > span {
+  vertical-align: text-bottom;
+  font-size: 1.15em;
+  line-height: 1em;
+  height: 1em;
+  display: inline-block;
+  user-select: none;
+  margin-right: 0.25em;
+}
+.tree_wrapper .tree_node > .term {
+  letter-spacing: 0.015em;
+  font-weight: 400;
+  height: unset;
+}
+.tree_wrapper .tree_node > .term.hilite {
+  background-color: #b7996d;
+  border-radius: 0.15em;
+  padding: 0.15em;
+  padding-left: 0.35em;
+  padding-right: 0.35em;
+  vertical-align: text-top;
+  height: 1.8em;
+  line-height: 100%;
+  color: white;
+  padding-top: 0.26em;
+}
+.tree_wrapper .tree_node > .term.hilite a:before {
+  background-image: url('../../assets/images/icon_link_white.svg');
+}
+.tree_wrapper .tree_node > .term small {
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: unset;
+  color: #c0c0c0;
+}
+.tree_wrapper .tree_node a.icon_link {
+  margin-left: 0.5rem;
+  margin-right: 0.33rem;
+}
+.tree_wrapper .tree_node img.illustration {
+  background-color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  height: 2rem;
+  margin-left: 0.333rem;
+  transition: transform 0.3s ease-out;
+  vertical-align: middle;
+  border-radius: 4px;
+}
+@media screen and (max-width: 625px) {
+  .tree_wrapper .tree_node img.illustration {
+    height: 1.5rem;
+  }
+}
+.tree_wrapper .tree_node img.illustration.big {
+  transform: scale(10);
+  z-index: 9999;
+}
+.tree_wrapper .tree_node > .nd {
+  font-size: 0.8em;
+  color: #9d9d9d;
+}
+.tree_wrapper .tree_node > .btn_scope_note {
+  background-image: url('../../assets/images/icon_info.svg');
+  background-repeat: no-repeat;
+  background-size: 76%;
+  background-position: center center;
+  width: 1em;
+  cursor: pointer;
+}
+.tree_wrapper .tree_node > .btn_scope_note:active {
+  opacity: 0.5;
+}
+.tree_wrapper .tree_node > .btn_scope_note.open {
+  opacity: 0.5;
+}
+.tree_wrapper .tree_node > .btn_relations {
+  background-image: url('../../assets/images/icon_eye_color.svg');
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  width: 1em;
+  cursor: pointer;
+}
+.tree_wrapper .tree_node > .btn_relations:active {
+  opacity: 0.5;
+}
+.tree_wrapper .tree_node > .btn_relations.open {
+  transform: rotate(180deg);
+}
+.tree_wrapper .tree_node > .arrow {
+  background-image: url('../../assets/images/arrow-right.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 1em;
+  cursor: pointer;
+}
+.tree_wrapper .tree_node > .arrow:active {
+  opacity: 0.5;
+}
+.tree_wrapper .tree_node > .arrow.open {
+  transform: rotate(90deg);
+}
+.tree_wrapper .tree_node > .scope_note {
+  background-color: #b7996d;
+  padding: 0.75em;
+  line-height: 1.4em;
+  color: #ffffff;
+  border-radius: 3px;
+  width: fit-content;
+}
+.tree_wrapper .tree_node > .scope_note * {
+  color: inherit;
+}
+.tree_wrapper .tree_node > .scope_note br + br {
+  display: none;
+}
+.tree_wrapper .tree_node > .branch {
+  display: block;
+}
+.tree_wrapper > .tree_node {
+  margin-left: 0;
+}
+.tree_wrapper > .tree_node > .term {
+  font-weight: 600 !important;
+}
+canvas {
+  display: none;
+}
+.truncate {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.line_value > span.value_label {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 94%;
+  display: inline-block;
+}
+/*# sourceMappingURL=thesaurus.css.map */

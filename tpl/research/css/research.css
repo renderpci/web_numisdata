@@ -1,0 +1,151 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
+h3 {
+  font-size: 1.1em;
+  letter-spacing: 2px;
+}
+.main_container .abstract {
+  margin-top: 2em;
+}
+.main_container code {
+  border: none;
+}
+input[type=button].btn.entrada_dedalo {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin-top: 3em;
+  margin-bottom: 2em;
+  margin-left: 1em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f78a1c;
+  position: relative;
+  height: 3em;
+  background-image: url(../../assets/images/logo_dedalo_white.svg);
+  background-repeat: no-repeat;
+  background-size: 1.6em;
+  background-position: 0.75em center;
+  padding-left: 3em;
+  padding-right: 1em;
+  margin-bottom: 6em;
+  margin-top: 5em;
+}
+input[type=button].btn.entrada_dedalo:hover {
+  background-color: #e27608;
+}
+.box_with_left_line {
+  overflow-wrap: break-word;
+  word-break: break-all;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-left: 3px solid #b7996d;
+  color: #666;
+  page-break-inside: avoid;
+  font-family: monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 1.6em;
+  max-width: 100%;
+  overflow: auto;
+  padding: 1em 1.5em;
+  display: block;
+  word-wrap: break-word;
+}
+.content pre {
+  overflow-wrap: break-word;
+  word-break: break-all;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-left: 3px solid #b7996d;
+  color: #666;
+  page-break-inside: avoid;
+  font-family: monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 1.6em;
+  max-width: 100%;
+  overflow: auto;
+  padding: 1em 1.5em;
+  display: block;
+  word-wrap: break-word;
+  margin-top: 0.5em;
+}
+.content .codepen_image {
+  margin-top: 0.5em;
+}
+.content .hljs {
+  background: #f4f4f4;
+}
+#swagger-ui {
+  overflow-wrap: break-word;
+  word-break: break-all;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-left: 3px solid #b7996d;
+  color: #666;
+  page-break-inside: avoid;
+  font-family: monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 1.6em;
+  max-width: 100%;
+  overflow: auto;
+  padding: 1em 1.5em;
+  display: block;
+  word-wrap: break-word;
+  margin-top: 4em;
+}
+#swagger-ui .swagger-ui .btn {
+  line-height: 1em;
+  height: 3em;
+  letter-spacing: 2px;
+}
+#swagger-ui .wrapper {
+  background-color: inherit;
+}
+#swagger-ui .swagger-ui .scheme-container {
+  background-color: unset;
+  box-shadow: unset;
+}
+#swagger-ui .swagger-ui .expand-methods,
+#swagger-ui .swagger-ui .expand-operation {
+  line-height: 1em;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  height: 1.8em;
+}
+#swagger-ui .swagger-ui .opblock-tag {
+  margin: 0 0 15px;
+  padding-right: 5px;
+}
+#swagger-ui .swagger-ui .info .title small {
+  font-size: 12px;
+  letter-spacing: 5px;
+}
+#swagger-ui .swagger-ui .parameters-col_description input[type=text] {
+  height: 2em;
+  font-size: 1.2em;
+}
+#swagger-ui .swagger-ui .btn.execute {
+  color: #ffffff !important;
+}
+#swagger-ui h2.title {
+  font-size: 3.2em;
+  letter-spacing: 1px;
+}
+/*# sourceMappingURL=research.css.map */

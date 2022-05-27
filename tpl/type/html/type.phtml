@@ -1,0 +1,47 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Curent controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+
+		<!-- main -->
+			<div id="main">
+				<div class="inner">
+
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
+						<div class="golden-separator"></div>
+
+					<!-- Result -->
+						<section class="result">
+							<div id="row_detail"></div>
+							<div id="export_data" class="export_data_container"></div>
+						</section>
+				</div>
+			</div>
+
+
+		<!-- footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
+<script>
+dom_ready(function(){
+	type.set_up({
+		section_id				: '<?php echo $section_id ?>',
+		export_data_container	: document.getElementById('export_data')
+	})
+})
+</script>

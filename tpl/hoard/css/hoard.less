@@ -1,0 +1,104 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+.result {
+
+	a.section_id {
+		float: right;
+	}
+
+	>div {
+		margin-bottom: 2em;
+		// background-color: #fffc9f;
+	}
+
+	// mint row detail
+	#row_detail {
+		label {
+			margin: 0;
+		}
+
+		.line-tittle-wrap {
+			.info_value {
+				display:inline-block;
+				margin-left: 0.5em;
+			}
+			.authorship{
+				margin-left: 0.7em;
+				font-size: 0.8em;
+				letter-spacing: 1px;
+			}
+		}
+		.info_text_block{
+			display: block;
+			padding-bottom: 0.5rem !important;
+			padding-top: 0.5rem !important;
+
+  			br{
+				display: block;
+				margin: 1.2em 0;
+				content: " ";
+			}
+		}
+		.icon_link {
+			display: block;
+			margin-top: 0.5rem;
+			&:before {
+				margin-right: 0.5rem;
+			}
+		}
+	}
+
+	// map
+	.map_container {
+		// height: 60vh;
+		// font-size: 1rem;
+		// margin-bottom: 3em;
+		// background-color: @blue_ocean;
+		// border-top: 1px solid #dcdcdc;
+		// border-bottom: 1px solid #dcdcdc;
+		// transition: opacity 0.5s ease-in-out 0.5s;
+
+		// wide
+		// width: 100vw;
+		// margin-left: calc(-50vw + 50%);
+		// margin-right: calc(-50vw + 50%);
+	}
+
+	// mint types list
+	#types {
+		// background-color: #3d3d3d;
+		padding: 1em;
+		// color: white;
+		border-radius: 0.25em;
+		margin-top: 1em;
+		border-radius: 0.25em;
+		border: 1px solid #cccccc;
+
+		>.type_row {
+			display: table;
+			width: 100%;
+			border-bottom: 1px solid #ccc;
+			padding-bottom: 0.5em;
+			margin-bottom: 0.5em;
+
+			>span {
+				padding-right: 1em;
+			}
+			.equivalents {
+				display: block;
+			}
+		}
+	}
+
+	.rows_list {
+		min-height: 10rem;
+	}
+
+}

@@ -1,0 +1,396 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+
+.result {
+	min-height: 50vh;
+	display: block;
+	margin-top: 4em;
+
+	&:after {
+		content: " ";
+		display: block;
+		clear: both;
+	}
+
+	a.section_id {
+		float: right;
+	}
+
+
+	// row detail
+	#row_detail {
+		margin-bottom: 2em;
+		width: 100%;
+		display: inline-block;
+
+		a.underline-text{
+			margin-top:-0.1em;
+		}
+
+		.row_wrapper {
+			display: flex;
+			flex-wrap: wrap;
+			flex-flow: column;
+
+			@media screen and (min-width: 960px){
+				flex-flow: row;
+			}
+		}
+
+		.identify_images_wrapper {
+			//float: left;
+			//display: grid;
+			//padding-right: 3em;
+			//margin-right: 1em;
+			width: 100%;
+			flex-flow: row;
+			display: flex;
+			@media screen and (min-width: 960px){
+				flex-flow: column;
+				width: 30%;
+			}
+			//border-right: 1px solid #cccccc;
+
+			>a.image_link {
+
+				height: auto;
+				text-align: center;
+
+				>img {
+					// height: calc(50vh - 12em);
+					height: 12em;
+					//display: block;
+					margin: 1em;
+					margin-top: 0;
+					margin-right: 0;
+					object-fit: contain;
+					background-position: center;
+					@media screen and (max-width: 960px){
+						width: 100%;
+					}
+				}
+
+
+			}
+
+			@media screen and (max-width: 736px){
+				float:inherit;
+				display:flex;
+			}
+		}
+
+		.info_container {
+			grid-template-columns: 25% auto;
+			display: grid;
+			width: 70%;
+			grid-column-gap: 1em;
+			// grid-row-gap: 0.2em;
+
+
+			@media screen and (max-width: 960px){
+				width: 100%;
+				grid-template-columns: 100%;
+			}
+
+			.left-labels {
+				// width: 35%;
+				text-align: right;
+				grid-column: 1;
+				margin: 0;
+				font-size: unset;
+				@media screen and (max-width: 960px){
+					text-align: left;
+				}
+			}
+
+			.rigth-values {
+				// width: 65%;
+				text-align: left;
+				grid-column: 2;
+				@media screen and (max-width: 960px){
+					grid-column: 1;
+				}
+				border-bottom: none;
+				// margin-left: 0.5em;
+			}
+
+			.sub-label{
+				font-weight: normal;
+				color: #585858;
+				// padding-right: 1em;
+			}
+			.icon_link {
+				 margin: 0;
+				 border-bottom: none;
+			}
+			.type_label{
+				border-bottom: none;
+			}
+			.equivalents{
+				font-size: 0.8em;
+			}
+
+		}
+
+		.block_wrapper {
+			@_height : 1.2em;
+			display: flex;
+			//flex-wrap: wrap;
+			flex-flow: row;
+			// margin: 0.3em 0;
+			// background-color: #a9fed5;
+
+			a{
+				border-bottom:none;
+				text-decoration-line: underline;
+				text-decoration-style: dotted;
+				text-decoration-thickness: 1px;
+			}
+
+			&.block {
+				display: grid;
+				// width: 100%;
+			}
+
+			&:after {
+				content: " ";
+				clear: both;
+			}
+
+			>label {
+				display: block;
+				width: 100%;
+				padding: 0.25em;
+				padding: 0.5em;
+				line-height: 1em;
+				margin: 0;
+				font-size: 1em;
+				font-weight: normal;
+				opacity: 0.5;
+				margin-left: 0.25em;
+				// &:after {
+				// 	content: ":";
+				// }
+			}
+
+			.labels-group {
+				width: 35%;
+				display: flex;
+				flex-flow: row;
+				justify-content: flex-end;
+				// margin-bottom: 1em;
+
+				@media screen and (max-width: 736px){
+					flex-flow: column;
+
+					.separator{
+						display: none;
+					}
+				}
+
+				.left-labels{
+					width: auto;
+					color: #585858;
+					font-weight: normal;
+					opacity: 0.5;
+					font-size: 1em;
+					margin-bottom: 0;
+				}
+			}
+
+			.values-group {
+				width: 65%;
+				display: flex;
+				flex-flow: row;
+				// margin-bottom: 1em;
+
+				@media screen and (max-width: 736px){
+					flex-flow: column;
+
+					.separator{
+						display: none;
+					}
+				}
+				.rigth-values{
+					width: auto;
+					margin-bottom: 0;
+				}
+			}
+
+			.vertical-group {
+				width: 65%;
+				display: flex;
+				flex-flow: column;
+
+				.sub-vertical-group{
+					width: 100%;
+					margin-bottom: 0.5em;
+				}
+			}
+
+			.group {
+				display: flex;
+				flex-wrap: wrap;
+				// background-color: #fcdbec;
+				margin: 0.5em;
+				margin-left: 0;
+
+				&.id {
+					width: 100%;
+					font-size: 1.5em;
+					padding-left: 0;
+					margin: 0;
+					margin-bottom: 0.25em;
+
+					label{
+						color:#b7996d;
+					}
+				}
+
+				>label, >span {
+					padding: 0.25em;
+					line-height: 1em;
+					margin: 0;
+					font-size: 1em;
+					height: @_height;
+				}
+
+				&.former_collection {
+					// &:before {
+					// 	content: "(";
+					// 	display: inline-block;
+					// 	line-height: 1.5em;
+					// }
+					// &:after {
+					// 	content: ")";
+					// 	display: inline-block;
+					// 	line-height: 1.5em;
+					// }
+				}
+
+				label {
+					// background-color: #fdfbad;
+					color: #585858;
+					font-weight: normal;
+					//opacity: 0.5;
+					// &:after {
+					// 	content: ":";
+					// }
+				}
+
+				&.bibliography {
+					// background-color: #fbcd99;
+					display: block;
+					line-height: @_height;
+					// padding-left: 0.25em;
+
+					.bibliographic_reference {
+						padding-left: 0.5em;
+					}
+				}
+			}
+
+
+			.value {
+				// background-color: #fcc1b3;
+
+				img {
+					height: @_height;
+					vertical-align: middle;
+				}
+			}
+		}
+	}
+
+
+	// mint types list
+	#types {
+		// background-color: #3d3d3d;
+		padding: 1em;
+		// color: white;
+		border-radius: 0.25em;
+		margin-top: 1em;
+		border-radius: 0.25em;
+		border: 1px solid #cccccc;
+
+		>.type_row {
+			display: table;
+			width: 100%;
+			border-bottom: 1px solid #ccc;
+			padding-bottom: 0.5em;
+			margin-bottom: 0.5em;
+
+			>span {
+				padding-right: 1em;
+			}
+			.equivalents {
+				display: block;
+			}
+		}
+	}
+
+
+}
+
+// print specifics
+@media print {
+	form, nav {
+		display: none !important;
+	}
+	#header {
+		padding: 0 !important;
+	}
+
+	#footer, #header, #export_data {
+		display: none;
+		
+	}
+
+	#wrapper {
+		font-size: 80%;
+		color: black !important;
+	}
+
+	a {
+		color: black !important;
+	}
+
+	.term {
+		color: black !important;
+	}
+
+	.coins_images {
+		width: 10vw;
+	}
+
+	.type_container {
+		display: inline-grid !important;
+		grid-template-columns: auto 40% !important;
+		grid-template-rows: auto auto !important;
+		margin-bottom: 0.5em;
+		margin-top: 0.5em;
+	}
+
+	@page {
+		size: 1200px 1692px;
+	}
+
+	.inner {
+		max-width: 100% !important;
+
+		.row_wrapper{
+			flex-flow: row !important;
+
+			.identify_images_wrapper{
+				flex-flow: column !important;
+			}
+		}
+	}
+}

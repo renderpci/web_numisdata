@@ -1,0 +1,184 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@page_path : "../../page";
+
+// Usage library
+	@import "@{page_path}/css/library.less";
+
+
+
+// search_form
+	// form {
+		
+	// 	.form-group.field_operators {
+	// 		float: right;
+	// 		// background-color: #e1c96e;
+	// 		text-align: right;
+	// 		margin-right: -2.5em;
+	// 	}
+	// }
+
+
+
+// result
+	.result {
+
+		.image {
+			height: 6em;
+
+			@media screen and (max-width: 736px){
+				height: 8em;
+			}
+
+		}
+	}
+
+	.rows_container {
+
+		margin-bottom:2em;
+
+		.icon_link {
+			margin-left: 0.4em;
+		}
+		.icon_link_after{
+			margin-left: unset;
+			&:after {
+				margin-left: 0.4em;
+			}
+		}
+
+		.type_row{
+			display: flex;
+			margin-right: 1em;
+
+		}
+		.type_wrapper{
+			border-bottom: 1px solid #000;
+			font-weight: 300;
+			font-variant: small-caps;
+			font-size: 1.2em;
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.mint {
+			padding-right: 1em;
+		}
+		.mint_label{
+			border-bottom: none;
+			color: inherit;
+		}
+
+		.type_label {
+			font-size: 80%;
+			align-self: end;
+		}
+
+		.row_wrapper {
+			border-bottom: 1px solid #ddd;
+			margin-bottom: 1em;
+			padding-top: 1em;
+			display: flex;
+			align-content: space-between;
+			margin-left: 3em;
+
+			@media screen and (max-width: 625px){
+				flex-direction: column-reverse;
+			}
+
+
+			.legend_box {
+				height: 1em;
+				font-size: 100% !important;
+
+				img {
+					top: 0.2em;
+				}
+			}
+
+			.info_container {
+				flex-grow:1;
+
+				@media screen and (max-width: 736px){
+					width: 100%;
+				}
+
+			}
+
+			.img_container {
+				text-align: right;
+				flex-direction: row;
+
+				@media screen and (max-width: 736px){
+					width: 100%;
+					text-align: left;
+				}
+			}
+		}
+		.row_wrapper:last-child {
+			border-bottom: none;
+		}
+	}
+
+// print specifics
+@media print {
+	.form, nav, #form_container  {
+		display: none !important;
+	}
+	#header {
+		padding: 0 !important;
+	}
+
+	#footer, #header, #export_data {
+		display: none;
+		
+	}
+
+	#wrapper {
+		font-size: 50%;
+		color: black !important;
+	}
+
+	a {
+		color: black !important;
+	}
+
+	.term {
+		color: black !important;
+	}
+
+	.coins_images {
+		width: 10vw;
+	}
+
+	.type_container {
+		display: inline-grid !important;
+		grid-template-columns: auto 40% !important;
+		grid-template-rows: auto auto !important;
+		margin-bottom: 0.5em;
+		margin-top: 0.5em;
+	}
+
+	@page {
+		size: 1200px 1692px;
+		}
+
+		.inner {
+
+			.contracted-block {
+				max-height: 10000px !important;
+			}
+
+			.text-block-separator{
+				display: none;
+			}
+
+			.pagination {
+				display: none;
+			}
+
+			max-width: 100% !important;
+		}
+}
+	

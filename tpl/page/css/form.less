@@ -1,0 +1,294 @@
+/**
+* FORM
+* Common forms css across all site.
+* Use the specific template to override or add specific features
+*/
+
+// Variables
+	@assets_path: '../../assets';
+	@page_path : '../../page';
+
+// Usage library
+	@import '@{page_path}/css/library.less';
+
+
+
+	// search_form
+	form {
+		overflow-x: initial;
+	}
+
+
+
+	.form-group {
+		position: relative;
+	}
+
+	// form_input_label
+	span.form_input_label {
+		// position: absolute;
+		// font-size: 14px;
+		// top: 4px;
+		// left: 0;
+		// opacity: 0.7;
+		display: none;
+	}
+
+
+	input.form-control {
+		&:not(:placeholder-shown) {
+			border-bottom: 2px solid #be875a;
+			padding-left: 0.25em;
+		}
+	}
+
+
+
+// search_operators_info
+	.search_operators_info {
+		// width: 1em;
+		// height: 1em;
+		position: absolute;
+		top: 1.5em;
+		right: 0;
+		z-index: 2;
+		background-image: url('@{assets_path}/images/icon_info2.svg');
+
+		.button_icon_simple;
+	}
+
+	.full_text_search_operators_info {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		background-color: white;
+		color: #3f3f3f;
+		outline: 1px solid #eeeeee;
+		background-color: #fafafa;
+		font-size: 0.75em;
+		box-shadow: 4px 3px 7px #d3d3d3;
+		position: absolute;
+		z-index: 9;
+		width: auto;
+
+		>* {
+			padding: 0.25em;
+			padding-left: 0.85em;
+			padding-right: 0.85em;
+		}
+
+		>.op {
+			text-align: center;
+		}
+
+		>:nth-of-type(1), >:nth-of-type(2) {
+			background-color: #3f3f3f;
+			color: white;
+		}
+	}
+
+
+
+// line_value (user selections on autocomplete)
+	.line_value {
+		display: flex;
+		line-height: 1em;
+		padding-top: 5px;
+		padding-left: 10px;
+
+		i {
+			color: #BFBFBF;
+			cursor: pointer;
+			align-self: center;
+
+			&:hover {
+				color: #E31A0A;
+			}
+		}
+
+		.value_label {
+			pointer-events:none;
+			border:none;
+			margin-left: 5px;
+			width: 100%;
+			align-self: center;
+			background-color: transparent;
+			font-size: 0.85em;
+
+			// white-space: nowrap;
+			// overflow: hidden;
+			// text-overflow: ellipsis;
+			// width: 96%;
+
+			img {
+				vertical-align: middle;
+				height: 1em;
+			}
+		}
+
+		input.input_values {
+			pointer-events:none;
+			border:none;
+			margin-left: 5px;
+			width: 100%;
+			align-self: center;
+			text-overflow: ellipsis;
+			background-color: transparent;
+			display: none;
+
+			// display: block;
+			// background-color: #cdf736;
+			// text-overflow: unset;
+			// pointer-events: unset;
+		}
+
+
+	}
+
+
+
+// form
+	.form-inline {
+
+		.form-row.fields {
+			margin-bottom: 1.25em;
+			margin-top: 0.25em;
+		}
+
+			input[type="text"],
+			input[type="password"],
+			input[type="email"],
+			select {
+				height: 2.5em;
+				border-bottom: solid 1px #eeeeee;
+			}
+
+
+		.form-row {
+			display: flex;
+			flex-wrap: wrap;
+
+			width: 100%;
+			margin: 0;
+
+			.form-group {
+				flex: 0 1 25%;
+				align-self: baseline;
+				padding: 0;
+				// padding-top: 0.5em;
+				padding-right: 1em;
+
+				@media screen and (max-width: 736px){
+					flex: 1 1 50%;
+				}
+
+				// global_search
+				&.global_search  {
+					flex: 0 1 100%;
+				}
+			}
+
+			.form-group.field_operators {
+				// flex: 0 1 33%;
+				padding: 0;
+			}
+
+			.operators {
+				padding-right: 2em;
+			}
+
+			// input:focus {
+			// 	font-weight: 400;
+			// 	color: black;
+			// }
+
+		}
+
+		.button_submit {
+			display: inline-block;
+			// background-color: #9de49e;
+		}
+
+		.button_reset {
+			display: inline-block;
+			margin-left: 1rem;
+			opacity: 0.33;
+		}
+
+		.form-group.field_operators {
+			float: right;
+			// background-color: #e1c96e;
+			text-align: right;
+			// margin-right: -2.5em;
+
+			.operators {
+				margin-right: 1em;
+			}
+		}
+
+		// range_slider
+			.range_slider {
+				padding-left: 1em;
+				padding-right: 1em;
+
+				.range_slider_labels {
+					// background-color: #d5ff94;
+					display: flex;
+					justify-content: space-between;
+					height: 2em;
+					line-height: 1em;
+
+					.range_slider_label {
+						width: auto;
+						text-align: center;
+					}
+					input.range_slider_value {
+						width: 3em;
+						height: 2em;
+						text-align: center;
+
+						&.value_in {
+							// float: left;
+						}
+						&.value_out {
+							// float: right;
+						}
+					}
+				}
+
+				.ui-slider-handle  {
+					margin-top: 4px;
+					height: 23px;
+				}
+			}
+	}//end .form-inline
+
+
+
+// jquery autocomplete overwrite
+	.ui-menu .ui-menu-item {
+		padding-left: 0;
+		width: 100%;
+		display: flex;
+	}
+	.ui-menu .ui-menu-item-wrapper {
+		width: 100%;
+		border: none !important;
+		margin: 0 !important;
+		line-height: 1.4em;
+		font-size: 1em;
+
+		img {
+			vertical-align: middle;
+			height: 1em;
+		}
+	}
+	.ui-widget.ui-widget-content {
+		background-color: #f9f9f9;
+		border: none !important;
+		z-index: 9999;
+
+		// allow wide lines like ''
+		width: auto !important;
+		max-width: 80vw;
+		min-width: 19%;
+	}

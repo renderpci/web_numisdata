@@ -1,0 +1,150 @@
+// Variables
+	@assets_path: "../../assets";
+	@fonts_path: "@{assets_path}/fonts";
+	@path_page: "../../page"; ;
+
+// Usage library
+	@import "@{path_page}/css/library.less";
+
+
+
+h3 {
+	font-size: 1.1em;
+    letter-spacing: 2px;
+}
+
+.main_container {
+
+	.abstract {
+		margin-top: 2em;
+	}
+
+	code {
+		border: none;
+	}
+
+}
+
+
+
+
+
+input[type=button].btn.entrada_dedalo {
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+	letter-spacing: 2px;
+	font-weight: 600;
+	margin-top: 3em;
+	margin-bottom: 2em;
+	margin-left: 1em;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+
+	background-color: #f78a1c;
+	&:hover {
+		background-color: darken(#f78a1c, 8%);
+	}
+
+    position: relative;
+    height: 3em;
+    background-image: url(../../assets/images/logo_dedalo_white.svg);
+    background-repeat: no-repeat;
+    background-size: 1.6em;
+    background-position: .75em center;
+    padding-left: 3em;
+    padding-right: 1em;
+	margin-bottom: 6em;
+	margin-top: 5em;
+}
+
+
+.box_with_left_line {
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-all;
+
+	background: #f4f4f4;
+	border: 1px solid #ddd;
+	border-left: 3px solid @color_gold_logo;
+	color: #666;
+	page-break-inside: avoid;
+	font-family: monospace;
+	font-size: 15px;
+	line-height: 1.6;
+	margin-bottom: 1.6em;
+	max-width: 100%;
+	overflow: auto;
+	padding: 1em 1.5em;
+	display: block;
+	word-wrap: break-word;
+}
+
+
+.content {
+
+	pre {
+		.box_with_left_line;
+		margin-top: 0.5em;
+	}
+
+	.codepen_image {
+		margin-top: 0.5em;
+	}
+
+	.hljs {
+		background: #f4f4f4;
+	}
+}
+
+
+#swagger-ui {
+	.box_with_left_line;
+	margin-top: 4em;
+
+	.swagger-ui .btn {
+	    line-height: 1em;
+	    height: 3em;
+	    letter-spacing: 2px;
+	}    	
+
+	.wrapper {
+		background-color: inherit;
+	}
+
+	.swagger-ui .scheme-container {
+		background-color: unset;
+		box-shadow: unset;
+	}
+
+	.swagger-ui .expand-methods, .swagger-ui .expand-operation {
+		line-height: 1em;
+		padding-left: 1.5em;
+		padding-right: 1.5em;
+		height: 1.8em;
+	}
+
+	.swagger-ui .opblock-tag {
+		margin: 0 0 15px;
+		padding-right: 5px;
+	}
+
+	.swagger-ui .info .title small {
+		font-size: 12px;
+		letter-spacing: 5px;
+	}
+
+	.swagger-ui .parameters-col_description input[type=text] {
+		height: 2em;
+	    font-size: 1.2em;
+	}
+
+	.swagger-ui .btn.execute {
+		color: #ffffff !important;
+	}
+
+	h2.title {
+		font-size: 3.2em;
+		letter-spacing: 1px;
+	}
+   
+}

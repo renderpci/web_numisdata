@@ -5,7 +5,7 @@ config.codekit3
 acc
 .DS_Store
 *.sublime-workspace
-/.phpintel/
+.phpintel
 acc
 *_OLD.*
 *_old.*

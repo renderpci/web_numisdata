@@ -6,3 +6,7 @@ acc
 .DS_Store
 *.sublime-workspace
 /.phpintel/
+acc
+*_OLD.*
+*_old.*
+*_DES

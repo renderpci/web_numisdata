@@ -25,10 +25,7 @@
 // site config
 
 	// __web_base_url__ . absolute url base to target web. Used to build absolute calls to elements
-		define('__WEB_BASE_URL__', ($source_data_api==='remote')
-			? 'https://monedaiberica.org'
-			: 'http://monedaiberica:8080'
-		);
+		define('__WEB_BASE_URL__', 'https://monedaiberica.org');
 
 	// media base url
 		define('__WEB_MEDIA_BASE_URL__', 'https://monedaiberica.org');
@@ -37,12 +34,8 @@
 		$base = '/web_mib';
 		define('__WEB_ROOT_WEB__', $base);
 
-	// IS_PRODUCTION. used like 'mib_web'
-		$path_suffix = substr($base , -3);
-		define('IS_PRODUCTION', ($path_suffix==='web')
-			? true
-			: false
-		);
+	// is_production. used like 'mib_web'
+		define('IS_PRODUCTION', true);
 
 	// web_app_dir
 		define('WEB_APP_DIR', 'web_app');

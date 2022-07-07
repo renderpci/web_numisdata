@@ -171,7 +171,7 @@ var coin_row = {
 				value_collection.push('('+row.former_collection+')')
 			}
 
-			if (row.number && row.number.length>0) {
+			if (value_collection.length > 0 && row.number && row.number.length>0) {
 				// label_collection.push(tstring.number || "Number")
 				value_collection.push(row.number)
 			}
@@ -222,20 +222,22 @@ var coin_row = {
 					const auction = row.ref_auction_group[i]
 
 					const auction_label = []
-					if (auction.name) auction_label.push(auction.name)
+					if (auction.name){
+						auction_label.push(auction.name)
+						auction_label.push(" ")
+					}
 
-					auction_label.push(" ")
+					if (auction.date){
+						auction_label.push(auction.date)
+						auction_label.push(", ")
+					}
 
-					if (auction.date) auction_label.push(auction.date)
-
-					auction_label.push(", ")
-
-					if (auction.number) auction_label.push(auction.number || row.number)
-
-					auction_label.push(", ")
+					if (auction.number){
+						auction_label.push(auction.number || row.number)
+						auction_label.push(", ")
+					}
 
 					if (row.number){
-
 						auction_label.push(tstring.lot || "Lot")
 						auction_label.push(" "+row.number)
 					}

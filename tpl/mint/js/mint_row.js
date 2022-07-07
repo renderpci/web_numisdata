@@ -187,7 +187,7 @@ var mint_row = {
 				element_type	: "img",
 				src				: row.ref_coins_image_obverse_thumb,
 				title 			: row.section_id,
-				dataset 		: {caption: "MIB " + mint_number + c_name  },
+				dataset 		: {caption: page_globals.OWN_CATALOG_ACRONYM + " " + mint_number + c_name  },
 				parent			: img_link_ob
 			})
 			img_obverse.style.width = (diameter + (diameter * 8/100)) + 'mm'
@@ -207,7 +207,7 @@ var mint_row = {
 				element_type	: "img",
 				src 			: row.ref_coins_image_reverse_thumb,
 				title 			: row.section_id,
-				dataset 		: {caption: "MIB " + mint_number + c_name  },
+				dataset 		: {caption: page_globals.OWN_CATALOG_ACRONYM +" " + mint_number + c_name  },
 				parent 			: img_link_re
 			})
 			img_reverse.style.width = (diameter + (diameter * 8/100)) + 'mm'

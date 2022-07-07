@@ -299,7 +299,7 @@ var coin_row = {
 								// + ' ' +label_mint.toLowerCase()
 								// + ' / ' +label_number.toLowerCase()
 								// +' ' +label_type_name.toLowerCase();
-			const type_section = row.type_data.filter(item => item.catalogue === 'MIB')[0]
+			const type_section = row.type_data.filter(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM)[0]
 
 			// creators
 			const creators_data = typeof type_section!=="undefined"
@@ -390,7 +390,7 @@ var coin_row = {
 
 			for (let i = 0; i < row.catalogue_type_mint.length; i++) {
 				const catalogue = row.catalogue_type_mint[i]
-				if(catalogue === 'MIB') continue;
+				if(catalogue === page_globals.OWN_CATALOG_ACRONYM ) continue;
 
 				const value_type_node = common.create_dom_element({
 					element_type	: "span",
@@ -748,9 +748,9 @@ var coin_row = {
 			}
 
 		// uri
-			const uri = row.mib_uri
-			const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> MIB </a> '
-			if (row.mib_uri && row.mib_uri.length>0) {
+			const uri = row.coin_uri
+			const uri_text	= '<a class="icon_link info_value" target="_blank" href="' +uri+ '"> '+ page_globals.OWN_CATALOG_ACRONYM +' </a> '
+			if (row.coin_uri && row.coin_uri.length>0) {
 				common.create_dom_element({
 					element_type	: "label",
 					class_name		: "left-labels",
@@ -770,7 +770,7 @@ var coin_row = {
 					for (let i = 0; i < row.uri.length; i++) {
 
 						const currentUri		= row.uri[i]
-						const currentUri_text	= '<a class="icon_link info_value" target="_blank" href="'+currentUri.value+'"> '+currentUri.label+'</a> '
+						const currentUri_text	= '<a class="icon_link info_value" target="_blank" href="'+ currentUri.value+'"> '+currentUri.label +'</a> '
 
 						// common.create_dom_element({
 						// 	element_type	: "label",

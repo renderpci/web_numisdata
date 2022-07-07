@@ -462,7 +462,7 @@ page.parse_coin_data = function(data) {
 		// find
 		row.find_date = self.parse_date(row.find_date)
 
-		row.mib_uri = page_globals.__WEB_BASE_URL__ + page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
+		row.coin_uri = page_globals.__WEB_ROOT_WEB__ + "/coin/" + row.section_id
 
 		row.uri = self.parse_iri_data(row.uri)
 

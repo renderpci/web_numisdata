@@ -53,7 +53,7 @@ var coins_row_fields = {
 
 
 
-					if(current_catalogue === 'MIB'){
+					if(current_catalogue === page_globals.OWN_CATALOG_ACRONYM ){
 
 						const ar_mint_number	= row.mint_number[i]
 						 	? row.mint_number[i]

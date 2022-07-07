@@ -415,9 +415,15 @@ page.parse_coin_data = function(data) {
 				row.ref_auction_group = []
 				for (let g = 0; g < row.ref_auction.length; g++) {
 					row.ref_auction_group.push({
-						name	: row.ref_auction[g],
-						date	: typeof row.ref_auction_date[g]!=="undefined" ? self.parse_date(row.ref_auction_date[g]) : '',
-						number	: typeof row.ref_auction_number[g]!=="undefined" ? row.ref_auction_number[g] : ''
+						name	: row.ref_auction && typeof row.ref_auction[g]!=="undefined"
+							? row.ref_auction[g]
+							: '',
+						date	: row.ref_auction_date && typeof row.ref_auction_date[g]!=="undefined"
+							? self.parse_date(row.ref_auction_date[g])
+							: '',
+						number	: row.ref_auction_number && typeof row.ref_auction_number[g]!=="undefined"
+							? row.ref_auction_number[g]
+							: ''
 					})
 				}
 			}
@@ -439,9 +445,15 @@ page.parse_coin_data = function(data) {
 				row.ref_related_coin_auction_group = []
 				for (let g = 0; g < row.ref_related_coin_auction.length; g++) {
 					row.ref_related_coin_auction_group.push({
-						name	: row.ref_related_coin_auction[g],
-						date	: typeof row.ref_related_coin_auction_date[g]!=="undefined" ? self.parse_date(row.ref_related_coin_auction_date[g]) : '',
-						number	: typeof row.ref_related_coin_auction_number[g]!=="undefined" ? row.ref_related_coin_auction_number[g] : ''
+						name	: row.ref_related_coin_auction && typeof row.ref_related_coin_auction[g]!=="undefined"
+							? row.ref_related_coin_auction[g]
+							: '',
+						date	: row.ref_related_coin_auction_date && typeof row.ref_related_coin_auction_date[g]!=="undefined"
+							? self.parse_date(row.ref_related_coin_auction_date[g])
+							: '',
+						number	: row.ref_related_coin_auction_number && typeof row.ref_related_coin_auction_number[g]!=="undefined"
+							? row.ref_related_coin_auction_number[g]
+							: ''
 					})
 				}
 			}

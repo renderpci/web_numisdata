@@ -222,20 +222,22 @@ var coin_row = {
 					const auction = row.ref_auction_group[i]
 
 					const auction_label = []
-					if (auction.name) auction_label.push(auction.name)
+					if (auction.name){
+						auction_label.push(auction.name)
+						auction_label.push(" ")
+					}
 
-					auction_label.push(" ")
+					if (auction.date){
+						auction_label.push(auction.date)
+						auction_label.push(", ")
+					}
 
-					if (auction.date) auction_label.push(auction.date)
-
-					auction_label.push(", ")
-
-					if (auction.number) auction_label.push(auction.number || row.number)
-
-					auction_label.push(", ")
+					if (auction.number){
+						auction_label.push(auction.number || row.number)
+						auction_label.push(", ")
+					}
 
 					if (row.number){
-
 						auction_label.push(tstring.lot || "Lot")
 						auction_label.push(" "+row.number)
 					}

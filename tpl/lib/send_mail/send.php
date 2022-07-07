@@ -1,21 +1,25 @@
 <?php
 	/*
-	
-	Envio de email html
-	
-	*/	
-	#@ date_default_timezone_set('Europe/Madrid');	
-		
-	# 
-	# PHPMailer
-	require_once( dirname(__FILE__) . "/PHPMailer/PHPMailerAutoload.php");
 
-	# Error report . Report simple running errors	# error_reporting(E_ALL ^ E_STRICT);	
+	Envio de email html
+
+	*/
+	#@ date_default_timezone_set('Europe/Madrid');
+
+	#
+	# PHPMailer
+	// require_once( dirname(__FILE__) . "/PHPMailer/PHPMailerAutoload.php");
+	require dirname(__FILE__) .'/vendor/autoload.php';
+
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
+
+	# Error report . Report simple running errors	# error_reporting(E_ALL ^ E_STRICT);
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	
-	# Verify data	
+
+	# Verify data
 	if(empty($recipients) || empty($headers) || empty($content_text) || empty($content_html) ) {
-		
+
 		echo 'Error: missing data <pre>';
 		print_r( $recipients );
 		echo '<br> ';
@@ -27,11 +31,11 @@
 		echo '</pre> ';
 		exit();
 	}
-	
-	# verify email	
+
+	# verify email
 	if( !filter_var($to, FILTER_VALIDATE_EMAIL) || !preg_match('/^([a-zA-Z0-9\'\._\+-]+)\@((\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,7}|[0-9]{1,3})(\]?))$/', $to) ) {
-		
-		echo("Error: email $to is not valid !"); //$tx_error_al_enviar 
+
+		echo("Error: email $to is not valid !"); //$tx_error_al_enviar
 		exit();
 	}
 

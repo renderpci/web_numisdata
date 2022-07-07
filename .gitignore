@@ -1,8 +1,13 @@
+config.php
 config.codekit3
 .codekit-cache
 *codekit*
 acc
 .DS_Store
-/tpl/assets/.DS_Store
 *.sublime-workspace
-/.phpintel/
+.phpintel
+acc
+*_OLD.*
+*_old.*
+*_DES
+sendmail

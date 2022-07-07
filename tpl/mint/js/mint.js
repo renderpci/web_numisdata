@@ -13,6 +13,7 @@ var mint = {
 		section_id				: null,
 		export_data_container	: null,
 		row_detail				: null,
+		map_container			: null, // DOM node
 
 
 	/**
@@ -27,6 +28,7 @@ var mint = {
 			self.export_data_container	= options.export_data_container
 			self.row_detail				= options.row_detail
 			self.section_id				= options.section_id
+			self.map_container			= options.map_container
 
 		// export_data_buttons added once
 			const export_data_buttons = page.render_export_data_buttons()
@@ -1271,7 +1273,11 @@ var mint = {
 		.then(function(response){
 			// console.log("draw_map get_place_data: ",response);
 
-			const container	= document.getElementById("map_container")
+			const container	= self.map_container // document.getElementById("map_container")
+
+			if (response && response.result) {
+				container.classList.remove('hide')
+			}
 
 			self.map = self.map || new map_factory() // creates / get existing instance of map
 			self.map.init({

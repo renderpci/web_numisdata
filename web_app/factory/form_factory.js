@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page*/
+/* global tstring, SHOW_DEBUG, common, page */
 /*eslint no-undef: "error"*/
 "use strict";
 

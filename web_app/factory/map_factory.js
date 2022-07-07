@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, event_manager, common, L */
+/* global, page_globals, SHOW_DEBUG, event_manager, common, L */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -269,7 +269,7 @@ function map_factory() {
 			// create marker. Build marker with custom icon and popup
 				const create_marker = function(element, latlng, marker_icon, popup) {
 					const marker = L.marker(latlng, {icon: marker_icon}).bindPopup(popup) //.openPopup();
-					marker.on('click', function(e) {
+					marker.on('mousedown', function(e) {
 						// event publish map_selected_marker
 						event_manager.publish('map_selected_marker', {
 							item	: element,
@@ -362,7 +362,7 @@ function map_factory() {
 							}
 						})
 
-						marker.on('click', function(e) {
+						marker.on('mousedown', function(e) {
 							// event publish map_selected_marker
 							event_manager.publish('map_selected_marker', {
 								item	: element,
@@ -493,7 +493,9 @@ function map_factory() {
 
 			for (let k = 0; k < geojson_length; k++) {
 
-				const features = geojson[k].layer_data.features
+				const features = geojson[k] && geojson[k].layer_data
+					? geojson[k].layer_data.features
+					: []
 
 				for (let g = 0; g < features.length; g++) {
 

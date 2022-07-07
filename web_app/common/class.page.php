@@ -170,7 +170,7 @@ class page {
 				$options->ar_calls 		= $ar_calls;
 			# Http request in php to the API
 			$response = json_web_data::get_data($options);
-				#dump($response->result, ' response ++ '.to_string());
+				// dump($response->result, ' response ++ '.to_string());
 
 		// filter page by config WEB_MENU_PARENT
 			# $ar_terms = [];

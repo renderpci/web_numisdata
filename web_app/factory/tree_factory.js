@@ -1,4 +1,4 @@
-/*global tstring, page_globals, __WEB_TEMPLATE_WEB__, Promise, BackgroundColorTheif, SHOW_DEBUG, row_fields, common, page*/
+/*global tstring, page_globals, __WEB_TEMPLATE_WEB__, Promise, SHOW_DEBUG, common, page */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -112,7 +112,6 @@ function tree_factory() {
 
 			// 	// console.log(">>>>>> self.tree_state calculated new:", self.tree_state);
 			// }
-			// console.log("self:",self);
 
 		// tree_state (object way)
 			const session_tree_state = sessionStorage.getItem("tree_state_" + WEB_AREA)
@@ -489,26 +488,30 @@ function tree_factory() {
 						parent			: tree_node
 					})
 					arrow.addEventListener("mousedown", function(){
-						let new_state
-						if (this.classList.contains("open")) {
-							branch.classList.add("hide")
-							this.classList.remove("open")
-							// new_state
-							new_state = "closed"
-						}else{
-							branch.classList.remove("hide")
-							this.classList.add("open")
-							// new_state
-							new_state = "opened"
-						}
+						e.stopPropagation()
 
-						// state update
-						const current_state = self.tree_state.find(item => item.id===row.term_id)
-						if (current_state && current_state.state!==new_state) {
-							current_state.state = new_state
-							// update sessionStorage tree_state var
-							sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
-						}
+						// state  set based on current classList contains open/hide
+							let new_state
+							if (this.classList.contains("open")) {
+								branch.classList.add("hide")
+								this.classList.remove("open")
+								// new_state
+								new_state = "closed"
+							}else{
+								branch.classList.remove("hide")
+								this.classList.add("open")
+								// new_state
+								new_state = "opened"
+							}
+
+						// state update (sessionStorage)
+							const current_state = self.tree_state[row.term_id]
+							if (current_state!==new_state) {
+								// current_state.state = new_state
+								self.tree_state[row.term_id] = new_state
+								// update sessionStorage tree_state var
+								sessionStorage.setItem('tree_state_' + WEB_AREA, JSON.stringify(self.tree_state));
+							}
 					})
 				}
 

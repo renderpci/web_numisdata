@@ -276,7 +276,7 @@ var web_ts_term = new function() {
 					
 						const item = rows_types[i]
 						const title = []
-						const type_id = "MIB " + item.section_id + "/"+ item.number
+						const type_id = page_globals.OWN_CATALOG_ACRONYM  + " " + item.section_id + "/"+ item.number
 						
 						title.push(type_id)
 						if(item.denomination){

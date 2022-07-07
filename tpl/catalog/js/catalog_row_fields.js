@@ -222,7 +222,7 @@ var catalog_row_fields = {
 								class_name		: "image_obverse",
 								src				: item.ref_coins_image_obverse_thumb,
 								title			: item.section_id,
-								dataset			: {caption: "MIB " + mint_number + c_name  },
+								dataset			: {caption: page_globals.OWN_CATALOG_ACRONYM + " " + mint_number + c_name  },
 								parent			: image_link_obverse
 							})
 							img_obverse.style.width = (diameter * 2 ) + 'mm'

@@ -43,6 +43,9 @@
 	// web_dispatch_dir
 		define('WEB_DISPATCH_DIR', 'web');
 
+	// OWN_CATALOG_ACRONYM
+		define('OWN_CATALOG_ACRONYM', 'MIB');
+
 	// __web_template_web_
 		define('__WEB_TEMPLATE_WEB__' , __WEB_ROOT_WEB__  .'/tpl' );
 		define('__WEB_TEMPLATE_PATH__', __WEB_BASE_PATH__ .'/tpl');

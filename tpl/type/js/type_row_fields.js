@@ -480,7 +480,7 @@ var type_row_fields = {
 			common.create_dom_element({
 				element_type 	: "span",
 				class_name 		: "breadcrumb",
-				text_content	: "MIB " + mint_number + catalog.term,
+				text_content	: page_globals.OWN_CATALOG_ACRONYM + " " + mint_number + catalog.term,
 				parent 			: line
 			})
 		}
@@ -1478,7 +1478,7 @@ var type_row_fields = {
 		// uri
 			const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 			const full_url	= page_globals.__WEB_BASE_URL__ + uri
-			const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> MIB </a>'
+			const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> '+page_globals.OWN_CATALOG_ACRONYM +' </a>'
 			common.create_dom_element({
 				element_type	: "span",
 				class_name		: "uri-text",
@@ -1673,7 +1673,7 @@ var type_row_fields = {
 				// uri
 					const uri		= page_globals.__WEB_ROOT_WEB__ + "/coin/" + data.section_id
 					const full_uri	= page_globals.__WEB_BASE_URL__ + uri
-					const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> MIB </a>'
+					const uri_text	= '<a class="icon_link" target="_blank" href="' +uri+ '"> '+page_globals.OWN_CATALOG_ACRONYM +' </a>'
 					common.create_dom_element({
 						element_type	: "span",
 						class_name		: "",

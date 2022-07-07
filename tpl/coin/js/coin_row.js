@@ -171,7 +171,7 @@ var coin_row = {
 				value_collection.push('('+row.former_collection+')')
 			}
 
-			if (row.number && row.number.length>0) {
+			if (value_collection.length > 0 && row.number && row.number.length>0) {
 				// label_collection.push(tstring.number || "Number")
 				value_collection.push(row.number)
 			}

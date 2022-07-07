@@ -4,14 +4,14 @@
 		<div class="footer-section-wrapper" id="footer_dynamic_wraper"></div>
 		<div class="footer-copyright-wrapper">
 			<ul class="copyright version">
-				<li>Moneda Ibérica v <?php
+				<li>Numisdata web v <?php
 					echo WEB_VERSION;
 					echo IS_PRODUCTION ? ' pro' : ' dev';
 					if (IS_PRODUCTION===false) {
 						echo ' DB: '.WEB_DB;
 					}
 				?></li>
-				<li><a href="mailto:mib@numisdata.org">mib@numisdata.org</a></li>
+				<li><a href="mailto:<?php echo EMAIL ?>"><?php echo EMAIL ?></a></li>
 				<li class="print_hide99">
 					Powered by
 					<a href="https://dedalo.dev" rel="noreferrer" target="_blank">

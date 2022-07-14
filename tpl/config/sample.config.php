@@ -49,6 +49,9 @@
 	// EMAIL
 		define('EMAIL', 'mib@numisdata.org');
 
+	// DEDALO_CONTROL_ACCESS
+		define('DEDALO_CONTROL_ACCESS', true);
+		
 	// __web_template_web_
 		define('__WEB_TEMPLATE_WEB__' , __WEB_ROOT_WEB__  .'/tpl' );
 		define('__WEB_TEMPLATE_PATH__', __WEB_BASE_PATH__ .'/tpl');

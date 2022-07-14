@@ -299,7 +299,7 @@ var coin_row = {
 								// + ' ' +label_mint.toLowerCase()
 								// + ' / ' +label_number.toLowerCase()
 								// +' ' +label_type_name.toLowerCase();
-			const type_section = row.type_data.filter(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM)[0]
+			const type_section = row.type_data.find(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM) || {}
 
 			// creators
 			const creators_data = typeof type_section!=="undefined"

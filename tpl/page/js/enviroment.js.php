@@ -32,6 +32,12 @@ __WEB_TEMPLATE_WEB__='<?php echo __WEB_TEMPLATE_WEB__ ?>';
 BASE_LINKS='<?php echo ''. BASE_LINKS ?>';
 IS_PRODUCTION=<?php echo json_encode(IS_PRODUCTION) ?>;
 const dedalo_logged = typeof document!=='undefined' && document.cookie.indexOf('dedalo_logged')!==-1 ? true : false;
+
+// dedalo_logged redirect
+// if (dedalo_logged!==true) {
+// 	window.location.href = "/dedalo";
+// }
+
 function dom_ready(fn) {
 	if (document.readyState!=='loading'){
 		fn();

@@ -334,7 +334,7 @@
 
 			>a.logo {
 				// border-bottom: #b93b3b 4px solid;
-				background-color: #333333;
+				background-color: @color_grey_dark;
 				background-image: url("../../assets/images/logo_head-06.svg");
 				// background-size: 50%;
 				background-repeat: no-repeat;
@@ -470,10 +470,10 @@
 			.title {
 				font-size: 3em !important;
 				text-shadow:
-				   -2px -2px 0 #333333,
-				    2px -2px 0 #333333,
-				    -2px 2px 0 #333333,
-				     2px 2px 0 #333333;
+				   -2px -2px 0 @color_grey_dark,
+				    2px -2px 0 @color_grey_dark,
+				    -2px 2px 0 @color_grey_dark,
+				     2px 2px 0 @color_grey_dark;
 			}
 		}
 
@@ -1085,7 +1085,7 @@
 	.float-prompt{
 		position: fixed;
 		top: 100px;
-		background-color: #333333;
+		background-color: @color_grey_dark;
 		display: flex;
 		flex-flow: column;
 		padding: 2em;
@@ -1325,7 +1325,74 @@
 		}
 	}
 
+// Cite
 
+.cite_this_record{
+	float: right;
+	// font-weight: 100;
+	font-size: .8em;
+	cursor: pointer;
+	color: @color_gold_logo;
+}
+.float-cite{
+	position: fixed;
+	top: 200px;
+	right: 100px;
+	background-color: #333333;
+	display: flex;
+	flex-flow: column;
+	padding: 2em;
+	padding-top: 1em;
+	border-radius: 5px;
+	box-shadow: 8px 8px 10px 0px rgb(180 180 180 / 80%);
+	max-width: 600px;
+}
+.float-cite .float-label {
+	width: auto;
+	float: left;
+	display: inline-block;
+	color: @color_gold_logo;
+	text-align: center;
+	margin: 0 auto;
+	padding-bottom: -1em;
+	line-height: 1;
+	margin-bottom: 0.5em;
+	font-size: 125%;
+}
+.float-cite .close-buttom {
+	display: inline-block;
+	background-image: url("../../assets/images/close.svg");
+	background-repeat: no-repeat;
+	background-position: top right;
+	background-size: contain;
+	height: 2.3em;
+	cursor: pointer;
+	width: 10%;
+	position: absolute;
+	right: 1em;
+	top: 0.5em;
+}
+.float-cite .cite_this{
+	font-size: 1em;
+	color: white;
+	a{
+		color: white;
+	}
+	background-color: transparent;
+}
+.float-cite .copy{
+	position: fixed;
+	left: -9999px;
+	background-color: white !important;
+	display: block;
+}
+.float-cite .cite_this.copy{
+	font-size: 10px;
+	color: black ;
+	a{
+		color: black ;
+	}
+}
 
 // legend_box
 	.legend_box {

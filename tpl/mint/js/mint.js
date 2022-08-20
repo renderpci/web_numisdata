@@ -667,6 +667,82 @@ var mint = {
 				link.setAttribute('target', '_blank');
 			}
 
+		// Cite of record
+			const golden_separator = document.querySelector('.golden-separator')
+			const cite = common.create_dom_element({
+				element_type	: "span",
+				class_name		: "cite_this_record",
+				text_content	: tstring.cite_this_record || 'cite this record',
+				parent			: golden_separator
+			})
+			cite.addEventListener('click', async function(){
+				const main_catalog_data = await page.load_main_catalog()
+				const cite_data = main_catalog_data.result[0];
+				const publication_data = cite_data.publication_data[0];
+				cite_data.autors = {
+					authorship_data		: row_object.authorship_data || null,
+					authorship_names	: row_object.authorship_names || null,
+					authorship_surnames	: row_object.authorship_surnames || null,
+					authorship_roles	: row_object.authorship_roles || null,
+				}
+				cite_data.catalog = null
+				cite_data.title = row_object.name
+				cite_data.publication_data = publication_data
+				cite_data.uri_location 	= window.location
+
+				const cite_data_node = biblio_row_fields.render_cite_this(cite_data)
+
+
+				const popUpContainer = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "float-cite",
+					parent 			: document.body
+				})
+				popUpContainer.addEventListener('mouseup',function() {
+
+   					popUpContainer.classList.add('copy')
+   					cite_data_node.classList.add('copy')
+
+   					const selection = window.getSelection();
+					//create a selection range
+					const copy_range = document.createRange();
+					//choose the element we want to select the text of
+					copy_range.selectNodeContents(cite_data_node);
+					//select the text inside the range
+					selection.removeAllRanges();
+       				selection.addRange( copy_range );
+
+       				//copy the text to the clipboard
+					document.execCommand("copy");
+
+					//remove our selection range
+					window.getSelection().removeAllRanges();
+				})
+
+				const title = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "float-label",
+					text_content	: tstring.cite_this_record || 'Cite this record',
+					parent 			: popUpContainer
+				})
+
+				const close_buttom = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "close-buttom",
+					parent 			: popUpContainer
+				})
+				close_buttom.addEventListener("click",function(){
+					// popUpContainer.remove()
+				})
+				document.body.addEventListener("click",function(event_cite){
+					document.body.removeEventListener("click", function(event_cite){})
+					popUpContainer.remove()
+				})
+
+				popUpContainer.appendChild(cite_data_node)
+
+			})
+
 		// name & place
 			if (row_object.name && row_object.name.length>0) {
 

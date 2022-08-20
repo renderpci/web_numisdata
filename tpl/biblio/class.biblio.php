@@ -131,8 +131,8 @@ class biblio {
 		// 	'pdf_uri',
 		// 	'descriptors',
 		// 	// 'volume',
-		// 	'other_people_name',
-		// 	'other_people_role',
+		// 	'other_people_full_names',
+		// 	'other_people_full_roles',
 		// 	'transcription'
 		// ];
 		$ar_fields = ['*'];

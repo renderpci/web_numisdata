@@ -208,24 +208,24 @@ var biblio_row_fields = {
 
 			case 'book': // book
 
-				// other_people_info : name and role other_people_name
-					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-						const other_people_name = biblio_object.other_people_name.split(" | ");
-						const other_people_role = biblio_object.other_people_role.split(" | ")
+				// other_people_info : name and role other_people_full_names
+					if (biblio_object.other_people_full_names && biblio_object.other_people_full_names.length>0) {
+						const other_people_full_names = biblio_object.other_people_full_names.split(" | ");
+						const other_people_full_roles = biblio_object.other_people_full_roles.split(" | ")
 
 						const particle_in = tstring.in || 'In'
 
 						common.create_dom_element({
 								element_type 	: "span",
-								class_name 		: "info_value other_people_name grey",
+								class_name 		: "info_value other_people_full_names grey",
 								text_content 	: particle_in,
 								parent 			: line
 							})
 
-						const other_people_length = other_people_name.length
+						const other_people_length = other_people_full_names.length
 						for (let g = 0; g < other_people_length; g++) {
 
-							const name = other_people_name[g]
+							const name = other_people_full_names[g]
 
 							const text_content = (g!==0)
 								? ", "+name
@@ -233,19 +233,19 @@ var biblio_row_fields = {
 
 							common.create_dom_element({
 								element_type 	: "span",
-								class_name 		: "info_value other_people_name grey",
+								class_name 		: "info_value other_people_full_names grey",
 								text_content 	: text_content,
 								parent 			: line
 							})
 						}
 
-						const role = typeof other_people_role[0]!=='undefined'
-							? ' ('+other_people_role[0].toLowerCase()+'.): '
+						const role = typeof other_people_full_roles[0]!=='undefined'
+							? ' ('+other_people_full_roles[0].toLowerCase()+'.): '
 							: ' '
 
 						common.create_dom_element({
 								element_type 	: "span",
-								class_name 		: "info_value other_people_name grey",
+								class_name 		: "info_value other_people_full_names grey",
 								text_content 	: role,
 								parent 			: line
 							})
@@ -310,24 +310,24 @@ var biblio_row_fields = {
 
 			default: // article, etc.
 
-				// other_people_info : name and role other_people_name
-					if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-						const other_people_name = biblio_object.other_people_name.split(" | ");
-						const other_people_role = biblio_object.other_people_role.split(" | ")
+				// other_people_info : name and role other_people_full_names
+					if (biblio_object.other_people_full_names && biblio_object.other_people_full_names.length>0) {
+						const other_people_full_names = biblio_object.other_people_full_names.split(" | ");
+						const other_people_full_roles = biblio_object.other_people_full_roles.split(" | ")
 
 						const particle_in = tstring.in || 'In'
 
 						common.create_dom_element({
 								element_type 	: "span",
-								class_name 		: "info_value other_people_name grey",
+								class_name 		: "info_value other_people_full_names grey",
 								text_content 	: particle_in,
 								parent 			: line
 							})
 
-						const other_people_length = other_people_name.length
+						const other_people_length = other_people_full_names.length
 						for (let g = 0; g < other_people_length; g++) {
 
-							const name = other_people_name[g]
+							const name = other_people_full_names[g]
 
 							const text_content = (g!==0)
 								? ", "+name
@@ -335,19 +335,19 @@ var biblio_row_fields = {
 
 							common.create_dom_element({
 								element_type 	: "span",
-								class_name 		: "info_value other_people_name grey",
+								class_name 		: "info_value other_people_full_names grey",
 								text_content 	: text_content,
 								parent 			: line
 							})
 						}
 
-						const role = typeof other_people_role[0]!=='undefined'
-							? ' ('+other_people_role[0].toLowerCase()+'.): '
+						const role = typeof other_people_full_roles[0]!=='undefined'
+							? ' ('+other_people_full_roles[0].toLowerCase()+'.): '
 							: ' '
 
 						common.create_dom_element({
 								element_type 	: "span",
-								class_name 		: "info_value other_people_name grey",
+								class_name 		: "info_value other_people_full_names grey",
 								text_content 	: role,
 								parent 			: line
 							})
@@ -387,15 +387,15 @@ var biblio_row_fields = {
 
 						}
 
-				// // other_people_info : name and role other_people_name
-				// 	if (biblio_object.other_people_name && biblio_object.other_people_name.length>0) {
-				// 		const other_people_name = biblio_object.other_people_name.split(" | ");
-				// 		const other_people_role = biblio_object.other_people_role.split(" | ")
-				// 		for (let g = 0; g < other_people_name.length; g++) {
+				// // other_people_info : name and role other_people_full_names
+				// 	if (biblio_object.other_people_full_names && biblio_object.other_people_full_names.length>0) {
+				// 		const other_people_full_names = biblio_object.other_people_full_names.split(" | ");
+				// 		const other_people_full_roles = biblio_object.other_people_full_roles.split(" | ")
+				// 		for (let g = 0; g < other_people_full_names.length; g++) {
 				//
-				// 			const name = other_people_name[g]
-				// 			const role = typeof other_people_role[g]!=='undefined'
-				// 				? ' ('+other_people_role[g]+')'
+				// 			const name = other_people_full_names[g]
+				// 			const role = typeof other_people_full_roles[g]!=='undefined'
+				// 				? ' ('+other_people_full_roles[g]+')'
 				// 				: ''
 				//
 				// 			const text_content = (biblio_object.serie.length>0 || (biblio_object.volume && biblio_object.volume.length>0))
@@ -404,7 +404,7 @@ var biblio_row_fields = {
 				//
 				// 			common.create_dom_element({
 				// 				element_type 	: "div",
-				// 				class_name 		: "info_value other_people_name grey",
+				// 				class_name 		: "info_value other_people_full_names grey",
 				// 				text_content 	: text_content,
 				// 				parent 			: line
 				// 			})
@@ -694,10 +694,10 @@ var biblio_row_fields = {
 			})
 
 
-		// other_people_info : name and role other_people_name
-			if (biblio_object.ref_publications_other_people_name && biblio_object.ref_publications_other_people_name.length>0) {
-				const other_people_name = biblio_object.ref_publications_other_people_name.split(" | ");
-				const other_people_role = biblio_object.ref_publications_other_people_role.split(" | ")
+		// other_people_info : name and role other_people_full_names
+			if (biblio_object.ref_publications_other_people_full_names && biblio_object.ref_publications_other_people_full_names.length>0) {
+				const other_people_full_names = biblio_object.ref_publications_other_people_full_names.split(" | ");
+				const other_people_full_roles = biblio_object.ref_publications_other_people_full_roles.split(" | ")
 
 				const particle_in = tstring.in || 'In'
 
@@ -707,10 +707,10 @@ var biblio_row_fields = {
 						parent 			: line
 					})
 
-				const other_people_length = other_people_name.length
+				const other_people_length = other_people_full_names.length
 				for (let g = 0; g < other_people_length; g++) {
 
-					const name = other_people_name[g]
+					const name = other_people_full_names[g]
 
 					const text_content = (g!==0)
 						? ", "+name
@@ -723,8 +723,8 @@ var biblio_row_fields = {
 					})
 				}
 
-				const role = typeof other_people_role[0]!=='undefined'
-					? ' ('+other_people_role[0].toLowerCase()+'.): '
+				const role = typeof other_people_full_roles[0]!=='undefined'
+					? ' ('+other_people_full_roles[0].toLowerCase()+'.): '
 					: ' '
 
 				common.create_dom_element({
@@ -851,8 +851,236 @@ var biblio_row_fields = {
 		}
 
 		return line
-	}//end render_row_bibliography
+	},//end render_row_bibliography
 
 
+
+	render_cite_this : function(cite_data){
+
+		// catalog_name: "MIB"
+		// definition: ""
+		// lang: "lg-spa"
+		// publication_data :{
+		// 	editor: "Universitat de València - Museu de Prehistòria de València"
+		// other_people_data: "[\"229\"]"
+		// other_people_full_names: "Pere Pau Ripollès Alegre | Manuel Gozalbes Fernández de Palencia"
+		// other_people_full_roles: "ed"
+		// other_people_name: "[\"Pere Pau\",\"Manuel\"]"
+		// other_people_role: "[\"ed\"]"
+		// other_people_surname: "[\"Ripollès Alegre\",\"Gozalbes Fernández de Palencia\"]"
+		// 	publication_date: "2022-00-00 00:00:00"
+		// 	table: "publications"
+		// 	title: "Moneda Ibérica"
+		// 	typology_name: "Página web"
+		// 	url_data: "[{\"iri\":\"monedaiberica.org\",\"title\":\"MIB\"}]"
+		// }
+		// uri: "[{\"iri\":\"http://nomisma.org/id/mib\",\"title\":\"nomisma\"}]"
+		// autors : {
+		// 	authorship_data: "[\"1\",\"2\"]"
+		// 	authorship_names: "Pablo | Pere Pau"
+		// 	authorship_roles: "Introducción | Ordenación emisiones"
+		// 	authorship_surnames: "Cerdà Insa | Ripollès Alegre"
+		// }
+
+		// line
+			const line = common.create_dom_element({
+				element_type 	: "div",
+				class_name 		: "info_line cite_this"
+			})
+
+		// authors
+			if(cite_data.autors.authorship_names && cite_data.autors.authorship_surnames){
+				const authors_name		= cite_data.autors.authorship_names.split(' | ')
+				const authors_surname	= cite_data.autors.authorship_surnames.split(' | ')
+
+				const authors = []
+				const authors_len = authors_surname.length
+
+				for (let i = 0; i < authors_len; i++) {
+					const current_full_surname	= authors_surname[i]
+					const current_full_name	= authors_name[i]
+
+					const ar_current_name = []
+					current_full_name.split(' ')
+						.map(word => word.charAt(0) != ''
+							? ar_current_name.push(word.charAt(0))
+							: '');
+					const current_name = ar_current_name.join('.') +'.'
+
+					const ar_surname = current_full_surname.split(' ')
+					const surname = (ar_surname.length > 1)
+								? ar_surname.slice(0, 1)
+								: ar_surname
+
+					const current_surname = surname.join(' ')
+					const author = current_surname+', '+current_name
+					authors.push(author)
+				}
+				const authors_string = authors.join('; ')
+
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: authors_string,
+					parent			: line
+				})
+
+
+			// date
+				const ar_date_full = cite_data.publication_data.publication_date.split("-")
+
+				const date_year = typeof(ar_date_full[0])!=="undefined"
+					? parseInt(ar_date_full[0])
+					: null
+				const date = (date_year)
+					? " ("+ date_year + "): "
+					: ""
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: date,
+					parent			: line
+				})
+			}// end if authors
+
+
+		// Catalog & title
+			const ar_title = []
+
+			if(cite_data.catalog){
+				ar_title.push("<em>" + cite_data.catalog + "</em>")
+			}
+
+			if(cite_data.title){
+				ar_title.push(cite_data.title)
+			}
+			const title_string = ar_title.join(' ')
+
+			if(ar_title.length>0){
+				common.create_dom_element({
+					element_type	: "span",
+					inner_html		: title_string +', ',
+					parent			: line
+				})
+			}
+
+
+		// editors
+		// // other_people_info : name and role other_people_full_names
+			if (cite_data.publication_data.other_people_data && cite_data.publication_data.other_people_data.length>0) {
+
+				const particle_in = tstring.in || 'in'
+
+				common.create_dom_element({
+					element_type 	: "span",
+					text_content 	: particle_in.toLowerCase()+' ',
+					parent 			: line
+				})
+
+				const ar_data = cite_data.publication_data.other_people_data.split(" | ")
+				const ar_other_people_name = cite_data.publication_data.other_people_name.split(" | ");
+				const ar_other_people_surname = cite_data.publication_data.other_people_surname.split(" | ");
+				const ar_other_people_role = cite_data.publication_data.other_people_role.split(" | ")
+
+				const ar_data_len = ar_data.length
+				for (let i = 0; i < ar_data_len; i++) {
+					const fragment = new DocumentFragment()
+
+					const ar_current_data = JSON.parse(ar_data[i])
+					const ar_current_names = JSON.parse(ar_other_people_name[i])
+					const ar_current_surnames = JSON.parse(ar_other_people_surname[i])
+					const ar_current_role = JSON.parse(ar_other_people_role[i])
+
+					const authors =[]
+					const ar_current_data_len = ar_current_names.length
+					for (let i = 0; i < ar_current_data_len; i++) {
+
+						const current_full_surname	= ar_current_surnames[i]
+						const current_full_name	= ar_current_names[i]
+
+						const ar_current_name = []
+						current_full_name.split(' ')
+							.map(word => word.charAt(0) != ''
+								? ar_current_name.push(word.charAt(0))
+								: '');
+						const current_name = ar_current_name.join('.') +'.'
+
+						const ar_surname = current_full_surname.split(' ')
+
+						const surname = (ar_surname.length > 1)
+							? ar_surname.slice(0, 1)
+							: ar_surname
+
+						const current_surname = surname.join(' ')
+						const author = current_name +' '+current_surname
+						authors.push(author)
+					}
+					const other_people_names_string = authors.join(', ')
+					const other_people_role_string = ar_current_role.join('')
+
+					common.create_dom_element({
+						element_type 	: "span",
+						text_content 	: other_people_names_string,
+						parent 			: fragment
+					})
+					const role = other_people_role_string.length > 0
+						? ' ('+other_people_role_string.toLowerCase()+'.), '
+						: ', '
+					common.create_dom_element({
+						element_type 	: "span",
+						text_content 	: role,
+						parent 			: fragment
+					})
+					line.appendChild(fragment)
+				}
+			}
+
+		//title
+			const title = (cite_data.publication_data.title)
+				? cite_data.publication_data.title +' ('+page_globals.OWN_CATALOG_ACRONYM+'), '
+				: ' ('+page_globals.OWN_CATALOG_ACRONYM+'), '
+			common.create_dom_element({
+				element_type	: "em",
+				inner_html		: title,
+				parent			: line
+			})
+
+
+		// place
+			const place = (cite_data.publication_data.place)
+				? cite_data.publication_data.place + ', '
+				: ''
+			common.create_dom_element({
+				element_type	: "span",
+				inner_html		: place,
+				parent			: line
+			})
+
+		// uri_location
+			const uri = cite_data.uri_location
+			const link = common.create_dom_element({
+				element_type	: "a",
+				class_name		: "section_id",
+				text_content	: uri +' ',
+				href			: uri,
+				parent			: line
+			})
+			link.setAttribute('target', '_blank');
+
+		// accessed
+			const today	= new Date()
+			// const year	= today.getFullYear()
+			// const month	= today.getMonth()
+			// const day	= today.getUTCDate()
+
+			const browser_lang = window.navigator.language
+	console.log("tstring:",tstring);
+			const string_date	= new Intl.DateTimeFormat(browser_lang).format(today)
+			const accessed = common.create_dom_element({
+				element_type	: "span",
+				inner_html		: '[' + tstring.accessed +' '+ string_date+']',
+				parent			: line
+			})
+
+		return line
+	}
 
 }//end biblio_row_fields

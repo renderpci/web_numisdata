@@ -952,7 +952,36 @@ var page = {
 		})
 
 		return true
-	}//end create_expandable_block
+	},//end create_expandable_block
+
+
+	/**
+	* LOAD_MAIN_CATALOG
+	* load the main catalog of the page
+	*/
+	load_main_catalog : function() {
+
+		// request
+			const body = {
+				dedalo_get				: 'records',
+				db_name					: page_globals.WEB_DB,
+				table					: 'main_catalogs',
+				lang					: page_globals.WEB_CURRENT_LANG_CODE,
+				sql_filter				: 'catalog_name=\''+page_globals.OWN_CATALOG_ACRONYM+'\'',
+				limit					: 1,
+				resolve_portals_custom	: {
+											"publication_data":"publications"
+										},
+				// group				: (group.length>0) ? group.join(",") : null,
+				count					: false,
+				// order				: order
+			}
+			const js_promise = data_manager.request({
+				body : body
+			})
+
+		return js_promise
+	}//end load_main_catalog
 
 
 

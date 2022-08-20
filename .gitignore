@@ -11,3 +11,6 @@ acc
 *_old.*
 *_DES
 sendmail
+config
+images
+library.less

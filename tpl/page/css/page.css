@@ -879,7 +879,7 @@ nav ul {
   height: 23em;
 }
 #header > .head_inner > a.logo {
-  background-color: #00378b;
+  background-color: #333333;
   background-image: url("../../assets/images/logo_head-06.svg");
   background-repeat: no-repeat;
   height: 5em;
@@ -962,7 +962,7 @@ nav ul {
 }
 #header .symbol .title {
   font-size: 3em !important;
-  text-shadow: -2px -2px 0 #00378b, 2px -2px 0 #00378b, -2px 2px 0 #00378b, 2px 2px 0 #00378b;
+  text-shadow: -2px -2px 0 #333333, 2px -2px 0 #333333, -2px 2px 0 #333333, 2px 2px 0 #333333;
 }
 @media screen and (max-width: 736px) {
   #header {
@@ -1084,7 +1084,7 @@ nav ul {
   }
 }
 #footer {
-  background-color: #00378b;
+  background-color: #333333;
   padding: 0;
   padding-top: 0.75em;
   padding-bottom: 0.75em;
@@ -1380,7 +1380,7 @@ a.image_link img {
 .float-prompt {
   position: fixed;
   top: 100px;
-  background-color: #00378b;
+  background-color: #333333;
   display: flex;
   flex-flow: column;
   padding: 2em;
@@ -1971,3 +1971,4 @@ input[type=button].btn.button_contact.unactive {
 .leaflet-touch .leaflet-bar a {
   line-height: 1rem;
 }
+/*# sourceMappingURL=page.css.map */

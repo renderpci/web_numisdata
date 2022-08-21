@@ -12,5 +12,12 @@ acc
 *_DES
 sendmail
 config
-images
+# images
 library.less
+logo_head*
+default.jpg
+uni_val_hist.png
+LogoMuseoNegroValencia.png
+logo_mciu.jpg
+logo_mib_marron.svg
+logo-inc.svg

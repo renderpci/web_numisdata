@@ -12,5 +12,8 @@ acc
 *_DES
 sendmail
 config
-images
+# images
 library.less
+logo_head*
+default.jpg
+logo-inc.svg

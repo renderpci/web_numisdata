@@ -1,0 +1,2 @@
+"use strict";var analysis={area_name:null,export_data_container:null,row:null,set_up:function(a){const n=this;return n.area_name=a.area_name,n.export_data_container=a.export_data_container,n.row=a.row,!0}};
+//# sourceMappingURL=analysis-min.js.map

@@ -20,27 +20,17 @@
 						<h1><?php echo $title ?></h1>
 						<div class="golden-separator"></div>
 
-					<!-- main image -->
-						<?php /*<span class="image main"><img src="images/pic13.jpg" alt="" /></span>*/ ?>
-
-					<!-- abstract -->
-						<p><?php echo $abstract ?></p>
-
-					<!-- Images -->
-						<?php if(!empty($ar_image)) { ?>
-						<section class="images">
-							<?php foreach ($ar_image as $key => $image) { ?>
-								<a href="<?php echo __WEB_BASE_URL__ . $image ?>" class="gallery image fit" rel="noreferrer">
-									<img src="<?php echo __WEB_BASE_URL__ . $image ?>" alt="" class="image_big" />
-								</a>
-							<?php } ?>
+					<!-- Form -->
+						<section class="form">
+							<?php #include($cwd.'_search.phtml') ?>
+							<div id="items_container"></div>
 						</section>
-						<?php } ?>
 
-					<!-- body -->
-						<section class="content">
-							<?php echo $body ?>
+					<!-- Result -->
+						<section class="result">
+							<div id="export_data" class="export_data_container"></div>
 						</section>
+
 				</div>
 			</div>
 
@@ -55,7 +45,8 @@ dom_ready(function(){
 	analysis.set_up({
 		row						: <?php echo json_encode($this->row) ?>,
 		area_name				: <?php echo json_encode($area_name) ?>,
-		export_data_container	: document.getElementById('export_data')
+		export_data_container	: document.getElementById('export_data'),
+		form_items_container	: document.getElementById('items_container')
 	})
 })
 </script>

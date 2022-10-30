@@ -129,7 +129,49 @@ var analysis =  {
 	 * Form submit launch search
 	 */
 	form_submit : function(form_obj, options={}) {
-		// TODO: everything
+		
+		const self = this
+
+		// options
+			const scroll_result	= typeof options.scroll_result==="boolean" ? options.scroll_result : true
+			const form_items	= options.form_items || self.form.form_items
+
+		// build filter
+			const filter = self.form.build_filter({
+				form_items: form_items
+			})
+		
+		// empty filter case
+			if (!filter || filter.length<1) {
+				return false
+			}
+
+		// search rows exec against API
+
+	},
+
+	/**
+	 * SEARCH_ROWS
+	 * Call to API and load json data results of search
+	 */
+	search_rows : function(options) {
+
+		const self = this
+
+		// sort vars
+			const filter			= options.filter || null
+			const ar_fields			= options.ar_fields || ["*"]
+			const order				= options.order || "norder ASC"
+			const lang				= page_globals.WEB_CURRENT_LANG_CODE
+			const process_result	= options.process_result || null
+			const limit				= options.limit != undefined
+										? options.limit
+										: 30
+		
+		return new Promise(function(resolve){
+
+		})
+
 	}
 
 

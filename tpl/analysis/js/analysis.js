@@ -4,9 +4,6 @@
 "use strict";
 
 
-const DEFAULT_BIN_WIDTH = 1
-
-
 var analysis =  {
 
 	// Form factory instance
@@ -302,32 +299,53 @@ class histogram_wrapper extends chart_wrapper {
          * @private
          */
         this.data = data
+		/**
+		 * Number of bins in the histogram
+		 * 
+		 * Defined as the square root of the
+		 * amount of datapoints, computed
+		 * during render
+		 * @type {number}
+		 * @private
+		 */
+		this.n_bins = undefined
+		/**
+		 * Number of decimals to display
+		 * @type {number}
+		 * @private
+		 */
+		this.n_decimals = 2
     }
 
-    render() {
-        // Superclass render method
-        super.render()
+	/**
+	 * Get data needed to generate the chart
+	 * @private
+	 * 
+	 * @returns {[number[], number[], number]}
+	 * 			the bin centers, the count per bin,
+	 * 			and half of the bin width
+	 */
+	get_plotting_data() {
+		// Update number of bins
+		this.n_bins = Math.ceil(Math.sqrt(this.data.length))
 
-        // Subclass process
-        // Process data
-        const bin_width = 1
-		const half_bin_width = 0.5 * bin_width
 		const data_max = Math.max(...this.data)
 		const data_min = Math.min(...this.data)
-		const n_bins = Math.ceil( (data_max - data_min) / bin_width )
-		const bin_centers = Array.apply(null, Array(n_bins)).map(
+		const bin_width = (data_max - data_min) / this.n_bins
+		const half_bin_width = 0.5 * bin_width
+		const bin_centers = Array.apply(null, Array(this.n_bins)).map(
 			(value, index) => data_min + (2*index+1)*half_bin_width
 		)
 		// We bin with right-open intervals
-		let entries = Array.apply(null, Array(n_bins)).map(() => 0)
+		let entries = Array.apply(null, Array(this.n_bins)).map(() => 0)
 		for (let i = 0; i < this.data.length; i++) {
 			// If value is max, add it to last bin
 			if (this.data[i] === data_max) {
-				bin_centers[n_bins-1]++
+				bin_centers[this.n_bins-1]++
 				continue
 			}
 			// Proceed as usual
-			for (let j = 0; j < n_bins; j++) {
+			for (let j = 0; j < this.n_bins; j++) {
 				if (this.data[i] >= bin_centers[j] - half_bin_width
 					&& this.data[i] < bin_centers[j] + half_bin_width) {
 					entries[j]++
@@ -335,15 +353,21 @@ class histogram_wrapper extends chart_wrapper {
 				}
 			}
 		}
-		// Arrange data for plotting
-		// const plotting_data = bin_centers.map((val, i) => ({x: val, y: entries[i]}))
-		// console.log(plotting_data)
+		return [bin_centers, entries, half_bin_width]
+	}
+
+    render() {
+        // Superclass render method
+        super.render()
+
+        // Subclass process
+        const [bin_centers, entries, half_bin_width] = this.get_plotting_data()
 		
 		// Render the graph
 		const chart = new Chart(this.canvas, {
 			type: 'bar',
 			data: {
-				labels: bin_centers,
+				labels: bin_centers.map((val) => val.toFixed(this.n_decimals)),
 				datasets: [{
 					label: 'Amount',
 					data: entries,
@@ -396,13 +420,16 @@ class histogram_wrapper extends chart_wrapper {
 								const index = item.dataIndex
 								const min = bin_centers[index] - half_bin_width
 								const max = bin_centers[index] + half_bin_width
-								return `Diameter: ${min} - ${max}`
+								return `Diameter: ${min.toFixed(this.n_decimals)} `
+									   + `- ${max.toFixed(this.n_decimals)}`
 							},
 						},
 					},
 				},
 			},
 		})
+
+		// TODO: create slider for the number of bins
     }
 
 }

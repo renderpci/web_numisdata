@@ -4,6 +4,8 @@
 "use strict";
 
 
+const DEFAULT_BIN_WIDTH = 1
+
 
 var analysis =  {
 
@@ -16,6 +18,11 @@ var analysis =  {
 	// DOM containers
 	export_data_container	: null,
 	form_items_container	: null,
+	graph_canvas			: null,
+
+	// Chart (Chart.js object)
+	chart					: null,
+
 
 
 	set_up : function(options) {
@@ -23,10 +30,11 @@ var analysis =  {
 		const self = this
 
 		// options
-			self.area_name				= options.area_name
-			self.export_data_container	= options.export_data_container
-			self.row					= options.row
-			self.form_items_container	= options.form_items_container
+			self.area_name					= options.area_name
+			self.export_data_container		= options.export_data_container
+			self.row						= options.row
+			self.form_items_container		= options.form_items_container
+			self.graph_canvas				= options.graph_canvas
 
 		// form
 		const form_node = self.render_form()
@@ -147,6 +155,21 @@ var analysis =  {
 			}
 
 		// search rows exec against API
+			const js_promise = self.search_rows({
+				filter			: filter,
+				limit			: 0
+			})
+			.then((parsed_data)=>{
+
+				event_manager.publish('form_submit', parsed_data)
+
+				// TODO: do stuff with the data
+				const diameters = parsed_data
+					.map((ele) => ele.ref_type_averages_diameter)
+					.filter((ele) => ele !== undefined && ele !== null)  // removes null or undefined entries
+				this.create_histogram(diameters, DEFAULT_BIN_WIDTH)
+
+			})
 
 	},
 
@@ -169,9 +192,142 @@ var analysis =  {
 										: 30
 		
 		return new Promise(function(resolve){
+			// parse_sql_filter
+				const group = []
+			// parsed filters
+				const sql_filter = self.form.parse_sql_filter(filter)
+			// request
+				const request_body = {
+					dedalo_get		: 'records',
+					table			: 'catalog',
+					ar_fields		: ar_fields,
+					lang			: lang,
+					sql_filter		: sql_filter,
+					limit			: limit,
+					group			: (group.length>0) ? group.join(",") : null,
+					count			: false,
+					order			: order,
+					process_result	: process_result
+				}
+				data_manager.request({
+					body : request_body
+				})
+				.then((response)=>{
+					// data parsed
+					const data = page.parse_catalog_data(response.result)
 
+					resolve(data)
+				})
 		})
 
+	},
+
+	/** Create a histogram
+	 * @param data {number[]} list of values
+	 * @param bin_width {number} the width of the bins
+	*/
+	create_histogram : function(data, bin_width) {
+		// Destroy chart if it exist
+		if (this.chart) {
+			this.chart.destroy()
+			this.graph_canvas.removeAttribute('width')
+			this.graph_canvas.removeAttribute('height')
+			this.graph_canvas.removeAttribute('style')
+		}
+
+		// Process data
+		const half_bin_width = 0.5 * bin_width
+		const data_max = Math.max(...data)
+		const data_min = Math.min(...data)
+		const n_bins = Math.ceil( (data_max - data_min) / bin_width )
+		const bin_centers = Array.apply(null, Array(n_bins)).map(
+			(value, index) => data_min + (2*index+1)*half_bin_width
+		)
+		// We bin with right-open intervals
+		let entries = Array.apply(null, Array(n_bins)).map(() => 0)
+		for (let i = 0; i < data.length; i++) {
+			// If value is max, add it to last bin
+			if (data[i] === data_max) {
+				bin_centers[n_bins-1]++
+				continue
+			}
+			// Proceed as usual
+			for (let j = 0; j < n_bins; j++) {
+				if (data[i] >= bin_centers[j] - half_bin_width
+					&& data[i] < bin_centers[j] + half_bin_width) {
+					entries[j]++
+					break
+				}
+			}
+		}
+		// Arrange data for plotting
+		// const plotting_data = bin_centers.map((val, i) => ({x: val, y: entries[i]}))
+		// console.log(plotting_data)
+		
+		// Render the graph
+		this.chart = new Chart(this.graph_canvas, {
+			type: 'bar',
+			data: {
+				labels: bin_centers,
+				datasets: [{
+					label: 'Amount',
+					data: entries,
+					categoryPercentage: 1,
+					barPercentage: 1,
+				}],
+			},
+			options: {
+				scales: {
+					x: {
+						// type: 'linear',  // otherwise it goes to a category axis...
+						// min: data_min,
+						// max: data_max,
+						// offset: false,
+						grid: {
+							offset: false,
+						},
+						// ticks: {
+						// 	stepSize: bin_width,
+						// },
+						title: {
+							display: true,
+							text: 'Diameter',
+							font: {
+								size: 14
+							},
+						}
+					},
+					y: {
+						title: {
+							display: true,
+							text: 'Amount',
+							font: {
+								size: 14
+							},
+						},
+					},
+				},
+				plugins: {
+					legend: {
+						display: false,
+					},
+					tooltip: {
+						callbacks: {
+							title: (items) => {
+								if (!items.length) {
+									return ''
+								}
+								const item = items[0]
+								const index = item.dataIndex
+								const min = bin_centers[index] - half_bin_width
+								const max = bin_centers[index] + half_bin_width
+								return `Diameter: ${min} - ${max}`
+							},
+						},
+					},
+				},
+			},
+		})
 	}
 
 

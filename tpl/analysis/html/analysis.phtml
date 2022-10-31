@@ -29,6 +29,7 @@
 					<!-- Result -->
 						<section class="result">
 							<div id="export_data" class="export_data_container"></div>
+							<canvas id="result_graph"></canvas>
 						</section>
 
 				</div>
@@ -46,7 +47,8 @@ dom_ready(function(){
 		row						: <?php echo json_encode($this->row) ?>,
 		area_name				: <?php echo json_encode($area_name) ?>,
 		export_data_container	: document.getElementById('export_data'),
-		form_items_container	: document.getElementById('items_container')
+		form_items_container	: document.getElementById('items_container'),
+		graph_canvas 			: document.getElementById('result_graph')
 	})
 })
 </script>

@@ -18,11 +18,10 @@ var analysis =  {
 	// DOM containers
 	export_data_container	: null,
 	form_items_container	: null,
-	graph_canvas			: null,
+	chart_wrapper_container	: null,
 
-	// Chart (Chart.js object)
-	chart					: null,
-
+	// Chart wrapper
+	chart_wrapper: null,
 
 
 	set_up : function(options) {
@@ -34,7 +33,7 @@ var analysis =  {
 			self.export_data_container		= options.export_data_container
 			self.row						= options.row
 			self.form_items_container		= options.form_items_container
-			self.graph_canvas				= options.graph_canvas
+			self.chart_wrapper_container	= options.chart_wrapper_container
 
 		// form
 		const form_node = self.render_form()
@@ -167,7 +166,11 @@ var analysis =  {
 				const diameters = parsed_data
 					.map((ele) => ele.ref_type_averages_diameter)
 					.filter((ele) => ele !== undefined && ele !== null)  // removes null or undefined entries
-				this.create_histogram(diameters, DEFAULT_BIN_WIDTH)
+				this.chart_wrapper = new histogram_wrapper(
+					this.chart_wrapper_container,
+					diameters
+				)
+				this.chart_wrapper.render()
 
 			})
 
@@ -222,39 +225,111 @@ var analysis =  {
 
 	},
 
-	/** Create a histogram
-	 * @param data {number[]} list of values
-	 * @param bin_width {number} the width of the bins
-	*/
-	create_histogram : function(data, bin_width) {
-		// Destroy chart if it exist
-		if (this.chart) {
-			this.chart.destroy()
-			this.graph_canvas.removeAttribute('width')
-			this.graph_canvas.removeAttribute('height')
-			this.graph_canvas.removeAttribute('style')
-		}
+}//end analysis
 
-		// Process data
+
+
+
+
+/** Wrapper for charts (data plots) that includes the
+ * chart itself and possible UI for controls
+ * 
+ * Subclasses implement particular types of charts,
+ * such as histograms, pie-charts, etc.
+ * 
+ * Subclasses must implement their own constructor
+ * and `render` method
+*/
+class chart_wrapper {
+
+    /**
+     * Construct a new chart wrapper
+     * @param div_wrapper {Element} the div to work in
+     */
+    constructor(div_wrapper) {
+        /**
+         * Div element wrapping the chart itself and
+         * the controls
+         * @type {Element}
+         * @protected
+         */
+        this.div_wrapper = div_wrapper
+        /**
+         * Canvas instance, will be created during
+         * render
+         * @type {Element}
+         * @protected
+         */
+        this.canvas = undefined
+    }
+
+    /**
+     * Render the chart and controls
+     * 
+     * Empties the div wrapper
+     * 
+     * Subclasses must call this method at the top
+     * of their own implementation
+     */
+    render() {
+        // Create canvas
+        this.canvas = common.create_dom_element({
+            element_type    : 'canvas',
+            id              : 'result_graph',
+        })
+        // Replace all existing children of the div wrapper
+        // by the canvas
+        this.div_wrapper.replaceChildren(this.canvas)
+    }
+
+}
+
+/** Wrapper for a histogram
+ * @extends chart_wrapper
+ */
+class histogram_wrapper extends chart_wrapper {
+
+    /**
+     * Construct a new histogram wrapper
+     * @param div_wrapper {Element} the div to work in
+     * @param data {number[]} the data
+     */
+    constructor(div_wrapper, data) {
+        super(div_wrapper)
+        /**
+         * Data values
+         * @type {number[]}
+         * @private
+         */
+        this.data = data
+    }
+
+    render() {
+        // Superclass render method
+        super.render()
+
+        // Subclass process
+        // Process data
+        const bin_width = 1
 		const half_bin_width = 0.5 * bin_width
-		const data_max = Math.max(...data)
-		const data_min = Math.min(...data)
+		const data_max = Math.max(...this.data)
+		const data_min = Math.min(...this.data)
 		const n_bins = Math.ceil( (data_max - data_min) / bin_width )
 		const bin_centers = Array.apply(null, Array(n_bins)).map(
 			(value, index) => data_min + (2*index+1)*half_bin_width
 		)
 		// We bin with right-open intervals
 		let entries = Array.apply(null, Array(n_bins)).map(() => 0)
-		for (let i = 0; i < data.length; i++) {
+		for (let i = 0; i < this.data.length; i++) {
 			// If value is max, add it to last bin
-			if (data[i] === data_max) {
+			if (this.data[i] === data_max) {
 				bin_centers[n_bins-1]++
 				continue
 			}
 			// Proceed as usual
 			for (let j = 0; j < n_bins; j++) {
-				if (data[i] >= bin_centers[j] - half_bin_width
-					&& data[i] < bin_centers[j] + half_bin_width) {
+				if (this.data[i] >= bin_centers[j] - half_bin_width
+					&& this.data[i] < bin_centers[j] + half_bin_width) {
 					entries[j]++
 					break
 				}
@@ -265,7 +340,7 @@ var analysis =  {
 		// console.log(plotting_data)
 		
 		// Render the graph
-		this.chart = new Chart(this.graph_canvas, {
+		const chart = new Chart(this.canvas, {
 			type: 'bar',
 			data: {
 				labels: bin_centers,
@@ -328,7 +403,6 @@ var analysis =  {
 				},
 			},
 		})
-	}
+    }
 
-
-}//end analysis
+}

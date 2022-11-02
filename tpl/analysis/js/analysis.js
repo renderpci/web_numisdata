@@ -361,6 +361,12 @@ function histogram_wrapper(div_wrapper, data, xlabel) {
 	 * @private
 	 */
 	this._max_bins_multiplier = 3
+	/**
+	 * Default color for the bars in rgba
+	 * @type {string}
+	 * @private
+	 */
+	this._default_bar_color = 'rgba(255,190,92,0.5)'
 }
 
 /**
@@ -571,6 +577,7 @@ histogram_wrapper.prototype._render_chart = function() {
 			data: plot_data,
 			categoryPercentage: 1,
 			barPercentage: 1,
+			backgroundColor: this._default_bar_color,
 		}],
 	}
 	const scales_options = {
@@ -696,6 +703,29 @@ histogram_wrapper.prototype._render_control_panel = function() {
 	density_checkbox_label.setAttribute('for', 'density_checkbox')
 	density_checkbox.addEventListener('change', () => {
 		this.set_density(Boolean(density_checkbox.checked))
+	})
+	/** iro.js color picker */
+	const color_picker_container = common.create_dom_element({
+		element_type	: 'div',
+		id				: 'color_picker_container',
+		parent			: this.controls_container
+	})
+	const color_picker = new window.iro.ColorPicker(color_picker_container, {
+		color: this._default_bar_color,
+		layout: [
+			{
+				component: window.iro.ui.Wheel,
+			},
+			{
+				component: window.iro.ui.Slider,
+			},
+			{
+				component: window.iro.ui.Slider,
+				options: {
+					sliderType: 'alpha',
+				}
+			},
+		],
 	})
 }
 

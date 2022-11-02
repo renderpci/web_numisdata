@@ -1,0 +1,54 @@
+<?php
+# REQUIRED FILES
+	$base_path = dirname(dirname(__FILE__));
+	$cwd 	   = basename($base_path); # Current dir name
+
+	# Current controller add
+	require($base_path .'/'. $cwd .'.php');
+?>
+<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- header -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/header.phtml'; ?>
+
+		<!-- Main -->
+			<div id="main">
+				<div class="inner">
+
+					<!-- title -->
+						<h1><?php echo $title ?></h1>
+						<div class="golden-separator"></div>
+
+					<!-- Form -->
+						<section class="form">
+							<?php #include($cwd.'_search.phtml') ?>
+							<div id="items_container"></div>
+						</section>
+
+					<!-- Result -->
+						<section class="result">
+							<div id="chart_wrapper" class="o-red"></div>
+							<div id="export_data" class="export_data_container"></div>
+						</section>
+
+				</div>
+			</div>
+
+		<!-- Footer -->
+			<?php include dirname(dirname(dirname(__FILE__))) . '/page/html/footer.phtml'; ?>
+
+	</div>
+
+<?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
+<script>
+dom_ready(function(){
+	analysis.set_up({
+		row						: <?php echo json_encode($this->row) ?>,
+		area_name				: <?php echo json_encode($area_name) ?>,
+		export_data_container	: document.getElementById('export_data'),
+		form_items_container	: document.getElementById('items_container'),
+		chart_wrapper_container : document.getElementById('chart_wrapper')
+	})
+})
+</script>

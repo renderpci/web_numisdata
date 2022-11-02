@@ -165,7 +165,8 @@ var analysis =  {
 					.filter((ele) => ele !== undefined && ele !== null)  // removes null or undefined entries
 				this.chart_wrapper = new histogram_wrapper(
 					this.chart_wrapper_container,
-					diameters
+					diameters,
+					"Diameter"
 				)
 				this.chart_wrapper.render()
 
@@ -258,12 +259,23 @@ class chart_wrapper {
          * @protected
          */
         this.canvas = undefined
+		/**
+		 * Chart instance (e.g., chart.js)
+		 * @protected
+		 */
+		this.chart = undefined
+		/**
+		 * Div container for user controls
+		 * @type {Element}
+		 * @protected
+		 */
+		this.controls_container = undefined
     }
 
     /**
      * Render the chart and controls
      * 
-     * Empties the div wrapper
+     * Empties the div wrapper and resets properties
      * 
      * Subclasses must call this method at the top
      * of their own implementation
@@ -273,10 +285,15 @@ class chart_wrapper {
         this.canvas = common.create_dom_element({
             element_type    : 'canvas',
             id              : 'result_graph',
+			class_name		: 'o-blue',
         })
         // Replace all existing children of the div wrapper
         // by the canvas
         this.div_wrapper.replaceChildren(this.canvas)
+		// Set chart instance to undefined
+		this.chart = undefined
+		// Set controls container to undefined
+		this.controls_container = undefined
     }
 
 }
@@ -290,8 +307,9 @@ class histogram_wrapper extends chart_wrapper {
      * Construct a new histogram wrapper
      * @param div_wrapper {Element} the div to work in
      * @param data {number[]} the data
+	 * @param xlabel {string} the label for the x-axis
      */
-    constructor(div_wrapper, data) {
+    constructor(div_wrapper, data, xlabel) {
         super(div_wrapper)
         /**
          * Data values
@@ -299,6 +317,18 @@ class histogram_wrapper extends chart_wrapper {
          * @private
          */
         this.data = data
+		/**
+		 * Whether to perform a density plot
+		 * @type {boolean}
+		 * @private
+		 */
+		this._density = false
+		/**
+		 * Default number of bins
+		 * @type {number}
+		 * @private
+		 */
+		this.n_bins_default = Math.ceil(Math.sqrt(this.data.length))
 		/**
 		 * Number of bins in the histogram
 		 * 
@@ -308,35 +338,122 @@ class histogram_wrapper extends chart_wrapper {
 		 * @type {number}
 		 * @private
 		 */
-		this.n_bins = undefined
+		this._n_bins = undefined
+		/** Label for the xaxis
+		 * @type {string}
+		 * @private
+		*/
+		this.xlabel = xlabel
 		/**
 		 * Number of decimals to display
 		 * @type {number}
 		 * @private
 		 */
-		this.n_decimals = 2
+		this.n_decimals = 3
+		/**
+		 * Maximum number of bins as mutiplier of default
+		 * @type {number}
+		 * @private
+		 */
+		this.max_bins_multiplier = 3
     }
 
 	/**
+	 * Check whether we are doing a density plot
+	 * @returns {boolean} `true` if density plot,
+	 * 			`false` otherwise
+	 */
+	get density() {
+		return this._density
+	}
+
+	/**
+	 * Change the density plot attribute
+	 * @param newVal {boolean} `true` if density,
+	 * 		  `false` otherwise
+	 */
+	set density(newVal) {
+		this._density = newVal
+		if (!this.chart) {
+			return;
+		}
+		// Update chart
+		const [
+			bin_centers, plot_data, half_bin_width, data_min, data_max
+		] = this.get_plotting_data()
+		this.chart.data.datasets[0].label = this.density_string
+		this.chart.data.datasets[0].data = plot_data
+		this.chart.options.scales.y.title.text = this.density_string
+		this.chart.update()
+	}
+
+	/** Get a string representing our plot mode
+	 * @returns {string} `'Density'` if we are in density
+	 * 			mode, `'Frequency'` otherwise
+	*/
+	get density_string() {
+		return this.density ? 'Density' : 'Frequency'
+	}
+
+	/**
+	 * Get the amount of bins in the histogram
+	 * @returns {number} the amount of bins
+	 */
+	get n_bins() {
+		return this._n_bins
+	}
+
+	/**
+	 * Set a new number of bins for the histogram
+	 * 
+	 * Updates chart instance accordingly
+	 * @param newVal {number} amount of bins
+	 */
+	set n_bins(newVal) {
+		this._n_bins = newVal
+		if (!this.chart) {
+			return;
+		}
+		// Update chart
+		const [
+			bin_centers, plot_data, half_bin_width, data_min, data_max
+		] = this.get_plotting_data()
+		this.chart.data.datasets[0].data = plot_data
+		this.chart.options.scales.x.min = data_min
+		this.chart.options.scales.x.max = data_max
+		this.chart.options.scales.x.ticks.stepSize = 2*half_bin_width
+		this.chart.options.plugins.tooltip.callbacks.title =
+			this.getTooltipTitleCallback(bin_centers, half_bin_width)
+		this.chart.update()
+	}
+
+	/**
 	 * Get data needed to generate the chart
+	 * TODO: there is no need to recompute bin_centers unless the number of bins
+	 * 		 has changed
 	 * @private
 	 * 
-	 * @returns {[number[], number[], number]}
-	 * 			the bin centers, the count per bin,
-	 * 			and half of the bin width
+	 * @returns {[number[], {x: number, y: number}[], number, number, number]}
+	 * 			the bin centers, {bin centers, count per bin}, half of the bin width,
+	 * 			the minimum and maximum of input data
 	 */
 	get_plotting_data() {
-		// Update number of bins
-		this.n_bins = Math.ceil(Math.sqrt(this.data.length))
-
 		const data_max = Math.max(...this.data)
 		const data_min = Math.min(...this.data)
 		const bin_width = (data_max - data_min) / this.n_bins
 		const half_bin_width = 0.5 * bin_width
+		/**
+		 * Center of each bin
+		 * @type {number[]}
+		 */
 		const bin_centers = Array.apply(null, Array(this.n_bins)).map(
 			(value, index) => data_min + (2*index+1)*half_bin_width
 		)
 		// We bin with right-open intervals
+		/**
+		 * Count per bin
+		 * @type {number[]}
+		 */
 		let entries = Array.apply(null, Array(this.n_bins)).map(() => 0)
 		for (let i = 0; i < this.data.length; i++) {
 			// If value is max, add it to last bin
@@ -353,7 +470,49 @@ class histogram_wrapper extends chart_wrapper {
 				}
 			}
 		}
-		return [bin_centers, entries, half_bin_width]
+		// Normalize if density
+		if (this.density) {
+			const sum = entries.reduce((partialSum, val) => partialSum + val, 0)
+			for (let j = 0; j < this.n_bins; j++) {
+				entries[j] /= (sum*bin_width);
+			}
+		}
+		return [
+			bin_centers,
+			bin_centers.map((val, i) => ({x: val, y: entries[i]})),
+			half_bin_width,
+			data_min,
+			data_max,
+		]
+	}
+
+	/**
+	 * Get callback function for tooltip title
+	 * @param bin_centers {number[]} the bin centers
+	 * @param half_bin_width {number} half of the bin width
+	 * @returns the callback function
+	 */
+	getTooltipTitleCallback(bin_centers, half_bin_width) {
+		/**
+		 * Callback function for the tooltip title
+		 * @param {TooltipItem[]} items the tooltip item contexts
+		 * @returns {string} the title of the tooltip
+		 */
+		// Cannot use `this` inside inner function!!!
+		const xlabel = this.xlabel
+		const n_decimals = this.n_decimals
+		const callback = function(items) {
+			if (!items.length) {
+				return ''
+			}
+			const item = items[0]
+			const index = item.dataIndex
+			const min = bin_centers[index] - half_bin_width
+			const max = bin_centers[index] + half_bin_width
+			return `${xlabel}: ${min.toFixed(n_decimals)} `
+				   + `- ${max.toFixed(n_decimals)}`
+		}
+		return callback
 	}
 
     render() {
@@ -361,75 +520,133 @@ class histogram_wrapper extends chart_wrapper {
         super.render()
 
         // Subclass process
-        const [bin_centers, entries, half_bin_width] = this.get_plotting_data()
+		this.n_bins =  this.n_bins_default
+        const [
+			bin_centers, plot_data, half_bin_width, data_min, data_max
+		] = this.get_plotting_data()
+
+		// Split chart options
+		const chart_data = {
+			datasets: [{
+				label: this.density_string,
+				data: plot_data,
+				categoryPercentage: 1,
+				barPercentage: 1,
+			}],
+		}
+		const scales_options = {
+			x: {
+				type: 'linear',  // otherwise it goes to a category axis...
+				min: data_min,
+				max: data_max,
+				offset: false,
+				grid: {
+					offset: false,
+				},
+				ticks: {
+					stepSize: 2*half_bin_width,
+					callback: (label, index, labels) => {
+						return Number(label).toFixed(this.n_decimals)
+					}
+				},
+				title: {
+					display: true,
+					text: this.xlabel,
+					font: {
+						size: 14
+					},
+				}
+			},
+			y: {
+				title: {
+					display: true,
+					text: this.density_string,
+					font: {
+						size: 14
+					},
+				},
+			},
+		}
+		const plugins_options = {
+			legend: {
+				display: false,
+			},
+			tooltip: {
+				callbacks: {
+					title: this.getTooltipTitleCallback(bin_centers, half_bin_width),
+				},
+			},
+		}
 		
 		// Render the graph
-		const chart = new Chart(this.canvas, {
+		this.chart = new Chart(this.canvas, {
 			type: 'bar',
-			data: {
-				labels: bin_centers.map((val) => val.toFixed(this.n_decimals)),
-				datasets: [{
-					label: 'Amount',
-					data: entries,
-					categoryPercentage: 1,
-					barPercentage: 1,
-				}],
-			},
+			data: chart_data,
 			options: {
-				scales: {
-					x: {
-						// type: 'linear',  // otherwise it goes to a category axis...
-						// min: data_min,
-						// max: data_max,
-						// offset: false,
-						grid: {
-							offset: false,
-						},
-						// ticks: {
-						// 	stepSize: bin_width,
-						// },
-						title: {
-							display: true,
-							text: 'Diameter',
-							font: {
-								size: 14
-							},
-						}
-					},
-					y: {
-						title: {
-							display: true,
-							text: 'Amount',
-							font: {
-								size: 14
-							},
-						},
-					},
-				},
-				plugins: {
-					legend: {
-						display: false,
-					},
-					tooltip: {
-						callbacks: {
-							title: (items) => {
-								if (!items.length) {
-									return ''
-								}
-								const item = items[0]
-								const index = item.dataIndex
-								const min = bin_centers[index] - half_bin_width
-								const max = bin_centers[index] + half_bin_width
-								return `Diameter: ${min.toFixed(this.n_decimals)} `
-									   + `- ${max.toFixed(this.n_decimals)}`
-							},
-						},
-					},
-				},
+				scales: scales_options,
+				plugins: plugins_options,
 			},
 		})
 
-		// TODO: create slider for the number of bins
+		// Create controls container
+		this.controls_container = common.create_dom_element({
+			element_type    : 'div',
+            id              : 'controls',
+			class_name		: 'o-green',
+			parent			: this.div_wrapper,
+		})
+		/**
+		 * Slider for number of bins
+		 * @type {Element}
+		 */
+		const slider = common.create_dom_element({
+			element_type	: 'input',
+			type			: 'range',
+			value			: this.n_bins_default,
+			parent			: this.controls_container,
+		})
+		slider.setAttribute('min', 1)
+		slider.setAttribute('max', this.max_bins_multiplier*this.n_bins_default)
+		slider.addEventListener('input', () => {
+			this.n_bins = Number(slider.value)
+		})
+		/**
+		 * Reset button for the slider
+		 * @type {Element}
+		 */
+		const slider_reset = common.create_dom_element({
+			element_type	: 'button',
+			type			: 'button',
+			text_content	: 'Reset',
+			parent			: this.controls_container,
+		})
+		slider_reset.addEventListener('click', () => {
+			slider.value = this.n_bins_default
+			this.n_bins = Number(slider.value)
+		})
+		/**
+		 * Checkbox for density plot
+		 * @type {Element}
+		 */
+		const density_checkbox = common.create_dom_element({
+			element_type	: 'input',
+			type			: 'checkbox',
+			id				: 'density_checkbox',
+			parent			: this.controls_container,
+		})
+		/**
+		 * Checkbox label for density plot
+		 * @type {Element}
+		 */
+		const density_checkbox_label = common.create_dom_element({
+			element_type	: 'label',
+			text_content	: 'Density',
+			parent			: this.controls_container,
+		})
+		density_checkbox_label.setAttribute('for', 'density_checkbox')
+		density_checkbox.addEventListener('change', () => {
+			this.density = Boolean(density_checkbox.checked)
+		})
     }
 
 }

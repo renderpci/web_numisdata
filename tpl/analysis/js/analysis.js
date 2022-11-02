@@ -585,6 +585,8 @@ class histogram_wrapper extends chart_wrapper {
 			options: {
 				scales: scales_options,
 				plugins: plugins_options,
+				parsing: false,
+				normalized: true,
 			},
 		})
 

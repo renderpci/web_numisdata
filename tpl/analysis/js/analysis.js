@@ -476,7 +476,7 @@ histogram_wrapper.prototype._get_plotting_data = function() {
 	for (let i = 0; i < this._data.length; i++) {
 		// If value is max, add it to last bin
 		if (this._data[i] === data_max) {
-			bin_centers[this._n_bins-1]++
+			entries[this._n_bins-1]++
 			continue
 		}
 		// Proceed as usual

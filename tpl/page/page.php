@@ -33,6 +33,7 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/breakpoints.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/chart.min.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/iro.min.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/canvas2svg.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/util'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/main'.JS_SUFFIX.'.js';
 		//page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/js/jquery.poptrox.min.js';

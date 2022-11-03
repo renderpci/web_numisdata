@@ -373,7 +373,7 @@ function chartjs_chart_wrapper(div_wrapper) {
 	/**
 	 * Canvas instance, will be created during
 	 * render
-	 * @type {Element}
+	 * @type {HTMLCanvasElement}
 	 * @protected
 	 */
 	 this.canvas = undefined
@@ -461,7 +461,55 @@ chartjs_chart_wrapper.prototype._download_chart_as_png = function(filename) {
  * @name chartjs_chart_wrapper#_download_chart_as_svg
  */
 chartjs_chart_wrapper.prototype._download_chart_as_svg = function(filename) {
-	console.log(`Downloading ${filename}`)
+	// Tweak C2S library
+	this._tweak_c2s()
+	// Get original width and height
+	const width = this.canvas.offsetWidth
+	const height = this.canvas.offsetHeight
+	// TODO: Turn off responsiveness and animations
+	// Replicate chart in C2S space
+	const svgContext = C2S(width, height)
+	const svgChart = new Chart(svgContext, this.chart.config._config)
+	// Download
+	/**
+	 * Temporary link
+	 * @type {Element}
+	 */
+	 let tmpLink = common.create_dom_element({
+		element_type	: 'a',
+		href			: 'data:image/svg+xml;utf8,'
+						  + encodeURIComponent(svgContext.getSerializedSvg()),
+	})
+	tmpLink.setAttribute('download', filename)
+	tmpLink.click()
+	tmpLink.remove()
+	// TODO: Turn on responsiveness and animations
+}
+
+/**
+ * Some tweaks to the canvas2svg library are required for svg export to work
+ * 
+ * Via: https://stackoverflow.com/questions/62249315/export-canvas-to-svg-file
+ * @function
+ * @private
+ * @name chartjs_chart_wrapper#_tweak_c2s
+ */
+chartjs_chart_wrapper.prototype._tweak_c2s = function() {
+	C2S.prototype.getContext = function(contextId) {
+		if (contextId === '2d' || contextId === '2D') {
+		  return this;
+		}
+		return null;
+	  }
+	  C2S.prototype.style = function() {
+		return this.__canvas.style;
+	  }
+	  C2S.prototype.getAttribute = function(name) {
+		return this[name];
+	  }
+	  C2S.prototype.addEventListener = function(type, listener, eventListenerOptions) {
+		// nothing to do here, but we need this function :)
+	  }
 }
 
 /*

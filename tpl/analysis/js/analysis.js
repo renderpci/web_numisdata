@@ -17,7 +17,10 @@ var analysis =  {
 	form_items_container	: null,
 	chart_wrapper_container	: null,
 
-	// Chart wrapper
+	/**
+	 * Chart wrapper instance
+	 * @type {chart_wrapper}
+	 */
 	chart_wrapper: null,
 
 
@@ -233,16 +236,34 @@ var analysis =  {
 
 /**
  * Width (in pixels) of color picker
- * @type{number}
+ * @type {number}
  */
 const COLOR_PICKER_WIDTH = 200
 
 /**
+ * Supported chart export formats
+ * @type {string[]}
+ */
+const SUPPORTED_CHART_EXPORT_FORMATS = ['png', 'svg']
+
+/**
+ * Default name for the chart -> when exporting,
+ * `<name>.<format>`
+ * @type {string}
+ */
+const DEFAULT_CHART_NAME = 'chart'
+
+
+/**
  * Chart wrapper class
  * @class
+ * @abstract
  * @param {Element} div_wrapper 
  */
 function chart_wrapper(div_wrapper) {
+	if (this.constructor === chart_wrapper) {
+		throw new Error("Abstract class 'chart_wrapper' cannot be instantiated")
+	}
 	/**
 	 * Div element wrapping the chart itself and
 	 * the controls
@@ -251,17 +272,11 @@ function chart_wrapper(div_wrapper) {
 	 */
 	this.div_wrapper = div_wrapper
 	/**
-	 * Canvas instance, will be created during
-	 * render
+	 * Div container for chart download
 	 * @type {Element}
 	 * @protected
 	 */
-	this.canvas = undefined
-	/**
-	 * Chart instance (e.g., chart.js)
-	 * @protected
-	 */
-	this.chart = undefined
+	this.download_chart_container = undefined
 	/**
 	 * Div container for user controls
 	 * @type {Element}
@@ -281,23 +296,176 @@ function chart_wrapper(div_wrapper) {
  * @function
  */
 chart_wrapper.prototype.render = function() {
+	// Save this chart_wrapper intance
+	/**
+	 * This chart_wrapper intance
+	 * @type {chart_wrapper}
+	 */
+	const self = this
+	// Remove all children in the div_wrapper
+	this.div_wrapper.replaceChildren()
+	// Set controls container to undefined
+	this.controls_container = undefined
+	// Create the chart download section
+	this.download_chart_container = common.create_dom_element({
+		element_type	: 'div',
+		id				: 'download_chart_container',
+		class_name		: 'o-purple',
+		parent			: this.div_wrapper,
+	})
+	const format_select = common.create_dom_element({
+		element_type	: 'select',
+		id				: 'chart_export_format',
+		parent			: this.download_chart_container,
+		// TODO: add ARIA attributes?
+	})
+	for (const format of SUPPORTED_CHART_EXPORT_FORMATS) {
+		common.create_dom_element({
+			element_type	: 'option',
+			value			: format,
+			text_content	: format.toUpperCase(),
+			parent			: format_select,
+		})
+	}
+	const chart_download_button = common.create_dom_element({
+		element_type	: 'button',
+		text_content	: 'Download',
+		parent			: this.download_chart_container,
+	})
+	chart_download_button.addEventListener('click', () => {
+		self.download_chart(format_select.value)
+	})
+}
+
+/**
+ * Download the chart as an image
+ * 
+ * Subclasses must implement this method
+ * @param {string} format the image format
+ * @function
+ * @abstract
+ * @name chart_wrapper#download_chart
+ */
+chart_wrapper.prototype.download_chart = function(format) {
+	throw new Error(`Abstract method 'chart_wrapper.download_chart' cannot be called`)
+}
+
+/*
+ * END chart_wrapper
+ */
+
+/*
+ * BEGIN chartjs_chart_wrapper
+ */
+
+/**
+ * Chart.js chart wrapper class
+ * @class
+ * @abstract
+ * @param {Element} div_wrapper 
+ * @extends chart_wrapper
+ */
+function chartjs_chart_wrapper(div_wrapper) {
+	if (this.constructor === chartjs_chart_wrapper) {
+		throw new Error("Abstract class 'chartjs_chart_wrapper' cannot be instantiated")
+	}
+	chart_wrapper.call(this, div_wrapper)
+	/**
+	 * Canvas instance, will be created during
+	 * render
+	 * @type {Element}
+	 * @protected
+	 */
+	 this.canvas = undefined
+	 /**
+	  * Chart instance (chart.js)
+	  * @protected
+	  */
+	 this.chart = undefined
+}
+// Set prototype chain
+Object.setPrototypeOf(chartjs_chart_wrapper.prototype, chart_wrapper.prototype)
+
+/**
+ * Render the chart (chartjs) and controls
+ * 
+ * Subclasses must call this method at the top
+ * of their own implementation
+ * @name chartjs_chart_wrapper#render
+ * @function
+ */
+chartjs_chart_wrapper.prototype.render = function() {
+	chart_wrapper.prototype.render.call(this)
 	// Create canvas
 	this.canvas = common.create_dom_element({
 		element_type    : 'canvas',
 		id              : 'result_graph',
 		class_name		: 'o-blue',
+		parent			: this.div_wrapper,
 	})
-	// Replace all existing children of the div wrapper
-	// by the canvas
-	this.div_wrapper.replaceChildren(this.canvas)
 	// Set chart instance to undefined
 	this.chart = undefined
-	// Set controls container to undefined
-	this.controls_container = undefined
+}
+
+/**
+ * Download the chart.js chart as an image
+ * 
+ * @param {string} format the image format
+ * @function
+ * @name chartjs_chart_wrapper#download_chart
+ */
+chartjs_chart_wrapper.prototype.download_chart = function(format) {
+	/**
+	 * File name for the chart
+	 * @type {string}
+	 */
+	const filename = `${DEFAULT_CHART_NAME}.${format}`
+	switch (format) {
+		case 'png':
+			this._download_chart_as_png(filename)
+			break
+		case 'svg':
+			this._download_chart_as_svg(filename)
+			break
+		default:
+			throw new Error(`${format} is not supported`)
+	}
+}
+
+/**
+ * Download the chart as png
+ * @param {string} filename the name of the file
+ * @function
+ * @private
+ * @name chartjs_chart_wrapper#_download_chart_as_png
+ */
+chartjs_chart_wrapper.prototype._download_chart_as_png = function(filename) {
+	/**
+	 * Temporary link
+	 * @type {Element}
+	 */
+	let tmpLink = common.create_dom_element({
+		element_type	: 'a',
+		href			: this.chart.toBase64Image(),
+	})
+	tmpLink.setAttribute('download', filename)
+	tmpLink.click()
+	tmpLink.remove()
+}
+
+/**
+ * Download the chart as svg
+ * @param {string} filename the name of the file
+ * @function
+ * @private
+ * @name chartjs_chart_wrapper#_download_chart_as_svg
+ */
+chartjs_chart_wrapper.prototype._download_chart_as_svg = function(filename) {
+	console.log(`Downloading ${filename}`)
 }
 
 /*
- * END chart_wrapper
+ * END chartjs_chart_wrapper
  */
 
 /*
@@ -310,7 +478,7 @@ chart_wrapper.prototype.render = function() {
  * @param data {number[]} the data
  * @param xlabel {string} the label for the x-axis
  * @class
- * @extends chart_wrapper
+ * @extends chartjs_chart_wrapper
  */
 function histogram_wrapper(div_wrapper, data, xlabel) {
 	/*
@@ -320,7 +488,7 @@ function histogram_wrapper(div_wrapper, data, xlabel) {
      * that is being "called". This essentially performs all of
      * chart_wrapper's constructor logic on histogram_wrapper's "this".
      */
-	chart_wrapper.call(this, div_wrapper)
+	chartjs_chart_wrapper.call(this, div_wrapper)
 
 	/**
 	 * Data values
@@ -374,6 +542,8 @@ function histogram_wrapper(div_wrapper, data, xlabel) {
 	 */
 	this._bar_color = 'rgba(255,190,92,0.5)'
 }
+// Set prototype chain
+Object.setPrototypeOf(histogram_wrapper.prototype, chartjs_chart_wrapper.prototype)
 
 /**
  * Check whether we are doing a density plot
@@ -584,7 +754,7 @@ histogram_wrapper.prototype._get_tooltip_title_callback = function(bin_centers, 
  */
 histogram_wrapper.prototype.render = function() {
 	// Call super render method
-	chart_wrapper.prototype.render.call(this)
+	chartjs_chart_wrapper.prototype.render.call(this)
 	// Render chart
 	this._render_chart()
 	// Render control panel
@@ -680,6 +850,10 @@ histogram_wrapper.prototype._render_chart = function() {
 histogram_wrapper.prototype._render_control_panel = function() {
 	// Save this histogram wrapper instance, because when we change scope
 	// we may still need to refer to it
+	/**
+	 * This histogram_wrapper instance
+	 * @type {histogram_wrapper}
+	 */
 	const self = this
 	// Create controls container
 	this.controls_container = common.create_dom_element({

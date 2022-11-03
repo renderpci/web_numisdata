@@ -241,12 +241,6 @@ var analysis =  {
 const COLOR_PICKER_WIDTH = 200
 
 /**
- * Supported chart export formats
- * @type {string[]}
- */
-const SUPPORTED_CHART_EXPORT_FORMATS = ['png']
-
-/**
  * Default name for the chart -> when exporting,
  * `<name>.<format>`
  * @type {string}
@@ -319,7 +313,7 @@ chart_wrapper.prototype.render = function() {
 		parent			: this.download_chart_container,
 		// TODO: add ARIA attributes?
 	})
-	for (const format of SUPPORTED_CHART_EXPORT_FORMATS) {
+	for (const format of this.get_supported_export_formats()) {
 		common.create_dom_element({
 			element_type	: 'option',
 			value			: format,
@@ -340,13 +334,44 @@ chart_wrapper.prototype.render = function() {
 /**
  * Download the chart as an image
  * 
- * Subclasses must implement this method
+ * For each supported format in the subclass,
+ * @see chart_wrapper#get_supported_export_formats
+ * the subclass must implement a method called
+ * `download_chart_as_<format>`
  * @param {string} format the image format
  * @function
  * @abstract
  * @name chart_wrapper#download_chart
  */
 chart_wrapper.prototype.download_chart = function(format) {
+	/**
+	 * File name for the chart
+	 * @type {string}
+	 */
+	const filename = `${DEFAULT_CHART_NAME}.${format}`
+	/**
+	 * Function name for downloading with the particular format
+	 * @type {string}
+	 */
+	const download_func_name = `download_chart_as_${format}`
+	console.log(download_func_name)
+	if (this[download_func_name] === undefined) {
+		throw new Error(`${download_func_name} is not implemented!`)
+	}
+	this[download_func_name](filename)
+}
+
+/**
+ * Get the supported chart export formats
+ * 
+ * Subclasses must return their own supported formats, e.g.,
+ * `['png', 'jpg', 'eps']`
+ * @function
+ * @returns {string[]} the supported formats
+ * @abstract
+ * @name chart_wrapper#get_supported_export_formats
+ */
+chart_wrapper.prototype.get_supported_export_formats = function() {
 	throw new Error(`Abstract method 'chart_wrapper.download_chart' cannot be called`)
 }
 
@@ -408,38 +433,22 @@ chartjs_chart_wrapper.prototype.render = function() {
 }
 
 /**
- * Download the chart.js chart as an image
- * 
- * @param {string} format the image format
+ * Get the supported chart export formats
  * @function
- * @name chartjs_chart_wrapper#download_chart
+ * @returns {string[]} the supported formats
+ * @name chartjs_chart_wrapper#get_supported_export_formats
  */
-chartjs_chart_wrapper.prototype.download_chart = function(format) {
-	/**
-	 * File name for the chart
-	 * @type {string}
-	 */
-	const filename = `${DEFAULT_CHART_NAME}.${format}`
-	switch (format) {
-		case 'png':
-			this._download_chart_as_png(filename)
-			break
-		case 'svg':
-			this._download_chart_as_svg(filename)
-			break
-		default:
-			throw new Error(`${format} is not supported`)
-	}
+chartjs_chart_wrapper.prototype.get_supported_export_formats = function() {
+	return ['png']
 }
 
 /**
  * Download the chart as png
  * @param {string} filename the name of the file
  * @function
- * @private
  * @name chartjs_chart_wrapper#_download_chart_as_png
  */
-chartjs_chart_wrapper.prototype._download_chart_as_png = function(filename) {
+chartjs_chart_wrapper.prototype.download_chart_as_png = function(filename) {
 	/**
 	 * Temporary link
 	 * @type {Element}
@@ -458,10 +467,9 @@ chartjs_chart_wrapper.prototype._download_chart_as_png = function(filename) {
  * Download the chart as svg
  * @param {string} filename the name of the file
  * @function
- * @private
  * @name chartjs_chart_wrapper#_download_chart_as_svg
  */
-chartjs_chart_wrapper.prototype._download_chart_as_svg = function(filename) {
+chartjs_chart_wrapper.prototype.download_chart_as_svg = function(filename) {
 	// Tweak C2S library
 	this._tweak_c2s()
 	// Get original width and height

@@ -244,7 +244,7 @@ const COLOR_PICKER_WIDTH = 200
  * Supported chart export formats
  * @type {string[]}
  */
-const SUPPORTED_CHART_EXPORT_FORMATS = ['png', 'svg']
+const SUPPORTED_CHART_EXPORT_FORMATS = ['png']
 
 /**
  * Default name for the chart -> when exporting,
@@ -454,6 +454,7 @@ chartjs_chart_wrapper.prototype._download_chart_as_png = function(filename) {
 }
 
 /**
+ * FIXME: this is not working...
  * Download the chart as svg
  * @param {string} filename the name of the file
  * @function
@@ -467,6 +468,8 @@ chartjs_chart_wrapper.prototype._download_chart_as_svg = function(filename) {
 	const width = this.canvas.offsetWidth
 	const height = this.canvas.offsetHeight
 	// TODO: Turn off responsiveness and animations
+	this.chart.options.animation = false
+	this.chart.options.reponsive = false
 	// Replicate chart in C2S space
 	const svgContext = C2S(width, height)
 	const svgChart = new Chart(svgContext, this.chart.config._config)
@@ -475,7 +478,7 @@ chartjs_chart_wrapper.prototype._download_chart_as_svg = function(filename) {
 	 * Temporary link
 	 * @type {Element}
 	 */
-	 let tmpLink = common.create_dom_element({
+	let tmpLink = common.create_dom_element({
 		element_type	: 'a',
 		href			: 'data:image/svg+xml;utf8,'
 						  + encodeURIComponent(svgContext.getSerializedSvg()),
@@ -484,6 +487,8 @@ chartjs_chart_wrapper.prototype._download_chart_as_svg = function(filename) {
 	tmpLink.click()
 	tmpLink.remove()
 	// TODO: Turn on responsiveness and animations
+	this.chart.options.animation = true
+	this.chart.options.reponsive = true
 }
 
 /**

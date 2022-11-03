@@ -232,6 +232,12 @@ var analysis =  {
  */
 
 /**
+ * Width (in pixels) of color picker
+ * @type{number}
+ */
+const COLOR_PICKER_WIDTH = 200
+
+/**
  * Chart wrapper class
  * @class
  * @param {Element} div_wrapper 
@@ -366,7 +372,7 @@ function histogram_wrapper(div_wrapper, data, xlabel) {
 	 * @type {string}
 	 * @private
 	 */
-	this._default_bar_color = 'rgba(255,190,92,0.5)'
+	this._bar_color = 'rgba(255,190,92,0.5)'
 }
 
 /**
@@ -446,6 +452,33 @@ histogram_wrapper.prototype.set_n_bins = function(n_bins) {
 	this.chart.options.scales.x.ticks.stepSize = 2*half_bin_width
 	this.chart.options.plugins.tooltip.callbacks.title =
 		this._get_tooltip_title_callback(bin_centers, half_bin_width)
+	this.chart.update()
+}
+
+/**
+ * Get the color of the bars in the histogram
+ * @returns {string} the bar color as an rgba string
+ * @function
+ * @name histogram_wrapper#get_bar_color
+ */
+histogram_wrapper.prototype.get_bar_color = function() {
+	return this._bar_color
+}
+
+/**
+ * Set a new color for the bars in the histogram
+ * 
+ * Updates the chart instance accordingly
+ * @param {string} bar_color the new bar color for the histogram
+ * @function
+ * @name histogram_wrapper#set_bar_color
+ */
+histogram_wrapper.prototype.set_bar_color = function(bar_color) {
+	this._bar_color = bar_color
+	if (!this.chart) {
+		return
+	}
+	this.chart.data.datasets[0].backgroundColor = this._bar_color
 	this.chart.update()
 }
 
@@ -577,7 +610,7 @@ histogram_wrapper.prototype._render_chart = function() {
 			data: plot_data,
 			categoryPercentage: 1,
 			barPercentage: 1,
-			backgroundColor: this._default_bar_color,
+			backgroundColor: this._bar_color,
 		}],
 	}
 	const scales_options = {
@@ -645,6 +678,9 @@ histogram_wrapper.prototype._render_chart = function() {
  * @name histogram_wrapper#_render_control_panel
  */
 histogram_wrapper.prototype._render_control_panel = function() {
+	// Save this histogram wrapper instance, because when we change scope
+	// we may still need to refer to it
+	const self = this
 	// Create controls container
 	this.controls_container = common.create_dom_element({
 		element_type    : 'div',
@@ -711,7 +747,9 @@ histogram_wrapper.prototype._render_control_panel = function() {
 		parent			: this.controls_container
 	})
 	const color_picker = new window.iro.ColorPicker(color_picker_container, {
-		color: this._default_bar_color,
+		color: this._bar_color,
+		width: COLOR_PICKER_WIDTH,
+		layoutDirection: 'horizontal',
 		layout: [
 			{
 				component: window.iro.ui.Wheel,
@@ -726,6 +764,9 @@ histogram_wrapper.prototype._render_control_panel = function() {
 				}
 			},
 		],
+	})
+	color_picker.on('color:change', function(color) {
+		self.set_bar_color(color.rgbaString)
 	})
 }
 

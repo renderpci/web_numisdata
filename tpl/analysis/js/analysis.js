@@ -163,15 +163,18 @@ var analysis =  {
 				event_manager.publish('form_submit', parsed_data)
 
 				// TODO: do stuff with the data
-				const diameters = parsed_data
-					.map((ele) => ele.ref_type_averages_diameter)
-					.filter((ele) => ele !== undefined && ele !== null)  // removes null or undefined entries
-				this.chart_wrapper = new histogram_wrapper(
-					this.chart_wrapper_container,
-					diameters,
-					"Diameter"
-				)
-				this.chart_wrapper.render()
+				console.log(parsed_data)
+				const cultures = parsed_data
+					.map((ele) => ele.p_territory)
+					.flat()
+					.filter((ele) => ele)
+				console.log(cultures)
+				// this.chart_wrapper = new histogram_wrapper(
+				// 	this.chart_wrapper_container,
+				// 	diameters,
+				// 	"Diameter"
+				// )
+				// this.chart_wrapper.render()
 
 			})
 
@@ -354,7 +357,6 @@ chart_wrapper.prototype.download_chart = function(format) {
 	 * @type {string}
 	 */
 	const download_func_name = `download_chart_as_${format}`
-	console.log(download_func_name)
 	if (this[download_func_name] === undefined) {
 		throw new Error(`${download_func_name} is not implemented!`)
 	}
@@ -535,9 +537,9 @@ chartjs_chart_wrapper.prototype._tweak_c2s = function() {
 
 /**
  * Histogram wrapper
- * @param div_wrapper {Element} the div to work in
- * @param data {number[]} the data
- * @param xlabel {string} the label for the x-axis
+ * @param {Element}  div_wrapper the div to work in
+ * @param {number[]} data the data
+ * @param {string} xlabel the label for the x-axis
  * @class
  * @extends chartjs_chart_wrapper
  */
@@ -1007,4 +1009,41 @@ histogram_wrapper.prototype._render_control_panel = function() {
 
 /*
  * END histogram_wrapper
+ */
+
+/*
+ * BEGIN bar_chart_wrapper
+ */
+
+/**
+ * Bar chart wrapper
+ * @param {Element} div_wrapper the div to work in
+ * @param {number[] | string[] | {[key: string | number]: number}} data
+ * 		  input data. Either an array of occurences, which are parsed by
+ * 		  the bar chart wrapper (e.g., `['bronze', 'bronze', 'iron']`), or
+ * 		  an object with keys and counts (e.g. `{'bronze': 2, 'iron': 1}`)
+ * @param {string} ylabel the label for the y-axis
+ * @class
+ * @extends chartjs_chart_wrapper
+ */
+function bar_chart_wrapper(div_wrapper, data, ylabel) {
+	chartjs_chart_wrapper.call(this, div_wrapper)
+	/**
+	 * Data for the bar chart
+	 * @type {{labels: string[] | number[], values: number[]}}
+	 */
+	this._data = undefined
+	if (Array.isArray(data)) {
+		// TODO: Check validity of array
+		// TODO: parse array
+	} else {
+		// TODO: Check validity of object
+		// TODO: Parse object
+	}
+}
+// Set prototype chain
+Object.setPrototypeOf(bar_chart_wrapper.prototype, chartjs_chart_wrapper.prototype)
+
+/*
+ * END bar_chart_wrapper
  */

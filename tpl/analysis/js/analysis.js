@@ -174,6 +174,11 @@ var analysis =  {
 				// 	diameters,
 				// 	"Diameter"
 				// )
+				this.chart_wrapper = new bar_chart_wrapper(
+					this.chart_wrapper_container,
+					cultures,
+					'Count'
+				)
 				// this.chart_wrapper.render()
 
 			})
@@ -1031,18 +1036,135 @@ function bar_chart_wrapper(div_wrapper, data, ylabel) {
 	/**
 	 * Data for the bar chart
 	 * @type {{labels: string[] | number[], values: number[]}}
+	 * @private
 	 */
 	this._data = undefined
 	if (Array.isArray(data)) {
-		// TODO: Check validity of array
-		// TODO: parse array
+		this._check_array_valid(data)
+		this._data = this._parse_array(data)
 	} else {
-		// TODO: Check validity of object
-		// TODO: Parse object
+		this._check_object_valid(data)
+		this._data = this._parse_object(data)
 	}
+	/**
+	 * Label for the y-axis
+	 * @type {string}
+	 * @private
+	 */
+	this._ylabel = ylabel
 }
 // Set prototype chain
 Object.setPrototypeOf(bar_chart_wrapper.prototype, chartjs_chart_wrapper.prototype)
+
+/**
+ * Check if the input data array is valid
+ * 
+ * Throws error otherwise
+ * @param {string[] | number[]} arr the array to check
+ * @function
+ * @private
+ * @name bar_chart_wrapper#_check_array_valid
+ */
+bar_chart_wrapper.prototype._check_array_valid = function(arr) {
+	if (!arr.length) {
+		throw new Error("Input array is empty!")
+	}
+	/**
+	 * Type of the first element of the array
+	 * @type {string}
+	 */
+	const type = typeof arr[0]
+	if (type !== 'number' && type !== 'string') {
+		throw new Error("Input array is not made of numbers or strings")
+	}
+	for (const ele of arr.slice(1)) {
+		if (typeof ele !== type) {
+			throw new Error("Input array combines multiple types")
+		}
+	}
+}
+
+/**
+ * Parse the input data array
+ * 
+ * @param {string[] | number[]} arr the input array
+ * @returns {{labels: string[] | number[], values: number[]}}
+ * 			the parsed input data in internal format
+ * @function
+ * @private
+ * @name bar_chart_wrapper#_parse_array
+ */
+bar_chart_wrapper.prototype._parse_array = function(arr) {
+	/**
+	 * Unique values of the input array
+	 * @type {number[] | string[]}
+	 */
+	const labels = arr.filter((v, i, a) => a.indexOf(v) === i)
+	/**
+	 * Count for each unique value in the input array
+	 * @type {number[]}
+	 */
+	const counts = labels.map((v) => arr.filter((ele) => ele === v).length)
+	/**
+	 * Parsed data
+	 * @type {{labels: string[] | number[], values: number[]}}
+	 */
+	let parsed = {
+		labels: labels,
+		counts: counts,
+	}
+	return parsed
+}
+
+/**
+ * Check if the input data object is valid
+ * 
+ * Throws error otherwise
+ * @param {{[key: string | number]: number}} obj the object to check
+ * @function
+ * @private
+ * @name bar_chart_wrapper#_check_object_valid
+ */
+bar_chart_wrapper.prototype._check_object_valid = function(obj) {
+	if (!obj) {
+		throw new Error("Input data object is null or undefined")
+	}
+	/**
+	 * Keys of the input data object
+	 * @type {number[] | string[]}
+	 */
+	const keys = Object.keys(obj)
+	if (!keys.length) {
+		throw new Error("Input data object is empty")
+	}
+	/**
+	 * Values of the input data object
+	 * @type {number}
+	 */
+	const values = Object.values(obj)
+	for (const val of values) {
+		if (typeof val !== 'number') {
+			throw new Error("A value in the input data object is not a number")
+		}
+	}
+}
+
+/**
+ * Parse the input data object
+ * 
+ * @param {{[key: string | number]: number}} obj the input array
+ * @returns {{labels: string[] | number[], values: number[]}}
+ * 			the parsed input data in internal format
+ * @function
+ * @private
+ * @name bar_chart_wrapper#_parse_object
+ */
+bar_chart_wrapper.prototype._parse_object = function(obj) {
+	return {
+		labels: Object.keys(obj),
+		counts: Object.values(obj),
+	}
+}
 
 /*
  * END bar_chart_wrapper

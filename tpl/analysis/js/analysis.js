@@ -168,7 +168,6 @@ var analysis =  {
 					.map((ele) => ele.p_territory)
 					.flat()
 					.filter((ele) => ele)
-				console.log(cultures)
 				// this.chart_wrapper = new histogram_wrapper(
 				// 	this.chart_wrapper_container,
 				// 	diameters,
@@ -179,7 +178,7 @@ var analysis =  {
 					cultures,
 					'Count'
 				)
-				// this.chart_wrapper.render()
+				this.chart_wrapper.render()
 
 			})
 
@@ -255,6 +254,12 @@ const COLOR_PICKER_WIDTH = 200
  */
 const DEFAULT_CHART_NAME = 'chart'
 
+/**
+ * Default color for chart bars in rgba
+ * @type {string}
+ */
+const DEFAULT_BAR_COLOR = 'rgba(255,190,92,0.5)'
+
 
 /**
  * Chart wrapper class
@@ -281,6 +286,7 @@ function chart_wrapper(div_wrapper) {
 	this.download_chart_container = undefined
 	/**
 	 * Div container for user controls
+	 * Used freely by each subclass
 	 * @type {Element}
 	 * @protected
 	 */
@@ -608,7 +614,7 @@ function histogram_wrapper(div_wrapper, data, xlabel) {
 	 * @type {string}
 	 * @private
 	 */
-	this._bar_color = 'rgba(255,190,92,0.5)'
+	this._bar_color = DEFAULT_BAR_COLOR
 }
 // Set prototype chain
 Object.setPrototypeOf(histogram_wrapper.prototype, chartjs_chart_wrapper.prototype)
@@ -879,7 +885,7 @@ histogram_wrapper.prototype._render_chart = function() {
 				display: true,
 				text: this._get_density_string(),
 				font: {
-					size: 14
+					size: 14,
 				},
 			},
 		},
@@ -1052,6 +1058,12 @@ function bar_chart_wrapper(div_wrapper, data, ylabel) {
 	 * @private
 	 */
 	this._ylabel = ylabel
+	/**
+	 * Color for each bar
+	 * @type {string[]}
+	 * @private
+	 */
+	this._bar_colors = Array.apply(null, Array(this._data.labels.length)).map(() => DEFAULT_BAR_COLOR)
 }
 // Set prototype chain
 Object.setPrototypeOf(bar_chart_wrapper.prototype, chartjs_chart_wrapper.prototype)
@@ -1104,14 +1116,14 @@ bar_chart_wrapper.prototype._parse_array = function(arr) {
 	 * Count for each unique value in the input array
 	 * @type {number[]}
 	 */
-	const counts = labels.map((v) => arr.filter((ele) => ele === v).length)
+	const values = labels.map((v) => arr.filter((ele) => ele === v).length)
 	/**
 	 * Parsed data
 	 * @type {{labels: string[] | number[], values: number[]}}
 	 */
 	let parsed = {
 		labels: labels,
-		counts: counts,
+		values: values,
 	}
 	return parsed
 }
@@ -1162,8 +1174,177 @@ bar_chart_wrapper.prototype._check_object_valid = function(obj) {
 bar_chart_wrapper.prototype._parse_object = function(obj) {
 	return {
 		labels: Object.keys(obj),
-		counts: Object.values(obj),
+		values: Object.values(obj),
 	}
+}
+
+/**
+ * Get the bar colors
+ * @returns {string[]} the bar colors as rgba strings
+ */
+bar_chart_wrapper.prototype.get_bar_colors = function() {
+	return this._bar_colors
+}
+
+/**
+ * Set new bar colors
+ * 
+ * Updates chart instance accordingly
+ * @param {string[]} bar_colors the new bar colors as rgba strings
+ */
+bar_chart_wrapper.prototype.set_bar_colors = function(bar_colors) {
+	this._bar_colors = bar_colors
+	this.chart.data.datasets[0].backgroundColor = bar_colors
+	this.chart.update()
+}
+
+/**
+ * Set a color for a given bar
+ * @param {number} index the index of the bar 
+ * @param {string} bar_color the new bar color as an rgba string
+ */
+bar_chart_wrapper.prototype.set_bar_color = function(index, bar_color) {
+	if (typeof index !== 'number') {
+		throw new Error("Index is not a number")
+	} else if (!Number.isInteger(index)) {
+		throw new Error("Index is not an integer")
+	} else if (index < 0 || index >= this._data.labels.length) {
+		throw new Error("Index is out of bounds")
+	}
+	this._bar_colors[index] = bar_color
+	this.chart.data.datasets[0].backgroundColor[index] = bar_color
+	this.chart.update()
+}
+
+/**
+ * Render the chart and the control panel
+ * @function
+ * @name bar_chart_wrapper#render
+ */
+bar_chart_wrapper.prototype.render = function() {
+	// Call super render method
+	chartjs_chart_wrapper.prototype.render.call(this)
+	// Render chart
+	this._render_chart()
+	// Render control panel
+	this._render_control_panel()
+}
+
+/**
+ * Render the chart
+ * @function
+ * @private
+ * @name bar_chart_wrapper#_render_chart
+ */
+bar_chart_wrapper.prototype._render_chart = function() {
+	const chart_data = {
+		labels: this._data.labels,
+		datasets: [{
+			label: this._ylabel,
+			data: this._data.values,
+			backgroundColor: this._bar_colors,
+		}],
+	}
+	const scales_options = {
+		y: {
+			title: {
+				display: true,
+				text: this._ylabel,
+				font: {
+					size: 14,
+				}
+			},
+		},
+	}
+	const plugins_options = {
+		legend: {
+			display: false,
+		},
+	}
+	// Render the graph
+	this.chart = new Chart(this.canvas, {
+		type: 'bar',
+		data: chart_data,
+		options: {
+			scales: scales_options,
+			plugins: plugins_options,
+			normalized: true,
+		},
+	})
+}
+
+/**
+ * Render the control panel
+ * @function
+ * @private
+ * @name bar_chart_wrapper#_render_control_panel
+ */
+bar_chart_wrapper.prototype._render_control_panel = function() {
+	/**
+	 * This bar_chart_wrapper instance
+	 * @type {bar_chart_wrapper}
+	 */
+	const self = this
+	// Create controls container
+	this.controls_container = common.create_dom_element({
+		element_type    : 'div',
+		id              : 'controls',
+		class_name		: 'o-green',
+		parent			: this.div_wrapper,
+	})
+	/**
+	 * Select for bar choice
+	 * @type {Element}
+	 */
+	const bar_select = common.create_dom_element({
+		element_type	: 'select',
+		id				: 'bar_selection',
+		parent			: this.controls_container,
+		// TODO: add ARIA attributes?
+	})
+	for (const [index, label] of this._data.labels.entries()) {
+		common.create_dom_element({
+			element_type	: 'option',
+			value			: String(index),  // 0 as a number becomes false as a boolean...
+			text_content	: label,
+			parent			: bar_select,
+		})
+	}
+	/** iro.js color picker */
+	const color_picker_container = common.create_dom_element({
+		element_type	: 'div',
+		id				: 'color_picker_container',
+		parent			: this.controls_container
+	})
+	const color_picker = new window.iro.ColorPicker(color_picker_container, {
+		color: this._bar_colors[0],
+		width: COLOR_PICKER_WIDTH,
+		layoutDirection: 'horizontal',
+		layout: [
+			{
+				component: window.iro.ui.Wheel,
+			},
+			{
+				component: window.iro.ui.Slider,
+			},
+			{
+				component: window.iro.ui.Slider,
+				options: {
+					sliderType: 'alpha',
+				}
+			},
+		],
+	})
+	// Bar select change event
+	bar_select.addEventListener('change', () => {
+		const index = Number(bar_select.value)
+		color_picker.color.set(self._bar_colors[index])
+	})
+	// Color change event
+	color_picker.on('color:change', function(color) {
+		const index = Number(bar_select.value)
+		self.set_bar_color(index, color.rgbaString)
+	})
 }
 
 /*

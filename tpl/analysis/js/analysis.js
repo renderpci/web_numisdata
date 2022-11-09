@@ -8,7 +8,7 @@ import { chart_wrapper } from "./charts/chart-wrapper.js";
 import { histogram_wrapper } from "./charts/chartjs/histogram-wrapper.js";
 import { bar_chart_wrapper } from "./charts/chartjs/bar-chart-wrapper.js";
 
-var analysis =  {
+export const analysis =  {
 
 	// Form factory instance
 	form: null,
@@ -169,7 +169,7 @@ var analysis =  {
 				// TODO: do stuff with the data
 				console.log(parsed_data)
 				const diameters = parsed_data
-					.map((ele) => JSON.parse(ele.full_coins_reference_diameter_max))
+					.map((ele) => ele.full_coins_reference_diameter_max)
 					.flat()
 					.filter((ele) => ele)
 				this.chart_wrapper = new histogram_wrapper(
@@ -238,5 +238,4 @@ var analysis =  {
 	},
 
 }//end analysis
-
 

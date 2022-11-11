@@ -6,7 +6,7 @@ import { chart_wrapper } from "../chart-wrapper.js";
  * Chart.js chart wrapper class
  * @class
  * @abstract
- * @param {Element} div_wrapper 
+ * @param {Element} div_wrapper the div conatining the chart
  * @extends chart_wrapper
  */
 export function chartjs_chart_wrapper(div_wrapper) {

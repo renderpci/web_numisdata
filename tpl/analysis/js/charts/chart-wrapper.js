@@ -22,6 +22,9 @@ export const DEFAULT_BAR_COLOR = 'rgba(255,190,92,0.5)'
 
 /**
  * Chart wrapper class
+ * 
+ * It clears the container div during render, so subclasses should work with the dom
+ * after the render method of this superclass has been called
  * @class
  * @abstract
  * @param {Element} div_wrapper 

@@ -7,6 +7,8 @@
 import { chart_wrapper } from "./charts/chart-wrapper.js";
 import { histogram_wrapper } from "./charts/chartjs/histogram-wrapper.js";
 import { bar_chart_wrapper } from "./charts/chartjs/bar-chart-wrapper.js";
+import { boxvio_chart_wrapper } from "./charts/d3/boxvio-chart-wrapper.js";
+
 
 export const analysis =  {
 
@@ -172,10 +174,13 @@ export const analysis =  {
 					.map((ele) => ele.full_coins_reference_diameter_max)
 					.flat()
 					.filter((ele) => ele)
-				this.chart_wrapper = new histogram_wrapper(
-					this.chart_wrapper_container,
-					diameters,
-					"Diameter"
+				// this.chart_wrapper = new histogram_wrapper(
+				// 	this.chart_wrapper_container,
+				// 	diameters,
+				// 	"Diameter"
+				// )
+				this.chart_wrapper = new boxvio_chart_wrapper(
+					this.chart_wrapper_container
 				)
 				// this.chart_wrapper = new bar_chart_wrapper(
 				// 	this.chart_wrapper_container,

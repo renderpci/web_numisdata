@@ -204,12 +204,12 @@ export const analysis =  {
 
 				// TODO: do stuff with the data
 				console.log(parsed_data)
-				let data = {}
+				const data = {}
 				for (const ele of parsed_data) {
 					const name = ele.term.split(' ')[0].slice(0, -1)
-					// if (!['12', '59', '62', '18'].includes(name)) continue
+					// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 					if (!['59', '62'].includes(name)) continue
-					let tmpData = {}
+					const tmpData = {}
 					const calculable = ele.full_coins_reference_calculable
 					const diameter_max = ele.full_coins_reference_diameter_max
 					const diameter_min = ele.full_coins_reference_diameter_min
@@ -228,7 +228,7 @@ export const analysis =  {
 					}
 				}
 				console.log(data)
-				let input_data = {}
+				const input_data = {}
 				for (const [name, props] of Object.entries(data)) {
 					input_data[name] = props.diameter_max
 				}

@@ -70,7 +70,7 @@ d3_chart_wrapper.prototype.download_chart_as_svg = function (filename) {
      * Temporary link
      * @type {Element}
      */
-    let tmpLink = common.create_dom_element({
+    const tmpLink = common.create_dom_element({
         element_type: 'a',
         href: url,
     })

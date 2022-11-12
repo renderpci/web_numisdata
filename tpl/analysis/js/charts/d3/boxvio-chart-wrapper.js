@@ -333,7 +333,7 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
  * }}
  */
 function calc_metrics(values) {
-    let metrics = {
+    const metrics = {
         max: null,
         upper_fence: null,
         quartile3: null,

@@ -4,6 +4,13 @@ import { d3_chart_wrapper } from "./d3-chart-wrapper";
 
 
 /**
+ * Color palette, totally stolen from matplotlib
+ * @type {string[]}
+ */
+const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+
+
+/**
  * Boxplot + violin chart wrapper
  * 
  * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f
@@ -33,15 +40,13 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
      * Boxplot metrics for each group name
      * @type {{string: {
      *  max: number,
-     *  upper_outer_fence: number,
-     *  upper_inner_fence: number,
+     *  upper_fence: number,
      *  quartile3: number,
      *  median: number,
      *  mean: number,
      *  iqr: number,
      *  quartile1: number,
-     *  lower_inner_fence: number,
-     *  lower_outer_fence: number,
+     *  lower_fence: number,
      *  min: number,
      * }}}
      * @private
@@ -70,7 +75,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
      * @private
      */
     this._chart = {}
-    this._chart.margin = {top: 15, right: 40, bottom: 35, left: 50}
+    this._chart.margin = {top: 15, right: 3, bottom: 23, left: 50}
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -81,7 +86,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     this._chart.xscale = d3.scaleBand()
         .domain(Object.keys(this._data))
         .range([0, this._chart.width])
-        .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+        .padding(0.1)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
     this._chart.histogram = d3.bin()
         .domain(this._chart.yscale.domain())
@@ -131,6 +136,7 @@ boxvio_chart_wrapper.prototype._render_chart = function () {
     
     this._render_axis()
     this._render_violins()
+    this._render_boxes()
 
 }
 
@@ -158,6 +164,12 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
       .text(this._ylabel);
 }
 
+/**
+ * Render the violins
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_violins
+ */
 boxvio_chart_wrapper.prototype._render_violins = function () {
 
     const chart = this._chart
@@ -175,10 +187,9 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
     const xNum = d3.scaleLinear()
         .range([0, chart.xscale.bandwidth()])
         .domain([-max_count, max_count])
-    
 
     // Render
-    chart.root_g
+    chart.root_g.append('g')
         .selectAll('violin')
         .data(chart.bins)
         .enter()  // Working per group now
@@ -187,16 +198,112 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
         .append('path')
             .datum((d) => d.value)  // Working per bin within a group
             .style('stroke', 'black')
-            .style('stroke-width', 1)
+            .style('stroke-width', 0.5)
             .style('fill', 'ghostwhite')
             .attr('d', d3.area()
                 .x0((d) => xNum(-d.length))
                 .x1((d) => xNum(d.length))
-                .y((d) => this._chart.yscale(d.x0))
+                .y((d) => chart.yscale(d.x0))
                 .curve(d3.curveCatmullRom)
             )
 
 }
+
+/**
+ * Render the boxes (including whiskers and outliers)
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_boxes
+ */
+boxvio_chart_wrapper.prototype._render_boxes = function () {
+    
+    const chart = this._chart
+
+    // Get outliers
+    const outliers = {}
+    for (const [name, values] of Object.entries(this._data)) {
+        outliers[name] = values.filter(
+            (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
+        )
+    }
+    
+    // Draw
+    const boxes = chart.root_g.append('g')
+    const bandwidth = chart.xscale.bandwidth()
+    const box_width = 0.6 * bandwidth
+
+    const whiskers_lw = 2
+    const median_lw = 3
+
+    // Iterate over the groups
+    for (const [i, name] of Object.entries(Object.keys(this._data))) {
+
+        const metrics = this._metrics[name]
+
+        const group_box = boxes.append('g')
+            .attr('transform', `translate(${chart.xscale(name) + bandwidth/2},0)`)
+        
+        // Draw outliers
+        for (const outlier of outliers[name]) {
+            group_box.append('circle')
+                .attr('cx', 0)
+                .attr('cy', chart.yscale(outlier))
+                .attr('r', 4)
+                .style('fill', COLOR_PALETTE[i])
+                .style('opacity', 0.6)
+        }
+
+        // Draw whiskers
+        const whiskers = group_box.append('g')
+        whiskers.append('line')  // vertical line
+            .attr('x1', 0)
+            .attr('y1', chart.yscale(metrics.lower_fence))
+            .attr('x2', 0)
+            .attr('y2', chart.yscale(metrics.upper_fence))
+            .attr('stroke', COLOR_PALETTE[i])
+            .attr('stroke-width', whiskers_lw)
+        whiskers.append('line') // lower horizontal
+            .attr('x1', -box_width/2)
+            .attr('y1', chart.yscale(metrics.lower_fence))
+            .attr('x2', box_width/2)
+            .attr('y2', chart.yscale(metrics.lower_fence))
+            .attr('stroke', COLOR_PALETTE[i])
+            .attr('stroke-width', whiskers_lw)
+        whiskers.append('line') // upper horizontal
+            .attr('x1', -box_width/2)
+            .attr('y1', chart.yscale(metrics.upper_fence))
+            .attr('x2', box_width/2)
+            .attr('y2', chart.yscale(metrics.upper_fence))
+            .attr('stroke', COLOR_PALETTE[i])
+            .attr('stroke-width', whiskers_lw)
+        
+        // Draw IQR box
+        const iqr = group_box.append('g')
+        iqr.append('rect')  // iqr rect
+            .attr('x', -box_width/2)
+            .attr('y', chart.yscale(metrics.quartile3))
+            .attr('width', box_width)
+            .attr('height', chart.yscale(metrics.quartile1) - chart.yscale(metrics.quartile3))
+            .attr('fill', COLOR_PALETTE[i])
+        iqr.append('line')  // median line
+            .attr('x1', -box_width/2)
+            .attr('y1', chart.yscale(metrics.median))
+            .attr('x2', box_width/2)
+            .attr('y2', chart.yscale(metrics.median))
+            .attr('stroke', 'black')
+            .attr('stroke-width', median_lw)
+        iqr.append('circle')  // median dot
+            .attr('cx', 0)
+            .attr('cy', chart.yscale(metrics.median))
+            .attr('r', 5)
+            .style('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 2)
+    }
+
+}
+
+
 
 /**
  * Render the control panel
@@ -215,30 +322,26 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
  * @param {number[]} values the data values
  * @returns {{
  *  max: number,
- *  upper_outer_fence: number,
- *  upper_inner_fence: number,
+ *  upper_fence: number,
  *  quartile3: number,
  *  median: number,
  *  mean: number,
  *  iqr: number,
  *  quartile1: number,
- *  lower_inner_fence: number,
- *  lower_outer_fence: number,
+ *  lower_fence: number,
  *  min: number,
  * }}
  */
 function calc_metrics(values) {
     let metrics = {
         max: null,
-        upper_outer_fence: null,
-        upper_inner_fence: null,
+        upper_fence: null,
         quartile3: null,
         median: null,
         mean: null,
         iqr: null,
         quartile1: null,
-        lower_inner_fence: null,
-        lower_outer_fence: null,
+        lower_fence: null,
         min: null,
     }
 
@@ -249,33 +352,8 @@ function calc_metrics(values) {
     metrics.quartile3 = d3.quantile(values, 0.75)
     metrics.max = d3.max(values)
     metrics.iqr = metrics.quartile3 - metrics.quartile1
-
-    // The inner fences are the closest value to the IQR without going past it
-    // Assuming sorted values
-    const LIF = metrics.quartile1 - (1.5 * metrics.iqr)
-    const UIF = metrics.quartile3 + (1.5 * metrics.iqr)
-    for (let i = 0; i < values.length; i++) {
-        if (values[i] < LIF) {
-            continue
-        }
-        if (!metrics.lower_inner_fence && values[i] >= LIF) {
-            metrics.lower_inner_fence = values[i]
-            continue
-        }
-        if (values[i] > UIF) {
-            metrics.upper_inner_fence = values[i-1]
-            break
-        }
-    }
-
-    metrics.lower_outer_fence = metrics.quartile1 - (3 * metrics.iqr)
-    metrics.upper_outer_fence = metrics.quartile3 + (3 * metrics.iqr)
-    if (!metrics.lower_inner_fence) {
-        metrics.lower_inner_fence = metrics.min
-    }
-    if (!metrics.upper_inner_fence) {
-        metrics.upper_inner_fence = metrics.max
-    }
+    metrics.lower_fence = metrics.quartile1 - 1.5 * metrics.iqr
+    metrics.upper_fence = metrics.quartile3 + 1.5 * metrics.iqr
 
     return metrics
 }

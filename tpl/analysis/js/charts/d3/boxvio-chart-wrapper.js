@@ -81,7 +81,20 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     this._chart.xscale = d3.scaleBand()
         .domain(Object.keys(this._data))
         .range([0, this._chart.width])
+        .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
+    this._chart.histogram = d3.bin()
+        .domain(this._chart.yscale.domain())
+        // TODO: compute number of bins automatically depending on the range of the data
+        .thresholds(this._chart.yscale.ticks(10)) // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
+        .value((d) => d)
+    this._chart.bins = []  // TODO: can do a one-liner here with map() on Object.entries(this._data)
+    for (const [name, values] of Object.entries(this._data)) {
+        this._chart.bins.push({
+            key: name,
+            value: this._chart.histogram(values),
+        })
+    }
     this._chart.root_g = null
 }
 // Set prototype chain
@@ -117,6 +130,7 @@ boxvio_chart_wrapper.prototype._render_chart = function () {
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
     
     this._render_axis()
+    this._render_violins()
 
 }
 
@@ -142,6 +156,46 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
       .attr('y', -this._chart.margin.left + 20)
       .attr('x', -this._chart.height/2)
       .text(this._ylabel);
+}
+
+boxvio_chart_wrapper.prototype._render_violins = function () {
+
+    const chart = this._chart
+
+    // Get the largest count in a bin, as it will be the maximum width
+    let max_count = 0
+    for (const group of chart.bins) {
+        const longest = d3.max(group.value.map((v) => v.length))
+        if (longest > max_count) {
+            max_count = longest
+        }
+    }
+
+    // Make a scale linear to map bin counts to bandwidth
+    const xNum = d3.scaleLinear()
+        .range([0, chart.xscale.bandwidth()])
+        .domain([-max_count, max_count])
+    
+
+    // Render
+    chart.root_g
+        .selectAll('violin')
+        .data(chart.bins)
+        .enter()  // Working per group now
+        .append('g')
+            .attr('transform', (d) => `translate(${chart.xscale(d.key)},0)`)
+        .append('path')
+            .datum((d) => d.value)  // Working per bin within a group
+            .style('stroke', 'black')
+            .style('stroke-width', 1)
+            .style('fill', 'ghostwhite')
+            .attr('d', d3.area()
+                .x0((d) => xNum(-d.length))
+                .x1((d) => xNum(d.length))
+                .y((d) => this._chart.yscale(d.x0))
+                .curve(d3.curveCatmullRom)
+            )
+
 }
 
 /**

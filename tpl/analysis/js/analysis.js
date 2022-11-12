@@ -86,6 +86,40 @@ export const analysis =  {
 					})
 				}
 			})
+		
+		// number
+			self.form.item_factory({
+				id 			: "number",
+				name 		: "number",
+				q_column 	: "term",
+				q_table 	: "types",
+				label		: tstring.number_key || "Number & Key",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
+		
+		// denomination
+			self.form.item_factory({
+				id 			: "denomination",
+				name 		: "denomination",
+				q_column 	: "ref_type_denomination",
+				q_table 	: "any",
+				label		: tstring.denomination || "denomination",
+				is_term 	: false,
+				parent		: form_row,
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
 
 		// submit button
 			const submit_group = common.create_dom_element({
@@ -170,17 +204,43 @@ export const analysis =  {
 
 				// TODO: do stuff with the data
 				console.log(parsed_data)
-				const diameters = parsed_data
-					.map((ele) => ele.full_coins_reference_diameter_max)
-					.flat()
-					.filter((ele) => ele)
+				let data = {}
+				for (const ele of parsed_data) {
+					const name = ele.term.split(' ')[0].slice(0, -1)
+					if (!['12', '59', '62', '18'].includes(name)) continue
+					let tmpData = {}
+					const calculable = ele.full_coins_reference_calculable
+					const diameter_max = ele.full_coins_reference_diameter_max
+					const diameter_min = ele.full_coins_reference_diameter_min
+					const weight = ele.full_coins_reference_weight
+					if (diameter_max && diameter_max.length) {
+						tmpData.diameter_max = diameter_max.filter((v, i) => v && calculable[i])
+					}
+					if (diameter_min && diameter_min.length) {
+						tmpData.diameter_min = diameter_min.filter((v, i) => v && calculable[i])
+					}
+					if (weight && weight.length) {
+						tmpData.weight = weight.filter((v, i) => v && calculable[i])
+					}
+					if (Object.keys(tmpData).length) {
+						data[name] = tmpData
+					}
+				}
+				console.log(data)
+				let input_data = {}
+				for (const [name, props] of Object.entries(data)) {
+					input_data[name] = props.diameter_max
+				}
+				console.log(input_data)
 				// this.chart_wrapper = new histogram_wrapper(
 				// 	this.chart_wrapper_container,
 				// 	diameters,
 				// 	"Diameter"
 				// )
 				this.chart_wrapper = new boxvio_chart_wrapper(
-					this.chart_wrapper_container
+					this.chart_wrapper_container,
+					input_data,
+					'Diameter'
 				)
 				// this.chart_wrapper = new bar_chart_wrapper(
 				// 	this.chart_wrapper_container,

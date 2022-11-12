@@ -81,11 +81,19 @@ chart_wrapper.prototype.render = function () {
         element_type: 'div',
         id: 'download_chart_container',
         class_name: 'o-purple',
+        style: {
+            'display': 'flex',
+            'flex-direction': 'row',
+            'justify-content': 'center',
+        },
         parent: this.div_wrapper,
     })
     const format_select = common.create_dom_element({
         element_type: 'select',
         id: 'chart_export_format',
+        style: {
+            'width': '80%',
+        },
         parent: this.download_chart_container,
         // TODO: add ARIA attributes?
     })
@@ -100,6 +108,9 @@ chart_wrapper.prototype.render = function () {
     const chart_download_button = common.create_dom_element({
         element_type: 'button',
         text_content: 'Download',
+        style: {
+            'width': '20%',
+        },
         parent: this.download_chart_container,
     })
     chart_download_button.addEventListener('click', () => {

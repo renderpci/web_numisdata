@@ -220,8 +220,8 @@ export const analysis =  {
 				const data = {}
 				for (const ele of parsed_data) {
 					const name = ele.term.split(' ')[0].slice(0, -1)
-					// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
-					if (!['59', '62'].includes(name)) continue
+					if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
+					// if (!['59', '62'].includes(name)) continue
 					const tmpData = {}
 					const calculable = ele.full_coins_reference_calculable
 					const diameter_max = ele.full_coins_reference_diameter_max

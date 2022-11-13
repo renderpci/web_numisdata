@@ -81,20 +81,20 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     this._chart.xscale = d3.scaleBand()
         .domain(Object.keys(this._data))
         .range([0, this._chart.width])
-        .padding(0.1)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
-    this._chart.xaxis = d3.axisBottom(this._chart.xscale)
+        .padding(0.22)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+        this._chart.xaxis = d3.axisBottom(this._chart.xscale)
+    this._chart.n_bins_default = 15
+    this._chart.n_bins = this._chart.n_bins_default
+    this._chart.min_bins_multiplier = 0.5
+    this._chart.max_bins_multiplier = 3
     this._chart.histogram = d3.bin()
         .domain(this._chart.yscale.domain())
         // TODO: compute number of bins automatically depending on the range of the data
-        .thresholds(this._chart.yscale.ticks(10)) // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
+        .thresholds(this._chart.yscale.ticks(this._chart.n_bins)) // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
         .value((d) => d)
-    this._chart.bins = []  // TODO: can do a one-liner here with map() on Object.entries(this._data)
-    for (const [name, values] of Object.entries(this._data)) {
-        this._chart.bins.push({
-            key: name,
-            value: this._chart.histogram(values),
-        })
-    }
+    this._chart.bins = Object.entries(this._data).map(
+        ([name, values]) => {return {key: name, value: this._chart.histogram(values)}}
+    )
     /**
      * Graphic components of the chart: d3 selection objects
      * @private
@@ -108,6 +108,23 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
+
+/**
+ * Set a new number of bins for the violin plot
+ * @function
+ * @param {number} n_bins the number of bins
+ * @name boxvio_chart_wrapper#set_n_bins
+ */
+boxvio_chart_wrapper.prototype.set_n_bins = function (n_bins) {
+    this._chart.n_bins = n_bins
+    this._chart.histogram.thresholds(this._chart.yscale.ticks(n_bins))
+    this._chart.bins = Object.entries(this._data).map(
+        ([name, values]) => {return {key: name, value: this._chart.histogram(values)}}
+    )
+    // Remove the violin graphics, only leaving its root g tag (violins_g)
+    this._graphics.violins_g.selectAll('*').remove()
+    this._render_violins(true)
+}
 
 /**
  * Render the chart and the control panel
@@ -173,9 +190,11 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
  * Render the violins
  * @function
  * @private
+ * @param {boolean} is_g_ready whether the g tag for violins is
+ *        set up (default: `false`)
  * @name boxvio_chart_wrapper#_render_violins
  */
-boxvio_chart_wrapper.prototype._render_violins = function () {
+boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 
     const chart = this._chart
     const g = this._graphics.root_g
@@ -195,22 +214,25 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
         .domain([-max_count, max_count])
 
     // Render
-    this._graphics.violins_g = g.append('g')
+    if (!is_g_ready) {
+        this._graphics.violins_g = g.append('g')
+    }
+    this._graphics.violins_g
         .selectAll('violin')
         .data(chart.bins)
         .enter()  // Working per group now
         .append('g')
-        .attr('transform', (d) => `translate(${chart.xscale(d.key)},0)`)
+            .attr('transform', (d) => `translate(${chart.xscale(d.key)},0)`)
         .append('path')
-        .datum((d) => d.value)  // Working per bin within a group
-        .style('stroke', 'black')
-        .style('stroke-width', 0.5)
-        .style('fill', 'ghostwhite')
-        .attr('d', d3.area()
-            .x0((d) => xNum(-d.length))
-            .x1((d) => xNum(d.length))
-            .y((d) => chart.yscale(d.x0))
-            .curve(d3.curveCatmullRom)
+            .datum((d) => d.value)  // Working per bin within a group
+            .style('stroke', 'gray')
+            .style('stroke-width', 0.4)
+            .style('fill', 'ghostwhite')
+            .attr('d', d3.area()
+                .x0((d) => xNum(-d.length))
+                .x1((d) => xNum(d.length))
+                .y((d) => chart.yscale(d.x0))
+                .curve(d3.curveCatmullRom)
         )
 
 }
@@ -238,7 +260,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
     const boxes = g.append('g')
     this._graphics.boxes_g = boxes
     const bandwidth = chart.xscale.bandwidth()
-    const box_width = 0.6 * bandwidth
+    const box_width = 0.5 * bandwidth
 
     const whiskers_lw = 2
     const median_lw = 3
@@ -257,9 +279,9 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
             group_box.append('circle')
                 .attr('cx', 0)
                 .attr('cy', chart.yscale(outlier))
-                .attr('r', 4)
+                .attr('r', 0.03*bandwidth)
                 .style('fill', color)
-                .style('opacity', 0.6)
+                .style('opacity', 0.7)
         }
 
         // Draw whiskers
@@ -322,18 +344,42 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
  */
 boxvio_chart_wrapper.prototype._render_control_panel = function () {
 
-    /**
-     * This boxvio_chart_wrapper instance
-     * @type {boxvio_chart_wrapper}
-     */
-    const self = this
-
     // Create controls container
     this.controls_container = common.create_dom_element({
         element_type: 'div',
         id: 'controls',
         class_name: 'o-green',
         parent: this.div_wrapper,
+    })
+
+    /**
+     * Slider for number of bins
+     * @type {Element}
+     */
+    const n_bins_slider = common.create_dom_element({
+        element_type: 'input',
+        type: 'range',
+        value: this._chart.n_bins_default,
+        parent: this.controls_container,
+    })
+    n_bins_slider.setAttribute('min', Math.floor(this._chart.min_bins_multiplier * this._chart.n_bins_default))
+    n_bins_slider.setAttribute('max', this._chart.max_bins_multiplier * this._chart.n_bins_default)
+    n_bins_slider.addEventListener('input', () => {
+        this.set_n_bins(Number(n_bins_slider.value))
+    })
+    /**
+     * Reset button for the n_bins_slider
+     * @type {Element}
+     */
+    const n_bins_slider_reset = common.create_dom_element({
+        element_type: 'button',
+        type: 'button',
+        text_content: 'Reset',
+        parent: this.controls_container,
+    })
+    n_bins_slider_reset.addEventListener('click', () => {
+        n_bins_slider.value = this._chart.n_bins_default
+        this.set_n_bins(Number(n_bins_slider.value))
     })
 
     /**

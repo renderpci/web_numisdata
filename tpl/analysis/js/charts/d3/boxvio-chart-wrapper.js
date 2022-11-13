@@ -2,6 +2,7 @@
 
 import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
+import { toggle_visibility } from "./utils";
 
 
 /**
@@ -10,7 +11,7 @@ import { COLOR_PALETTE } from "../chart-wrapper";
  * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f
  * 
  * @param {Element}  div_wrapper the div to work in
- * @param {{string: number[]}} data the input data: group name
+ * @param {{[group_name: string]: number[]}} data the input data: group name
  *        and array of values
  * @param {string} ylabel the y label
  * @class
@@ -20,7 +21,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     d3_chart_wrapper.call(this, div_wrapper)
     /**
      * Data: group name to array of values
-     * @type {{string: number[]}}
+     * @type {Object.<string, number[]>}
      * @private
      */
     this._data = data
@@ -32,7 +33,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     this._ylabel = ylabel
     /**
      * Boxplot metrics for each group name
-     * @type {{string: {
+     * @type {{[group_name: string]: {
      *  max: number,
      *  upper_fence: number,
      *  quartile3: number,
@@ -69,7 +70,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
      * @private
      */
     this._chart = {}
-    this._chart.margin = {top: 15, right: 3, bottom: 23, left: 50}
+    this._chart.margin = { top: 15, right: 3, bottom: 23, left: 50 }
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -97,9 +98,13 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     /**
      * Graphic components of the chart: d3 selection objects
      * @private
+     * @type {{[name: string]: d3.selection}}
      */
-    this._graphics = {}
-    this._graphics.root_g = null
+    this._graphics = {
+        root_g: null,
+        violins_g: null,
+        boxes_g: null,
+    }
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
@@ -132,7 +137,7 @@ boxvio_chart_wrapper.prototype._render_chart = function () {
     // Root g tag
     this._graphics.root_g = this.svg.append('g')
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
-    
+
     this._render_axis()
     this._render_violins()
     this._render_boxes()
@@ -157,11 +162,11 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 
     // Render Y axis label
     g.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', -this._chart.margin.left + 20)
-      .attr('x', -this._chart.height/2)
-      .text(this._ylabel);
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -this._chart.margin.left + 20)
+        .attr('x', -this._chart.height / 2)
+        .text(this._ylabel);
 }
 
 /**
@@ -173,6 +178,7 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 boxvio_chart_wrapper.prototype._render_violins = function () {
 
     const chart = this._chart
+    const g = this._graphics.root_g
 
     // Get the largest count in a bin, as it will be the maximum width
     let max_count = 0
@@ -189,23 +195,23 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
         .domain([-max_count, max_count])
 
     // Render
-    this._graphics.root_g.append('g')
+    this._graphics.violins_g = g.append('g')
         .selectAll('violin')
         .data(chart.bins)
         .enter()  // Working per group now
         .append('g')
-            .attr('transform', (d) => `translate(${chart.xscale(d.key)},0)`)
+        .attr('transform', (d) => `translate(${chart.xscale(d.key)},0)`)
         .append('path')
-            .datum((d) => d.value)  // Working per bin within a group
-            .style('stroke', 'black')
-            .style('stroke-width', 0.5)
-            .style('fill', 'ghostwhite')
-            .attr('d', d3.area()
-                .x0((d) => xNum(-d.length))
-                .x1((d) => xNum(d.length))
-                .y((d) => chart.yscale(d.x0))
-                .curve(d3.curveCatmullRom)
-            )
+        .datum((d) => d.value)  // Working per bin within a group
+        .style('stroke', 'black')
+        .style('stroke-width', 0.5)
+        .style('fill', 'ghostwhite')
+        .attr('d', d3.area()
+            .x0((d) => xNum(-d.length))
+            .x1((d) => xNum(d.length))
+            .y((d) => chart.yscale(d.x0))
+            .curve(d3.curveCatmullRom)
+        )
 
 }
 
@@ -216,7 +222,7 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
  * @name boxvio_chart_wrapper#_render_boxes
  */
 boxvio_chart_wrapper.prototype._render_boxes = function () {
-    
+
     const chart = this._chart
     const g = this._graphics.root_g
 
@@ -227,9 +233,10 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
             (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
         )
     }
-    
+
     // Draw
     const boxes = g.append('g')
+    this._graphics.boxes_g = boxes
     const bandwidth = chart.xscale.bandwidth()
     const box_width = 0.6 * bandwidth
 
@@ -240,11 +247,11 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
     for (const [i, name] of Object.entries(Object.keys(this._data))) {
 
         const metrics = this._metrics[name]
-        const color = COLOR_PALETTE[i%COLOR_PALETTE.length]  // loop around!
+        const color = COLOR_PALETTE[i % COLOR_PALETTE.length]  // loop around!
 
         const group_box = boxes.append('g')
-            .attr('transform', `translate(${chart.xscale(name) + bandwidth/2},0)`)
-        
+            .attr('transform', `translate(${chart.xscale(name) + bandwidth / 2},0)`)
+
         // Draw outliers
         for (const outlier of outliers[name]) {
             group_box.append('circle')
@@ -265,32 +272,32 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
             .attr('stroke', color)
             .attr('stroke-width', whiskers_lw)
         whiskers.append('line') // lower horizontal
-            .attr('x1', -box_width/2)
+            .attr('x1', -box_width / 2)
             .attr('y1', chart.yscale(metrics.lower_fence))
-            .attr('x2', box_width/2)
+            .attr('x2', box_width / 2)
             .attr('y2', chart.yscale(metrics.lower_fence))
             .attr('stroke', color)
             .attr('stroke-width', whiskers_lw)
         whiskers.append('line') // upper horizontal
-            .attr('x1', -box_width/2)
+            .attr('x1', -box_width / 2)
             .attr('y1', chart.yscale(metrics.upper_fence))
-            .attr('x2', box_width/2)
+            .attr('x2', box_width / 2)
             .attr('y2', chart.yscale(metrics.upper_fence))
             .attr('stroke', color)
             .attr('stroke-width', whiskers_lw)
-        
+
         // Draw IQR box
         const iqr = group_box.append('g')
         iqr.append('rect')  // iqr rect
-            .attr('x', -box_width/2)
+            .attr('x', -box_width / 2)
             .attr('y', chart.yscale(metrics.quartile3))
             .attr('width', box_width)
             .attr('height', chart.yscale(metrics.quartile1) - chart.yscale(metrics.quartile3))
             .attr('fill', color)
         iqr.append('line')  // median line
-            .attr('x1', -box_width/2)
+            .attr('x1', -box_width / 2)
             .attr('y1', chart.yscale(metrics.median))
-            .attr('x2', box_width/2)
+            .attr('x2', box_width / 2)
             .attr('y2', chart.yscale(metrics.median))
             .attr('stroke', 'black')
             .attr('stroke-width', median_lw)
@@ -314,6 +321,70 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
  * @name boxvio_chart_wrapper#_render_control_panel
  */
 boxvio_chart_wrapper.prototype._render_control_panel = function () {
+
+    /**
+     * This boxvio_chart_wrapper instance
+     * @type {boxvio_chart_wrapper}
+     */
+    const self = this
+
+    // Create controls container
+    this.controls_container = common.create_dom_element({
+        element_type: 'div',
+        id: 'controls',
+        class_name: 'o-green',
+        parent: this.div_wrapper,
+    })
+
+    /**
+     * Checkbox for showing violins
+     * @type {Element}
+     */
+    const show_violins_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: 'show_violins_checkbox',
+        parent: this.controls_container,
+    })
+    show_violins_checkbox.checked = true
+    /**
+     * Checkbox label for density plot
+     * @type {Element}
+     */
+    const show_violins_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: 'Show violins',
+        parent: this.controls_container,
+    })
+    show_violins_label.setAttribute('for', 'show_violins_checkbox')
+    show_violins_checkbox.addEventListener('change', () => {
+        toggle_visibility(this._graphics.violins_g)
+    })
+
+    /**
+     * Checkbox for showing boxes
+     * @type {Element}
+     */
+     const show_boxes_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: 'show_boxes_checkbox',
+        parent: this.controls_container,
+    })
+    show_boxes_checkbox.checked = true
+    /**
+     * Checkbox label for density plot
+     * @type {Element}
+     */
+    const show_boxes_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: 'Show boxes',
+        parent: this.controls_container,
+    })
+    show_boxes_label.setAttribute('for', 'show_boxes_checkbox')
+    show_boxes_checkbox.addEventListener('change', () => {
+        toggle_visibility(this._graphics.boxes_g)
+    })
 
 }
 

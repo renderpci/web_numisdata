@@ -65,7 +65,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
      */
     this._full_height = 420
     /**
-     * Components of the chart
+     * Non-graphic components of the chart: setting, scales, etc.
      * @private
      */
     this._chart = {}
@@ -94,7 +94,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
             value: this._chart.histogram(values),
         })
     }
-    this._chart.root_g = null
+    /**
+     * Graphic components of the chart: d3 selection objects
+     * @private
+     */
+    this._graphics = {}
+    this._graphics.root_g = null
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
@@ -125,7 +130,7 @@ boxvio_chart_wrapper.prototype._render_chart = function () {
     this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)
 
     // Root g tag
-    this._chart.root_g = this.svg.append('g')
+    this._graphics.root_g = this.svg.append('g')
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
     
     this._render_axis()
@@ -141,16 +146,17 @@ boxvio_chart_wrapper.prototype._render_chart = function () {
  * @name boxvio_chart_wrapper#_render_axis
  */
 boxvio_chart_wrapper.prototype._render_axis = function () {
+    const g = this._graphics.root_g
     // Render x axis
-    this._chart.root_g.append('g')
+    g.append('g')
         .attr('transform', `translate(0,${this._chart.height})`)
         .call(this._chart.xaxis)
     // Render y axis
-    this._chart.root_g.append('g')
+    g.append('g')
         .call(this._chart.yaxis)
 
     // Render Y axis label
-    this._chart.root_g.append('text')
+    g.append('text')
       .attr('text-anchor', 'middle')
       .attr('transform', 'rotate(-90)')
       .attr('y', -this._chart.margin.left + 20)
@@ -183,7 +189,7 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
         .domain([-max_count, max_count])
 
     // Render
-    chart.root_g.append('g')
+    this._graphics.root_g.append('g')
         .selectAll('violin')
         .data(chart.bins)
         .enter()  // Working per group now
@@ -212,6 +218,7 @@ boxvio_chart_wrapper.prototype._render_violins = function () {
 boxvio_chart_wrapper.prototype._render_boxes = function () {
     
     const chart = this._chart
+    const g = this._graphics.root_g
 
     // Get outliers
     const outliers = {}
@@ -222,7 +229,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
     }
     
     // Draw
-    const boxes = chart.root_g.append('g')
+    const boxes = g.append('g')
     const bandwidth = chart.xscale.bandwidth()
     const box_width = 0.6 * bandwidth
 

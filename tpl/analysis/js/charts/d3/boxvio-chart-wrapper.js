@@ -2,7 +2,7 @@
 
 import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
-import { toggle_visibility } from "./utils";
+import { toggle_visibility, linspace } from "./utils";
 
 
 /**
@@ -85,12 +85,13 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
         this._chart.xaxis = d3.axisBottom(this._chart.xscale)
     this._chart.n_bins_default = 15
     this._chart.n_bins = this._chart.n_bins_default
-    this._chart.min_bins_multiplier = 0.5
     this._chart.max_bins_multiplier = 3
     this._chart.histogram = d3.bin()
         .domain(this._chart.yscale.domain())
         // TODO: compute number of bins automatically depending on the range of the data
-        .thresholds(this._chart.yscale.ticks(this._chart.n_bins)) // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
+        .thresholds(
+            linspace(this._data_extent[0], this._data_extent[1], this._chart.n_bins+1)
+        )
         .value((d) => d)
     this._chart.bins = Object.entries(this._data).map(
         ([name, values]) => {return {key: name, value: this._chart.histogram(values)}}
@@ -117,7 +118,9 @@ Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype
  */
 boxvio_chart_wrapper.prototype.set_n_bins = function (n_bins) {
     this._chart.n_bins = n_bins
-    this._chart.histogram.thresholds(this._chart.yscale.ticks(n_bins))
+    this._chart.histogram.thresholds(
+        linspace(this._data_extent[0], this._data_extent[1], n_bins+1)
+    )
     this._chart.bins = Object.entries(this._data).map(
         ([name, values]) => {return {key: name, value: this._chart.histogram(values)}}
     )
@@ -362,7 +365,7 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         value: this._chart.n_bins_default,
         parent: this.controls_container,
     })
-    n_bins_slider.setAttribute('min', Math.floor(this._chart.min_bins_multiplier * this._chart.n_bins_default))
+    n_bins_slider.setAttribute('min', 1)
     n_bins_slider.setAttribute('max', this._chart.max_bins_multiplier * this._chart.n_bins_default)
     n_bins_slider.addEventListener('input', () => {
         this.set_n_bins(Number(n_bins_slider.value))

@@ -1,7 +1,7 @@
 "use strict";
 
 import { chartjs_chart_wrapper } from "./chartjs-chart-wrapper.js";
-import { DEFAULT_BAR_COLOR, COLOR_PICKER_WIDTH } from "../chart-wrapper.js";
+import { COLOR_PALETTE, COLOR_PICKER_WIDTH } from "../chart-wrapper.js";
 
 /**
  * Bar chart wrapper
@@ -40,7 +40,7 @@ export function bar_chart_wrapper(div_wrapper, data, ylabel) {
      * @type {string[]}
      * @private
      */
-    this._bar_colors = Array(this._data.labels.length).fill(DEFAULT_BAR_COLOR)
+    this._bar_colors = Array(this._data.labels.length).fill(COLOR_PALETTE[0])
 }
 // Set prototype chain
 Object.setPrototypeOf(bar_chart_wrapper.prototype, chartjs_chart_wrapper.prototype)

@@ -1,7 +1,7 @@
 "use strict";
 
 import { chartjs_chart_wrapper } from "./chartjs-chart-wrapper.js";
-import { COLOR_PICKER_WIDTH, DEFAULT_BAR_COLOR } from "../chart-wrapper.js";
+import { COLOR_PICKER_WIDTH, COLOR_PALETTE } from "../chart-wrapper.js";
 
 /**
  * Histogram wrapper
@@ -71,7 +71,7 @@ export function histogram_wrapper(div_wrapper, data, xlabel) {
      * @type {string}
      * @private
      */
-    this._bar_color = DEFAULT_BAR_COLOR
+    this._bar_color = COLOR_PALETTE[0]
 }
 // Set prototype chain
 Object.setPrototypeOf(histogram_wrapper.prototype, chartjs_chart_wrapper.prototype)

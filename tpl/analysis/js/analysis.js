@@ -202,8 +202,21 @@ export const analysis =  {
 
 				event_manager.publish('form_submit', parsed_data)
 
-				// TODO: do stuff with the data
 				console.log(parsed_data)
+
+				// const diameters = parsed_data
+				// 	.map((ele) => ele.full_coins_reference_diameter_max)
+				// 	.flat()
+				// 	.filter((v) => v)
+				// console.log(diameters)
+
+				// this.chart_wrapper = new histogram_wrapper(
+				// 	this.chart_wrapper_container,
+				// 	diameters,
+				// 	'Diameter'
+				// )
+				// this.chart_wrapper.render()
+
 				const data = {}
 				for (const ele of parsed_data) {
 					const name = ele.term.split(' ')[0].slice(0, -1)
@@ -233,21 +246,11 @@ export const analysis =  {
 					input_data[name] = props.diameter_max
 				}
 				console.log(input_data)
-				// this.chart_wrapper = new histogram_wrapper(
-				// 	this.chart_wrapper_container,
-				// 	diameters,
-				// 	"Diameter"
-				// )
 				this.chart_wrapper = new boxvio_chart_wrapper(
 					this.chart_wrapper_container,
 					input_data,
 					'Diameter'
 				)
-				// this.chart_wrapper = new bar_chart_wrapper(
-				// 	this.chart_wrapper_container,
-				// 	cultures,
-				// 	'Count'
-				// )
 				this.chart_wrapper.render()
 
 			})

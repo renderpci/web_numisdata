@@ -1,13 +1,7 @@
 "use strict";
 
 import { d3_chart_wrapper } from "./d3-chart-wrapper";
-
-
-/**
- * Color palette, totally stolen from matplotlib
- * @type {string[]}
- */
-const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+import { COLOR_PALETTE } from "../chart-wrapper";
 
 
 /**
@@ -239,6 +233,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
     for (const [i, name] of Object.entries(Object.keys(this._data))) {
 
         const metrics = this._metrics[name]
+        const color = COLOR_PALETTE[i%COLOR_PALETTE.length]  // loop around!
 
         const group_box = boxes.append('g')
             .attr('transform', `translate(${chart.xscale(name) + bandwidth/2},0)`)
@@ -249,7 +244,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
                 .attr('cx', 0)
                 .attr('cy', chart.yscale(outlier))
                 .attr('r', 4)
-                .style('fill', COLOR_PALETTE[i])
+                .style('fill', color)
                 .style('opacity', 0.6)
         }
 
@@ -260,21 +255,21 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
             .attr('y1', chart.yscale(metrics.lower_fence))
             .attr('x2', 0)
             .attr('y2', chart.yscale(metrics.upper_fence))
-            .attr('stroke', COLOR_PALETTE[i])
+            .attr('stroke', color)
             .attr('stroke-width', whiskers_lw)
         whiskers.append('line') // lower horizontal
             .attr('x1', -box_width/2)
             .attr('y1', chart.yscale(metrics.lower_fence))
             .attr('x2', box_width/2)
             .attr('y2', chart.yscale(metrics.lower_fence))
-            .attr('stroke', COLOR_PALETTE[i])
+            .attr('stroke', color)
             .attr('stroke-width', whiskers_lw)
         whiskers.append('line') // upper horizontal
             .attr('x1', -box_width/2)
             .attr('y1', chart.yscale(metrics.upper_fence))
             .attr('x2', box_width/2)
             .attr('y2', chart.yscale(metrics.upper_fence))
-            .attr('stroke', COLOR_PALETTE[i])
+            .attr('stroke', color)
             .attr('stroke-width', whiskers_lw)
         
         // Draw IQR box
@@ -284,7 +279,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
             .attr('y', chart.yscale(metrics.quartile3))
             .attr('width', box_width)
             .attr('height', chart.yscale(metrics.quartile1) - chart.yscale(metrics.quartile3))
-            .attr('fill', COLOR_PALETTE[i])
+            .attr('fill', color)
         iqr.append('line')  // median line
             .attr('x1', -box_width/2)
             .attr('y1', chart.yscale(metrics.median))

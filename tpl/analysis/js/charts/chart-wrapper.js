@@ -14,10 +14,10 @@ export const COLOR_PICKER_WIDTH = 200
 const DEFAULT_CHART_NAME = 'chart'
 
 /**
- * Default color for chart bars in rgba
- * @type {string}
+ * Color palette, totally stolen from matplotlib
+ * @type {string[]}
  */
-export const DEFAULT_BAR_COLOR = 'rgba(255,190,92,0.5)'
+export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
 
 /**

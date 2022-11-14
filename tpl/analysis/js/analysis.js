@@ -236,7 +236,7 @@ export const analysis =  {
 
 				const data = {}
 				for (const ele of parsed_data) {
-					const name = ele.term.split(',')[0]
+					const name = ele.ref_type_number
 					if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 					// if (!['59', '62'].includes(name)) continue
 					const tmpData = {}

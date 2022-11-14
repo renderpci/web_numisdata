@@ -96,6 +96,7 @@ export const analysis =  {
 				label		: tstring.number_key || "Number & Key",
 				is_term 	: false,
 				parent		: form_row,
+				group_op 	: '$or',
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,

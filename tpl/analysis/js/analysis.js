@@ -4,10 +4,8 @@
 "use strict";
 
 
-import { chart_wrapper } from "./charts/chart-wrapper.js";
-import { histogram_wrapper } from "./charts/chartjs/histogram-wrapper.js";
-import { bar_chart_wrapper } from "./charts/chartjs/bar-chart-wrapper.js";
-import { boxvio_chart_wrapper } from "./charts/d3/boxvio-chart-wrapper.js";
+import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
+import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio-chart-wrapper.js";
 
 
 export const analysis =  {

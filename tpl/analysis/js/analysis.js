@@ -4,10 +4,8 @@
 "use strict";
 
 
-import { chart_wrapper } from "./charts/chart-wrapper.js";
-import { histogram_wrapper } from "./charts/chartjs/histogram-wrapper.js";
-import { bar_chart_wrapper } from "./charts/chartjs/bar-chart-wrapper.js";
-import { boxvio_chart_wrapper } from "./charts/d3/boxvio-chart-wrapper.js";
+import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
+import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio-chart-wrapper.js";
 
 
 export const analysis =  {
@@ -19,15 +17,21 @@ export const analysis =  {
 	row						: null,
 
 	// DOM containers
-	export_data_container	: null,
-	form_items_container	: null,
-	chart_wrapper_container	: null,
+	export_data_container		: null,
+	form_items_container		: null,
+	diameter_chart_container	: null,
+	weight_chart_container		: null,
 
 	/**
-	 * Chart wrapper instance
+	 * Chart wrapper instance for diameter
 	 * @type {chart_wrapper}
 	 */
-	chart_wrapper: null,
+	diameter_chart_wrapper: null,
+	/**
+	 * Chart wrapper instance for weight
+	 * @type {chart_wrapper}
+	 */
+	weight_chart_wrapper: null,
 
 
 	set_up : function(options) {
@@ -39,7 +43,8 @@ export const analysis =  {
 			self.export_data_container		= options.export_data_container
 			self.row						= options.row
 			self.form_items_container		= options.form_items_container
-			self.chart_wrapper_container	= options.chart_wrapper_container
+			self.diameter_chart_container	= options.diameter_chart_container
+			self.weight_chart_container		= options.weight_chart_container
 
 		// form
 		const form_node = self.render_form()
@@ -194,6 +199,13 @@ export const analysis =  {
 				return false
 			}
 
+		// scroll to head result
+			if (scroll_result) {
+				this.diameter_chart_container.scrollIntoView(
+					{behavior: "smooth", block: "start", inline: "nearest"}
+				);
+			}
+
 		// search rows exec against API
 			const js_promise = self.search_rows({
 				filter			: filter,
@@ -207,13 +219,26 @@ export const analysis =  {
 
 				event_manager.publish('form_submit', parsed_data)
 
-				// TODO: do stuff with the data
 				console.log(parsed_data)
+
+				// const diameters = parsed_data
+				// 	.map((ele) => ele.full_coins_reference_diameter_max)
+				// 	.flat()
+				// 	.filter((v) => v)
+				// console.log(diameters)
+
+				// this.chart_wrapper = new histogram_wrapper(
+				// 	this.chart_wrapper_container,
+				// 	diameters,
+				// 	'Diameter'
+				// )
+				// this.chart_wrapper.render()
+
 				const data = {}
 				for (const ele of parsed_data) {
 					const name = ele.term.split(' ')[0].slice(0, -1)
-					// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
-					if (!['59', '62'].includes(name)) continue
+					if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
+					// if (!['59', '62'].includes(name)) continue
 					const tmpData = {}
 					const calculable = ele.full_coins_reference_calculable
 					const diameter_max = ele.full_coins_reference_diameter_max
@@ -233,27 +258,30 @@ export const analysis =  {
 					}
 				}
 				console.log(data)
-				const input_data = {}
+
+				// Diameters
+				const diameters = {}
 				for (const [name, props] of Object.entries(data)) {
-					input_data[name] = props.diameter_max
+					diameters[name] = props.diameter_max
 				}
-				console.log(input_data)
-				// this.chart_wrapper = new histogram_wrapper(
-				// 	this.chart_wrapper_container,
-				// 	diameters,
-				// 	"Diameter"
-				// )
-				this.chart_wrapper = new boxvio_chart_wrapper(
-					this.chart_wrapper_container,
-					input_data,
+				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
+					this.diameter_chart_container,
+					diameters,
 					'Diameter'
 				)
-				// this.chart_wrapper = new bar_chart_wrapper(
-				// 	this.chart_wrapper_container,
-				// 	cultures,
-				// 	'Count'
-				// )
-				this.chart_wrapper.render()
+				this.diameter_chart_wrapper.render()
+
+				// Diameters
+				const weights = {}
+				for (const [name, props] of Object.entries(data)) {
+					weights[name] = props.weight
+				}
+				this.weight_chart_wrapper = new boxvio_chart_wrapper(
+					this.weight_chart_container,
+					weights,
+					'Weight'
+				)
+				this.weight_chart_wrapper.render()
 
 			})
 

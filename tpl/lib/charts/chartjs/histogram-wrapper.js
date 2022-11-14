@@ -1,7 +1,7 @@
 "use strict";
 
 import { chartjs_chart_wrapper } from "./chartjs-chart-wrapper.js";
-import { COLOR_PICKER_WIDTH, DEFAULT_BAR_COLOR } from "../chart-wrapper.js";
+import { COLOR_PICKER_WIDTH, COLOR_PALETTE } from "../chart-wrapper.js";
 
 /**
  * Histogram wrapper
@@ -71,7 +71,7 @@ export function histogram_wrapper(div_wrapper, data, xlabel) {
      * @type {string}
      * @private
      */
-    this._bar_color = DEFAULT_BAR_COLOR
+    this._bar_color = COLOR_PALETTE[0]
 }
 // Set prototype chain
 Object.setPrototypeOf(histogram_wrapper.prototype, chartjs_chart_wrapper.prototype)
@@ -389,7 +389,7 @@ histogram_wrapper.prototype._render_control_panel = function () {
     // Create controls container
     this.controls_container = common.create_dom_element({
         element_type: 'div',
-        id: 'controls',
+        id: `${this.id_string()}_controls`,
         class_name: 'o-green',
         parent: this.div_wrapper,
     })
@@ -422,6 +422,8 @@ histogram_wrapper.prototype._render_control_panel = function () {
         slider.value = this._n_bins_default
         this.set_n_bins(Number(slider.value))
     })
+
+    const density_checkbox_id = `${this.id_string()}_density_checkbox`
     /**
      * Checkbox for density plot
      * @type {Element}
@@ -429,7 +431,7 @@ histogram_wrapper.prototype._render_control_panel = function () {
     const density_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
-        id: 'density_checkbox',
+        id: density_checkbox_id,
         parent: this.controls_container,
     })
     /**
@@ -441,14 +443,14 @@ histogram_wrapper.prototype._render_control_panel = function () {
         text_content: 'Density',
         parent: this.controls_container,
     })
-    density_checkbox_label.setAttribute('for', 'density_checkbox')
+    density_checkbox_label.setAttribute('for', density_checkbox_id)
     density_checkbox.addEventListener('change', () => {
         this.set_density(Boolean(density_checkbox.checked))
     })
     /** iro.js color picker */
     const color_picker_container = common.create_dom_element({
         element_type: 'div',
-        id: 'color_picker_container',
+        id: `${this.id_string()}_color_picker_container`,
         parent: this.controls_container
     })
     const color_picker = new window.iro.ColorPicker(color_picker_container, {

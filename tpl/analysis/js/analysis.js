@@ -197,7 +197,11 @@ export const analysis =  {
 		// search rows exec against API
 			const js_promise = self.search_rows({
 				filter			: filter,
-				limit			: 0
+				limit			: 0,
+				process_result	: {
+					fn		: 'process_result::add_parents_and_children_recursive',
+					columns	: [{name : "parents"}]
+				}
 			})
 			.then((parsed_data)=>{
 

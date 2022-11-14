@@ -51,6 +51,17 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
         this._metrics[name] = calc_metrics(values)
     }
     /**
+     * Outliers per group name
+     * @type {{[group_name: string]: number[]}}
+     * @private
+     */
+    this._outliers = {}
+    for (const [name, values] of Object.entries(this._data)) {
+        this._outliers[name] = values.filter(
+            (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
+        )
+    }
+    /**
      * Maximum and minimum of the input data
      * @type {[number, number]}
      */
@@ -78,11 +89,15 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
         .domain(this._data_extent)
         .clamp(true)  // when input outside of domain, its output is clamped to range
     this._chart.yaxis = d3.axisLeft(this._chart.yscale)
+    this._chart.violin_scale_default = 0.8
+    this._chart.violin_scale = this._chart.violin_scale_default
+    this._chart.box_scale_default = 0.3
+    this._chart.box_scale = this._chart.box_scale_default
     this._chart.xscale = d3.scaleBand()
         .domain(Object.keys(this._data))
         .range([0, this._chart.width])
-        .padding(0.22)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
-        this._chart.xaxis = d3.axisBottom(this._chart.xscale)
+        // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+    this._chart.xaxis = d3.axisBottom(this._chart.xscale)
     this._chart.n_bins_default = 15
     this._chart.n_bins = this._chart.n_bins_default
     this._chart.max_bins_multiplier = 3
@@ -105,6 +120,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
         root_g: null,
         violins_g: null,
         boxes_g: null,
+        outliers: {},
     }
 }
 // Set prototype chain
@@ -127,6 +143,32 @@ boxvio_chart_wrapper.prototype.set_n_bins = function (n_bins) {
     // Remove the violin graphics, only leaving its root g tag (violins_g)
     this._graphics.violins_g.selectAll('*').remove()
     this._render_violins(true)
+}
+
+/**
+ * Set the scale for the violins
+ * @function
+ * @param {number} scale the scale [0, 1]
+ * @name boxvio_chart_wrapper#set_violin_scale
+ */
+boxvio_chart_wrapper.prototype.set_violin_scale = function (scale) {
+    this._chart.violin_scale = scale
+    // Remove the violin graphics, only leaving its root g tag (violins_g)
+    this._graphics.violins_g.selectAll('*').remove()
+    this._render_violins(true)
+}
+
+/**
+ * Set the scale for the boxes
+ * @function
+ * @param {number} scale the scale [0, 1]
+ * @name boxvio_chart_wrapper#set_box_scale
+ */
+ boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
+    this._chart.box_scale = scale
+    // Remove the box graphics, only leaving its root g tag (boxes_g)
+    this._graphics.boxes_g.selectAll('*').remove()
+    this._render_boxes(true)
 }
 
 /**
@@ -232,8 +274,8 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
             .style('stroke-width', 0.4)
             .style('fill', 'ghostwhite')
             .attr('d', d3.area()
-                .x0((d) => xNum(-d.length))
-                .x1((d) => xNum(d.length))
+                .x0((d) => xNum(-d.length*chart.violin_scale))
+                .x1((d) => xNum(d.length*chart.violin_scale))
                 .y((d) => chart.yscale(d.x0))
                 .curve(d3.curveCatmullRom)
         )
@@ -244,26 +286,22 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
  * Render the boxes (including whiskers and outliers)
  * @function
  * @private
+ * @param {boolean} is_g_ready whether the g tag for boxes is
+ *        set up (default: `false`)
  * @name boxvio_chart_wrapper#_render_boxes
  */
-boxvio_chart_wrapper.prototype._render_boxes = function () {
+boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
     const chart = this._chart
     const g = this._graphics.root_g
 
-    // Get outliers
-    const outliers = {}
-    for (const [name, values] of Object.entries(this._data)) {
-        outliers[name] = values.filter(
-            (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
-        )
-    }
-
     // Draw
-    const boxes = g.append('g')
-    this._graphics.boxes_g = boxes
+    if (!is_g_ready) {
+        this._graphics.boxes_g = g.append('g')
+    }
+    const boxes = this._graphics.boxes_g
     const bandwidth = chart.xscale.bandwidth()
-    const box_width = 0.5 * bandwidth
+    const box_width = this._chart.box_scale * bandwidth
 
     const whiskers_lw = 2
     const median_lw = 3
@@ -278,11 +316,13 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
             .attr('transform', `translate(${chart.xscale(name) + bandwidth / 2},0)`)
 
         // Draw outliers
-        for (const outlier of outliers[name]) {
-            group_box.append('circle')
+        this._graphics.outliers[name] = group_box.append('g')
+        const outliers = this._graphics.outliers[name]
+        for (const outlier of this._outliers[name]) {
+            outliers.append('circle')
                 .attr('cx', 0)
                 .attr('cy', chart.yscale(outlier))
-                .attr('r', 0.03*bandwidth)
+                .attr('r', 0.027*bandwidth)
                 .style('fill', color)
                 .style('opacity', 0.7)
         }
@@ -329,7 +369,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
         iqr.append('circle')  // median dot
             .attr('cx', 0)
             .attr('cy', chart.yscale(metrics.median))
-            .attr('r', 5)
+            .attr('r', 4.5)
             .style('fill', 'white')
             .attr('stroke', 'black')
             .attr('stroke-width', 2)
@@ -348,9 +388,10 @@ boxvio_chart_wrapper.prototype._render_boxes = function () {
 boxvio_chart_wrapper.prototype._render_control_panel = function () {
 
     // Create controls container
+    const controls_container_id = `${this.id_string()}_controls`
     this.controls_container = common.create_dom_element({
         element_type: 'div',
-        id: 'controls',
+        id: controls_container_id,
         class_name: 'o-green',
         parent: this.div_wrapper,
     })
@@ -385,6 +426,7 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         this.set_n_bins(Number(n_bins_slider.value))
     })
 
+    const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
     /**
      * Checkbox for showing violins
      * @type {Element}
@@ -392,7 +434,7 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
     const show_violins_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
-        id: 'show_violins_checkbox',
+        id: show_violins_checkbox_id,
         parent: this.controls_container,
     })
     show_violins_checkbox.checked = true
@@ -405,11 +447,12 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         text_content: 'Show violins',
         parent: this.controls_container,
     })
-    show_violins_label.setAttribute('for', 'show_violins_checkbox')
+    show_violins_label.setAttribute('for', show_violins_checkbox_id)
     show_violins_checkbox.addEventListener('change', () => {
         toggle_visibility(this._graphics.violins_g)
     })
 
+    const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
     /**
      * Checkbox for showing boxes
      * @type {Element}
@@ -417,7 +460,7 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
      const show_boxes_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
-        id: 'show_boxes_checkbox',
+        id: show_boxes_checkbox_id,
         parent: this.controls_container,
     })
     show_boxes_checkbox.checked = true
@@ -430,9 +473,101 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         text_content: 'Show boxes',
         parent: this.controls_container,
     })
-    show_boxes_label.setAttribute('for', 'show_boxes_checkbox')
+    show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
     show_boxes_checkbox.addEventListener('change', () => {
         toggle_visibility(this._graphics.boxes_g)
+    })
+
+    const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
+    /**
+     * Checkbox for showing outliers
+     * @type {Element}
+     */
+    const show_outliers_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: show_outliers_checkbox_id,
+        parent: this.controls_container,
+    })
+    show_outliers_checkbox.checked = true
+    /**
+     * Checkbox label for density plot
+     * @type {Element}
+     */
+    const show_outliers_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: 'Show outliers',
+        parent: this.controls_container,
+    })
+    show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
+    show_outliers_checkbox.addEventListener('change', () => {
+        for (const group of Object.values(this._graphics.outliers)) {
+            toggle_visibility(group)
+        }
+    })
+
+    /**
+     * Slider for violin scale
+     * @type {Element}
+     */
+    const violin_scale_slider = common.create_dom_element({
+        element_type: 'input',
+        type: 'range',
+        // value: this._chart.violin_scale_default,  // This does not work here?
+        parent: this.controls_container,
+    })
+    violin_scale_slider.setAttribute('min', 0)
+    violin_scale_slider.setAttribute('max', 1)
+    violin_scale_slider.setAttribute('step', 0.05)
+    violin_scale_slider.value = this._chart.violin_scale_default
+    violin_scale_slider.addEventListener('input', () => {
+        this.set_violin_scale(Number(violin_scale_slider.value))
+    })
+    /**
+     * Reset button for the violin_scale_slider
+     * @type {Element}
+     */
+    const violin_scale_slider_reset = common.create_dom_element({
+        element_type: 'button',
+        type: 'button',
+        text_content: 'Reset',
+        parent: this.controls_container,
+    })
+    violin_scale_slider_reset.addEventListener('click', () => {
+        violin_scale_slider.value = this._chart.violin_scale_default
+        this.set_violin_scale(Number(violin_scale_slider.value))
+    })
+
+    /**
+     * Slider for box scale
+     * @type {Element}
+     */
+     const box_scale_slider = common.create_dom_element({
+        element_type: 'input',
+        type: 'range',
+        // value: this._chart.box_scale_default,  // This does not work here?
+        parent: this.controls_container,
+    })
+    box_scale_slider.setAttribute('min', 0)
+    box_scale_slider.setAttribute('max', 1)
+    box_scale_slider.setAttribute('step', 0.05)
+    box_scale_slider.value = this._chart.box_scale_default
+    box_scale_slider.addEventListener('input', () => {
+        this.set_box_scale(Number(box_scale_slider.value))
+    })
+    /**
+     * Reset button for the box_scale_slider
+     * @type {Element}
+     */
+    const box_scale_slider_reset = common.create_dom_element({
+        element_type: 'button',
+        type: 'button',
+        text_content: 'Reset',
+        parent: this.controls_container,
+    })
+    box_scale_slider_reset.addEventListener('click', () => {
+        box_scale_slider.value = this._chart.box_scale_default
+        this.set_box_scale(Number(box_scale_slider.value))
     })
 
 }

@@ -265,17 +265,19 @@ bar_chart_wrapper.prototype._render_control_panel = function () {
     // Create controls container
     this.controls_container = common.create_dom_element({
         element_type: 'div',
-        id: 'controls',
+        id: `${this.id_string()}_controls`,
         class_name: 'o-green',
         parent: this.div_wrapper,
     })
+
+    const bar_select_id = `${this.id_string()}_bar_select`
     /**
      * Select for bar choice
      * @type {Element}
      */
     const bar_select = common.create_dom_element({
         element_type: 'select',
-        id: 'bar_selection',
+        id: bar_select_id,
         parent: this.controls_container,
         // TODO: add ARIA attributes?
     })
@@ -287,10 +289,11 @@ bar_chart_wrapper.prototype._render_control_panel = function () {
             parent: bar_select,
         })
     }
+
     /** iro.js color picker */
     const color_picker_container = common.create_dom_element({
         element_type: 'div',
-        id: 'color_picker_container',
+        id: `${this.id_string()}_color_picker_container`,
         parent: this.controls_container
     })
     const color_picker = new window.iro.ColorPicker(color_picker_container, {

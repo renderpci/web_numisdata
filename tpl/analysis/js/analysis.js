@@ -19,15 +19,21 @@ export const analysis =  {
 	row						: null,
 
 	// DOM containers
-	export_data_container	: null,
-	form_items_container	: null,
-	chart_wrapper_container	: null,
+	export_data_container		: null,
+	form_items_container		: null,
+	diameter_chart_container	: null,
+	weight_chart_container		: null,
 
 	/**
-	 * Chart wrapper instance
+	 * Chart wrapper instance for diameter
 	 * @type {chart_wrapper}
 	 */
-	chart_wrapper: null,
+	diameter_chart_wrapper: null,
+	/**
+	 * Chart wrapper instance for weight
+	 * @type {chart_wrapper}
+	 */
+	weight_chart_wrapper: null,
 
 
 	set_up : function(options) {
@@ -39,7 +45,8 @@ export const analysis =  {
 			self.export_data_container		= options.export_data_container
 			self.row						= options.row
 			self.form_items_container		= options.form_items_container
-			self.chart_wrapper_container	= options.chart_wrapper_container
+			self.diameter_chart_container	= options.diameter_chart_container
+			self.weight_chart_container		= options.weight_chart_container
 
 		// form
 		const form_node = self.render_form()
@@ -193,6 +200,13 @@ export const analysis =  {
 				return false
 			}
 
+		// scroll to head result
+			if (scroll_result) {
+				this.diameter_chart_container.scrollIntoView(
+					{behavior: "smooth", block: "start", inline: "nearest"}
+				);
+			}
+
 		// search rows exec against API
 			const js_promise = self.search_rows({
 				filter			: filter,
@@ -241,17 +255,30 @@ export const analysis =  {
 					}
 				}
 				console.log(data)
-				const input_data = {}
+
+				// Diameters
+				const diameters = {}
 				for (const [name, props] of Object.entries(data)) {
-					input_data[name] = props.diameter_max
+					diameters[name] = props.diameter_max
 				}
-				console.log(input_data)
-				this.chart_wrapper = new boxvio_chart_wrapper(
-					this.chart_wrapper_container,
-					input_data,
+				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
+					this.diameter_chart_container,
+					diameters,
 					'Diameter'
 				)
-				this.chart_wrapper.render()
+				this.diameter_chart_wrapper.render()
+
+				// Diameters
+				const weights = {}
+				for (const [name, props] of Object.entries(data)) {
+					weights[name] = props.weight
+				}
+				this.weight_chart_wrapper = new boxvio_chart_wrapper(
+					this.weight_chart_container,
+					weights,
+					'Weight'
+				)
+				this.weight_chart_wrapper.render()
 
 			})
 

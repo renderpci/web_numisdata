@@ -28,7 +28,8 @@
 
 					<!-- Result -->
 						<section class="result">
-							<div id="chart_wrapper" class="o-red"></div>
+							<div id="diameter_chart_container" class="o-red"></div>
+							<div id="weight_chart_container" class="o-red" style="margin-top: 2em;"></div>
 							<div id="export_data" class="export_data_container"></div>
 						</section>
 
@@ -45,11 +46,12 @@
 dom_ready(function(){
 	var analysis = analysis_min.analysis
 	analysis.set_up({
-		row						: <?php echo json_encode($this->row) ?>,
-		area_name				: <?php echo json_encode($area_name) ?>,
-		export_data_container	: document.getElementById('export_data'),
-		form_items_container	: document.getElementById('items_container'),
-		chart_wrapper_container : document.getElementById('chart_wrapper')
+		row							: <?php echo json_encode($this->row) ?>,
+		area_name					: <?php echo json_encode($area_name) ?>,
+		export_data_container		: document.getElementById('export_data'),
+		form_items_container		: document.getElementById('items_container'),
+		diameter_chart_container	: document.getElementById('diameter_chart_container'),
+		weight_chart_container		: document.getElementById('weight_chart_container')
 	})
 })
 </script>

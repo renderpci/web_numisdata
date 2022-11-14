@@ -33,6 +33,15 @@ export function chart_wrapper(div_wrapper) {
     if (this.constructor === chart_wrapper) {
         throw new Error("Abstract class 'chart_wrapper' cannot be instantiated")
     }
+    chart_wrapper._n_charts_created++;
+    /**
+     * Unique identifier for the chart.
+     * 
+     * Subclasses MUST use this in order to assing IDs
+     * to DOM elements, in order to avoid bugs and cross-chart events
+     * @type {number}
+     */
+    this.id = chart_wrapper._n_charts_created
     /**
      * Div element wrapping the chart itself and
      * the controls
@@ -53,6 +62,23 @@ export function chart_wrapper(div_wrapper) {
      * @protected
      */
     this.controls_container = undefined
+}
+
+/**
+ * Amount of created charts
+ * @type {number}
+ * @static
+ * @private
+ */
+chart_wrapper._n_charts_created = 0;
+
+/**
+ * Get a string representing the ID of the chart
+ * @returns {string} the id as a string
+ *          (`'chart1'`, `'chart2'`, ...)
+ */
+chart_wrapper.prototype.id_string = function () {
+    return `chart${this.id}`
 }
 
 /**

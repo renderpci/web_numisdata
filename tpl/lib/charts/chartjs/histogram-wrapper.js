@@ -2,6 +2,7 @@
 
 import { chartjs_chart_wrapper } from "./chartjs-chart-wrapper.js";
 import { COLOR_PICKER_WIDTH, COLOR_PALETTE } from "../chart-wrapper.js";
+import { compute_n_bins } from "../compute-n-bins.js";
 
 /**
  * Histogram wrapper
@@ -38,7 +39,7 @@ export function histogram_wrapper(div_wrapper, data, xlabel) {
      * @type {number}
      * @private
      */
-    this._n_bins_default = Math.ceil(Math.sqrt(this._data.length))
+    this._n_bins_default = compute_n_bins.sqrt(this._data)
     /**
      * Number of bins in the histogram
      * 

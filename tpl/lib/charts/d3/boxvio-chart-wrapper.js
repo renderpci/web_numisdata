@@ -542,7 +542,7 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
      * Slider for box scale
      * @type {Element}
      */
-     const box_scale_slider = common.create_dom_element({
+    const box_scale_slider = common.create_dom_element({
         element_type: 'input',
         type: 'range',
         // value: this._chart.box_scale_default,  // This does not work here?

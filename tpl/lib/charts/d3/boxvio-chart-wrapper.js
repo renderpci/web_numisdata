@@ -164,11 +164,18 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, over
      * @type {{[name: string]: d3.selection | {[group: string]: d3.selection}}}
      */
     this._graphics = {
-        root_g: null,  // Root g tag (translated to account for the margins)
-        violins_g: null, // g tag grouping all violins
-        violins: {}, // individual g tag for each violin (mapped by group name)
-        boxes_g: null, // g tag grouping all boxes
-        outliers: {},  // per group: g tag grouping all outliers of the group
+        // Root g tag (translated to account for the margins)
+        root_g: null,
+        // g tag for the y-axis
+        yaxis_g: null,
+        // g tag grouping all violins
+        violins_g: null,
+        // individual g tag for each violin (mapped by group name)
+        violins: {},
+        // g tag grouping all boxes
+        boxes_g: null,
+        // per group: g tag grouping all outliers of the group
+        outliers: {},
     }
     /**
      * Control panel things
@@ -293,17 +300,20 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
     g.append('g')
         .attr('transform', `translate(0,${this._chart.height})`)
         .call(this._chart.xaxis)
+    
     // Render y axis
-    g.append('g')
+    this._graphics.yaxis_g = g.append('g')
+    const yaxis_g = this._graphics.yaxis_g
+    yaxis_g.append('g')
         .call(this._chart.yaxis)
-
     // Render Y axis label
-    g.append('text')
+    yaxis_g.append('text')
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(-90)')
         .attr('y', -this._chart.margin.left + 20)
         .attr('x', -this._chart.height / 2)
-        .text(this._ylabel);
+        .text(this._ylabel)
+
 }
 
 /**

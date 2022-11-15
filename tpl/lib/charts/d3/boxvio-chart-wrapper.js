@@ -11,7 +11,7 @@ import { deepcopy } from "../utils"
  * Padding for the y-axis, to fit the label
  * @type {number}
  */
-const YAXIS_PADDING = 60;
+const YAXIS_PADDING = 52;
 
 /**
  * Boxplot + violin chart wrapper
@@ -42,6 +42,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
      * @private
      */
     this._group_names = sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
+    /**
+     * Colors
+     * @type {string[]}
+     * @private
+     */
+    this._colors = this._group_names.map((name, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
     /**
      * The label for the y axis
      * @type {string}
@@ -95,7 +101,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
      * Full width of svg
      * @type {number}
      */
-    this._full_width = Object.keys(data).length*20+YAXIS_PADDING
+    this._full_width = 24.15625*Math.sqrt(Object.keys(data).length) + 135.84375 + YAXIS_PADDING
     /**
      * Full height of svg
      * @type {number}
@@ -106,7 +112,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
      * @private
      */
     this._chart = {}
-    this._chart.margin = { top: 15, right: YAXIS_PADDING, bottom: 23, left: 60 }
+    this._chart.margin = { top: 15, right: 4, bottom: 23, left: YAXIS_PADDING }
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -377,10 +383,10 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
     const median_lw = 3
 
     // Iterate over the groups
-    for (const [i, name] of Object.entries(Object.keys(this._data))) {
+    for (const [i, name] of Object.entries(this._group_names)) {
 
         const metrics = this._metrics[name]
-        const color = COLOR_PALETTE[i % COLOR_PALETTE.length]  // loop around!
+        const color = this._colors[i]
 
         const group_box = boxes.append('g')
             .attr('transform', `translate(${chart.xscale(name) + bandwidth / 2},0)`)

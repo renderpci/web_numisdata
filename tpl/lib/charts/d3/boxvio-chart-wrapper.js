@@ -369,7 +369,7 @@ boxvio_chart_wrapper.prototype._render_violin = function (name) {
         .datum(bins)
             .style('stroke', 'gray')
             .style('stroke-width', 0.4)
-            .style('fill', 'ghostwhite')
+            .style('fill', '#d2d2d2')
             .attr('d', d3.area()
                 .x0((d) => x_num(-d.length*violin_scale))
                 .x1((d) => x_num(d.length*violin_scale))

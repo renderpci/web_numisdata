@@ -6,6 +6,7 @@
 
 import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
 import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio-chart-wrapper.js";
+import { histogram_wrapper } from "../../lib/charts/chartjs/histogram-wrapper.js";
 
 
 export const analysis =  {
@@ -102,6 +103,23 @@ export const analysis =  {
 				is_term 	: false,
 				parent		: form_row,
 				group_op 	: '$or',
+				callback	: function(form_item) {
+					self.form.activate_autocomplete({
+						form_item	: form_item,
+						table		: 'catalog'
+					})
+				}
+			})
+		
+		// material
+			self.form.item_factory({
+				id 			: "material",
+				name 		: "material",
+				q_column 	: "ref_type_material",
+				q_table 	: "any",
+				label		: tstring.material || "material",
+				is_term 	: false,
+				parent		: form_row,
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
@@ -227,12 +245,12 @@ export const analysis =  {
 				// 	.filter((v) => v)
 				// console.log(diameters)
 
-				// this.chart_wrapper = new histogram_wrapper(
-				// 	this.chart_wrapper_container,
+				// this.diameter_chart_wrapper = new histogram_wrapper(
+				// 	this.diameter_chart_container,
 				// 	diameters,
 				// 	'Diameter'
 				// )
-				// this.chart_wrapper.render()
+				// this.diameter_chart_wrapper.render()
 
 				const data = {}
 				for (const ele of parsed_data) {

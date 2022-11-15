@@ -262,13 +262,6 @@ bar_chart_wrapper.prototype._render_control_panel = function () {
      * @type {bar_chart_wrapper}
      */
     const self = this
-    // Create controls container
-    this.controls_container = common.create_dom_element({
-        element_type: 'div',
-        id: `${this.id_string()}_controls`,
-        class_name: 'o-green',
-        parent: this.div_wrapper,
-    })
 
     const bar_select_id = `${this.id_string()}_bar_select`
     /**

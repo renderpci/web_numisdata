@@ -387,13 +387,6 @@ histogram_wrapper.prototype._render_control_panel = function () {
      * @type {histogram_wrapper}
      */
     const self = this
-    // Create controls container
-    this.controls_container = common.create_dom_element({
-        element_type: 'div',
-        id: `${this.id_string()}_controls`,
-        class_name: 'o-green',
-        parent: this.div_wrapper,
-    })
     /**
      * Slider for number of bins
      * @type {Element}

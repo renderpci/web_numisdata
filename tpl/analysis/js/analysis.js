@@ -268,7 +268,8 @@ export const analysis =  {
 					this.diameter_chart_container,
 					diameters,
 					true,
-					'Diameter'
+					'Diameter',
+					true
 				)
 				this.diameter_chart_wrapper.render()
 
@@ -281,7 +282,8 @@ export const analysis =  {
 					this.weight_chart_container,
 					weights,
 					true,
-					'Weight'
+					'Weight',
+					true
 				)
 				this.weight_chart_wrapper.render()
 

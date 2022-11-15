@@ -25,11 +25,17 @@ const YAXIS_PADDING = 62;
  *        and array of values
  * @param {boolen} sort_xaxis whether to sort the xaxis
  * @param {string} ylabel the y label
+ * @param {boolean} overflow whether to go beyond the width of the plot container
  * @class
  * @extends d3_chart_wrapper
  */
-export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
+export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, overflow) {
     d3_chart_wrapper.call(this, div_wrapper)
+    /**
+     * Whether to go beyond the width of the plot container
+     * @type {boolean}
+     */
+    this._overflow = overflow
     /**
      * Data: group name to array of values
      * @type {Object.<string, number[]>}
@@ -243,8 +249,11 @@ boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
 boxvio_chart_wrapper.prototype.render = function () {
     // Call super render method
     d3_chart_wrapper.prototype.render.call(this)
-    this.svg.attr('width', null)
-    this.svg.attr('height', '500px')
+    if (this._overflow) {
+        this.svg.attr('width', null)
+        this.svg.attr('height', '500px')
+        this.plot_container.style = "overflow: auto;"
+    }
     // Render chart
     this._render_chart()
     // Render control panel
@@ -461,15 +470,6 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
  * @name boxvio_chart_wrapper#_render_control_panel
  */
 boxvio_chart_wrapper.prototype._render_control_panel = function () {
-
-    // Create controls container
-    const controls_container_id = `${this.id_string()}_controls`
-    this.controls_container = common.create_dom_element({
-        element_type: 'div',
-        id: controls_container_id,
-        class_name: 'o-green',
-        parent: this.div_wrapper,
-    })
 
     this._render_violin_curve_selector()
     this._render_checkboxes()

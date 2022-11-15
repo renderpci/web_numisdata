@@ -23,6 +23,14 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
 /**
  * Chart wrapper class
  * 
+ * The `render` method must be called for the chart to be rendered to the DOM!!!
+ * 
+ * Within the provided div wrapper, it will create three divs:
+ * 1. If download is supported, a div to containing the download section, with
+ *    id `chart<id>_download_chart_container` class `download_chart_container`
+ * 2. A div to contain the plot itself, with id `chart<id>_plot_wrapper` class `plot_wrapper` 
+ * 3. A div to contain the control panel, with id `chart<id>_control_panel` and class `control_panel`
+ * 
  * It clears the container div during render, so subclasses should work with the dom
  * after the render method of this superclass has been called
  * @class
@@ -115,8 +123,8 @@ chart_wrapper.prototype.render = function () {
     if (supported_formats.length) {
         this.download_chart_container = common.create_dom_element({
             element_type: 'div',
-            id: 'download_chart_container',
-            class_name: 'o-purple',
+            id: `${this.id_string()}_download_chart_container`,
+            class_name: 'o-purple download_chart_container',
             style: {
                 'display': 'flex',
                 'flex-direction': 'row',
@@ -126,7 +134,7 @@ chart_wrapper.prototype.render = function () {
         })
         const format_select = common.create_dom_element({
             element_type: 'select',
-            id: 'chart_export_format',
+            id: `${this.id_string()}_chart_export_format`,
             style: {
                 'width': '80%',
             },
@@ -157,8 +165,17 @@ chart_wrapper.prototype.render = function () {
     // Create the div for wrapping the plot
     this.plot_container = common.create_dom_element({
         element_type: 'div',
-            class_name: 'o-purple plot_wrapper',
-            parent: this.div_wrapper,
+        id: `${this.id_string()}_plot_wrapper`,
+        class_name: 'o-purple plot_wrapper',
+        parent: this.div_wrapper,
+    })
+
+    // Create the div for the control panel
+    this.controls_container = common.create_dom_element({
+        element_type: 'div',
+        id: `${this.id_string()}_control_panel`,
+        class_name: 'o-green control_panel',
+        parent: this.div_wrapper,
     })
 }
 

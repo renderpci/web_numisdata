@@ -8,6 +8,12 @@ import { deepcopy } from "../utils"
 
 
 /**
+ * Padding for the y-axis, to fit the label
+ * @type {number}
+ */
+const YAXIS_PADDING = 60;
+
+/**
  * Boxplot + violin chart wrapper
  * 
  * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
@@ -89,7 +95,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
      * Full width of svg
      * @type {number}
      */
-    this._full_width = 960
+    this._full_width = Object.keys(data).length*20+YAXIS_PADDING
     /**
      * Full height of svg
      * @type {number}
@@ -100,7 +106,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
      * @private
      */
     this._chart = {}
-    this._chart.margin = { top: 15, right: 3, bottom: 23, left: 50 }
+    this._chart.margin = { top: 15, right: YAXIS_PADDING, bottom: 23, left: 60 }
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -230,6 +236,8 @@ boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
 boxvio_chart_wrapper.prototype.render = function () {
     // Call super render method
     d3_chart_wrapper.prototype.render.call(this)
+    this.svg.attr('width', null)
+    this.svg.attr('height', '500px')
     // Render chart
     this._render_chart()
     // Render control panel

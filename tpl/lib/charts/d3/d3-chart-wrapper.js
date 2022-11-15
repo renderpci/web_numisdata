@@ -19,6 +19,12 @@ export function d3_chart_wrapper(div_wrapper) {
     }
     chart_wrapper.call(this, div_wrapper)
     /**
+     * Div inside the div_wrapper, that just wraps the drawing
+     * @type {Element}
+     * @protected
+     */
+    this.plot_div = undefined
+    /**
      * D3 selection object for the root `svg` tag
      * @protected
      */
@@ -38,8 +44,14 @@ Object.setPrototypeOf(d3_chart_wrapper.prototype, chart_wrapper.prototype)
  */
 d3_chart_wrapper.prototype.render = function () {
     chart_wrapper.prototype.render.call(this)
+    
+    this.plot_div = common.create_dom_element({
+        element_type: 'div',
+            class_name: 'o-purple plot_wrapper',
+            parent: this.div_wrapper,
+    })
 
-    this.svg = d3.select(this.div_wrapper)
+    this.svg = d3.select(this.plot_div)
         .append('svg')
         .attr('version', '1.1') // When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
         .attr('xmlns', 'http://www.w3.org/2000/svg')

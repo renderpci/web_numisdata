@@ -280,7 +280,9 @@ export const analysis =  {
 				// Diameters
 				const diameters = {}
 				for (const [name, props] of Object.entries(data)) {
-					diameters[name] = props.diameter_max
+					if (props.diameter_max && props.diameter_max.length) {
+						diameters[name] = props.diameter_max
+					}
 				}
 				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
 					this.diameter_chart_container,
@@ -294,7 +296,9 @@ export const analysis =  {
 				// Diameters
 				const weights = {}
 				for (const [name, props] of Object.entries(data)) {
-					weights[name] = props.weight
+					if (props.weight && props.weight.length) {
+						weights[name] = props.weight
+					}
 				}
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
 					this.weight_chart_container,

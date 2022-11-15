@@ -2,7 +2,7 @@
 
 import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
-import { toggle_visibility, linspace } from "./utils";
+import { toggle_visibility, linspace, CURVES } from "./utils";
 import { compute_n_bins } from "../compute-n-bins";
 import { deepcopy } from "../utils"
 
@@ -134,6 +134,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
     this._chart.bins = Object.fromEntries(Object.entries(data).map(
         ([name, values]) => [name, this._chart.histogram[name](values)]
     ))
+    this._chart.supported_curves = [
+        'Basis', 'Bump Y', 'Cardinal', 'Catmull-Rom', 'Linear',
+        'Monotone Y', 'Natural', 'Step'
+    ]
+    this._chart.violin_curve = CURVES[this._chart.supported_curves[0]]
     /**
      * Graphic components of the chart: d3 selection objects
      * @private
@@ -188,6 +193,20 @@ boxvio_chart_wrapper.prototype.set_n_bins = function (name, n_bins) {
     // Delete the oath of the existing violin and redraw
     this._graphics.violins[name].selectAll('*').remove()
     this._render_violin(name)
+}
+
+/**
+ * Set the curve for the violins
+ * 
+ * Updates the chart accordingly
+ * @param {string} curve_name name of the curve 
+ * @name boxvio_chart_wrapper#set_violin_curve
+ */
+boxvio_chart_wrapper.prototype.set_violin_curve = function (curve_name) {
+    this._chart.violin_curve = CURVES[curve_name]
+    // Remove the violin graphics, only leaving its root g tag (violins_g)
+    this._graphics.violins_g.selectAll('*').remove()
+    this._render_violins(true)
 }
 
 /**
@@ -302,6 +321,7 @@ boxvio_chart_wrapper.prototype._render_violin = function (name) {
     const violin_scale = this._chart.violin_scale
     const bandwidth = this._chart.xscale.bandwidth()
     const yscale = this._chart.yscale
+    const violin_curve = this._chart.violin_curve
 
     // Get the largest count in a bin as it will be maximum width
     const max_count = d3.max(bins, (bin) => bin.length)
@@ -320,7 +340,7 @@ boxvio_chart_wrapper.prototype._render_violin = function (name) {
                 .x0((d) => x_num(-d.length*violin_scale))
                 .x1((d) => x_num(d.length*violin_scale))
                 .y((d) => yscale(d.x0))
-                .curve(d3.curveCatmullRom)
+                .curve(violin_curve)
             )
 }
 
@@ -436,10 +456,38 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         parent: this.div_wrapper,
     })
 
+    this._render_violin_curve_selector()
     this._render_checkboxes()
     this._render_scale_sliders()
     this._render_n_bins_control()
 
+}
+
+/**
+ * Render the selector for the violin curve
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_violin_curve_selector
+ */
+boxvio_chart_wrapper.prototype._render_violin_curve_selector = function () {
+    const curve_select_id = `${this.id_string()}_curve_select`
+    const curve_select = common.create_dom_element({
+        element_type: 'select',
+        id: curve_select_id,
+        parent: this.controls_container,
+        // TODO: add ARIA attributes?
+    })
+    for (const curve_name of this._chart.supported_curves) {
+        common.create_dom_element({
+            element_type: 'option',
+            value: curve_name,
+            text_content: curve_name,
+            parent: curve_select,
+        })
+    }
+    curve_select.addEventListener('change', () => {
+        this.set_violin_curve(curve_select.value)
+    })
 }
 
 /**

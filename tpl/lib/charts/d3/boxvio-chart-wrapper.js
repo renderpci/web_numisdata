@@ -711,6 +711,21 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
         violin_n_bins_slider.value = this._chart.n_bins_default[name]
         this.set_n_bins(name, Number(violin_n_bins_slider.value))
     })
+
+    const violin_all_n_bins_slider_reset = common.create_dom_element({
+        element_type: 'button',
+        type: 'button',
+        text_content: 'Reset all bins',
+        parent: this.controls_container,
+    })
+    violin_all_n_bins_slider_reset.addEventListener('click', () => {
+        const name = group_select.value
+        // Update the value of the slider
+        violin_n_bins_slider.value = this._chart.n_bins_default[name]
+        for (const [name, n_bins] of Object.entries(this._chart.n_bins_default)) {
+            this.set_n_bins(name, n_bins)
+        }
+    })
 }
 
 

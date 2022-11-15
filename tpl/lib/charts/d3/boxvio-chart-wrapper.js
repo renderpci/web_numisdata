@@ -11,7 +11,7 @@ import { deepcopy } from "../utils"
  * Padding for the y-axis, to fit the label
  * @type {number}
  */
-const YAXIS_PADDING = 52;
+const YAXIS_PADDING = 62;
 
 /**
  * Boxplot + violin chart wrapper
@@ -101,7 +101,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
      * Full width of svg
      * @type {number}
      */
-    this._full_width = 24.15625*Math.sqrt(Object.keys(data).length) + 135.84375 + YAXIS_PADDING
+    this._full_width = 330.664701211*Math.sqrt(Object.keys(data).length) + -170.664701211 + YAXIS_PADDING
     /**
      * Full height of svg
      * @type {number}
@@ -120,6 +120,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
         .domain(this._data_extent)
         .clamp(true)  // when input outside of domain, its output is clamped to range
     this._chart.yaxis = d3.axisLeft(this._chart.yscale)
+    this._chart.yaxis.tickFormat(d3.format(".1f"))  // format y axis with 1 decimal
     this._chart.violin_scale_default = 0.8
     this._chart.violin_scale = this._chart.violin_scale_default
     this._chart.box_scale_default = 0.3

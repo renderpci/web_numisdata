@@ -45,7 +45,7 @@ chartjs_chart_wrapper.prototype.render = function () {
         element_type: 'canvas',
         id: 'result_graph',
         class_name: 'o-blue',
-        parent: this.div_wrapper,
+        parent: this.plot_container,
     })
     // Set chart instance to undefined
     this.chart = undefined

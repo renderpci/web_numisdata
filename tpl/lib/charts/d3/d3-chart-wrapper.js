@@ -8,6 +8,9 @@ import { chart_wrapper } from "../chart-wrapper";
  * Appends an `svg` tag to the provided div, so that it spans all width
  * 
  * Subclasses MUST specify the viewBox of the svg, so that it responds to window resizing
+ * The created svg tag has width=100%, spanning the width of the parent element. Subclasses
+ * can alter this behavior by modifying the svg after the superclass render method has been
+ * called
  * @param {Element} div_wrapper the div containing the chart
  * @class
  * @abstract
@@ -18,12 +21,6 @@ export function d3_chart_wrapper(div_wrapper) {
         throw new Error("Abstract class 'd3_chart_wrapper' cannot be instantiated")
     }
     chart_wrapper.call(this, div_wrapper)
-    /**
-     * Div inside the div_wrapper, that just wraps the drawing
-     * @type {Element}
-     * @protected
-     */
-    this.plot_div = undefined
     /**
      * D3 selection object for the root `svg` tag
      * @protected
@@ -44,14 +41,8 @@ Object.setPrototypeOf(d3_chart_wrapper.prototype, chart_wrapper.prototype)
  */
 d3_chart_wrapper.prototype.render = function () {
     chart_wrapper.prototype.render.call(this)
-    
-    this.plot_div = common.create_dom_element({
-        element_type: 'div',
-            class_name: 'o-purple plot_wrapper',
-            parent: this.div_wrapper,
-    })
 
-    this.svg = d3.select(this.plot_div)
+    this.svg = d3.select(this.plot_container)
         .append('svg')
         .attr('version', '1.1') // When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
         .attr('xmlns', 'http://www.w3.org/2000/svg')

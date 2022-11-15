@@ -56,6 +56,12 @@ export function chart_wrapper(div_wrapper) {
      */
     this.download_chart_container = undefined
     /**
+     * Div inside the div_wrapper, that just wraps the drawing
+     * @type {Element}
+     * @protected
+     */
+    this.plot_container = undefined
+    /**
      * Div container for user controls
      * Used freely by each subclass
      * @type {Element}
@@ -100,47 +106,59 @@ chart_wrapper.prototype.render = function () {
     const self = this
     // Remove all children in the div_wrapper
     this.div_wrapper.replaceChildren()
+
     // Set controls container to undefined
     this.controls_container = undefined
+
     // Create the chart download section
-    this.download_chart_container = common.create_dom_element({
-        element_type: 'div',
-        id: 'download_chart_container',
-        class_name: 'o-purple',
-        style: {
-            'display': 'flex',
-            'flex-direction': 'row',
-            'justify-content': 'center',
-        },
-        parent: this.div_wrapper,
-    })
-    const format_select = common.create_dom_element({
-        element_type: 'select',
-        id: 'chart_export_format',
-        style: {
-            'width': '80%',
-        },
-        parent: this.download_chart_container,
-        // TODO: add ARIA attributes?
-    })
-    for (const format of this.get_supported_export_formats()) {
-        common.create_dom_element({
-            element_type: 'option',
-            value: format,
-            text_content: format.toUpperCase(),
-            parent: format_select,
+    const supported_formats = this.get_supported_export_formats()
+    if (supported_formats.length) {
+        this.download_chart_container = common.create_dom_element({
+            element_type: 'div',
+            id: 'download_chart_container',
+            class_name: 'o-purple',
+            style: {
+                'display': 'flex',
+                'flex-direction': 'row',
+                'justify-content': 'center',
+            },
+            parent: this.div_wrapper,
+        })
+        const format_select = common.create_dom_element({
+            element_type: 'select',
+            id: 'chart_export_format',
+            style: {
+                'width': '80%',
+            },
+            parent: this.download_chart_container,
+            // TODO: add ARIA attributes?
+        })
+        for (const format of supported_formats) {
+            common.create_dom_element({
+                element_type: 'option',
+                value: format,
+                text_content: format.toUpperCase(),
+                parent: format_select,
+            })
+        }
+        const chart_download_button = common.create_dom_element({
+            element_type: 'button',
+            text_content: 'Download',
+            style: {
+                'width': '20%',
+            },
+            parent: this.download_chart_container,
+        })
+        chart_download_button.addEventListener('click', () => {
+            self.download_chart(format_select.value)
         })
     }
-    const chart_download_button = common.create_dom_element({
-        element_type: 'button',
-        text_content: 'Download',
-        style: {
-            'width': '20%',
-        },
-        parent: this.download_chart_container,
-    })
-    chart_download_button.addEventListener('click', () => {
-        self.download_chart(format_select.value)
+
+    // Create the div for wrapping the plot
+    this.plot_container = common.create_dom_element({
+        element_type: 'div',
+            class_name: 'o-purple plot_wrapper',
+            parent: this.div_wrapper,
     })
 }
 
@@ -176,13 +194,13 @@ chart_wrapper.prototype.download_chart = function (format) {
 /**
  * Get the supported chart export formats
  * 
- * Subclasses must return their own supported formats, e.g.,
- * `['png', 'jpg', 'eps']`
+ * Subclasses must return their own supported formats, if any, e.g.,
+ * `['png', 'jpg', 'eps']`. If no format is supported, there is no
+ * need to override this method.
  * @function
  * @returns {string[]} the supported formats
- * @abstract
  * @name chart_wrapper#get_supported_export_formats
  */
 chart_wrapper.prototype.get_supported_export_formats = function () {
-    throw new Error(`Abstract method 'chart_wrapper.download_chart' cannot be called`)
+    return []
 }

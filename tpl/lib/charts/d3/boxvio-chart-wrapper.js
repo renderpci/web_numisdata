@@ -4,6 +4,7 @@ import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
 import { toggle_visibility, linspace } from "./utils";
 import { compute_n_bins } from "../compute-n-bins";
+import { deepcopy } from "../utils"
 
 
 /**
@@ -47,26 +48,34 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
      * }}}
      * @private
      */
-    this._metrics = {}
-    for (const [name, values] of Object.entries(data)) {
-        this._metrics[name] = calc_metrics(values)
-    }
+    this._metrics = Object.fromEntries(Object.entries(data).map(
+        ([name, values]) => [name, calc_metrics(values)]
+    ))
     /**
      * Outliers per group name
      * @type {{[group_name: string]: number[]}}
      * @private
      */
-    this._outliers = {}
-    for (const [name, values] of Object.entries(data)) {
-        this._outliers[name] = values.filter(
-            (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
-        )
-    }
+    this._outliers = Object.fromEntries(Object.entries(data).map(
+        ([name, values]) => [
+            name,
+            values.filter(
+                (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
+            )
+        ]
+    ))
+    /**
+     * Maximum and minimum values of each group
+     * @type {Object.<string, [number, number]>}
+     */
+    this._data_extents = Object.fromEntries(Object.entries(data).map(
+        ([name, values]) => [name, d3.extent(values)]
+    ))
     /**
      * Maximum and minimum of the input data
      * @type {[number, number]}
      */
-    this._data_extent = d3.extent(Object.values(data).flat())
+    this._data_extent = d3.extent(Object.values(this._data_extents).flat())
     /**
      * Full width of svg
      * @type {number}
@@ -99,32 +108,34 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
         .range([0, this._chart.width])
         // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
-    // this._chart.n_bins_default = 15
-    // this._chart.n_bins = this._chart.n_bins_default
-    // this._chart.max_bins_multiplier = 3
-    this._chart.histogram = {}
-    for (const [name, values] of Object.entries(data)) {
-        const extent = d3.extent(values)
-        this._chart.histogram[name] = d3.bin()
-            .domain(extent)
-            .thresholds(
-                linspace(extent[0], extent[1], compute_n_bins.sturges(values))
-            )
-            .value((d) => d)
-    }
-    this._chart.bins = Object.entries(data).map(
-        ([name, values]) => {return {key: name, value: this._chart.histogram[name](values)}}
-    )
+    this._chart.n_bins_default = Object.fromEntries(Object.entries(data).map(
+        ([name, values]) => [name, compute_n_bins.sturges(values)]
+    ))
+    this._chart.n_bins = deepcopy(this._chart.n_bins_default)
+    this._chart.histogram = Object.fromEntries(Object.entries(this._data_extents).map(
+        ([name, extent]) => {
+            return [
+                name,
+                d3.bin().domain(extent).thresholds(
+                    linspace(extent[0], extent[1], this._chart.n_bins[name])
+                )
+            ]
+        }
+    ))
+    this._chart.bins = Object.fromEntries(Object.entries(data).map(
+        ([name, values]) => [name, this._chart.histogram[name](values)]
+    ))
     /**
      * Graphic components of the chart: d3 selection objects
      * @private
-     * @type {{[name: string]: d3.selection}}
+     * @type {{[name: string]: d3.selection | {[group: string]: d3.selection}}}
      */
     this._graphics = {
-        root_g: null,
-        violins_g: null,
-        boxes_g: null,
-        outliers: {},
+        root_g: null,  // Root g tag (translated to account for the margins)
+        violins_g: null, // g tag grouping all violins
+        violins: {}, // individual g tag for each violin (mapped by group name)
+        boxes_g: null, // g tag grouping all boxes
+        outliers: {},  // per group: g tag grouping all outliers of the group
     }
 }
 // Set prototype chain
@@ -144,12 +155,33 @@ boxvio_chart_wrapper.prototype.set_violin_scale = function (scale) {
 }
 
 /**
+ * Set the number of bins for a particular violin
+ * 
+ * Updates the chart accordingly
+ * @param {string} name name of the group 
+ * @param {number} n_bins number of bins
+ * @name boxvio_chart_wrapper#set_n_bins
+ */
+boxvio_chart_wrapper.prototype.set_n_bins = function (name, n_bins) {
+    const chart = this._chart
+    const extent = this._data_extents[name]
+    chart.n_bins[name] = n_bins
+    chart.histogram[name].thresholds(
+        linspace(extent[0], extent[1], n_bins)
+    )
+    chart.bins[name] = chart.histogram[name](this._data[name])
+    // Delete the oath of the existing violin and redraw
+    this._graphics.violins[name].selectAll('*').remove()
+    this._render_violin(name)
+}
+
+/**
  * Set the scale for the boxes
  * @function
  * @param {number} scale the scale [0, 1]
  * @name boxvio_chart_wrapper#set_box_scale
  */
- boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
+boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
     this._chart.box_scale = scale
     // Remove the box graphics, only leaving its root g tag (boxes_g)
     this._graphics.boxes_g.selectAll('*').remove()
@@ -229,39 +261,52 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
     const chart = this._chart
     const g = this._graphics.root_g
 
-    // Get the largest count in a bin for each group,
-    // as it will be maximum width
-    const max_count = chart.bins.map((v) => d3.max(v.value, (ele) => ele.length))
-    // Make a linear scales to map bin counts to bandwidth
-    const x_num = max_count.map(
-        (v) => d3
-            .scaleLinear()
-            .range([0, chart.xscale.bandwidth()])
-            .domain([-v, v])
-    )
-
     // Render
     if (!is_g_ready) {
         this._graphics.violins_g = g.append('g')
     }
     const violins_g = this._graphics.violins_g
-    for (const [i, bin_obj] of Object.entries(chart.bins)) {
-        violins_g
-            .append('g')
-                .attr('transform', `translate(${chart.xscale(bin_obj.key)},0)`)
-            .append('path')
-            .datum(bin_obj.value)
-                .style('stroke', 'gray')
-                .style('stroke-width', 0.4)
-                .style('fill', 'ghostwhite')
-                .attr('d', d3.area()
-                    .x0((d) => x_num[i](-d.length*chart.violin_scale))
-                    .x1((d) => x_num[i](d.length*chart.violin_scale))
-                    .y((d) => chart.yscale(d.x0))
-                    .curve(d3.curveCatmullRom)
-                )
+    for (const name of Object.keys(chart.bins)) {
+        this._graphics.violins[name] = violins_g.append('g')
+            .attr('transform', `translate(${chart.xscale(name)},0)`)
+        this._render_violin(name)
     }
 
+}
+
+/**
+ * Render the violins
+ * @function
+ * @private
+ * @param {boolean} is_g_ready whether the g tag for violins is
+ *        set up (default: `false`)
+ * @name boxvio_chart_wrapper#_render_violins
+ */
+boxvio_chart_wrapper.prototype._render_violin = function (name) {
+    const bins = this._chart.bins[name]
+    const violin_scale = this._chart.violin_scale
+    const bandwidth = this._chart.xscale.bandwidth()
+    const yscale = this._chart.yscale
+
+    // Get the largest count in a bin as it will be maximum width
+    const max_count = d3.max(bins, (bin) => bin.length)
+    // Make a linear scale to map bin counts to bandwidth
+    const x_num = d3.scaleLinear()
+        .range([0, bandwidth])
+        .domain([-max_count, max_count])
+
+    this._graphics.violins[name]
+        .append('path')
+        .datum(bins)
+            .style('stroke', 'gray')
+            .style('stroke-width', 0.4)
+            .style('fill', 'ghostwhite')
+            .attr('d', d3.area()
+                .x0((d) => x_num(-d.length*violin_scale))
+                .x1((d) => x_num(d.length*violin_scale))
+                .y((d) => yscale(d.x0))
+                .curve(d3.curveCatmullRom)
+            )
 }
 
 /**

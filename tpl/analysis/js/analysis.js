@@ -267,6 +267,7 @@ export const analysis =  {
 				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
 					this.diameter_chart_container,
 					diameters,
+					true,
 					'Diameter'
 				)
 				this.diameter_chart_wrapper.render()
@@ -279,6 +280,7 @@ export const analysis =  {
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
 					this.weight_chart_container,
 					weights,
+					true,
 					'Weight'
 				)
 				this.weight_chart_wrapper.render()

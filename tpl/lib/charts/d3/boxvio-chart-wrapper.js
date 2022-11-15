@@ -10,16 +10,19 @@ import { deepcopy } from "../utils"
 /**
  * Boxplot + violin chart wrapper
  * 
- * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f
+ * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
+ * https://d3-graph-gallery.com/graph/violin_basicHist.html,
+ * https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  * 
  * @param {Element}  div_wrapper the div to work in
  * @param {{[group_name: string]: number[]}} data the input data: group name
  *        and array of values
+ * @param {boolen} sort_xaxis whether to sort the xaxis
  * @param {string} ylabel the y label
  * @class
  * @extends d3_chart_wrapper
  */
-export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
+export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel) {
     d3_chart_wrapper.call(this, div_wrapper)
     /**
      * Data: group name to array of values
@@ -27,6 +30,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
      * @private
      */
     this._data = data
+    /**
+     * Group names
+     * @type {string[]}
+     * @private
+     */
+    this._group_names = sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
     /**
      * The label for the y axis
      * @type {string}
@@ -104,7 +113,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
     this._chart.box_scale_default = 0.3
     this._chart.box_scale = this._chart.box_scale_default
     this._chart.xscale = d3.scaleBand()
-        .domain(Object.keys(this._data))
+        .domain(this._group_names)
         .range([0, this._chart.width])
         // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
@@ -137,6 +146,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, ylabel) {
         boxes_g: null, // g tag grouping all boxes
         outliers: {},  // per group: g tag grouping all outliers of the group
     }
+    /**
+     * Control panel things
+     * @private
+     */
+    this._controls = {}
+    this._controls.max_bins_multiplier = 3
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
@@ -404,8 +419,6 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 }
 
-
-
 /**
  * Render the control panel
  * @function
@@ -423,6 +436,19 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         parent: this.div_wrapper,
     })
 
+    this._render_checkboxes()
+    this._render_scale_sliders()
+    this._render_n_bins_control()
+
+}
+
+/**
+ * Render the checkboxes of the control panel
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_checkboxes
+ */
+boxvio_chart_wrapper.prototype._render_checkboxes = function () {
     const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
     /**
      * Checkbox for showing violins
@@ -473,6 +499,8 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
     show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
     show_boxes_checkbox.addEventListener('change', () => {
         toggle_visibility(this._graphics.boxes_g)
+        // (DISABLED) Disable the checkbox for outliers (defined below)
+        // show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
     })
 
     const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
@@ -502,7 +530,16 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
             toggle_visibility(group)
         }
     })
+}
 
+/**
+ * Render the sliders of the control panel that
+ * control the scale of violins and boxes
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_scale_sliders
+ */
+boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     /**
      * Slider for violin scale
      * @type {Element}
@@ -566,8 +603,68 @@ boxvio_chart_wrapper.prototype._render_control_panel = function () {
         box_scale_slider.value = this._chart.box_scale_default
         this.set_box_scale(Number(box_scale_slider.value))
     })
-
 }
+
+/**
+ * Render the control elements to change the number of bins
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_n_bins_control
+ */
+boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
+    const group_select_id = `${this.id_string()}_group_select`
+    const group_select = common.create_dom_element({
+        element_type: 'select',
+        id: group_select_id,
+        parent: this.controls_container,
+        // TODO: add ARIA attributes?
+    })
+    for (const name of this._group_names) {
+        common.create_dom_element({
+            element_type: 'option',
+            value: name,
+            text_content: name,
+            parent: group_select,
+        })
+    }
+    group_select.addEventListener('change', () => {
+        const name = group_select.value
+        violin_n_bins_slider.setAttribute(
+            'max',
+            this._controls.max_bins_multiplier * this._chart.n_bins_default[name]
+        )
+        violin_n_bins_slider.value = this._chart.n_bins[name]
+    })
+
+    const violin_n_bins_slider = common.create_dom_element({
+        element_type: 'input',
+        type: 'range',
+        // value: this._chart.violin_scale_default,  // This does not work here?
+        parent: this.controls_container,
+    })
+    violin_n_bins_slider.setAttribute('min', 1)
+    violin_n_bins_slider.setAttribute(
+        'max',
+        this._controls.max_bins_multiplier * this._chart.n_bins_default[group_select.value]
+    )
+    violin_n_bins_slider.value = this._chart.n_bins[group_select.value]
+    violin_n_bins_slider.addEventListener('input', () => {
+        this.set_n_bins(group_select.value, Number(violin_n_bins_slider.value))
+    })
+
+    const violin_n_bins_slider_reset = common.create_dom_element({
+        element_type: 'button',
+        type: 'button',
+        text_content: 'Reset',
+        parent: this.controls_container,
+    })
+    violin_n_bins_slider_reset.addEventListener('click', () => {
+        const name = group_select.value
+        violin_n_bins_slider.value = this._chart.n_bins_default[name]
+        this.set_n_bins(name, Number(violin_n_bins_slider.value))
+    })
+}
+
 
 // HELPER FUNCTIONS
 

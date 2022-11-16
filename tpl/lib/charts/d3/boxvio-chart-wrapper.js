@@ -322,9 +322,11 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 boxvio_chart_wrapper.prototype._apply_xticklabel_angle = function () {
     const angle = this._chart.xticklabel_angle
     const xaxis_g = this._graphics.xaxis_g
-    if (angle === 0) {
+    if (angle < 10) {
         xaxis_g.selectAll('text')
             .attr('text-anchor', 'middle')
+            .attr("dy", "0.8em")
+            .attr("dx", "0")
             .attr('transform', `rotate(${-this._chart.xticklabel_angle})`)
     } else {
         xaxis_g.selectAll('text')
@@ -334,7 +336,7 @@ boxvio_chart_wrapper.prototype._apply_xticklabel_angle = function () {
             .attr('transform',
                 `rotate(${-this._chart.xticklabel_angle})`
             )
-        if (angle < 35) {
+        if (angle < 50) {
             xaxis_g.selectAll('text')
                 .attr('dx', '-0.7em')
         }
@@ -507,11 +509,34 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
     d3_chart_wrapper.prototype.render_control_panel.call(this)
 
+    this._render_xticklabel_angle_slider()
     this._render_violin_curve_selector()
     this._render_checkboxes()
     this._render_scale_sliders()
     this._render_n_bins_control()
 
+}
+
+/**
+ * Render the slider for the xticklabel angle
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_xticklabel_angle_slider
+ */
+boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
+    /** @type {Element} */
+    const xticklabel_angle_slider = common.create_dom_element({
+        element_type: 'input',
+        type: 'range',
+        parent: this.controls_container,
+    })
+    xticklabel_angle_slider.setAttribute('min', 0)
+    xticklabel_angle_slider.setAttribute('max', 90)
+    xticklabel_angle_slider.value = this._chart.xticklabel_angle
+    xticklabel_angle_slider.addEventListener('input', () => {
+        this._chart.xticklabel_angle = Number(xticklabel_angle_slider.value)
+        this._apply_xticklabel_angle()
+    })
 }
 
 /**

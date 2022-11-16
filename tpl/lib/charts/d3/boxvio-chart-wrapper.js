@@ -23,6 +23,7 @@ import { deepcopy } from "../utils"
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
  * @param {string} options.ylabel the y-label (default `null`)
  * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
+ * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
  * @class
  * @extends d3_chart_wrapper
  */
@@ -120,13 +121,13 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      * Full height of svg
      * @type {number}
      */
-    this._full_height = 420
+    this._full_height = 423
     /**
      * Non-graphic components of the chart: setting, scales, etc.
      * @private
      */
     this._chart = {}
-    this._chart.margin = { top: 15, right: 4, bottom: 23, left: this.yaxis_padding }
+    this._chart.margin = { top: 15, right: 4, bottom: 31, left: this.yaxis_padding }
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -144,6 +145,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         .range([0, this._chart.width])
         // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
+    this._chart.xticklabel_angle = options.xticklabel_angle || 0
     this._chart.n_bins_default = Object.fromEntries(Object.entries(data).map(
         ([name, values]) => [name, compute_n_bins.sturges(values)]
     ))
@@ -174,6 +176,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
     this._graphics = {
         // Root g tag (translated to account for the margins)
         root_g: null,
+        // g tag for the x-axis
+        xaxis_g: null,
         // g tag for the y-axis
         yaxis_g: null,
         // g tag grouping all violins
@@ -293,9 +297,12 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 boxvio_chart_wrapper.prototype._render_axis = function () {
     const g = this._graphics.root_g
     // Render x axis
-    g.append('g')
+    this._graphics.xaxis_g = g.append('g')
+    const xaxis_g = this._graphics.xaxis_g
+    xaxis_g
         .attr('transform', `translate(0,${this._chart.height})`)
         .call(this._chart.xaxis)
+    this._apply_xticklabel_angle()
     
     // Render y axis
     this._graphics.yaxis_g = g.append('g')
@@ -310,6 +317,28 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
         .attr('x', -this._chart.height / 2)
         .text(this._ylabel)
 
+}
+
+boxvio_chart_wrapper.prototype._apply_xticklabel_angle = function () {
+    const angle = this._chart.xticklabel_angle
+    const xaxis_g = this._graphics.xaxis_g
+    if (angle === 0) {
+        xaxis_g.selectAll('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', `rotate(${-this._chart.xticklabel_angle})`)
+    } else {
+        xaxis_g.selectAll('text')
+            .attr('text-anchor', 'end')
+            .attr("dy", `${-angle*angle*0.00006172839}em`)
+            .attr("dx", "-0.9em")
+            .attr('transform',
+                `rotate(${-this._chart.xticklabel_angle})`
+            )
+        if (angle < 35) {
+            xaxis_g.selectAll('text')
+                .attr('dx', '-0.7em')
+        }
+    }
 }
 
 /**

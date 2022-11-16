@@ -295,6 +295,7 @@ export const analysis =  {
 						display_control_panel: true,
 						display_download: true,
 						sort_xaxis: true,
+						xticklabel_angle: 65,
 					}
 				)
 				this.weight_chart_wrapper.render()

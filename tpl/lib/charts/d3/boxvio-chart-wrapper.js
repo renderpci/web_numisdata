@@ -8,6 +8,10 @@ import { deepcopy } from "../utils"
 
 
 /**
+ * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
+ * which manages the axes, grid, and so on. This will be useful if we add other charts that make
+ * use of x and y axis 
+ *
  * Boxplot + violin chart wrapper
  * 
  * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
@@ -134,8 +138,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         .range([this._chart.height, 0])
         .domain(this._data_extent)
         .clamp(true)  // when input outside of domain, its output is clamped to range
+    this._chart.yticks_division = 2  // TODO: make this part of the input options object
+    // TODO: make number of decimals and number of ticks part of input options object
     this._chart.yaxis = d3.axisLeft(this._chart.yscale)
-    this._chart.yaxis.tickFormat(d3.format(".1f"))  // format y axis with 1 decimal
+        .tickFormat((d, i) => i % this._chart.yticks_division ? d.toFixed(1) : '')
+        .ticks(19)
     this._chart.violin_scale_default = 0.8
     this._chart.violin_scale = this._chart.violin_scale_default
     this._chart.box_scale_default = 0.3
@@ -178,6 +185,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         root_g: null,
         // g tag for the x-axis
         xaxis_g: null,
+        // g tag for the y-axis and label
+        yaxwl_g: null,
         // g tag for the y-axis
         yaxis_g: null,
         // g tag grouping all violins
@@ -283,6 +292,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
 
     this._render_axis()
+    this._render_grid()
     this._render_violins()
     this._render_boxes()
 
@@ -305,18 +315,39 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
     this._apply_xticklabel_angle()
     
     // Render y axis
-    this._graphics.yaxis_g = g.append('g')
-    const yaxis_g = this._graphics.yaxis_g
-    yaxis_g.append('g')
+    this._graphics.yaxwl_g = g.append('g')
+    const yaxwl_g = this._graphics.yaxwl_g
+    this._graphics.yaxis_g = yaxwl_g.append('g')
         .call(this._chart.yaxis)
     // Render Y axis label
-    yaxis_g.append('text')
+    yaxwl_g.append('text')
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(-90)')
         .attr('y', -this._chart.margin.left + 20)
         .attr('x', -this._chart.height / 2)
         .text(this._ylabel)
 
+}
+
+/**
+ * Render the grid for the y-axis
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_grid
+ */
+boxvio_chart_wrapper.prototype._render_grid = function () {
+    this._graphics.yaxis_g.selectAll('g.tick')
+        .append('g')
+            .attr('class', (d, i) => i % 2 ? 'major' : 'minor')
+            .attr('opacity', 0)  // disabled by default
+        .append('line')
+            .attr('x1', 0)
+            .attr('y1', 0)
+            .attr('x2', this._chart.width)
+            .attr('y2', 0)
+            .attr('stroke', (d, i) => i % 2 ? 'gray' : '#E0E0E0')
+            .attr('stroke-width', (d, i) => i % 2 ? 0.5 : 1)
+            .attr('opacity', 0.7)
 }
 
 boxvio_chart_wrapper.prototype._apply_xticklabel_angle = function () {
@@ -509,12 +540,64 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
     d3_chart_wrapper.prototype.render_control_panel.call(this)
 
+    this._render_grid_select()
     this._render_xticklabel_angle_slider()
     this._render_violin_curve_selector()
     this._render_checkboxes()
     this._render_scale_sliders()
     this._render_n_bins_control()
 
+}
+
+boxvio_chart_wrapper.prototype._render_grid_select = function () {
+    const grid_select_id = `${this.id_string()}_grid_select`
+    const grid_select = common.create_dom_element({
+        element_type: 'select',
+        id: grid_select_id,
+        parent: this.controls_container,
+        // TODO: add ARIA attributes?
+    })
+    for (const mode of ['None', 'Major', 'Major + Minor']) {
+        common.create_dom_element({
+            element_type: 'option',
+            value: mode,
+            text_content: mode,
+            parent: grid_select,
+        })
+    }
+    grid_select.addEventListener('change', () => {
+        const mode = grid_select.value
+        const major_lines = this._graphics.yaxis_g.selectAll('g.tick g.major')
+        const minor_lines = this._graphics.yaxis_g.selectAll('g.tick g.minor')
+        switch (mode) {
+            case 'None':
+                if (major_lines.attr('opacity') == 1) {
+                    toggle_visibility(major_lines)
+                }
+                if (minor_lines.attr('opacity') == 1) {
+                    toggle_visibility(minor_lines)
+                }
+                break
+            case 'Major':
+                if (major_lines.attr('opacity') == 0) {
+                    toggle_visibility(major_lines)
+                }
+                if (minor_lines.attr('opacity') == 1) {
+                    toggle_visibility(minor_lines)
+                }
+                break
+            case 'Major + Minor':
+                if (major_lines.attr('opacity') == 0) {
+                    toggle_visibility(major_lines)
+                }
+                if (minor_lines.attr('opacity') == 0) {
+                    toggle_visibility(minor_lines)
+                }
+                break
+            default:
+                throw new Error(`Grid mode '${mode}' is not supported?`)
+        }
+    })
 }
 
 /**

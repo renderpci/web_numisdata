@@ -248,7 +248,9 @@ export const analysis =  {
 				// this.diameter_chart_wrapper = new histogram_wrapper(
 				// 	this.diameter_chart_container,
 				// 	diameters,
-				// 	'Diameter'
+				// 	{
+				// 		xlabel: 'Diameter',
+				// 	}
 				// )
 				// this.diameter_chart_wrapper.render()
 
@@ -277,6 +279,26 @@ export const analysis =  {
 				}
 				console.log(data)
 
+				// Weights
+				const weights = {}
+				for (const [name, props] of Object.entries(data)) {
+					if (props.weight && props.weight.length) {
+						weights[name] = props.weight
+					}
+				}
+				this.weight_chart_wrapper = new boxvio_chart_wrapper(
+					this.weight_chart_container,
+					weights,
+					{
+						ylabel: 'Weight',
+						overflow: true,
+						display_control_panel: true,
+						display_download: true,
+						sort_xaxis: true,
+					}
+				)
+				this.weight_chart_wrapper.render()
+
 				// Diameters
 				const diameters = {}
 				for (const [name, props] of Object.entries(data)) {
@@ -287,27 +309,15 @@ export const analysis =  {
 				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
 					this.diameter_chart_container,
 					diameters,
-					true,
-					'Diameter',
-					true
+					{
+						ylabel: 'Diameter',
+						overflow: true,
+						display_control_panel: true,
+						display_download: true,
+						sort_xaxis: true,
+					}
 				)
 				this.diameter_chart_wrapper.render()
-
-				// Diameters
-				const weights = {}
-				for (const [name, props] of Object.entries(data)) {
-					if (props.weight && props.weight.length) {
-						weights[name] = props.weight
-					}
-				}
-				this.weight_chart_wrapper = new boxvio_chart_wrapper(
-					this.weight_chart_container,
-					weights,
-					true,
-					'Weight',
-					true
-				)
-				this.weight_chart_wrapper.render()
 
 			})
 

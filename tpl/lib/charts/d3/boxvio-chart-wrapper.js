@@ -8,34 +8,31 @@ import { deepcopy } from "../utils"
 
 
 /**
- * Padding for the y-axis, to fit the label
- * @type {number}
- */
-const YAXIS_PADDING = 62;
-
-/**
  * Boxplot + violin chart wrapper
  * 
  * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
  * https://d3-graph-gallery.com/graph/violin_basicHist.html,
  * https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  * 
- * @param {Element}  div_wrapper the div to work in
+ * @param {Element} div_wrapper the div to work in
  * @param {{[group_name: string]: number[]}} data the input data: group name
  *        and array of values
- * @param {boolen} sort_xaxis whether to sort the xaxis
- * @param {string} ylabel the y label
- * @param {boolean} overflow whether to go beyond the width of the plot container
+ * @param {Object} options configuration options
+ * @param {boolean} options.display_download whether to display the download panel (default `false`)
+ * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
+ * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
+ * @param {string} options.ylabel the y-label (default `null`)
+ * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
  * @class
  * @extends d3_chart_wrapper
  */
-export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, overflow) {
-    d3_chart_wrapper.call(this, div_wrapper)
+export function boxvio_chart_wrapper(div_wrapper, data, options) {
+    d3_chart_wrapper.call(this, div_wrapper, options)
     /**
      * Whether to go beyond the width of the plot container
      * @type {boolean}
      */
-    this._overflow = overflow
+    this._overflow = options.overflow || false
     /**
      * Data: group name to array of values
      * @type {Object.<string, number[]>}
@@ -43,11 +40,17 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, over
      */
     this._data = data
     /**
+     * Whether to sort the xaxis
+     * @type {boolean}
+     * @private
+     */
+    this._sort_xaxis = options.sort_xaxis || false
+    /**
      * Group names
      * @type {string[]}
      * @private
      */
-    this._group_names = sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
+    this._group_names = this._sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
     /**
      * Colors
      * @type {string[]}
@@ -59,7 +62,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, over
      * @type {string}
      * @private
      */
-    this._ylabel = ylabel
+    this._ylabel = options.ylabel || null
+    /**
+     * Padding for the y axis, to account for the label and ticks
+     * @type {number}
+     */
+    this.yaxis_padding = this._ylabel ? 62 : 35;
     /**
      * Boxplot metrics for each group name
      * @type {{[group_name: string]: {
@@ -107,7 +115,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, over
      * Full width of svg
      * @type {number}
      */
-    this._full_width = 330.664701211*Math.sqrt(Object.keys(data).length) + -170.664701211 + YAXIS_PADDING
+    this._full_width = 330.664701211*Math.sqrt(Object.keys(data).length) + -170.664701211 + this.yaxis_padding
     /**
      * Full height of svg
      * @type {number}
@@ -118,7 +126,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, sort_xaxis, ylabel, over
      * @private
      */
     this._chart = {}
-    this._chart.margin = { top: 15, right: 4, bottom: 23, left: YAXIS_PADDING }
+    this._chart.margin = { top: 15, right: 4, bottom: 23, left: this.yaxis_padding }
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -249,31 +257,19 @@ boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
 }
 
 /**
- * Render the chart and the control panel
+ * Render the plot
  * @function
- * @name boxvio_chart_wrapper#render
+ * @protected
+ * @name boxvio_chart_wrapper#render_plot
  */
-boxvio_chart_wrapper.prototype.render = function () {
-    // Call super render method
-    d3_chart_wrapper.prototype.render.call(this)
+boxvio_chart_wrapper.prototype.render_plot = function () {
+    d3_chart_wrapper.prototype.render_plot.call(this)
+
     if (this._overflow) {
         this.svg.attr('width', null)
         this.svg.attr('height', '500px')
         this.plot_container.style = "overflow: auto;"
     }
-    // Render chart
-    this._render_chart()
-    // Render control panel
-    this._render_control_panel()
-}
-
-/**
- * Render the chart
- * @function
- * @private
- * @name boxvio_chart_wrapper#_render_chart
- */
-boxvio_chart_wrapper.prototype._render_chart = function () {
 
     // Set viewBox of svg
     this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)
@@ -476,10 +472,11 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 /**
  * Render the control panel
  * @function
- * @private
- * @name boxvio_chart_wrapper#_render_control_panel
+ * @protected
+ * @name boxvio_chart_wrapper#render_control_panel
  */
-boxvio_chart_wrapper.prototype._render_control_panel = function () {
+boxvio_chart_wrapper.prototype.render_control_panel = function () {
+    d3_chart_wrapper.prototype.render_control_panel.call(this)
 
     this._render_violin_curve_selector()
     this._render_checkboxes()

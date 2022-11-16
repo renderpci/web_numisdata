@@ -7,13 +7,16 @@ import { chart_wrapper } from "../chart-wrapper.js";
  * @class
  * @abstract
  * @param {Element} div_wrapper the div conatining the chart
+ * @param {Object} options configuration options
+ * @param {boolean} options.display_download whether to display the download panel (default `false`)
+ * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
  * @extends chart_wrapper
  */
-export function chartjs_chart_wrapper(div_wrapper) {
+export function chartjs_chart_wrapper(div_wrapper, options) {
     if (this.constructor === chartjs_chart_wrapper) {
         throw new Error("Abstract class 'chartjs_chart_wrapper' cannot be instantiated")
     }
-    chart_wrapper.call(this, div_wrapper)
+    chart_wrapper.call(this, div_wrapper, options)
     /**
      * Canvas instance, will be created during
      * render
@@ -31,15 +34,17 @@ export function chartjs_chart_wrapper(div_wrapper) {
 Object.setPrototypeOf(chartjs_chart_wrapper.prototype, chart_wrapper.prototype)
 
 /**
- * Render the chart (chartjs) and controls
+ * Render the plot
  * 
  * Subclasses must call this method at the top
- * of their own implementation
- * @name chartjs_chart_wrapper#render
+ * of their own implementation. Then, they can make
+ * use of the canvas and the chartjs chart instance
+ * @name chartjs_chart_wrapper#render_plot
  * @function
+ * @protected
  */
-chartjs_chart_wrapper.prototype.render = function () {
-    chart_wrapper.prototype.render.call(this)
+chartjs_chart_wrapper.prototype.render_plot = function () {
+    chart_wrapper.prototype.render_plot.call(this)
     // Create canvas
     this.canvas = common.create_dom_element({
         element_type: 'canvas',

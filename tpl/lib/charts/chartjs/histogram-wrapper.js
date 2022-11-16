@@ -8,11 +8,14 @@ import { compute_n_bins } from "../compute-n-bins.js";
  * Histogram wrapper
  * @param {Element}  div_wrapper the div to work in
  * @param {number[]} data the data
- * @param {string} xlabel the label for the x-axis
+ * @param {Object} options configuration options
+ * @param {boolean} options.display_download whether to display the download panel (default `false`)
+ * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
+ * @param {string} options.xlabel the label for the x-axis (default `null` )
  * @class
  * @extends chartjs_chart_wrapper
  */
-export function histogram_wrapper(div_wrapper, data, xlabel) {
+export function histogram_wrapper(div_wrapper, data, options) {
     /*
      * <Function>.call is a method that executes the defined function,
      * but with the "this" variable pointing to the first argument,
@@ -20,7 +23,7 @@ export function histogram_wrapper(div_wrapper, data, xlabel) {
      * that is being "called". This essentially performs all of
      * chart_wrapper's constructor logic on histogram_wrapper's "this".
      */
-    chartjs_chart_wrapper.call(this, div_wrapper)
+    chartjs_chart_wrapper.call(this, div_wrapper, options)
 
     /**
      * Data values
@@ -54,7 +57,7 @@ export function histogram_wrapper(div_wrapper, data, xlabel) {
      * @type {string}
      * @private
     */
-    this._xlabel = xlabel
+    this._xlabel = options.xlabel || null
     /**
      * Number of decimals to display
      * @type {number}
@@ -280,26 +283,14 @@ histogram_wrapper.prototype._get_tooltip_title_callback = function (bin_centers,
 }
 
 /**
- * Render the chart and the control panel
+ * Render the plot
  * @function
- * @name histogram_wrapper#render
+ * @protected
+ * @name histogram_wrapper#render_plot
  */
-histogram_wrapper.prototype.render = function () {
-    // Call super render method
-    chartjs_chart_wrapper.prototype.render.call(this)
-    // Render chart
-    this._render_chart()
-    // Render control panel
-    this._render_control_panel()
-}
+histogram_wrapper.prototype.render_plot = function () {
+    chartjs_chart_wrapper.prototype.render_plot.call(this)
 
-/**
- * Render the chart
- * @function
- * @private
- * @name histogram_wrapper#_render_chart
- */
-histogram_wrapper.prototype._render_chart = function () {
     this._n_bins = this._n_bins_default
     const [
         bin_centers, plot_data, half_bin_width, data_min, data_max
@@ -331,7 +322,7 @@ histogram_wrapper.prototype._render_chart = function () {
                 }
             },
             title: {
-                display: true,
+                display: Boolean(this._xlabel),  // Only display if there is a label
                 text: this._xlabel,
                 font: {
                     size: 14
@@ -376,10 +367,12 @@ histogram_wrapper.prototype._render_chart = function () {
 /**
  * Render the control panel
  * @function
- * @private
- * @name histogram_wrapper#_render_control_panel
+ * @protected
+ * @name histogram_wrapper#render_control_panel
  */
-histogram_wrapper.prototype._render_control_panel = function () {
+histogram_wrapper.prototype.render_control_panel = function () {
+    chartjs_chart_wrapper.prototype.render_control_panel.call(this)
+
     // Save this histogram wrapper instance, because when we change scope
     // we may still need to refer to it
     /**

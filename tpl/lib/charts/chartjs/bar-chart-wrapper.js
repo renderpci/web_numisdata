@@ -10,12 +10,15 @@ import { COLOR_PALETTE, COLOR_PICKER_WIDTH } from "../chart-wrapper.js";
  * 		  input data. Either an array of occurences, which are parsed by
  * 		  the bar chart wrapper (e.g., `['bronze', 'bronze', 'iron']`), or
  * 		  an object with keys and counts (e.g. `{'bronze': 2, 'iron': 1}`)
- * @param {string} ylabel the label for the y-axis
+ * @param {Object} options configuration options
+ * @param {boolean} options.display_download whether to display the download panel (default `true`)
+ * @param {boolean} options.display_control_panel whether to display the control panel (default `true`)
+ * @param {string} options.ylabel the label for the y-axis (default `null`)
  * @class
  * @extends chartjs_chart_wrapper
  */
-export function bar_chart_wrapper(div_wrapper, data, ylabel) {
-    chartjs_chart_wrapper.call(this, div_wrapper)
+export function bar_chart_wrapper(div_wrapper, data, options) {
+    chartjs_chart_wrapper.call(this, div_wrapper, options)
     /**
      * Data for the bar chart
      * @type {{labels: string[] | number[], values: number[]}}
@@ -34,7 +37,7 @@ export function bar_chart_wrapper(div_wrapper, data, ylabel) {
      * @type {string}
      * @private
      */
-    this._ylabel = ylabel
+    this._ylabel = options.ylabel || null
     /**
      * Color for each bar
      * @type {string[]}
@@ -194,26 +197,14 @@ bar_chart_wrapper.prototype.set_bar_color = function (index, bar_color) {
 }
 
 /**
- * Render the chart and the control panel
+ * Render the plot
  * @function
- * @name bar_chart_wrapper#render
+ * @protected
+ * @name bar_chart_wrapper#render_plot
  */
-bar_chart_wrapper.prototype.render = function () {
-    // Call super render method
-    chartjs_chart_wrapper.prototype.render.call(this)
-    // Render chart
-    this._render_chart()
-    // Render control panel
-    this._render_control_panel()
-}
+bar_chart_wrapper.prototype.render_plot = function () {
+    chartjs_chart_wrapper.prototype.render_plot.call(this)
 
-/**
- * Render the chart
- * @function
- * @private
- * @name bar_chart_wrapper#_render_chart
- */
-bar_chart_wrapper.prototype._render_chart = function () {
     const chart_data = {
         labels: this._data.labels,
         datasets: [{
@@ -225,7 +216,7 @@ bar_chart_wrapper.prototype._render_chart = function () {
     const scales_options = {
         y: {
             title: {
-                display: true,
+                display: Boolean(this._ylabel),  // Only display if there is a label
                 text: this._ylabel,
                 font: {
                     size: 14,
@@ -253,10 +244,12 @@ bar_chart_wrapper.prototype._render_chart = function () {
 /**
  * Render the control panel
  * @function
- * @private
- * @name bar_chart_wrapper#_render_control_panel
+ * @protected
+ * @name bar_chart_wrapper#render_control_panel
  */
-bar_chart_wrapper.prototype._render_control_panel = function () {
+bar_chart_wrapper.prototype.render_control_panel = function () {
+    chartjs_chart_wrapper.prototype.render_control_panel.call(this)
+
     /**
      * This bar_chart_wrapper instance
      * @type {bar_chart_wrapper}

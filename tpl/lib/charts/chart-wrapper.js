@@ -21,7 +21,7 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
 
 
 /**
- * Chart wrapper class
+ * Chart wrapper class (download panel, plot, and control panel)
  * 
  * The `render` method must be called for the chart to be rendered to the DOM!!!
  * 
@@ -32,12 +32,19 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
  * 3. A div to contain the control panel, with id `chart<id>_control_panel` and class `control_panel`
  * 
  * It clears the container div during render, so subclasses should work with the dom
- * after the render method of this superclass has been called
+ * after the render methods of this superclass (`render_plot` and `render_control_panel`) have been called.
+ * In other words, subclasses should override those specific methods instead of the general `render` function
+ * 
+ * Last reminder, the constructor is the place to do data processing exclusively. All rendering to the DOM
+ * must be done in the specific render methods. Otherwise, bugs WILL appear.
  * @class
  * @abstract
- * @param {Element} div_wrapper 
+ * @param {Element} div_wrapper
+ * @param {Object} options configuration options
+ * @param {boolean} options.display_download whether to display the download panel (default `false`)
+ * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
  */
-export function chart_wrapper(div_wrapper) {
+export function chart_wrapper(div_wrapper, options) {
     if (this.constructor === chart_wrapper) {
         throw new Error("Abstract class 'chart_wrapper' cannot be instantiated")
     }
@@ -48,6 +55,7 @@ export function chart_wrapper(div_wrapper) {
      * Subclasses MUST use this in order to assing IDs
      * to DOM elements, in order to avoid bugs and cross-chart events
      * @type {number}
+     * @protected
      */
     this.id = chart_wrapper._n_charts_created
     /**
@@ -58,17 +66,29 @@ export function chart_wrapper(div_wrapper) {
      */
     this.div_wrapper = div_wrapper
     /**
+     * Whether to display the download panel
+     * @type {boolean}
+     * @private
+     */
+    this._display_download = options.display_download || false
+    /**
      * Div container for chart download
      * @type {Element}
-     * @protected
+     * @private
      */
-    this.download_chart_container = undefined
+    this._download_chart_container = undefined
     /**
      * Div inside the div_wrapper, that just wraps the drawing
      * @type {Element}
      * @protected
      */
     this.plot_container = undefined
+    /**
+     * Whether to display the control panel
+     * @type {boolean}
+     * @private
+     */
+     this._display_control_panel = options.display_control_panel || false
     /**
      * Div container for user controls
      * Used freely by each subclass
@@ -96,7 +116,7 @@ chart_wrapper.prototype.id_string = function () {
 }
 
 /**
- * Render the chart and controls
+ * Render the chart
  * 
  * Empties the div wrapper and resets properties
  * 
@@ -104,6 +124,7 @@ chart_wrapper.prototype.id_string = function () {
  * of their own implementation
  * @name chart_wrapper#render
  * @function
+ * @public
  */
 chart_wrapper.prototype.render = function () {
     // Save this chart_wrapper intance
@@ -115,10 +136,28 @@ chart_wrapper.prototype.render = function () {
     // Remove all children in the div_wrapper
     this.div_wrapper.replaceChildren()
 
-    // Set controls container to undefined
-    this.controls_container = undefined
-
     // Create the chart download section
+    if (this._display_download) {
+        this._render_download_panel()
+    }
+
+    // Create the div for wrapping the plot
+    this.render_plot()
+
+    // Create the div for the control panel
+    if (this._display_control_panel) {
+        this.render_control_panel()
+    }
+
+}
+
+/**
+ * Render the download panel to the DOM
+ * @function
+ * @private
+ * @name chart_wrapper#_render_download_panel
+ */
+chart_wrapper.prototype._render_download_panel = function () {
     const supported_formats = this.get_supported_export_formats()
     if (supported_formats.length) {
         this.download_chart_container = common.create_dom_element({
@@ -161,16 +200,36 @@ chart_wrapper.prototype.render = function () {
             self.download_chart(format_select.value)
         })
     }
+}
 
-    // Create the div for wrapping the plot
+/**
+ * Render the plot to the DOM
+ * 
+ * Subclasses should override this method and make
+ * use of the plot container
+ * @function
+ * @protected
+ * @name chart_wrapper#render_plot
+ */
+chart_wrapper.prototype.render_plot = function () {
     this.plot_container = common.create_dom_element({
         element_type: 'div',
         id: `${this.id_string()}_plot_wrapper`,
         class_name: 'o-purple plot_wrapper',
         parent: this.div_wrapper,
     })
+}
 
-    // Create the div for the control panel
+/**
+ * Render the control panel to the DOM
+ * 
+ * Subclasses should override this method and make
+ * use of the controls container
+ * @function
+ * @protected
+ * @name chart_wrapper#render_control_panel
+ */
+chart_wrapper.prototype.render_control_panel = function () {
     this.controls_container = common.create_dom_element({
         element_type: 'div',
         id: `${this.id_string()}_control_panel`,

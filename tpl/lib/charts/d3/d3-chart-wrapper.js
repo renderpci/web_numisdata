@@ -5,22 +5,25 @@ import { chart_wrapper } from "../chart-wrapper";
 /**
  * D3 chart wrapper class
  * 
- * Appends an `svg` tag to the provided div, so that it spans all width
+ * Appends an `svg` tag to the provided div.
  * 
  * Subclasses MUST specify the viewBox of the svg, so that it responds to window resizing
  * The created svg tag has width=100%, spanning the width of the parent element. Subclasses
- * can alter this behavior by modifying the svg after the superclass render method has been
+ * can alter this behavior by modifying the svg after the superclass `render_plot` method has been
  * called
  * @param {Element} div_wrapper the div containing the chart
+ * @param {Object} options configuration options
+ * @param {boolean} options.display_download whether to display the download panel (default `true`)
+ * @param {boolean} options.display_control_panel whether to display the control panel (default `true`)
  * @class
  * @abstract
  * @extends chart_wrapper
  */
-export function d3_chart_wrapper(div_wrapper) {
+export function d3_chart_wrapper(div_wrapper, options) {
     if (this.constructor === d3_chart_wrapper) {
         throw new Error("Abstract class 'd3_chart_wrapper' cannot be instantiated")
     }
-    chart_wrapper.call(this, div_wrapper)
+    chart_wrapper.call(this, div_wrapper, options)
     /**
      * D3 selection object for the root `svg` tag
      * @protected
@@ -32,19 +35,22 @@ export function d3_chart_wrapper(div_wrapper) {
 Object.setPrototypeOf(d3_chart_wrapper.prototype, chart_wrapper.prototype)
 
 /**
- * Render the chart (d3) and controls
+ * Render the plot to the DOM
  * 
  * Subclasses must call this method at the top
- * of their own implementation
- * @name d3_chart_wrapper#render
+ * of their own implementation. Then, they can
+ * make use of the svg d3.selection object
  * @function
+ * @protected
+ * @name chart_wrapper#render_plot
  */
-d3_chart_wrapper.prototype.render = function () {
-    chart_wrapper.prototype.render.call(this)
+d3_chart_wrapper.prototype.render_plot = function () {
+    chart_wrapper.prototype.render_plot.call(this)
 
     this.svg = d3.select(this.plot_container)
         .append('svg')
-        .attr('version', '1.1') // When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
+        // When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
+        .attr('version', '1.1')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .attr('width', '100%')
 }

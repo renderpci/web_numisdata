@@ -27,7 +27,7 @@ const DEFAULT_CLASS_NAME = 'Class 1'
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
- * use of x and y axis 
+ * use of x and y axis
  *
  * Boxplot + violin chart wrapper
  * 

@@ -14,9 +14,10 @@ import { deepcopy } from "../utils"
  *
  * Boxplot + violin chart wrapper
  * 
- * Inspired in http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
- * https://d3-graph-gallery.com/graph/violin_basicHist.html,
- * https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
+ * Inspired in:
+ * - http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
+ * - https://d3-graph-gallery.com/graph/violin_basicHist.html,
+ * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  * 
  * @param {Element} div_wrapper the div to work in
  * @param {{[group_name: string]: number[]}} data the input data: group name

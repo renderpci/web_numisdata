@@ -19,6 +19,12 @@ const TOOLTIP_STYLE = {
 }
 
 /**
+ * Default name for class
+ * @type {string}
+ */
+const DEFAULT_CLASS_NAME = 'Class 1'
+
+/**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
  * use of x and y axis 
@@ -56,7 +62,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      * @type {Object.<string, Object.<string, number[]>>}
      * @private
      */
-    this._data = Array.isArray(Object.values(data)[0]) ? {'Class 1': data} : data
+    this._data = Array.isArray(Object.values(data)[0]) ? {DEFAULT_CLASS_NAME: data} : data
     /**
      * Data flat: class name + group name to array of values
      * @type {Object.<string, number[]>}
@@ -479,7 +485,7 @@ boxvio_chart_wrapper.prototype._render_class_dividers = function () {
             .attr('text-anchor', 'end')
             .attr('transform', 'rotate(-90)')
             .attr('y', '1.3em')  // This is the horizontal axis now
-            .attr('x', '-0.7em')  // This is the vertical axis now
+            .attr('x', '-0.6em')  // This is the vertical axis now
             .attr('font-size', '0.8em')
             .attr('fill', color)
             .text(cname)
@@ -831,7 +837,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
     /** @type {Element} */
     const show_violins_label = common.create_dom_element({
         element_type: 'label',
-        text_content: 'Show violins',
+        text_content: tstring.show_violins || 'Show violins',
         parent: this.controls_container,
     })
     show_violins_label.setAttribute('for', show_violins_checkbox_id)

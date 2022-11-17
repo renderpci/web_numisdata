@@ -197,7 +197,7 @@ chart_wrapper.prototype._render_download_panel = function () {
             parent: this.download_chart_container,
         })
         chart_download_button.addEventListener('click', () => {
-            self.download_chart(format_select.value)
+            this.download_chart(format_select.value)
         })
     }
 }

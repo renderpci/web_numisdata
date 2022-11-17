@@ -20,8 +20,9 @@ import { deepcopy } from "../utils"
  * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  * 
  * @param {Element} div_wrapper the div to work in
- * @param {{[group_name: string]: number[]}} data the input data: group name
- *        and array of values
+ * @param {Object.<string, number[] | Object.<string, number[]>>} data the input data: either group name
+ *        and array of values, or class name, to group name, to array of values
+ *        (CLASS NAMES MUST NOT INCLUDE '_^_', or things WILL break)
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
@@ -40,11 +41,22 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      */
     this._overflow = options.overflow || false
     /**
-     * Data: group name to array of values
-     * @type {Object.<string, number[]>}
+     * Data: class name to group name to array of values
+     * @type {Object.<string, Object.<string, number[]>>}
      * @private
      */
-    this._data = data
+    this._data = Array.isArray(Object.values(data)[0]) ? {'Class 1': data} : data
+    /**
+     * Data flat: class name + group name to array of values
+     * @type {Object.<string, number[]>}
+     * @orivate
+     */
+    this._data_flat = {}
+    for (const [cname, group] of Object.entries(this._data)) {
+        for (const [gname, values] of Object.entries(group)) {
+            this._data_flat[join_class_group_name(cname, gname)] = values
+        }
+    }
     /**
      * Whether to sort the xaxis
      * @type {boolean}
@@ -52,17 +64,23 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      */
     this._sort_xaxis = options.sort_xaxis || false
     /**
-     * Group names
+     * Class names
      * @type {string[]}
      * @private
      */
-    this._group_names = this._sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
+    this._class_names = this._sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
+    /**
+     * Class+Group names
+     * @type {string[]}
+     * @private
+     */
+    this._cg_names = this._sort_xaxis ? Object.keys(this._data_flat).sort() : Object.keys(this._data_flat)
     /**
      * Colors
      * @type {string[]}
      * @private
      */
-    this._colors = this._group_names.map((name, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
+    this._colors = this._cg_names.map((name, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
     /**
      * The label for the y axis
      * @type {string}
@@ -75,8 +93,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      */
     this.yaxis_padding = this._ylabel ? 62 : 35;
     /**
-     * Boxplot metrics for each group name
-     * @type {{[group_name: string]: {
+     * Boxplot metrics for each class + group name
+     * @type {{[cg_name: string]: {
      *  max: number,
      *  upper_fence: number,
      *  quartile3: number,
@@ -89,15 +107,15 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      * }}}
      * @private
      */
-    this._metrics = Object.fromEntries(Object.entries(data).map(
+    this._metrics = Object.fromEntries(Object.entries(this._data_flat).map(
         ([name, values]) => [name, calc_metrics(values)]
     ))
     /**
-     * Outliers per group name
-     * @type {{[group_name: string]: number[]}}
+     * Outliers per class + group name
+     * @type {{[cg_name: string]: number[]}}
      * @private
      */
-    this._outliers = Object.fromEntries(Object.entries(data).map(
+    this._outliers = Object.fromEntries(Object.entries(this._data_flat).map(
         ([name, values]) => [
             name,
             values.filter(
@@ -106,10 +124,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         ]
     ))
     /**
-     * Maximum and minimum values of each group
+     * Maximum and minimum values of each class+group
      * @type {Object.<string, [number, number]>}
      */
-    this._data_extents = Object.fromEntries(Object.entries(data).map(
+    this._data_extents = Object.fromEntries(Object.entries(this._data_flat).map(
         ([name, values]) => [name, d3.extent(values)]
     ))
     /**
@@ -149,12 +167,13 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
     this._chart.box_scale_default = 0.3
     this._chart.box_scale = this._chart.box_scale_default
     this._chart.xscale = d3.scaleBand()
-        .domain(this._group_names)
+        .domain(this._cg_names)
         .range([0, this._chart.width])
         // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
+        .tickFormat((d) => split_class_group_name(d)[1])
     this._chart.xticklabel_angle = options.xticklabel_angle || 0
-    this._chart.n_bins_default = Object.fromEntries(Object.entries(data).map(
+    this._chart.n_bins_default = Object.fromEntries(Object.entries(this._data_flat).map(
         ([name, values]) => [name, compute_n_bins.sturges(values)]
     ))
     this._chart.n_bins = deepcopy(this._chart.n_bins_default)
@@ -168,7 +187,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
             ]
         }
     ))
-    this._chart.bins = Object.fromEntries(Object.entries(data).map(
+    this._chart.bins = Object.fromEntries(Object.entries(this._data_flat).map(
         ([name, values]) => [name, this._chart.histogram[name](values)]
     ))
     this._chart.supported_curves = [
@@ -237,7 +256,7 @@ boxvio_chart_wrapper.prototype.set_n_bins = function (name, n_bins) {
     chart.histogram[name].thresholds(
         linspace(extent[0], extent[1], n_bins)
     )
-    chart.bins[name] = chart.histogram[name](this._data[name])
+    chart.bins[name] = chart.histogram[name](this._data_flat[name])
     // Delete the oath of the existing violin and redraw
     this._graphics.violins[name].selectAll('*').remove()
     this._render_violin(name)
@@ -313,7 +332,7 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
     xaxis_g
         .attr('transform', `translate(0,${this._chart.height})`)
         .call(this._chart.xaxis)
-    this._apply_xticklabel_angle()
+    this.apply_xticklabel_angle()
     
     // Render y axis
     this._graphics.yaxwl_g = g.append('g')
@@ -349,7 +368,11 @@ boxvio_chart_wrapper.prototype._render_ygrid = function () {
         .attr('opacity', 0)  // disabled by default
 }
 
-boxvio_chart_wrapper.prototype._apply_ygrid_mode = function (mode) {
+/**
+ * Apply a grid mode to the y axis
+ * @param {'None' | 'Major' | 'Major + Minor'} mode the mode
+ */
+boxvio_chart_wrapper.prototype.apply_ygrid_mode = function (mode) {
     const major_lines = this._graphics.yaxis_g.selectAll('g.tick line.major')
     const minor_lines = this._graphics.yaxis_g.selectAll('g.tick line.minor')
     switch (mode) {
@@ -382,7 +405,11 @@ boxvio_chart_wrapper.prototype._apply_ygrid_mode = function (mode) {
     }
 }
 
-boxvio_chart_wrapper.prototype._apply_xticklabel_angle = function () {
+/**
+ * Apply an angle to the xtick labels
+ * @function
+ */
+boxvio_chart_wrapper.prototype.apply_xticklabel_angle = function () {
     const angle = this._chart.xticklabel_angle
     const xaxis_g = this._graphics.xaxis_g
     if (angle < 10) {
@@ -455,7 +482,7 @@ boxvio_chart_wrapper.prototype._render_violin = function (name) {
         .domain([-max_count, max_count])
 
     // Only render violin if there is more than 1 datapoint (otherwise there are NaNs around)
-    if (this._data[name].length > 1) {
+    if (this._data_flat[name].length > 1) {
         this._graphics.violins[name]
             .append('path')
             .datum(bins)
@@ -496,7 +523,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
     const median_lw = 3
 
     // Iterate over the groups
-    for (const [i, name] of Object.entries(this._group_names)) {
+    for (const [i, name] of Object.entries(this._cg_names)) {
 
         const metrics = this._metrics[name]
         const color = this._colors[i]
@@ -602,7 +629,7 @@ boxvio_chart_wrapper.prototype._render_grid_select = function () {
     }
     grid_select.addEventListener('change', () => {
         const mode = grid_select.value
-        this._apply_ygrid_mode(mode)
+        this.apply_ygrid_mode(mode)
     })
 }
 
@@ -624,7 +651,7 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
     xticklabel_angle_slider.value = this._chart.xticklabel_angle
     xticklabel_angle_slider.addEventListener('input', () => {
         this._chart.xticklabel_angle = Number(xticklabel_angle_slider.value)
-        this._apply_xticklabel_angle()
+        this.apply_xticklabel_angle()
     })
 }
 
@@ -832,11 +859,13 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
         parent: this.controls_container,
         // TODO: add ARIA attributes?
     })
-    for (const name of this._group_names) {
+    for (const name of this._cg_names) {
         common.create_dom_element({
             element_type: 'option',
             value: name,
-            text_content: name,
+            text_content: this._class_names.length > 1 ?
+                          split_class_group_name(name).join(' ') :
+                          split_class_group_name(name)[1],
             parent: group_select,
         })
     }
@@ -935,4 +964,23 @@ function calc_metrics(values) {
     metrics.upper_fence = metrics.quartile3 + 1.5 * metrics.iqr
 
     return metrics
+}
+
+/**
+ * Join class and group name together
+ * @param {string} cname the class name
+ * @param {string} gname the group name
+ * @returns {string} the join
+ */
+function join_class_group_name(cname, gname) {
+    return `${cname}_^_${gname}`
+}
+
+/**
+ * Split class and group name
+ * @param {string} name the combination of class and group name 
+ * @returns {[number, number]} the class and group name
+ */
+function split_class_group_name(name) {
+    return name.split('_^_')
 }

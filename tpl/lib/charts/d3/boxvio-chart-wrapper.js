@@ -4,8 +4,19 @@ import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
 import { toggle_visibility, linspace, CURVES } from "./utils";
 import { compute_n_bins } from "../compute-n-bins";
-import { deepcopy } from "../utils"
+import { deepcopy, insert_after } from "../utils"
 
+
+/**
+ * CSS style for the tooltip
+ * @type {Object.<string, string | number>}
+ */
+const TOOLTIP_STYLE = {
+    'text-align': 'left',
+    'padding': '0.7em',
+    'padding-left': '0.8em',
+    'font-size': '0.9em',
+}
 
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
@@ -197,8 +208,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
     this._chart.violin_curve = CURVES[this._chart.supported_curves[0]]
     /**
      * Graphic components of the chart: d3 selection objects
+     * Either a map from name to selection or a map from
+     * collection name to name to selection
      * @private
-     * @type {{[name: string]: d3.selection | {[group: string]: d3.selection}}}
+     * @type {Object.<string, d3.selection | Object.<string, d3.selection>>}
      */
     this._graphics = {
         // Root g tag (translated to account for the margins)
@@ -219,6 +232,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         boxes_g: null,
         // per group: g tag grouping all outliers of the group
         outliers: {},
+        // div tag of the tooltip
+        tooltip_div: null,
     }
     /**
      * Control panel things
@@ -318,6 +333,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
     this._render_class_dividers()
     this._render_violins()
     this._render_boxes()
+    this._render_tooltip()
 
 }
 
@@ -457,6 +473,7 @@ boxvio_chart_wrapper.prototype._render_class_dividers = function () {
                 .attr('y2', this._chart.height)
                 .attr('stroke', color)
                 .attr('stroke-width', 0.9)
+                .attr('stroke-dasharray', this._chart.height/35)
         }
         cdivider_g.append('text')
             .attr('text-anchor', 'end')
@@ -561,7 +578,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
     const median_lw = 3
 
     // Iterate over the groups
-    for (const [i, name] of Object.entries(this._cg_names)) {
+    for (const [i, name] of this._cg_names.entries()) {
 
         const metrics = this._metrics[name]
         const color = this._colors[i]
@@ -623,15 +640,64 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
             .attr('y2', chart.yscale(metrics.median))
             .attr('stroke', 'black')
             .attr('stroke-width', median_lw)
-        iqr.append('circle')  // median dot
+        const circle = iqr.append('circle')  // median dot
             .attr('cx', 0)
             .attr('cy', chart.yscale(metrics.median))
             .attr('r', 4.5)
             .style('fill', 'white')
             .attr('stroke', 'black')
             .attr('stroke-width', 2)
+        // Circle events for tooltip
+        circle.on('mouseover', () => {
+            this._graphics.tooltip_div.style('display', null)
+            this.tooltip_hover(name)
+        }).on('mouseout', () => {
+            this._graphics.tooltip_div.style('display', 'none')
+        })
     }
 
+}
+
+/**
+ * Add the tooltip to the DOM
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_tooltip
+ */
+boxvio_chart_wrapper.prototype._render_tooltip = function () {
+    const tooltip_element = common.create_dom_element({
+        element_type: 'div',
+        id: `${this.id_string()}_tooltip_div`,
+        class_name: 'o-red',
+    })
+    insert_after(tooltip_element, this.plot_container)
+    this._graphics.tooltip_div = d3.select(tooltip_element)
+    const tooltip_div = this._graphics.tooltip_div
+    tooltip_div.style('display', 'none')
+    for (const [k, v] of Object.entries(TOOLTIP_STYLE)) {
+        tooltip_div.style(k, v)
+    }
+        
+}
+
+/**
+ * Set the tooltip to visible when we hover over
+ * @param {string} cg_name the class+group name
+ * @function
+ * @name boxvio_chart_wrapper#tooltip_hover
+ */
+boxvio_chart_wrapper.prototype.tooltip_hover = function (cg_name) {
+    const metrics = this._metrics[cg_name]
+    const tooltip_text = `<b>${split_class_group_name(cg_name).join(' ')}</b>`
+        + `<br>Mean: ${metrics.mean.toFixed(3)}`
+        + `<br>Max: ${metrics.max.toFixed(3)}`
+        + `<br>Q3: ${metrics.quartile3.toFixed(3)}`
+        + `<br>Median: ${metrics.median.toFixed(3)}`
+        + `<br>Q1: ${metrics.quartile1.toFixed(3)}`
+        + `<br>Min: ${metrics.min.toFixed(3)}`
+    this._graphics.tooltip_div
+        .style('opacity', 0.9)
+        .html(tooltip_text)
 }
 
 /**

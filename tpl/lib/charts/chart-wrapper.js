@@ -214,8 +214,8 @@ chart_wrapper.prototype._render_download_panel = function () {
 chart_wrapper.prototype.render_plot = function () {
     this.plot_container = common.create_dom_element({
         element_type: 'div',
-        id: `${this.id_string()}_plot_wrapper`,
-        class_name: 'o-purple plot_wrapper',
+        id: `${this.id_string()}_plot_container`,
+        class_name: 'o-purple plot_container',
         parent: this.div_wrapper,
     })
 }

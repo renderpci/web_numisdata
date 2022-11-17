@@ -141,7 +141,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
     this._chart.yticks_division = 2  // TODO: make this part of the input options object
     // TODO: make number of decimals and number of ticks part of input options object
     this._chart.yaxis = d3.axisLeft(this._chart.yscale)
-        .tickFormat((d, i) => i % this._chart.yticks_division ? d.toFixed(1) : '')
+        .tickFormat((d, i) => i % this._chart.yticks_division ? '' : d.toFixed(1))
         .ticks(19)
     this._chart.violin_scale_default = 0.8
     this._chart.violin_scale = this._chart.violin_scale_default
@@ -292,7 +292,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
 
     this._render_axis()
-    this._render_grid()
+    this._render_ygrid()
     this._render_violins()
     this._render_boxes()
 
@@ -333,21 +333,52 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
  * Render the grid for the y-axis
  * @function
  * @private
- * @name boxvio_chart_wrapper#_render_grid
+ * @name boxvio_chart_wrapper#_render_ygrid
  */
-boxvio_chart_wrapper.prototype._render_grid = function () {
-    this._graphics.yaxis_g.selectAll('g.tick')
-        .append('g')
-            .attr('class', (d, i) => i % 2 ? 'major' : 'minor')
-            .attr('opacity', 0)  // disabled by default
-        .append('line')
-            .attr('x1', 0)
-            .attr('y1', 0)
-            .attr('x2', this._chart.width)
-            .attr('y2', 0)
-            .attr('stroke', (d, i) => i % 2 ? 'gray' : '#E0E0E0')
-            .attr('stroke-width', (d, i) => i % 2 ? 0.5 : 1)
-            .attr('opacity', 0.7)
+boxvio_chart_wrapper.prototype._render_ygrid = function () {
+    const ticks = this._graphics.yaxis_g.selectAll('g.tick')
+    ticks.append('line')
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', this._chart.width)
+        .attr('y2', 0)
+        .attr('stroke', (d, i) => i % 2 ? '#E0E0E0' : '#D1D1D1')
+        .attr('stroke-width', (d, i) => i % 2 ? 0.5 : 0.8)
+        .attr('class', (d, i) => i % 2 ? 'minor' : 'major')
+        .attr('opacity', 0)  // disabled by default
+}
+
+boxvio_chart_wrapper.prototype._apply_ygrid_mode = function (mode) {
+    const major_lines = this._graphics.yaxis_g.selectAll('g.tick line.major')
+    const minor_lines = this._graphics.yaxis_g.selectAll('g.tick line.minor')
+    switch (mode) {
+        case 'None':
+            if (major_lines.attr('opacity') == 1) {
+                toggle_visibility(major_lines)
+            }
+            if (minor_lines.attr('opacity') == 1) {
+                toggle_visibility(minor_lines)
+            }
+            break
+        case 'Major':
+            if (major_lines.attr('opacity') == 0) {
+                toggle_visibility(major_lines)
+            }
+            if (minor_lines.attr('opacity') == 1) {
+                toggle_visibility(minor_lines)
+            }
+            break
+        case 'Major + Minor':
+            if (major_lines.attr('opacity') == 0) {
+                toggle_visibility(major_lines)
+            }
+            if (minor_lines.attr('opacity') == 0) {
+                toggle_visibility(minor_lines)
+            }
+            break
+        default:
+            throw new Error(`Grid mode '${mode}' is not supported?`)
+    }
 }
 
 boxvio_chart_wrapper.prototype._apply_xticklabel_angle = function () {
@@ -422,18 +453,21 @@ boxvio_chart_wrapper.prototype._render_violin = function (name) {
         .range([0, bandwidth])
         .domain([-max_count, max_count])
 
-    this._graphics.violins[name]
-        .append('path')
-        .datum(bins)
-            .style('stroke', 'gray')
-            .style('stroke-width', 0.4)
-            .style('fill', '#d2d2d2')
-            .attr('d', d3.area()
-                .x0((d) => x_num(-d.length*violin_scale))
-                .x1((d) => x_num(d.length*violin_scale))
-                .y((d) => yscale(d.x0))
-                .curve(violin_curve)
-            )
+    // Only render violin if there is more than 1 datapoint (otherwise there are NaNs around)
+    if (this._data[name].length > 1) {
+        this._graphics.violins[name]
+            .append('path')
+            .datum(bins)
+                .style('stroke', 'gray')
+                .style('stroke-width', 0.4)
+                .style('fill', '#d2d2d2')
+                .attr('d', d3.area()
+                    .x0((d) => x_num(-d.length*violin_scale))
+                    .x1((d) => x_num(d.length*violin_scale))
+                    .y((d) => yscale(d.x0))
+                    .curve(violin_curve)
+                )
+    }
 }
 
 /**
@@ -567,36 +601,7 @@ boxvio_chart_wrapper.prototype._render_grid_select = function () {
     }
     grid_select.addEventListener('change', () => {
         const mode = grid_select.value
-        const major_lines = this._graphics.yaxis_g.selectAll('g.tick g.major')
-        const minor_lines = this._graphics.yaxis_g.selectAll('g.tick g.minor')
-        switch (mode) {
-            case 'None':
-                if (major_lines.attr('opacity') == 1) {
-                    toggle_visibility(major_lines)
-                }
-                if (minor_lines.attr('opacity') == 1) {
-                    toggle_visibility(minor_lines)
-                }
-                break
-            case 'Major':
-                if (major_lines.attr('opacity') == 0) {
-                    toggle_visibility(major_lines)
-                }
-                if (minor_lines.attr('opacity') == 1) {
-                    toggle_visibility(minor_lines)
-                }
-                break
-            case 'Major + Minor':
-                if (major_lines.attr('opacity') == 0) {
-                    toggle_visibility(major_lines)
-                }
-                if (minor_lines.attr('opacity') == 0) {
-                    toggle_visibility(minor_lines)
-                }
-                break
-            default:
-                throw new Error(`Grid mode '${mode}' is not supported?`)
-        }
+        this._apply_ygrid_mode(mode)
     })
 }
 

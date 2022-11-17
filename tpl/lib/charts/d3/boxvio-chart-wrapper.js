@@ -22,7 +22,7 @@ import { deepcopy } from "../utils"
  * @param {Element} div_wrapper the div to work in
  * @param {Object.<string, number[] | Object.<string, number[]>>} data the input data: either group name
  *        and array of values, or class name, to group name, to array of values
- *        (CLASS NAMES MUST NOT INCLUDE '_^_', or things WILL break)
+ *        (CLASS NAMES MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
@@ -139,7 +139,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      * Full width of svg
      * @type {number}
      */
-    this._full_width = 330.664701211*Math.sqrt(Object.keys(data).length) + -170.664701211 + this.yaxis_padding
+    this._full_width = 330.664701211*Math.sqrt(Object.keys(this._data_flat).length) + -170.664701211 + this.yaxis_padding
     /**
      * Full height of svg
      * @type {number}
@@ -209,6 +209,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         yaxwl_g: null,
         // g tag for the y-axis
         yaxis_g: null,
+        // g tag for the class dividers
+        cdividers_g: null,
         // g tag grouping all violins
         violins_g: null,
         // individual g tag for each violin (mapped by group name)
@@ -313,6 +315,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 
     this._render_axis()
     this._render_ygrid()
+    this._render_class_dividers()
     this._render_violins()
     this._render_boxes()
 
@@ -350,6 +353,35 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 }
 
 /**
+ * Apply an angle to the xtick labels
+ * @function
+ * @name boxvio_chart_wrapper#apply_xticklabel_angle
+ */
+boxvio_chart_wrapper.prototype.apply_xticklabel_angle = function () {
+    const angle = this._chart.xticklabel_angle
+    const xaxis_g = this._graphics.xaxis_g
+    if (angle < 10) {
+        xaxis_g.selectAll('text')
+            .attr('text-anchor', 'middle')
+            .attr("dy", "0.8em")
+            .attr("dx", "0")
+            .attr('transform', `rotate(${-this._chart.xticklabel_angle})`)
+    } else {
+        xaxis_g.selectAll('text')
+            .attr('text-anchor', 'end')
+            .attr("dy", `${-angle*angle*0.00006172839}em`)
+            .attr("dx", "-0.9em")
+            .attr('transform',
+                `rotate(${-this._chart.xticklabel_angle})`
+            )
+        if (angle < 50) {
+            xaxis_g.selectAll('text')
+                .attr('dx', '-0.7em')
+        }
+    }
+}
+
+/**
  * Render the grid for the y-axis
  * @function
  * @private
@@ -371,6 +403,8 @@ boxvio_chart_wrapper.prototype._render_ygrid = function () {
 /**
  * Apply a grid mode to the y axis
  * @param {'None' | 'Major' | 'Major + Minor'} mode the mode
+ * @function
+ * @name boxvio_chart_wrapper#apply_ygrid_mode
  */
 boxvio_chart_wrapper.prototype.apply_ygrid_mode = function (mode) {
     const major_lines = this._graphics.yaxis_g.selectAll('g.tick line.major')
@@ -405,31 +439,35 @@ boxvio_chart_wrapper.prototype.apply_ygrid_mode = function (mode) {
     }
 }
 
-/**
- * Apply an angle to the xtick labels
- * @function
- */
-boxvio_chart_wrapper.prototype.apply_xticklabel_angle = function () {
-    const angle = this._chart.xticklabel_angle
-    const xaxis_g = this._graphics.xaxis_g
-    if (angle < 10) {
-        xaxis_g.selectAll('text')
-            .attr('text-anchor', 'middle')
-            .attr("dy", "0.8em")
-            .attr("dx", "0")
-            .attr('transform', `rotate(${-this._chart.xticklabel_angle})`)
-    } else {
-        xaxis_g.selectAll('text')
-            .attr('text-anchor', 'end')
-            .attr("dy", `${-angle*angle*0.00006172839}em`)
-            .attr("dx", "-0.9em")
-            .attr('transform',
-                `rotate(${-this._chart.xticklabel_angle})`
-            )
-        if (angle < 50) {
-            xaxis_g.selectAll('text')
-                .attr('dx', '-0.7em')
+boxvio_chart_wrapper.prototype._render_class_dividers = function () {
+    this._graphics.cdividers_g = this._graphics.root_g.append('g')
+    const cdividers_g = this._graphics.cdividers_g
+    const color = 'gray'
+
+    let i = 0;
+    for (const [index, cname] of this._class_names.entries()) {
+        const x = this._chart.xscale(this._cg_names[i])
+        const cdivider_g = cdividers_g.append('g')
+            .attr('transform', `translate(${x},0)`)
+        if (index !== 0) {
+            cdivider_g.append('line')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('x2', 0)
+                .attr('y2', this._chart.height)
+                .attr('stroke', color)
+                .attr('stroke-width', 0.9)
         }
+        cdivider_g.append('text')
+            .attr('text-anchor', 'end')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', '1.3em')  // This is the horizontal axis now
+            .attr('x', '-0.7em')  // This is the vertical axis now
+            .attr('font-size', '0.8em')
+            .attr('fill', color)
+            .text(cname)
+        // Increase the index by the number of groups in the class
+        i += Object.keys(this._data[cname]).length
     }
 }
 
@@ -569,12 +607,15 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
         // Draw IQR box
         const iqr = group_box.append('g')
-        iqr.append('rect')  // iqr rect
+        // Only draw rectangle if there is more than 1 datapoint (otherwise NaNs appear)
+        if (this._data_flat[name].length > 1) {
+            iqr.append('rect')  // iqr rect
             .attr('x', -box_width / 2)
             .attr('y', chart.yscale(metrics.quartile3))
             .attr('width', box_width)
             .attr('height', chart.yscale(metrics.quartile1) - chart.yscale(metrics.quartile3))
             .attr('fill', color)
+        }
         iqr.append('line')  // median line
             .attr('x1', -box_width / 2)
             .attr('y1', chart.yscale(metrics.median))
@@ -689,11 +730,28 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function () {
  * @name boxvio_chart_wrapper#_render_checkboxes
  */
 boxvio_chart_wrapper.prototype._render_checkboxes = function () {
+    const show_classes_checkbox_id = `${this.id_string()}_show_classes_checkbox`
+    /** @type {Element} */
+    const show_classes_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: show_classes_checkbox_id,
+        parent: this.controls_container,
+    })
+    show_classes_checkbox.checked = true
+    /** @type {Element} */
+    const show_classes_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: 'Show classes',
+        parent: this.controls_container,
+    })
+    show_classes_label.setAttribute('for', show_classes_checkbox_id)
+    show_classes_checkbox.addEventListener('change', () => {
+        toggle_visibility(this._graphics.cdividers_g)
+    })
+    
     const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
-    /**
-     * Checkbox for showing violins
-     * @type {Element}
-     */
+    /** @type {Element} */
     const show_violins_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
@@ -701,10 +759,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
         parent: this.controls_container,
     })
     show_violins_checkbox.checked = true
-    /**
-     * Checkbox label for density plot
-     * @type {Element}
-     */
+    /** @type {Element} */
     const show_violins_label = common.create_dom_element({
         element_type: 'label',
         text_content: 'Show violins',
@@ -967,13 +1022,19 @@ function calc_metrics(values) {
 }
 
 /**
+ * Splitter string
+ * @type {string}
+ */
+const SPLITTER = '_^PoT3sRanaCantora_'
+
+/**
  * Join class and group name together
  * @param {string} cname the class name
  * @param {string} gname the group name
  * @returns {string} the join
  */
 function join_class_group_name(cname, gname) {
-    return `${cname}_^_${gname}`
+    return `${cname}${SPLITTER}${gname}`
 }
 
 /**
@@ -982,5 +1043,5 @@ function join_class_group_name(cname, gname) {
  * @returns {[number, number]} the class and group name
  */
 function split_class_group_name(name) {
-    return name.split('_^_')
+    return name.split(SPLITTER)
 }

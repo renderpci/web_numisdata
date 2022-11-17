@@ -257,6 +257,7 @@ export const analysis =  {
 				const data = {}
 				for (const ele of parsed_data) {
 					const name = ele.ref_type_number
+					const mint = ele.p_mint ? ele.p_mint[0] : 'Missing mint'
 					// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 					// if (!['59', '62'].includes(name)) continue
 					const tmpData = {}
@@ -274,16 +275,25 @@ export const analysis =  {
 						tmpData.weight = weight.filter((v, i) => v && calculable[i])
 					}
 					if (Object.keys(tmpData).length) {
-						data[name] = tmpData
+						if (!data[mint]) {
+							data[mint] = {}
+						}
+						data[mint][name] = tmpData
 					}
 				}
 				console.log(data)
 
 				// Weights
 				const weights = {}
-				for (const [name, props] of Object.entries(data)) {
-					if (props.weight && props.weight.length) {
-						weights[name] = props.weight
+				for (const [mint, types] of Object.entries(data)) {
+					const tmp_weights = {}
+					for (const [name, props] of Object.entries(types)) {
+						if (props.weight && props.weight.length) {
+							tmp_weights[name] = props.weight
+						}
+					}
+					if (Object.keys(tmp_weights).length) {
+						weights[mint] = tmp_weights
 					}
 				}
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
@@ -301,9 +311,15 @@ export const analysis =  {
 
 				// Diameters
 				const diameters = {}
-				for (const [name, props] of Object.entries(data)) {
-					if (props.diameter_max && props.diameter_max.length) {
-						diameters[name] = props.diameter_max
+				for (const [mint, types] of Object.entries(data)) {
+					const tmp_diameters = {}
+					for (const [name, props] of Object.entries(types)) {
+						if (props.diameter_max && props.diameter_max.length) {
+							tmp_diameters[name] = props.weight
+						}
+					}
+					if (Object.keys(tmp_diameters).length) {
+						diameters[mint] = tmp_diameters
 					}
 				}
 				this.diameter_chart_wrapper = new boxvio_chart_wrapper(

@@ -689,12 +689,15 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 boxvio_chart_wrapper.prototype.tooltip_hover = function (cg_name) {
     const metrics = this._metrics[cg_name]
     const tooltip_text = `<b>${split_class_group_name(cg_name).join(' ')}</b>`
+        + '<span style="font-size: smaller;">'
+        + `<br>Datapoints: ${this._data_flat[cg_name].length}`
         + `<br>Mean: ${metrics.mean.toFixed(3)}`
         + `<br>Max: ${metrics.max.toFixed(3)}`
         + `<br>Q3: ${metrics.quartile3.toFixed(3)}`
         + `<br>Median: ${metrics.median.toFixed(3)}`
         + `<br>Q1: ${metrics.quartile1.toFixed(3)}`
         + `<br>Min: ${metrics.min.toFixed(3)}`
+        + '</span>'
     this._graphics.tooltip_div
         .style('opacity', 0.9)
         .html(tooltip_text)

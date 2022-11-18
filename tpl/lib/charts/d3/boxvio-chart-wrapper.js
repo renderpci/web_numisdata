@@ -423,7 +423,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
     if (this._key_size > 1) {
         this._render_key2_dividers()
     }
-    // this._render_violins()
+    this._render_violins()
     // this._render_boxes()
     // this._render_tooltip()
 
@@ -605,7 +605,6 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
  * @name boxvio_chart_wrapper#_render_violins
  */
 boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
-
     const chart = this._chart
     const g = this._graphics.root_g
 
@@ -614,25 +613,24 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
         this._graphics.violins_g = g.append('g')
     }
     const violins_g = this._graphics.violins_g
-    for (const name of Object.keys(chart.bins)) {
-        this._graphics.violins[name] = violins_g.append('g')
-            .attr('transform', `translate(${chart.xscale(name)},0)`)
-        this._render_violin(name)
+    for (const [i, key_string] of this._key_strings.entries()) {
+        this._graphics.violins[i] = violins_g.append('g')
+            .attr('transform', `translate(${chart.xscale(key_string)},0)`)
+        this._render_violin(i)
     }
 
 }
 
 /**
- * Render the violins
+ * Render a violin
  * @function
  * @private
- * @param {boolean} is_g_ready whether the g tag for violins is
- *        set up (default: `false`)
+ * @param {boolean} i the index of the violin
  * @name boxvio_chart_wrapper#_render_violins
  */
-boxvio_chart_wrapper.prototype._render_violin = function (name) {
-    const bins = this._chart.bins[name]
-    const violin_scale = this._chart.violin_scale
+boxvio_chart_wrapper.prototype._render_violin = function (i) {
+    const bins = this._chart.bins[i]
+    const violin_scale = this._chart.violin_scale.value
     const bandwidth = this._chart.xscale.bandwidth()
     const yscale = this._chart.yscale
     const violin_curve = this._chart.violin_curve
@@ -645,8 +643,8 @@ boxvio_chart_wrapper.prototype._render_violin = function (name) {
         .domain([-max_count, max_count])
 
     // Only render violin if there is more than 1 datapoint (otherwise there are NaNs around)
-    if (this._data_flat[name].length > 1) {
-        this._graphics.violins[name]
+    if (this._data[i].values.length > 1) {
+        this._graphics.violins[i]
             .append('path')
             .datum(bins)
                 .style('stroke', 'gray')
@@ -824,7 +822,7 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
     this._render_xticklabel_angle_slider()
     // this._render_violin_curve_selector()
     this._render_checkboxes()
-    // this._render_scale_sliders()
+    this._render_scale_sliders()
     // this._render_n_bins_control()
 
 }
@@ -945,25 +943,25 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
         toggle_visibility(this._graphics.key2_dividers_g)
     })
     
-    // const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
-    // /** @type {Element} */
-    // const show_violins_checkbox = common.create_dom_element({
-    //     element_type: 'input',
-    //     type: 'checkbox',
-    //     id: show_violins_checkbox_id,
-    //     parent: this.controls_container,
-    // })
-    // show_violins_checkbox.checked = true
-    // /** @type {Element} */
-    // const show_violins_label = common.create_dom_element({
-    //     element_type: 'label',
-    //     text_content: tstring.show_violins || 'Show violins',
-    //     parent: this.controls_container,
-    // })
-    // show_violins_label.setAttribute('for', show_violins_checkbox_id)
-    // show_violins_checkbox.addEventListener('change', () => {
-    //     toggle_visibility(this._graphics.violins_g)
-    // })
+    const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
+    /** @type {Element} */
+    const show_violins_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: show_violins_checkbox_id,
+        parent: this.controls_container,
+    })
+    show_violins_checkbox.checked = true
+    /** @type {Element} */
+    const show_violins_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.show_violins || 'Show violins',
+        parent: this.controls_container,
+    })
+    show_violins_label.setAttribute('for', show_violins_checkbox_id)
+    show_violins_checkbox.addEventListener('change', () => {
+        toggle_visibility(this._graphics.violins_g)
+    })
 
     // const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
     // /**
@@ -1030,6 +1028,13 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
  * @name boxvio_chart_wrapper#_render_scale_sliders
  */
 boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
+    const violin_scale_slider_id = `${this.id_string()}_violin_scale_slider`
+    const violin_scale_slider_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.violin_width || 'Violin width',
+        parent: this.controls_container,
+    })
+    violin_scale_slider_label.setAttribute('for', violin_scale_slider_id)
     /**
      * Slider for violin scale
      * @type {Element}
@@ -1037,7 +1042,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     const violin_scale_slider = common.create_dom_element({
         element_type: 'input',
         type: 'range',
-        // value: this._chart.violin_scale_default,  // This does not work here?
+        id: violin_scale_slider_id,
         parent: this.controls_container,
     })
     violin_scale_slider.setAttribute('min', 0)
@@ -1054,7 +1059,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     const violin_scale_slider_reset = common.create_dom_element({
         element_type: 'button',
         type: 'button',
-        text_content: 'Reset',
+        text_content: tstring.reset || 'Reset',
         parent: this.controls_container,
     })
     violin_scale_slider_reset.addEventListener('click', () => {
@@ -1062,37 +1067,37 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         this.set_violin_scale(Number(violin_scale_slider.value))
     })
 
-    /**
-     * Slider for box scale
-     * @type {Element}
-     */
-    const box_scale_slider = common.create_dom_element({
-        element_type: 'input',
-        type: 'range',
-        // value: this._chart.box_scale_default,  // This does not work here?
-        parent: this.controls_container,
-    })
-    box_scale_slider.setAttribute('min', 0)
-    box_scale_slider.setAttribute('max', 1)
-    box_scale_slider.setAttribute('step', 0.05)
-    box_scale_slider.value = this._chart.box_scale_default
-    box_scale_slider.addEventListener('input', () => {
-        this.set_box_scale(Number(box_scale_slider.value))
-    })
-    /**
-     * Reset button for the box_scale_slider
-     * @type {Element}
-     */
-    const box_scale_slider_reset = common.create_dom_element({
-        element_type: 'button',
-        type: 'button',
-        text_content: 'Reset',
-        parent: this.controls_container,
-    })
-    box_scale_slider_reset.addEventListener('click', () => {
-        box_scale_slider.value = this._chart.box_scale_default
-        this.set_box_scale(Number(box_scale_slider.value))
-    })
+    // /**
+    //  * Slider for box scale
+    //  * @type {Element}
+    //  */
+    // const box_scale_slider = common.create_dom_element({
+    //     element_type: 'input',
+    //     type: 'range',
+    //     // value: this._chart.box_scale_default,  // This does not work here?
+    //     parent: this.controls_container,
+    // })
+    // box_scale_slider.setAttribute('min', 0)
+    // box_scale_slider.setAttribute('max', 1)
+    // box_scale_slider.setAttribute('step', 0.05)
+    // box_scale_slider.value = this._chart.box_scale_default
+    // box_scale_slider.addEventListener('input', () => {
+    //     this.set_box_scale(Number(box_scale_slider.value))
+    // })
+    // /**
+    //  * Reset button for the box_scale_slider
+    //  * @type {Element}
+    //  */
+    // const box_scale_slider_reset = common.create_dom_element({
+    //     element_type: 'button',
+    //     type: 'button',
+    //     text_content: 'Reset',
+    //     parent: this.controls_container,
+    // })
+    // box_scale_slider_reset.addEventListener('click', () => {
+    //     box_scale_slider.value = this._chart.box_scale_default
+    //     this.set_box_scale(Number(box_scale_slider.value))
+    // })
 }
 
 /**

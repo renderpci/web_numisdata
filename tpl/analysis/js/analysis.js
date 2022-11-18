@@ -254,51 +254,59 @@ export const analysis =  {
 				// )
 				// this.diameter_chart_wrapper.render()
 
-				const data = {}
-				for (const ele of parsed_data) {
-					const name = ele.ref_type_number
-					const mint = ele.p_mint ? ele.p_mint[0] : 'Missing mint'
+				const data = []
+				for (const [i, ele] of parsed_data.entries()) {
+					const number_key = ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})`
+					const mint = ele.p_mint ? ele.p_mint[0] : `Missing mint (${i})`
+					const material = ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})` 
+					const denomination = ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
 					// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 					// if (!['59', '62'].includes(name)) continue
-					const tmpData = {}
+					const tmp_data = {}
 					const calculable = ele.full_coins_reference_calculable
 					const diameter_max = ele.full_coins_reference_diameter_max
 					const diameter_min = ele.full_coins_reference_diameter_min
 					const weight = ele.full_coins_reference_weight
 					if (diameter_max && diameter_max.length) {
-						tmpData.diameter_max = diameter_max.filter((v, i) => v && calculable[i])
+						const tmp_diameter_max = diameter_max.filter((v, i) => v && calculable[i])
+						if (tmp_diameter_max.length) {
+							tmp_data.diameter_max = tmp_diameter_max
+						}
 					}
 					if (diameter_min && diameter_min.length) {
-						tmpData.diameter_min = diameter_min.filter((v, i) => v && calculable[i])
+						const tmp_diameter_min = diameter_min.filter((v, i) => v && calculable[i])
+						if (tmp_diameter_min.length) {
+							tmp_data.diameter_min = tmp_diameter_min
+						}
 					}
 					if (weight && weight.length) {
-						tmpData.weight = weight.filter((v, i) => v && calculable[i])
-					}
-					if (Object.keys(tmpData).length) {
-						if (!data[mint]) {
-							data[mint] = {}
+						const tmp_weight = weight.filter((v, i) => v && calculable[i])
+						if (tmp_weight.length) {
+							tmp_data.weight = tmp_weight
 						}
-						data[mint][name] = tmpData
+					}
+					if (Object.keys(tmp_data).length) {
+						tmp_data.number_key = number_key
+						tmp_data.mint = mint
+						tmp_data.material = material
+						tmp_data.denomination = denomination
+						data.push(tmp_data)
 					}
 				}
 				console.log(data)
 
 				// Weights
-				const weights = {}
-				for (const [mint, types] of Object.entries(data)) {
-					const tmp_weights = {}
-					for (const [name, props] of Object.entries(types)) {
-						if (props.weight && props.weight.length) {
-							tmp_weights[name] = props.weight
-						}
-					}
-					if (Object.keys(tmp_weights).length) {
-						weights[mint] = tmp_weights
-					}
-				}
+				const weights = data.filter(
+					(ele) => ele.weight
+				).map(
+					(ele) => {return {key: [ele.mint, ele.number_key], values: ele.weight}}
+				)
+				console.log('Weights:')
+				console.log(weights)
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
 					this.weight_chart_container,
 					weights,
+					['Mint', 'Number & Key'],
 					{
 						ylabel: 'Weight',
 						overflow: true,
@@ -310,30 +318,26 @@ export const analysis =  {
 				this.weight_chart_wrapper.render()
 
 				// Diameters
-				const diameters = {}
-				for (const [mint, types] of Object.entries(data)) {
-					const tmp_diameters = {}
-					for (const [name, props] of Object.entries(types)) {
-						if (props.diameter_max && props.diameter_max.length) {
-							tmp_diameters[name] = props.weight
-						}
-					}
-					if (Object.keys(tmp_diameters).length) {
-						diameters[mint] = tmp_diameters
-					}
-				}
-				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
-					this.diameter_chart_container,
-					diameters,
-					{
-						ylabel: 'Diameter',
-						overflow: true,
-						display_control_panel: true,
-						display_download: true,
-						sort_xaxis: true,
-					}
+				const diameters = data.filter(
+					(ele) => ele.diameter_max
+				).map(
+					(ele) => {return {key: [ele.mint, ele.number_key], values: ele.diameter_max}}
 				)
-				this.diameter_chart_wrapper.render()
+				console.log('Diameters:')
+				console.log(diameters)
+				// this.diameter_chart_wrapper = new boxvio_chart_wrapper(
+				// 	this.diameter_chart_container,
+				// 	diameters,
+				//  ['Mint', 'Number & Key'],
+				// 	{
+				// 		ylabel: 'Diameter',
+				// 		overflow: true,
+				// 		display_control_panel: true,
+				// 		display_download: true,
+				// 		sort_xaxis: true,
+				// 	}
+				// )
+				// this.diameter_chart_wrapper.render()
 
 			})
 

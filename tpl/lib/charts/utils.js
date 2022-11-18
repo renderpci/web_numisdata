@@ -15,3 +15,30 @@ export function deepcopy(obj) {
 export function insert_after(new_node, existing_node) {
     existing_node.parentNode.insertBefore(new_node, existing_node.nextSibling);
 }
+
+/**
+ * Check if arrays are equal
+ * @param {any[][]} arrs the arrays to compare
+ * @return {boolean} `true` if they are equal,
+ * 		   `false` otherwise
+ */
+export function array_equal(...arrs) {
+	if (!arrs.length) {
+		throw new Error("There are no input arrays")
+	}
+	const size = arrs[0].length
+	for (const arr of arrs.slice(1)) {
+		if (arr.length !== size) {
+			return false
+		}
+	}
+	for (let i = 0; i < size; i++) {
+		const value = arrs[0][i]
+		for (const arr of arrs.slice(1)) {
+			if (arr[i] !== value) {
+				return false
+			}
+		}
+	}
+	return true
+}

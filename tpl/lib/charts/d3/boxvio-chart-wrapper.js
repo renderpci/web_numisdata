@@ -18,11 +18,6 @@ const TOOLTIP_STYLE = {
     'font-size': '0.9em',
 }
 
-/**
- * Default name for class
- * @type {string}
- */
-const DEFAULT_CLASS_NAME = 'Class 1'
 
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
@@ -37,9 +32,10 @@ const DEFAULT_CLASS_NAME = 'Class 1'
  * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  * 
  * @param {Element} div_wrapper the div to work in
- * @param {Object.<string, number[] | Object.<string, number[]>>} data the input data: either group name
- *        and array of values, or class name, to group name, to array of values
- *        (CLASS NAMES MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
+ * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
+ *        with key (array of components) and values (the datapoints)
+ *        (KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
+ * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
@@ -50,54 +46,72 @@ const DEFAULT_CLASS_NAME = 'Class 1'
  * @class
  * @extends d3_chart_wrapper
  */
-export function boxvio_chart_wrapper(div_wrapper, data, options) {
+export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
     d3_chart_wrapper.call(this, div_wrapper, options)
     /**
      * Whether to go beyond the width of the plot container
      * @type {boolean}
      */
     this._overflow = options.overflow || false
-    /**
-     * Data: class name to group name to array of values
-     * @type {Object.<string, Object.<string, number[]>>}
-     * @private
-     */
-    this._data = Array.isArray(Object.values(data)[0]) ? {DEFAULT_CLASS_NAME: data} : data
-    /**
-     * Data flat: class name + group name to array of values
-     * @type {Object.<string, number[]>}
-     * @orivate
-     */
-    this._data_flat = {}
-    for (const [cname, group] of Object.entries(this._data)) {
-        for (const [gname, values] of Object.entries(group)) {
-            this._data_flat[join_class_group_name(cname, gname)] = values
-        }
+    const sort_xaxis = options.sort_xaxis || false
+    if (!data.length) {
+        throw new Error("Data array is empty")
     }
     /**
-     * Whether to sort the xaxis
-     * @type {boolean}
+     * Data: key to values, boxplot metrics, outliers,
+     * extent (min and max)
+     * @type {{
+     *  key: string[],
+     *  values: number[],
+     *  metrics: {
+     *      max: number,
+     *      upper_fence: number,
+     *      quartile3: number,
+     *      median: number,
+     *      mean: number,
+     *      iqr: number,
+     *      quartile1: number,
+     *      lower_fence: number,
+     *      min: number
+     *  },
+     *  outliers: number[],
+     *  extent: [number, number]
+     * }[]}
      * @private
      */
-    this._sort_xaxis = options.sort_xaxis || false
+    this._data = sort_xaxis
+                 ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
+                 : data
+    for (const ele of this._data) {
+        ele.metrics = calc_metrics(ele.values)
+        ele.outliers = ele.values.filter(
+            (v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
+        )
+        ele.extent = d3.extent(ele.values)
+    }
     /**
-     * Class names
+     * Overall Maximum and minimum of the input data
+     * @type {[number, number]}
+     */
+    this._data_extent = d3.extent(this._data.map((ele) => ele.extent).flat())
+    /**
+     * Number of components of the key
+     * @type {number}
+     * @private
+     */
+    this._key_size = data[0].key.length
+    /**
+     * Title for each key component
      * @type {string[]}
      * @private
      */
-    this._class_names = this._sort_xaxis ? Object.keys(this._data).sort() : Object.keys(this._data)
-    /**
-     * Class+Group names
-     * @type {string[]}
-     * @private
-     */
-    this._cg_names = this._sort_xaxis ? Object.keys(this._data_flat).sort() : Object.keys(this._data_flat)
+    this._key_titles = key_titles
     /**
      * Colors
      * @type {string[]}
      * @private
      */
-    this._colors = this._cg_names.map((name, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
+    this._colors = this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
     /**
      * The label for the y axis
      * @type {string}
@@ -110,61 +124,42 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
      */
     this.yaxis_padding = this._ylabel ? 62 : 35;
     /**
-     * Boxplot metrics for each class + group name
-     * @type {{[cg_name: string]: {
-     *  max: number,
-     *  upper_fence: number,
-     *  quartile3: number,
-     *  median: number,
-     *  mean: number,
-     *  iqr: number,
-     *  quartile1: number,
-     *  lower_fence: number,
-     *  min: number,
-     * }}}
-     * @private
-     */
-    this._metrics = Object.fromEntries(Object.entries(this._data_flat).map(
-        ([name, values]) => [name, calc_metrics(values)]
-    ))
-    /**
-     * Outliers per class + group name
-     * @type {{[cg_name: string]: number[]}}
-     * @private
-     */
-    this._outliers = Object.fromEntries(Object.entries(this._data_flat).map(
-        ([name, values]) => [
-            name,
-            values.filter(
-                (v) => v < this._metrics[name].lower_fence || v > this._metrics[name].upper_fence
-            )
-        ]
-    ))
-    /**
-     * Maximum and minimum values of each class+group
-     * @type {Object.<string, [number, number]>}
-     */
-    this._data_extents = Object.fromEntries(Object.entries(this._data_flat).map(
-        ([name, values]) => [name, d3.extent(values)]
-    ))
-    /**
-     * Maximum and minimum of the input data
-     * @type {[number, number]}
-     */
-    this._data_extent = d3.extent(Object.values(this._data_extents).flat())
-    /**
      * Full width of svg
      * @type {number}
      */
-    this._full_width = 330.664701211*Math.sqrt(Object.keys(this._data_flat).length) + -170.664701211 + this.yaxis_padding
+    this._full_width = 330.664701211*Math.sqrt(this._data.length) + -170.664701211 + this.yaxis_padding
     /**
      * Full height of svg
      * @type {number}
      */
     this._full_height = 423
     /**
-     * Non-graphic components of the chart: setting, scales, etc.
+     * Non-graphic components of the chart: setting, scales,
+     * axis generators, spacing, etc.
      * @private
+     * @type {{
+     *  margin: {
+     *      top: number,
+     *      right: number,
+     *      bottom: number,
+     *      left: number
+     *  },
+     *  width: number,
+     *  height: number,
+     *  yscale: d3.scaleLinear,
+     *  yticks_division: number,
+     *  yaxis: d3.axisGenerator,
+     *  violin_scale: {initial: number, value: number},
+     *  box_scale: {initial: number, value: number},
+     *  xscale: d3.scaleBand,
+     *  xaxis: d3.axisGenerator,
+     *  xticklabel_angle: number,
+     *  n_bins: {initial: number, value: number}[],
+     *  histogram: d3.binGenerator[],
+     *  bins: d3.Bin[][],
+     *  supported_curves: string[],
+     *  violin_curve: string
+     * }}
      */
     this._chart = {}
     this._chart.margin = { top: 15, right: 4, bottom: 31, left: this.yaxis_padding }
@@ -179,49 +174,58 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
     this._chart.yaxis = d3.axisLeft(this._chart.yscale)
         .tickFormat((d, i) => i % this._chart.yticks_division ? '' : d.toFixed(1))
         .ticks(19)
-    this._chart.violin_scale_default = 0.8
-    this._chart.violin_scale = this._chart.violin_scale_default
-    this._chart.box_scale_default = 0.3
-    this._chart.box_scale = this._chart.box_scale_default
+    this._chart.violin_scale = {initial: 0.8, value: 0.8}
+    this._chart.box_scale = {initial: 0.3, value: 0.3}
     this._chart.xscale = d3.scaleBand()
-        .domain(this._cg_names)
+        .domain(this._data.map((ele) => join_key(ele.key)))
         .range([0, this._chart.width])
         // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
-        .tickFormat((d) => split_class_group_name(d)[1])
+        .tickFormat((d) => split_key(d)[1])
     this._chart.xticklabel_angle = options.xticklabel_angle || 0
-    this._chart.n_bins_default = Object.fromEntries(Object.entries(this._data_flat).map(
-        ([name, values]) => [name, compute_n_bins.sturges(values)]
-    ))
-    this._chart.n_bins = deepcopy(this._chart.n_bins_default)
-    this._chart.histogram = Object.fromEntries(Object.entries(this._data_extents).map(
-        ([name, extent]) => {
-            return [
-                name,
-                d3.bin().domain(extent).thresholds(
-                    linspace(extent[0], extent[1], this._chart.n_bins[name])
-                )
-            ]
+    this._chart.n_bins = this._data.map((ele) => {
+        const initial_value = compute_n_bins.sturges(ele.values)
+        return {
+            initial: initial_value,
+            value: initial_value,
         }
-    ))
-    this._chart.bins = Object.fromEntries(Object.entries(this._data_flat).map(
-        ([name, values]) => [name, this._chart.histogram[name](values)]
-    ))
+    })
+    this._chart.histogram = this._data.map((ele, i) => {
+        return d3.bin().domain(ele.extent)
+            .thresholds(
+                linspace(extent[0], extent[1], this._chart.n_bins[i].value)
+            )
+    })
+    this._chart.bins = this._data.map((ele, i) => {
+        return this._chart.histogram[i](ele.values)
+    })
     this._chart.supported_curves = [
         'Basis', 'Bump Y', 'Cardinal', 'Catmull-Rom', 'Linear',
         'Monotone Y', 'Natural', 'Step'
     ]
     this._chart.violin_curve = CURVES[this._chart.supported_curves[0]]
     /**
-     * Graphic components of the chart: d3 selection objects
-     * Either a map from name to selection or a map from
-     * collection name to name to selection
+     * Graphic components of the chart
      * @private
-     * @type {Object.<string, d3.selection | Object.<string, d3.selection>>}
+     * @type {{
+     *  root_g: d3.selection,
+     *  xaxwl_g: d3.selection
+     *  xaxis_g: d3.selection,
+     *  yaxwl_g: d3.selection,
+     *  yaxis_g: d3.selection,
+     *  key2_dividers_g: d3.selection,
+     *  violins_g: d3.selection,
+     *  violins: d3.selection[],
+     *  boxes_g: d3.selection,
+     *  outliers: d3.selection[],
+     *  tooltip_div: d3.selection
+     * }}
      */
     this._graphics = {
         // Root g tag (translated to account for the margins)
         root_g: null,
+        // g tag for the x-axis and label
+        yaxwl_g: null,
         // g tag for the x-axis
         xaxis_g: null,
         // g tag for the y-axis and label
@@ -232,18 +236,25 @@ export function boxvio_chart_wrapper(div_wrapper, data, options) {
         cdividers_g: null,
         // g tag grouping all violins
         violins_g: null,
-        // individual g tag for each violin (mapped by group name)
-        violins: {},
+        // individual g tag for each violin
+        violins: [],
         // g tag grouping all boxes
         boxes_g: null,
-        // per group: g tag grouping all outliers of the group
-        outliers: {},
+        // per group: g tag grouping all outliers of each box
+        outliers: [],
         // div tag of the tooltip
         tooltip_div: null,
     }
     /**
      * Control panel things
+     * TODO: if modifying a particular violin gets slow
+     * because we have to fetch it based on key, we can
+     * keep track of the selected one so that we only fetch
+     * if when the selected key changes. Or something like that
      * @private
+     * @type {{
+     *  max_bins_multiplier: number
+     * }}
      */
     this._controls = {}
     this._controls.max_bins_multiplier = 3
@@ -258,7 +269,7 @@ Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype
  * @name boxvio_chart_wrapper#set_violin_scale
  */
 boxvio_chart_wrapper.prototype.set_violin_scale = function (scale) {
-    this._chart.violin_scale = scale
+    this._chart.violin_scale.value = scale
     // Remove the violin graphics, only leaving its root g tag (violins_g)
     this._graphics.violins_g.selectAll('*').remove()
     this._render_violins(true)
@@ -268,21 +279,21 @@ boxvio_chart_wrapper.prototype.set_violin_scale = function (scale) {
  * Set the number of bins for a particular violin
  * 
  * Updates the chart accordingly
- * @param {string} name name of the group 
+ * @param {number} i the index of the violin
  * @param {number} n_bins number of bins
  * @name boxvio_chart_wrapper#set_n_bins
  */
-boxvio_chart_wrapper.prototype.set_n_bins = function (name, n_bins) {
+boxvio_chart_wrapper.prototype.set_n_bins = function (i, n_bins) {
     const chart = this._chart
-    const extent = this._data_extents[name]
-    chart.n_bins[name] = n_bins
-    chart.histogram[name].thresholds(
+    const extent = this._data[i].extent
+    chart.n_bins[i].value = n_bins
+    chart.histogram[i].thresholds(
         linspace(extent[0], extent[1], n_bins)
     )
-    chart.bins[name] = chart.histogram[name](this._data_flat[name])
+    chart.bins[i] = chart.histogram[i](this._data[i].values)
     // Delete the oath of the existing violin and redraw
-    this._graphics.violins[name].selectAll('*').remove()
-    this._render_violin(name)
+    this._graphics.violins[i].selectAll('*').remove()
+    this._render_violin(i)
 }
 
 /**
@@ -306,7 +317,7 @@ boxvio_chart_wrapper.prototype.set_violin_curve = function (curve_name) {
  * @name boxvio_chart_wrapper#set_box_scale
  */
 boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
-    this._chart.box_scale = scale
+    this._chart.box_scale.value = scale
     // Remove the box graphics, only leaving its root g tag (boxes_g)
     this._graphics.boxes_g.selectAll('*').remove()
     this._render_boxes(true)
@@ -334,12 +345,12 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
     this._graphics.root_g = this.svg.append('g')
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
 
-    this._render_axis()
-    this._render_ygrid()
-    this._render_class_dividers()
-    this._render_violins()
-    this._render_boxes()
-    this._render_tooltip()
+    // this._render_axis()
+    // this._render_ygrid()
+    // this._render_class_dividers()
+    // this._render_violins()
+    // this._render_boxes()
+    // this._render_tooltip()
 
 }
 
@@ -718,12 +729,12 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (cg_name) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
     d3_chart_wrapper.prototype.render_control_panel.call(this)
 
-    this._render_grid_select()
-    this._render_xticklabel_angle_slider()
-    this._render_violin_curve_selector()
-    this._render_checkboxes()
-    this._render_scale_sliders()
-    this._render_n_bins_control()
+    // this._render_grid_select()
+    // this._render_xticklabel_angle_slider()
+    // this._render_violin_curve_selector()
+    // this._render_checkboxes()
+    // this._render_scale_sliders()
+    // this._render_n_bins_control()
 
 }
 
@@ -1103,20 +1114,19 @@ function calc_metrics(values) {
 const SPLITTER = '_^PoT3sRanaCantora_'
 
 /**
- * Join class and group name together
- * @param {string} cname the class name
- * @param {string} gname the group name
+ * Join key array into a string
+ * @param {string[]} key the key
  * @returns {string} the join
  */
-function join_class_group_name(cname, gname) {
-    return `${cname}${SPLITTER}${gname}`
+function join_key(key) {
+    return key.join(SPLITTER)
 }
 
 /**
- * Split class and group name
- * @param {string} name the combination of class and group name 
- * @returns {[number, number]} the class and group name
+ * Split key string into array
+ * @param {string} key the key join
+ * @returns {string[]} the split key
  */
-function split_class_group_name(name) {
-    return name.split(SPLITTER)
+function split_key(key) {
+    return key.split(SPLITTER)
 }

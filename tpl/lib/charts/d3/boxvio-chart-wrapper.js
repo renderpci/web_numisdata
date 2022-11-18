@@ -57,10 +57,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
         throw new Error("Data array is empty")
     }
     /**
-     * Data: key (general to specific components) to values,
+     * Data: key (general to specific components), index, values,
      * boxplot metrics, outliers, extent (min and max)
      * @type {{
      *  key: string[],
+     *  index: number
      *  values: number[],
      *  metrics: {
      *      max: number,
@@ -81,7 +82,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
     this._data = sort_xaxis
                  ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
                  : data
-    for (const ele of this._data) {
+    for (const [i, ele] of this._data.entries()) {
+        ele.index = i
         ele.metrics = calc_metrics(ele.values)
         ele.outliers = ele.values.filter(
             (v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
@@ -258,11 +260,13 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
      * if when the selected key changes. Or something like that
      * @private
      * @type {{
-     *  max_bins_multiplier: number
+     *  max_bins_multiplier: number,
+     *  selected_index: number
      * }}
      */
     this._controls = {}
     this._controls.max_bins_multiplier = 3
+    this._controls.selected_index = 0
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
@@ -326,13 +330,53 @@ boxvio_chart_wrapper.prototype._get_key_templates = function (i) {
     // Remove duplicates
     const templates = [templates_wd[0]]
     let tmp_template = templates_wd[0]
-    for (const template of templates_wd) {
+    for (const template of templates_wd.slice(1)) {
         if (!array_equal(tmp_template, template)) {
             templates.push(template)
             tmp_template = template
         }
     }
     return templates
+}
+
+/**
+ * Get the possible values of the next key component, given a partial key.
+ * E.g., if there are 4 components, and you provide the two leftmost ones
+ * in the partial key, possible values for the third leftmost one will be
+ * given
+ * @param {string[]} pkey partial key
+ * @returns {string[]} possible values for the next key component
+ */
+boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) {
+    const psize = pkey.length
+    if (psize >= this._key_size) {
+        throw new Error(`Input key ${pkey} is longer than the data keys`)
+    }
+    const key_tpl = pkey.concat(Array(this._key_size-psize).fill(null))
+    const values_wd = this._query_data(key_tpl).map((ele) => ele.key[psize])
+    if (!values_wd.length) return values_wd
+    const values = [values_wd[0]]
+    let current_value = values_wd[0]
+    for (const value of values_wd.slice(1)) {
+        if (value !== current_value) {
+            values.push(value)
+            current_value = value
+        }
+    }
+    return values
+}
+
+/**
+ * Get the index of a key
+ * @param {string[]} key the key 
+ * @returns the index of the key
+ */
+boxvio_chart_wrapper.prototype.get_index_of_key = function (key) {
+    const i = this._data.findIndex((ele) => ele.key.join() === key.join())
+    if (i === -1) {
+        throw new Error(`Key ${key} was not found in data`)
+    }
+    return i
 }
 
 /**
@@ -361,7 +405,7 @@ boxvio_chart_wrapper.prototype.set_n_bins = function (i, n_bins) {
     const extent = this._data[i].extent
     chart.n_bins[i].value = n_bins
     chart.histogram[i].thresholds(
-        linspace(extent[0], extent[1], n_bins)
+        linspace(extent[0], extent[1], n_bins+1)
     )
     chart.bins[i] = chart.histogram[i](this._data[i].values)
     // Delete the oath of the existing violin and redraw
@@ -820,10 +864,10 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 
     this._render_grid_select()
     this._render_xticklabel_angle_slider()
-    // this._render_violin_curve_selector()
+    this._render_violin_curve_selector()
     this._render_checkboxes()
     this._render_scale_sliders()
-    // this._render_n_bins_control()
+    this._render_n_bins_control()
 
 }
 
@@ -1107,72 +1151,110 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
  * @name boxvio_chart_wrapper#_render_n_bins_control
  */
 boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
-    const group_select_id = `${this.id_string()}_group_select`
-    const group_select = common.create_dom_element({
-        element_type: 'select',
-        id: group_select_id,
-        parent: this.controls_container,
-        // TODO: add ARIA attributes?
-    })
-    for (const name of this._cg_names) {
-        common.create_dom_element({
-            element_type: 'option',
-            value: name,
-            text_content: this._class_names.length > 1 ?
-                          split_class_group_name(name).join(' ') :
-                          split_class_group_name(name)[1],
-            parent: group_select,
+    // Render selects for the different key components
+    const key_selects = []
+    /**
+     * Inner function for populating a key select tag
+     * Previous key tags must be populated already
+     * @param {number} i index of the key select 
+     */
+    const populate_key_select = (i) => {
+        key_selects[i].replaceChildren()  // Delete existing children
+        const pkey = key_selects.slice(0, i).map((key_select) => key_select.value)
+        const values = this._get_next_key_component_values(pkey)
+        for (const value of values) {
+            common.create_dom_element({
+                element_type: 'option',
+                value: value,
+                text_content: value,
+                parent: key_selects[i],
+            })
+        }
+    }
+    for (let i = 0; i < this._key_size; i++) {
+        const select_id = `${this.id_string()}_key${this._key_size-i}_select`
+        const label = common.create_dom_element({
+            element_type: 'label',
+            text_content: this._key_titles[i],
+            parent: this.controls_container,
+        })
+        label.setAttribute('for', select_id)
+        const key_select = common.create_dom_element({
+            element_type: 'select',
+            id: select_id,
+            parent: this.controls_container,
+        })
+        key_selects.push(key_select)
+        populate_key_select(i)
+        key_select.addEventListener('change', () => {
+            // Repopulate the next key selects
+            for (let j = i+1; j < key_selects.length; j++) {
+                populate_key_select(j)
+            }
+            // Update the selected index
+            this._controls.selected_index = this.get_index_of_key(
+                key_selects.map((ks) => ks.value)
+            )
+            // Update the violin n bins slider
+            violin_n_bins_slider.setAttribute(
+                'max',
+                this._controls.max_bins_multiplier
+                    * this._chart.n_bins[this._controls.selected_index].initial
+            )
+            violin_n_bins_slider.value
+                = this._chart.n_bins[this._controls.selected_index].value
         })
     }
-    group_select.addEventListener('change', () => {
-        const name = group_select.value
-        violin_n_bins_slider.setAttribute(
-            'max',
-            this._controls.max_bins_multiplier * this._chart.n_bins_default[name]
-        )
-        violin_n_bins_slider.value = this._chart.n_bins[name]
-    })
 
+    // Slider for n bins
+    const violin_n_bins_slider_id = `${this.id_string()}_violin_n_bins_slider`
+    const violin_n_bins_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.violin_resolution || 'Violin resolution',
+        parent: this.controls_container,
+    })
+    violin_n_bins_label.setAttribute('for', violin_n_bins_slider_id)
     const violin_n_bins_slider = common.create_dom_element({
         element_type: 'input',
         type: 'range',
-        // value: this._chart.violin_scale_default,  // This does not work here?
+        id: violin_n_bins_slider_id,
         parent: this.controls_container,
     })
-    violin_n_bins_slider.setAttribute('min', 1)
+    violin_n_bins_slider.setAttribute('min', 2)
     violin_n_bins_slider.setAttribute(
         'max',
-        this._controls.max_bins_multiplier * this._chart.n_bins_default[group_select.value]
+        this._controls.max_bins_multiplier
+            * this._chart.n_bins[this._controls.selected_index].initial
     )
-    violin_n_bins_slider.value = this._chart.n_bins[group_select.value]
+    violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
     violin_n_bins_slider.addEventListener('input', () => {
-        this.set_n_bins(group_select.value, Number(violin_n_bins_slider.value))
+        this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
     })
 
+    // Reset n bins
     const violin_n_bins_slider_reset = common.create_dom_element({
         element_type: 'button',
         type: 'button',
-        text_content: 'Reset',
+        text_content: tstring.reset || 'Reset',
         parent: this.controls_container,
     })
     violin_n_bins_slider_reset.addEventListener('click', () => {
-        const name = group_select.value
-        violin_n_bins_slider.value = this._chart.n_bins_default[name]
-        this.set_n_bins(name, Number(violin_n_bins_slider.value))
+        violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
+        this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
     })
 
+    // Reset all n bins
     const violin_all_n_bins_slider_reset = common.create_dom_element({
         element_type: 'button',
         type: 'button',
-        text_content: 'Reset all bins',
+        text_content: tstring.reset_all_violins || 'Reset all violins',
         parent: this.controls_container,
     })
     violin_all_n_bins_slider_reset.addEventListener('click', () => {
-        const name = group_select.value
         // Update the value of the slider
-        violin_n_bins_slider.value = this._chart.n_bins_default[name]
-        for (const [name, n_bins] of Object.entries(this._chart.n_bins_default)) {
-            this.set_n_bins(name, n_bins)
+        violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
+        for (const [i, n_bins] of this._chart.n_bins.entries()) {
+            this.set_n_bins(i, n_bins.initial)
         }
     })
 }

@@ -17,7 +17,7 @@ export function toggle_visibility(element) {
  * https://gist.github.com/davebiagioni/1ac21feb1c2db04be4e6
  * @param {number} start start value
  * @param {number} stop stop value
- * @param {number} nsteps amount of spets
+ * @param {number} nsteps amount of steps
  * @returns {number[]} the values
  */
 export function linspace(start, stop, nsteps){

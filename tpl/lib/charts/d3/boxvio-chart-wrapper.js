@@ -4,7 +4,7 @@ import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
 import { toggle_visibility, linspace, CURVES } from "./utils";
 import { compute_n_bins } from "../compute-n-bins";
-import { deepcopy, insert_after } from "../utils"
+import { array_equal, deepcopy, insert_after } from "../utils"
 
 
 /**
@@ -17,7 +17,6 @@ const TOOLTIP_STYLE = {
     'padding-left': '0.8em',
     'font-size': '0.9em',
 }
-
 
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
@@ -33,7 +32,7 @@ const TOOLTIP_STYLE = {
  * 
  * @param {Element} div_wrapper the div to work in
  * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
- *        with key (array of components) and values (the datapoints)
+ *        with key (array of components, from general to specific) and values (the datapoints)
  *        (KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
@@ -58,8 +57,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
         throw new Error("Data array is empty")
     }
     /**
-     * Data: key to values, boxplot metrics, outliers,
-     * extent (min and max)
+     * Data: key (general to specific components) to values,
+     * boxplot metrics, outliers, extent (min and max)
      * @type {{
      *  key: string[],
      *  values: number[],
@@ -94,6 +93,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
      * @type {[number, number]}
      */
     this._data_extent = d3.extent(this._data.map((ele) => ele.extent).flat())
+    /**
+     * Existing keys as strings
+     * @type {string[]}
+     * @private
+     */
+    this._key_strings = this._data.map((ele) => join_key(ele.key))
     /**
      * Number of components of the key
      * @type {number}
@@ -177,7 +182,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
     this._chart.violin_scale = {initial: 0.8, value: 0.8}
     this._chart.box_scale = {initial: 0.3, value: 0.3}
     this._chart.xscale = d3.scaleBand()
-        .domain(this._data.map((ele) => join_key(ele.key)))
+        .domain(this._key_strings)
         .range([0, this._chart.width])
         // .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
     this._chart.xaxis = d3.axisBottom(this._chart.xscale)
@@ -261,6 +266,74 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
+
+/**
+ * Query the data given a key template
+ * @param {string[]} key_tpl the key template. Parts will be matched,
+ * `null` counts as wildcard
+ * @return {{
+ *  key: string[],
+ *  values: number[],
+ *  metrics: {
+ *      max: number,
+ *      upper_fence: number,
+ *      quartile3: number,
+ *      median: number,
+ *      mean: number,
+ *      iqr: number,
+ *      quartile1: number,
+ *      lower_fence: number,
+ *      min: number
+ *  },
+ *  outliers: number[],
+ *  extent: [number, number]
+ * }[]} the filtered data
+ */
+boxvio_chart_wrapper.prototype._query_data = function (key_tpl) {
+    if (key_tpl.length !== this._key_size) {
+        throw new Error("Key template is of different size than the plot keys")
+    }
+    return this._data.filter((ele) => {
+        const key = ele.key
+        for (let i = 0; i < key.length; i++) {
+            if (key_tpl[i] && key_tpl[i] !== key[i]) {
+                return false
+            }
+        }
+        return true
+    })
+}
+
+/**
+ * Get key templates up to a key number
+ * @param {number} i the key number. If 1, all existing keys
+ *        will be returned. If 2, all existing keys with a wildcard in
+ *        the last component will be returned. If 3, all existing keys
+ *        with a wildcard in the last and second-to-last component will
+ *        be returned.
+ * @returns {string[][]} the templates
+ */
+boxvio_chart_wrapper.prototype._get_key_templates = function (i) {
+    if (i < 1 || i > this._key_size) {
+        throw new Error(`Invalid key number ${i}`)
+    }
+    // Convert to real index
+    i = this._key_size - i
+    const templates_wd = this._data.map((ele) => {
+        return deepcopy(ele.key.slice(0,i+1)).concat(Array(this._key_size-i-1).fill(null))
+    })
+    if (!templates_wd.length) return templates_wd
+    // Remove duplicates
+    const templates = [templates_wd[0]]
+    let tmp_template = templates_wd[0]
+    for (const template of templates_wd) {
+        if (!array_equal(tmp_template, template)) {
+            templates.push(template)
+            tmp_template = template
+        }
+    }
+    return templates
+}
 
 /**
  * Set the scale for the violins
@@ -347,7 +420,9 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 
     this._render_axis()
     this._render_ygrid()
-    // this._render_class_dividers()
+    if (this._key_size > 1) {
+        this._render_key2_dividers()
+    }
     // this._render_violins()
     // this._render_boxes()
     // this._render_tooltip()
@@ -480,18 +555,26 @@ boxvio_chart_wrapper.prototype.apply_ygrid_mode = function (mode) {
     }
 }
 
-boxvio_chart_wrapper.prototype._render_class_dividers = function () {
-    this._graphics.cdividers_g = this._graphics.root_g.append('g')
-    const cdividers_g = this._graphics.cdividers_g
+/**
+ * Render the dividers for key2
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_key2_dividers
+ */
+boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
+    this._graphics.key2_dividers_g = this._graphics.root_g.append('g')
+    const dividers_g = this._graphics.key2_dividers_g
     const color = 'gray'
+    const key_tpls = this._get_key_templates(2)
 
     let i = 0;
-    for (const [index, cname] of this._class_names.entries()) {
-        const x = this._chart.xscale(this._cg_names[i])
-        const cdivider_g = cdividers_g.append('g')
+    for (const [index, key_tpl] of key_tpls.entries()) {
+        const queried_data = this._query_data(key_tpl)
+        const x = this._chart.xscale(this._key_strings[i])
+        const divider_g = dividers_g.append('g')
             .attr('transform', `translate(${x},0)`)
         if (index !== 0) {
-            cdivider_g.append('line')
+            divider_g.append('line')
                 .attr('x1', 0)
                 .attr('y1', 0)
                 .attr('x2', 0)
@@ -500,16 +583,16 @@ boxvio_chart_wrapper.prototype._render_class_dividers = function () {
                 .attr('stroke-width', 0.9)
                 .attr('stroke-dasharray', this._chart.height/35)
         }
-        cdivider_g.append('text')
+        divider_g.append('text')
             .attr('text-anchor', 'end')
             .attr('transform', 'rotate(-90)')
             .attr('y', '1.3em')  // This is the horizontal axis now
             .attr('x', '-0.6em')  // This is the vertical axis now
             .attr('font-size', '0.8em')
             .attr('fill', color)
-            .text(cname)
+            .text(key_tpl[key_tpl.length-2])
         // Increase the index by the number of groups in the class
-        i += Object.keys(this._data[cname]).length
+        i += queried_data.length
     }
 }
 
@@ -740,12 +823,18 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
     this._render_grid_select()
     this._render_xticklabel_angle_slider()
     // this._render_violin_curve_selector()
-    // this._render_checkboxes()
+    this._render_checkboxes()
     // this._render_scale_sliders()
     // this._render_n_bins_control()
 
 }
 
+/**
+ * Render the selector for grid mode
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_grid_select
+ */
 boxvio_chart_wrapper.prototype._render_grid_select = function () {
     const grid_select_id = `${this.id_string()}_grid_select`
     const grid_select = common.create_dom_element({
@@ -754,14 +843,24 @@ boxvio_chart_wrapper.prototype._render_grid_select = function () {
         parent: this.controls_container,
         // TODO: add ARIA attributes?
     })
-    for (const mode of ['None', 'Major', 'Major + Minor']) {
-        common.create_dom_element({
-            element_type: 'option',
-            value: mode,
-            text_content: mode,
-            parent: grid_select,
-        })
-    }
+    common.create_dom_element({
+        element_type: 'option',
+        value: 'None',
+        text_content: tstring.none_f || 'None',
+        parent: grid_select,
+    })
+    common.create_dom_element({
+        element_type: 'option',
+        value: 'Major',
+        text_content: tstring.major || 'Major',
+        parent: grid_select,
+    })
+    common.create_dom_element({
+        element_type: 'option',
+        value: 'Major + Minor',
+        text_content: tstring.major_minor || 'Major + Minor',
+        parent: grid_select,
+    })
     grid_select.addEventListener('change', () => {
         const mode = grid_select.value
         this.apply_ygrid_mode(mode)
@@ -824,101 +923,103 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function () {
  * @name boxvio_chart_wrapper#_render_checkboxes
  */
 boxvio_chart_wrapper.prototype._render_checkboxes = function () {
-    const show_classes_checkbox_id = `${this.id_string()}_show_classes_checkbox`
+    const show_key2_checkbox_id = `${this.id_string()}_show_key2_checkbox`
     /** @type {Element} */
-    const show_classes_checkbox = common.create_dom_element({
+    const show_key2_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
-        id: show_classes_checkbox_id,
+        id: show_key2_checkbox_id,
         parent: this.controls_container,
     })
-    show_classes_checkbox.checked = true
+    show_key2_checkbox.checked = true
     /** @type {Element} */
-    const show_classes_label = common.create_dom_element({
+    const show_key2_label = common.create_dom_element({
         element_type: 'label',
-        text_content: 'Show classes',
+        text_content: (tstring.show || 'Show')
+                      + ' '
+                      + this._key_titles[this._key_size-2].toLowerCase(),
         parent: this.controls_container,
     })
-    show_classes_label.setAttribute('for', show_classes_checkbox_id)
-    show_classes_checkbox.addEventListener('change', () => {
-        toggle_visibility(this._graphics.cdividers_g)
+    show_key2_label.setAttribute('for', show_key2_checkbox_id)
+    show_key2_checkbox.addEventListener('change', () => {
+        toggle_visibility(this._graphics.key2_dividers_g)
     })
     
-    const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
-    /** @type {Element} */
-    const show_violins_checkbox = common.create_dom_element({
-        element_type: 'input',
-        type: 'checkbox',
-        id: show_violins_checkbox_id,
-        parent: this.controls_container,
-    })
-    show_violins_checkbox.checked = true
-    /** @type {Element} */
-    const show_violins_label = common.create_dom_element({
-        element_type: 'label',
-        text_content: tstring.show_violins || 'Show violins',
-        parent: this.controls_container,
-    })
-    show_violins_label.setAttribute('for', show_violins_checkbox_id)
-    show_violins_checkbox.addEventListener('change', () => {
-        toggle_visibility(this._graphics.violins_g)
-    })
+    // const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
+    // /** @type {Element} */
+    // const show_violins_checkbox = common.create_dom_element({
+    //     element_type: 'input',
+    //     type: 'checkbox',
+    //     id: show_violins_checkbox_id,
+    //     parent: this.controls_container,
+    // })
+    // show_violins_checkbox.checked = true
+    // /** @type {Element} */
+    // const show_violins_label = common.create_dom_element({
+    //     element_type: 'label',
+    //     text_content: tstring.show_violins || 'Show violins',
+    //     parent: this.controls_container,
+    // })
+    // show_violins_label.setAttribute('for', show_violins_checkbox_id)
+    // show_violins_checkbox.addEventListener('change', () => {
+    //     toggle_visibility(this._graphics.violins_g)
+    // })
 
-    const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
-    /**
-     * Checkbox for showing boxes
-     * @type {Element}
-     */
-     const show_boxes_checkbox = common.create_dom_element({
-        element_type: 'input',
-        type: 'checkbox',
-        id: show_boxes_checkbox_id,
-        parent: this.controls_container,
-    })
-    show_boxes_checkbox.checked = true
-    /**
-     * Checkbox label for density plot
-     * @type {Element}
-     */
-    const show_boxes_label = common.create_dom_element({
-        element_type: 'label',
-        text_content: 'Show boxes',
-        parent: this.controls_container,
-    })
-    show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
-    show_boxes_checkbox.addEventListener('change', () => {
-        toggle_visibility(this._graphics.boxes_g)
-        // (DISABLED) Disable the checkbox for outliers (defined below)
-        // show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
-    })
+    // const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
+    // /**
+    //  * Checkbox for showing boxes
+    //  * @type {Element}
+    //  */
+    //  const show_boxes_checkbox = common.create_dom_element({
+    //     element_type: 'input',
+    //     type: 'checkbox',
+    //     id: show_boxes_checkbox_id,
+    //     parent: this.controls_container,
+    // })
+    // show_boxes_checkbox.checked = true
+    // /**
+    //  * Checkbox label for density plot
+    //  * @type {Element}
+    //  */
+    // const show_boxes_label = common.create_dom_element({
+    //     element_type: 'label',
+    //     text_content: 'Show boxes',
+    //     parent: this.controls_container,
+    // })
+    // show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
+    // show_boxes_checkbox.addEventListener('change', () => {
+    //     toggle_visibility(this._graphics.boxes_g)
+    //     // (DISABLED) Disable the checkbox for outliers (defined below)
+    //     // show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+    // })
 
-    const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
-    /**
-     * Checkbox for showing outliers
-     * @type {Element}
-     */
-    const show_outliers_checkbox = common.create_dom_element({
-        element_type: 'input',
-        type: 'checkbox',
-        id: show_outliers_checkbox_id,
-        parent: this.controls_container,
-    })
-    show_outliers_checkbox.checked = true
-    /**
-     * Checkbox label for density plot
-     * @type {Element}
-     */
-    const show_outliers_label = common.create_dom_element({
-        element_type: 'label',
-        text_content: 'Show outliers',
-        parent: this.controls_container,
-    })
-    show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
-    show_outliers_checkbox.addEventListener('change', () => {
-        for (const group of Object.values(this._graphics.outliers)) {
-            toggle_visibility(group)
-        }
-    })
+    // const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
+    // /**
+    //  * Checkbox for showing outliers
+    //  * @type {Element}
+    //  */
+    // const show_outliers_checkbox = common.create_dom_element({
+    //     element_type: 'input',
+    //     type: 'checkbox',
+    //     id: show_outliers_checkbox_id,
+    //     parent: this.controls_container,
+    // })
+    // show_outliers_checkbox.checked = true
+    // /**
+    //  * Checkbox label for density plot
+    //  * @type {Element}
+    //  */
+    // const show_outliers_label = common.create_dom_element({
+    //     element_type: 'label',
+    //     text_content: 'Show outliers',
+    //     parent: this.controls_container,
+    // })
+    // show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
+    // show_outliers_checkbox.addEventListener('change', () => {
+    //     for (const group of Object.values(this._graphics.outliers)) {
+    //         toggle_visibility(group)
+    //     }
+    // })
 }
 
 /**

@@ -306,9 +306,9 @@ export const analysis =  {
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
 					this.weight_chart_container,
 					weights,
-					['Mint', 'Number & Key'],
+					[tstring.mint || 'Mint', tstring.number_key || 'Number & Key'],
 					{
-						ylabel: 'Weight',
+						ylabel: tstring.weight || 'Weight',
 						overflow: true,
 						display_control_panel: true,
 						display_download: true,
@@ -328,9 +328,9 @@ export const analysis =  {
 				// this.diameter_chart_wrapper = new boxvio_chart_wrapper(
 				// 	this.diameter_chart_container,
 				// 	diameters,
-				//  ['Mint', 'Number & Key'],
+				//  [tstring.mint || 'Mint', tstring.number_key || 'Number & Key'],
 				// 	{
-				// 		ylabel: 'Diameter',
+				// 		ylabel: tstring.diameter || 'Diameter',
 				// 		overflow: true,
 				// 		display_control_panel: true,
 				// 		display_download: true,

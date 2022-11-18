@@ -132,7 +132,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
      * Full height of svg
      * @type {number}
      */
-    this._full_height = 423
+    this._full_height = 453
     /**
      * Non-graphic components of the chart: setting, scales,
      * axis generators, spacing, etc.
@@ -162,7 +162,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
      * }}
      */
     this._chart = {}
-    this._chart.margin = { top: 15, right: 4, bottom: 31, left: this.yaxis_padding }
+    this._chart.margin = { top: 15, right: 4, bottom: 61, left: this.yaxis_padding }
     this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
     this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
     this._chart.yscale = d3.scaleLinear()
@@ -193,7 +193,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
     this._chart.histogram = this._data.map((ele, i) => {
         return d3.bin().domain(ele.extent)
             .thresholds(
-                linspace(extent[0], extent[1], this._chart.n_bins[i].value)
+                linspace(ele.extent[0], ele.extent[1], this._chart.n_bins[i].value+1)
             )
     })
     this._chart.bins = this._data.map((ele, i) => {
@@ -345,8 +345,8 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
     this._graphics.root_g = this.svg.append('g')
         .attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
 
-    // this._render_axis()
-    // this._render_ygrid()
+    this._render_axis()
+    this._render_ygrid()
     // this._render_class_dividers()
     // this._render_violins()
     // this._render_boxes()
@@ -362,13 +362,19 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
  */
 boxvio_chart_wrapper.prototype._render_axis = function () {
     const g = this._graphics.root_g
-    // Render x axis
-    this._graphics.xaxis_g = g.append('g')
-    const xaxis_g = this._graphics.xaxis_g
-    xaxis_g
+    // Render X axis
+    this._graphics.xaxwl_g = g.append('g')
         .attr('transform', `translate(0,${this._chart.height})`)
+    const xaxwl_g = this._graphics.xaxwl_g
+    this._graphics.xaxis_g = xaxwl_g.append('g')
         .call(this._chart.xaxis)
     this.apply_xticklabel_angle()
+    // Render X axis label
+    xaxwl_g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('y', 50)
+        .attr('x', this._chart.width / 2)
+        .text(this._key_titles[this._key_titles.length-1])
     
     // Render y axis
     this._graphics.yaxwl_g = g.append('g')
@@ -427,9 +433,9 @@ boxvio_chart_wrapper.prototype._render_ygrid = function () {
         .attr('y1', 0)
         .attr('x2', this._chart.width)
         .attr('y2', 0)
-        .attr('stroke', (d, i) => i % 2 ? '#E0E0E0' : '#D1D1D1')
-        .attr('stroke-width', (d, i) => i % 2 ? 0.5 : 0.8)
-        .attr('class', (d, i) => i % 2 ? 'minor' : 'major')
+        .attr('stroke', (_, i) => i % 2 ? '#E0E0E0' : '#D1D1D1')
+        .attr('stroke-width', (_, i) => i % 2 ? 0.5 : 0.8)
+        .attr('class', (_, i) => i % 2 ? 'minor' : 'major')
         .attr('opacity', 0)  // disabled by default
 }
 
@@ -441,29 +447,31 @@ boxvio_chart_wrapper.prototype._render_ygrid = function () {
  */
 boxvio_chart_wrapper.prototype.apply_ygrid_mode = function (mode) {
     const major_lines = this._graphics.yaxis_g.selectAll('g.tick line.major')
+    const major_opacity = major_lines.attr('opacity')
     const minor_lines = this._graphics.yaxis_g.selectAll('g.tick line.minor')
+    const minor_opacity = minor_lines.attr('opacity')
     switch (mode) {
         case 'None':
-            if (major_lines.attr('opacity') == 1) {
+            if (major_opacity == 1) {
                 toggle_visibility(major_lines)
             }
-            if (minor_lines.attr('opacity') == 1) {
+            if (minor_opacity == 1) {
                 toggle_visibility(minor_lines)
             }
             break
         case 'Major':
-            if (major_lines.attr('opacity') == 0) {
+            if (major_opacity == 0) {
                 toggle_visibility(major_lines)
             }
-            if (minor_lines.attr('opacity') == 1) {
+            if (minor_opacity == 1) {
                 toggle_visibility(minor_lines)
             }
             break
         case 'Major + Minor':
-            if (major_lines.attr('opacity') == 0) {
+            if (major_opacity == 0) {
                 toggle_visibility(major_lines)
             }
-            if (minor_lines.attr('opacity') == 0) {
+            if (minor_opacity == 0) {
                 toggle_visibility(minor_lines)
             }
             break
@@ -729,8 +737,8 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (cg_name) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
     d3_chart_wrapper.prototype.render_control_panel.call(this)
 
-    // this._render_grid_select()
-    // this._render_xticklabel_angle_slider()
+    this._render_grid_select()
+    this._render_xticklabel_angle_slider()
     // this._render_violin_curve_selector()
     // this._render_checkboxes()
     // this._render_scale_sliders()

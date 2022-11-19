@@ -16,6 +16,7 @@ const TOOLTIP_STYLE = {
     'padding': '0.7em',
     'padding-left': '0.8em',
     'font-size': '0.9em',
+    'display': 'none',
 }
 
 /**
@@ -83,7 +84,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
                  ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
                  : data
     for (const [i, ele] of this._data.entries()) {
-        ele.index = i
         ele.metrics = calc_metrics(ele.values)
         ele.outliers = ele.values.filter(
             (v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
@@ -469,7 +469,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
     }
     this._render_violins()
     this._render_boxes()
-    // this._render_tooltip()
+    this._render_tooltip()
 
 }
 
@@ -704,6 +704,7 @@ boxvio_chart_wrapper.prototype._render_violin = function (i) {
 }
 
 /**
+ * TODO: refactor
  * Render the boxes (including whiskers and outliers)
  * @function
  * @private
@@ -799,12 +800,13 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
             .attr('stroke', 'black')
             .attr('stroke-width', 2)
         // Circle events for tooltip
-        // circle.on('mouseover', () => {
-        //     this._graphics.tooltip_div.style('display', null)
-        //     this.tooltip_hover(name)
-        // }).on('mouseout', () => {
-        //     this._graphics.tooltip_div.style('display', 'none')
-        // })
+        circle.on('mouseover', () => {
+            console.log(this)
+            this._graphics.tooltip_div.style('display', null)
+            this.tooltip_hover(i)
+        }).on('mouseout', () => {
+            this._graphics.tooltip_div.style('display', 'none')
+        })
     }
 
 }
@@ -824,7 +826,6 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
     insert_after(tooltip_element, this.plot_container)
     this._graphics.tooltip_div = d3.select(tooltip_element)
     const tooltip_div = this._graphics.tooltip_div
-    tooltip_div.style('display', 'none')
     for (const [k, v] of Object.entries(TOOLTIP_STYLE)) {
         tooltip_div.style(k, v)
     }
@@ -833,24 +834,26 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 
 /**
  * Set the tooltip to visible when we hover over
- * @param {string} cg_name the class+group name
+ * @param {number} i index of data
  * @function
  * @name boxvio_chart_wrapper#tooltip_hover
  */
-boxvio_chart_wrapper.prototype.tooltip_hover = function (cg_name) {
-    const metrics = this._metrics[cg_name]
-    const tooltip_text = `<b>${split_class_group_name(cg_name).join(' ')}</b>`
+boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
+    const decimals = 3
+    const key = this._data[i].key
+    const values = this._data[i].values
+    const metrics = this._data[i].metrics
+    const tooltip_text = `<b>${key.join(', ')}</b>`
         + '<span style="font-size: smaller;">'
-        + `<br>Datapoints: ${this._data_flat[cg_name].length}`
-        + `<br>Mean: ${metrics.mean.toFixed(3)}`
-        + `<br>Max: ${metrics.max.toFixed(3)}`
-        + `<br>Q3: ${metrics.quartile3.toFixed(3)}`
-        + `<br>Median: ${metrics.median.toFixed(3)}`
-        + `<br>Q1: ${metrics.quartile1.toFixed(3)}`
-        + `<br>Min: ${metrics.min.toFixed(3)}`
+        + `<br>Datapoints: ${values.length}`
+        + `<br>Mean: ${metrics.mean.toFixed(decimals)}`
+        + `<br>Max: ${metrics.max.toFixed(decimals)}`
+        + `<br>Q3: ${metrics.quartile3.toFixed(decimals)}`
+        + `<br>Median: ${metrics.median.toFixed(decimals)}`
+        + `<br>Q1: ${metrics.quartile1.toFixed(decimals)}`
+        + `<br>Min: ${metrics.min.toFixed(decimals)}`
         + '</span>'
     this._graphics.tooltip_div
-        .style('opacity', 0.9)
         .html(tooltip_text)
 }
 

@@ -30,6 +30,22 @@ const DEFAULT_FLEX_GAP = '1em'
  */
 const DEFUALT_MARGIN = '1em'
 
+/**
+ * Name of the key change event
+ * @type {string}
+ */
+const KEY_CHANGE_EVENT_NAME = 'ch_key_change'
+/**
+ * Key change event
+ * @type {Event}
+ */
+const KEY_CHANGE_EVENT = new Event(KEY_CHANGE_EVENT_NAME)
+/**
+ * Class name for key change listeners
+ * @type {string}
+ */
+const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
+
 
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
@@ -877,6 +893,7 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
     d3_chart_wrapper.prototype.render_control_panel.call(this)
 
+    // TODO: refactor the first three (together)
     const upper_container = common.create_dom_element({
         element_type: 'div',
         parent: this.controls_container,
@@ -892,6 +909,7 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
     this._render_violin_curve_selector(upper_container)
     this._render_checkboxes()
     this._render_scale_sliders()
+    this._render_key_select()
     this._render_n_bins_control()
 
 }
@@ -1272,12 +1290,12 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 }
 
 /**
- * Render the control elements to change the number of bins
+ * Render the key select elements
  * @function
  * @private
- * @name boxvio_chart_wrapper#_render_n_bins_control
+ * @name boxvio_chart_wrapper#_render_key_select
  */
-boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
+boxvio_chart_wrapper.prototype._render_key_select = function () {
     // Render selects for the different key components
     const key_selects = []
     /**
@@ -1322,17 +1340,25 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
             this._controls.selected_index = this.get_index_of_key(
                 key_selects.map((ks) => ks.value)
             )
-            // Update the violin n bins slider
-            violin_n_bins_slider.setAttribute(
-                'max',
-                this._controls.max_bins_multiplier
-                    * this._chart.n_bins[this._controls.selected_index].initial
-            )
-            violin_n_bins_slider.value
-                = this._chart.n_bins[this._controls.selected_index].value
+
+            // Dispatch key change event to all listeners
+            const listeners
+                = this.controls_container.getElementsByClassName(KEY_CHANGE_LISTENER_CLASS_NAME)
+            for (const ele of listeners) {
+                ele.dispatchEvent(KEY_CHANGE_EVENT)
+            }
+            
         })
     }
+}
 
+/**
+ * Render the control elements to change the number of bins
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_render_n_bins_control
+ */
+boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
     // Slider for n bins
     const violin_n_bins_slider_id = `${this.id_string()}_violin_n_bins_slider`
     const violin_n_bins_label = common.create_dom_element({
@@ -1344,18 +1370,25 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
     const violin_n_bins_slider = common.create_dom_element({
         element_type: 'input',
         type: 'range',
+        class_name: KEY_CHANGE_LISTENER_CLASS_NAME,
         id: violin_n_bins_slider_id,
         parent: this.controls_container,
     })
     violin_n_bins_slider.setAttribute('min', 2)
-    violin_n_bins_slider.setAttribute(
-        'max',
-        this._controls.max_bins_multiplier
-            * this._chart.n_bins[this._controls.selected_index].initial
-    )
-    violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
+    const reset = () => {
+        violin_n_bins_slider.setAttribute(
+            'max',
+            this._controls.max_bins_multiplier
+                * this._chart.n_bins[this._controls.selected_index].initial
+        )
+        violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
+    }
+    reset()
     violin_n_bins_slider.addEventListener('input', () => {
         this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
+    })
+    violin_n_bins_slider.addEventListener(KEY_CHANGE_EVENT_NAME, () => {
+        reset()
     })
 
     // Reset n bins

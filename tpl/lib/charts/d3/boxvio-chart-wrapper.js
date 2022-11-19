@@ -988,13 +988,30 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function () {
  * @name boxvio_chart_wrapper#_render_checkboxes
  */
 boxvio_chart_wrapper.prototype._render_checkboxes = function () {
+    // Container div
+    const container_div = common.create_dom_element({
+        element_type: 'div',
+        parent: this.controls_container,
+        style: {
+            'display': 'flex',
+            'direction': 'flex-row',
+            'justify-content': 'space-between',
+            'align-items': 'center',
+        },
+    })
+
+    // Show key 2
+    const show_key2_div = common.create_dom_element({
+        element_type: 'div',
+        parent: container_div,
+    })
     const show_key2_checkbox_id = `${this.id_string()}_show_key2_checkbox`
     /** @type {Element} */
     const show_key2_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
         id: show_key2_checkbox_id,
-        parent: this.controls_container,
+        parent: show_key2_div,
     })
     show_key2_checkbox.checked = true
     /** @type {Element} */
@@ -1003,47 +1020,57 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
         text_content: (tstring.show || 'Show')
                       + ' '
                       + this._key_titles[this._key_size-2].toLowerCase(),
-        parent: this.controls_container,
+        parent: show_key2_div,
     })
     show_key2_label.setAttribute('for', show_key2_checkbox_id)
     show_key2_checkbox.addEventListener('change', () => {
         toggle_visibility(this._graphics.key2_dividers_g)
     })
     
+    // Show violins
+    const show_violins_div = common.create_dom_element({
+        element_type: 'div',
+        parent: container_div,
+    })
     const show_violins_checkbox_id = `${this.id_string()}_show_violins_checkbox`
     /** @type {Element} */
     const show_violins_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
         id: show_violins_checkbox_id,
-        parent: this.controls_container,
+        parent: show_violins_div,
     })
     show_violins_checkbox.checked = true
     /** @type {Element} */
     const show_violins_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.show_violins || 'Show violins',
-        parent: this.controls_container,
+        parent: show_violins_div,
     })
     show_violins_label.setAttribute('for', show_violins_checkbox_id)
     show_violins_checkbox.addEventListener('change', () => {
         toggle_visibility(this._graphics.violins_g)
     })
 
+    // Show boxes
+    const show_boxes_div = common.create_dom_element({
+        element_type: 'div',
+        parent: container_div,
+    })
     const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
     /** @type {Element} */
     const show_boxes_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
         id: show_boxes_checkbox_id,
-        parent: this.controls_container,
+        parent: show_boxes_div,
     })
     show_boxes_checkbox.checked = true
     /** @type {Element} */
     const show_boxes_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.show_boxes || 'Show boxes',
-        parent: this.controls_container,
+        parent: show_boxes_div,
     })
     show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
     show_boxes_checkbox.addEventListener('change', () => {
@@ -1052,20 +1079,25 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
         // show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
     })
 
+    // Show outliers
+    const show_outliers_div = common.create_dom_element({
+        element_type: 'div',
+        parent: container_div,
+    })
     const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
     /** @type {Element} */
     const show_outliers_checkbox = common.create_dom_element({
         element_type: 'input',
         type: 'checkbox',
         id: show_outliers_checkbox_id,
-        parent: this.controls_container,
+        parent: show_outliers_div,
     })
     show_outliers_checkbox.checked = true
     /** @type {Element} */
     const show_outliers_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.show_outliers || 'Show outliers',
-        parent: this.controls_container,
+        parent: show_outliers_div,
     })
     show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
     show_outliers_checkbox.addEventListener('change', () => {

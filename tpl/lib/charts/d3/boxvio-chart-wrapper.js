@@ -468,7 +468,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
         this._render_key2_dividers()
     }
     this._render_violins()
-    // this._render_boxes()
+    this._render_boxes()
     // this._render_tooltip()
 
 }
@@ -722,24 +722,25 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
     }
     const boxes = this._graphics.boxes_g
     const bandwidth = chart.xscale.bandwidth()
-    const box_width = this._chart.box_scale * bandwidth
+    const box_width = this._chart.box_scale.value * bandwidth
 
     const whiskers_lw = 2
     const median_lw = 3
 
     // Iterate over the groups
-    for (const [i, name] of this._cg_names.entries()) {
+    for (const [i, ele] of this._data.entries()) {
 
-        const metrics = this._metrics[name]
+        const metrics = ele.metrics
         const color = this._colors[i]
+        const key = ele.key
 
         const group_box = boxes.append('g')
-            .attr('transform', `translate(${chart.xscale(name) + bandwidth / 2},0)`)
+            .attr('transform', `translate(${chart.xscale(join_key(key)) + bandwidth / 2},0)`)
 
         // Draw outliers
-        this._graphics.outliers[name] = group_box.append('g')
-        const outliers = this._graphics.outliers[name]
-        for (const outlier of this._outliers[name]) {
+        this._graphics.outliers[i] = group_box.append('g')
+        const outliers = this._graphics.outliers[i]
+        for (const outlier of ele.outliers) {
             outliers.append('circle')
                 .attr('cx', 0)
                 .attr('cy', chart.yscale(outlier))
@@ -775,7 +776,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
         // Draw IQR box
         const iqr = group_box.append('g')
         // Only draw rectangle if there is more than 1 datapoint (otherwise NaNs appear)
-        if (this._data_flat[name].length > 1) {
+        if (ele.values.length > 1) {
             iqr.append('rect')  // iqr rect
             .attr('x', -box_width / 2)
             .attr('y', chart.yscale(metrics.quartile3))
@@ -798,12 +799,12 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
             .attr('stroke', 'black')
             .attr('stroke-width', 2)
         // Circle events for tooltip
-        circle.on('mouseover', () => {
-            this._graphics.tooltip_div.style('display', null)
-            this.tooltip_hover(name)
-        }).on('mouseout', () => {
-            this._graphics.tooltip_div.style('display', 'none')
-        })
+        // circle.on('mouseover', () => {
+        //     this._graphics.tooltip_div.style('display', null)
+        //     this.tooltip_hover(name)
+        // }).on('mouseout', () => {
+        //     this._graphics.tooltip_div.style('display', 'none')
+        // })
     }
 
 }
@@ -1027,61 +1028,49 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
         toggle_visibility(this._graphics.violins_g)
     })
 
-    // const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
-    // /**
-    //  * Checkbox for showing boxes
-    //  * @type {Element}
-    //  */
-    //  const show_boxes_checkbox = common.create_dom_element({
-    //     element_type: 'input',
-    //     type: 'checkbox',
-    //     id: show_boxes_checkbox_id,
-    //     parent: this.controls_container,
-    // })
-    // show_boxes_checkbox.checked = true
-    // /**
-    //  * Checkbox label for density plot
-    //  * @type {Element}
-    //  */
-    // const show_boxes_label = common.create_dom_element({
-    //     element_type: 'label',
-    //     text_content: 'Show boxes',
-    //     parent: this.controls_container,
-    // })
-    // show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
-    // show_boxes_checkbox.addEventListener('change', () => {
-    //     toggle_visibility(this._graphics.boxes_g)
-    //     // (DISABLED) Disable the checkbox for outliers (defined below)
-    //     // show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
-    // })
+    const show_boxes_checkbox_id = `${this.id_string()}_show_boxes_checkbox`
+    /** @type {Element} */
+    const show_boxes_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: show_boxes_checkbox_id,
+        parent: this.controls_container,
+    })
+    show_boxes_checkbox.checked = true
+    /** @type {Element} */
+    const show_boxes_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.show_boxes || 'Show boxes',
+        parent: this.controls_container,
+    })
+    show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
+    show_boxes_checkbox.addEventListener('change', () => {
+        toggle_visibility(this._graphics.boxes_g)
+        // (DISABLED) Disable the checkbox for outliers (defined below)
+        // show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+    })
 
-    // const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
-    // /**
-    //  * Checkbox for showing outliers
-    //  * @type {Element}
-    //  */
-    // const show_outliers_checkbox = common.create_dom_element({
-    //     element_type: 'input',
-    //     type: 'checkbox',
-    //     id: show_outliers_checkbox_id,
-    //     parent: this.controls_container,
-    // })
-    // show_outliers_checkbox.checked = true
-    // /**
-    //  * Checkbox label for density plot
-    //  * @type {Element}
-    //  */
-    // const show_outliers_label = common.create_dom_element({
-    //     element_type: 'label',
-    //     text_content: 'Show outliers',
-    //     parent: this.controls_container,
-    // })
-    // show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
-    // show_outliers_checkbox.addEventListener('change', () => {
-    //     for (const group of Object.values(this._graphics.outliers)) {
-    //         toggle_visibility(group)
-    //     }
-    // })
+    const show_outliers_checkbox_id = `${this.id_string()}_show_outliers_checkbox`
+    /** @type {Element} */
+    const show_outliers_checkbox = common.create_dom_element({
+        element_type: 'input',
+        type: 'checkbox',
+        id: show_outliers_checkbox_id,
+        parent: this.controls_container,
+    })
+    show_outliers_checkbox.checked = true
+    /** @type {Element} */
+    const show_outliers_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.show_outliers || 'Show outliers',
+        parent: this.controls_container,
+    })
+    show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
+    show_outliers_checkbox.addEventListener('change', () => {
+        for (const group of this._graphics.outliers) {
+            toggle_visibility(group)
+        }
+    })
 }
 
 /**
@@ -1092,6 +1081,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
  * @name boxvio_chart_wrapper#_render_scale_sliders
  */
 boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
+    // Violin scale
     const violin_scale_slider_id = `${this.id_string()}_violin_scale_slider`
     const violin_scale_slider_label = common.create_dom_element({
         element_type: 'label',
@@ -1099,10 +1089,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         parent: this.controls_container,
     })
     violin_scale_slider_label.setAttribute('for', violin_scale_slider_id)
-    /**
-     * Slider for violin scale
-     * @type {Element}
-     */
+    /** @type {Element} */
     const violin_scale_slider = common.create_dom_element({
         element_type: 'input',
         type: 'range',
@@ -1116,10 +1103,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     violin_scale_slider.addEventListener('input', () => {
         this.set_violin_scale(Number(violin_scale_slider.value))
     })
-    /**
-     * Reset button for the violin_scale_slider
-     * @type {Element}
-     */
+    /** @type {Element} */
     const violin_scale_slider_reset = common.create_dom_element({
         element_type: 'button',
         type: 'button',
@@ -1131,37 +1115,39 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         this.set_violin_scale(Number(violin_scale_slider.value))
     })
 
-    // /**
-    //  * Slider for box scale
-    //  * @type {Element}
-    //  */
-    // const box_scale_slider = common.create_dom_element({
-    //     element_type: 'input',
-    //     type: 'range',
-    //     // value: this._chart.box_scale_default,  // This does not work here?
-    //     parent: this.controls_container,
-    // })
-    // box_scale_slider.setAttribute('min', 0)
-    // box_scale_slider.setAttribute('max', 1)
-    // box_scale_slider.setAttribute('step', 0.05)
-    // box_scale_slider.value = this._chart.box_scale_default
-    // box_scale_slider.addEventListener('input', () => {
-    //     this.set_box_scale(Number(box_scale_slider.value))
-    // })
-    // /**
-    //  * Reset button for the box_scale_slider
-    //  * @type {Element}
-    //  */
-    // const box_scale_slider_reset = common.create_dom_element({
-    //     element_type: 'button',
-    //     type: 'button',
-    //     text_content: 'Reset',
-    //     parent: this.controls_container,
-    // })
-    // box_scale_slider_reset.addEventListener('click', () => {
-    //     box_scale_slider.value = this._chart.box_scale_default
-    //     this.set_box_scale(Number(box_scale_slider.value))
-    // })
+    // Box scale
+    const box_scale_slider_id = `${this.id_string()}_box_scale_slider`
+    const box_scale_slider_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.box_width || 'Box width',
+        parent: this.controls_container,
+    })
+    box_scale_slider_label.setAttribute('for', box_scale_slider_id)
+    /** @type {Element} */
+    const box_scale_slider = common.create_dom_element({
+        element_type: 'input',
+        type: 'range',
+        id: box_scale_slider_id,
+        parent: this.controls_container,
+    })
+    box_scale_slider.setAttribute('min', 0)
+    box_scale_slider.setAttribute('max', 1)
+    box_scale_slider.setAttribute('step', 0.05)
+    box_scale_slider.value = this._chart.box_scale.initial
+    box_scale_slider.addEventListener('input', () => {
+        this.set_box_scale(Number(box_scale_slider.value))
+    })
+    /** @type {Element} */
+    const box_scale_slider_reset = common.create_dom_element({
+        element_type: 'button',
+        type: 'button',
+        text_content: 'Reset',
+        parent: this.controls_container,
+    })
+    box_scale_slider_reset.addEventListener('click', () => {
+        box_scale_slider.value = this._chart.box_scale.initial
+        this.set_box_scale(Number(box_scale_slider.value))
+    })
 }
 
 /**

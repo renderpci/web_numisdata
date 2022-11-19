@@ -1083,12 +1083,37 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
  * @name boxvio_chart_wrapper#_render_scale_sliders
  */
 boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
+    // Container div
+    const container_div = common.create_dom_element({
+        element_type: 'div',
+        parent: this.controls_container,
+        style: {
+            'display': 'flex',
+            'direction': 'flex-row',
+            'justify-content': 'space-between',
+            'align-items': 'center',
+        },
+    })
+
     // Violin scale
+    const violin_container_div = common.create_dom_element({
+        element_type: 'div',
+        parent: container_div,
+        style: {
+            'display': 'flex',
+            'direction': 'flex-row',
+            'justify-content': 'space-between',
+            'align-items': 'center',
+        },
+    })
     const violin_scale_slider_id = `${this.id_string()}_violin_scale_slider`
     const violin_scale_slider_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.violin_width || 'Violin width',
-        parent: this.controls_container,
+        parent: violin_container_div,
+        style: {
+            'margin-block': 'auto',
+        },
     })
     violin_scale_slider_label.setAttribute('for', violin_scale_slider_id)
     /** @type {Element} */
@@ -1096,7 +1121,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         element_type: 'input',
         type: 'range',
         id: violin_scale_slider_id,
-        parent: this.controls_container,
+        parent: violin_container_div,
     })
     violin_scale_slider.setAttribute('min', 0)
     violin_scale_slider.setAttribute('max', 1)
@@ -1110,7 +1135,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         element_type: 'button',
         type: 'button',
         text_content: tstring.reset || 'Reset',
-        parent: this.controls_container,
+        parent: violin_container_div,
     })
     violin_scale_slider_reset.addEventListener('click', () => {
         violin_scale_slider.value = this._chart.violin_scale.initial
@@ -1118,11 +1143,24 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     })
 
     // Box scale
+    const box_container_div = common.create_dom_element({
+        element_type: 'div',
+        parent: container_div,
+        style: {
+            'display': 'flex',
+            'direction': 'flex-row',
+            'justify-content': 'space-between',
+            'align-items': 'center',
+        },
+    })
     const box_scale_slider_id = `${this.id_string()}_box_scale_slider`
     const box_scale_slider_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.box_width || 'Box width',
-        parent: this.controls_container,
+        parent: box_container_div,
+        style: {
+            'margin-block': 'auto',
+        },
     })
     box_scale_slider_label.setAttribute('for', box_scale_slider_id)
     /** @type {Element} */
@@ -1130,7 +1168,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         element_type: 'input',
         type: 'range',
         id: box_scale_slider_id,
-        parent: this.controls_container,
+        parent: box_container_div,
     })
     box_scale_slider.setAttribute('min', 0)
     box_scale_slider.setAttribute('max', 1)
@@ -1143,8 +1181,8 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     const box_scale_slider_reset = common.create_dom_element({
         element_type: 'button',
         type: 'button',
-        text_content: 'Reset',
-        parent: this.controls_container,
+        text_content: tstring.reset || 'Reset',
+        parent: box_container_div,
     })
     box_scale_slider_reset.addEventListener('click', () => {
         box_scale_slider.value = this._chart.box_scale.initial

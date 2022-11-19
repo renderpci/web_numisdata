@@ -25,10 +25,20 @@ const TOOLTIP_STYLE = {
  */
 const DEFAULT_FLEX_GAP = '1em'
 /**
+ * Default flex gap (bif)
+ * @type {string}
+ */
+const DEFAULT_FLEX_GAP_BIG = '3em'
+/**
  * Default margin
  * @type {string}
  */
-const DEFUALT_MARGIN = '1em'
+const DEFAULT_MARGIN = '0.7em'
+/**
+ * Default margin (big)
+ * @type {string}
+ */
+const DEFAULT_MARGIN_BIG = '1em'
 
 /**
  * Name of the key change event
@@ -909,7 +919,7 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
     this._render_violin_curve_selector(upper_container)
     this._render_checkboxes()
     this._render_scale_sliders()
-    this._render_key_select()
+    this._render_key_selects()
     this._render_n_bins_control()
 
 }
@@ -1067,7 +1077,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
             'direction': 'flex-row',
             'justify-content': 'space-between',
             'align-items': 'center',
-            'margin-top': DEFUALT_MARGIN,
+            'margin-top': DEFAULT_MARGIN,
         },
     })
 
@@ -1295,7 +1305,17 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
  * @private
  * @name boxvio_chart_wrapper#_render_key_select
  */
-boxvio_chart_wrapper.prototype._render_key_select = function () {
+boxvio_chart_wrapper.prototype._render_key_selects = function () {
+    const container = common.create_dom_element({
+        element_type: 'div',
+        parent: this.controls_container,
+        style: {
+            'display': 'flex',
+            'align-items': 'center',
+            'gap': DEFAULT_FLEX_GAP_BIG,
+            'margin-top': DEFAULT_MARGIN_BIG,
+        },
+    })
     // Render selects for the different key components
     const key_selects = []
     /**
@@ -1317,17 +1337,26 @@ boxvio_chart_wrapper.prototype._render_key_select = function () {
         }
     }
     for (let i = 0; i < this._key_size; i++) {
+        const select_container = common.create_dom_element({
+            element_type: 'div',
+            parent: container,
+            style: {
+                'display': 'flex',
+                'gap': DEFAULT_FLEX_GAP,
+            },
+        })
         const select_id = `${this.id_string()}_key${this._key_size-i}_select`
         const label = common.create_dom_element({
             element_type: 'label',
             text_content: this._key_titles[i],
-            parent: this.controls_container,
+            parent: select_container,
+            style: {'margin-block': 'auto'},
         })
         label.setAttribute('for', select_id)
         const key_select = common.create_dom_element({
             element_type: 'select',
             id: select_id,
-            parent: this.controls_container,
+            parent: select_container,
         })
         key_selects.push(key_select)
         populate_key_select(i)
@@ -1359,12 +1388,23 @@ boxvio_chart_wrapper.prototype._render_key_select = function () {
  * @name boxvio_chart_wrapper#_render_n_bins_control
  */
 boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
+    const container = common.create_dom_element({
+        element_type: 'div',
+        parent: this.controls_container,
+        style: {
+            'display': 'flex',
+            'align-items': 'center',
+            'gap': DEFAULT_FLEX_GAP,
+            'margin-top': DEFAULT_MARGIN,
+        },
+    })
     // Slider for n bins
     const violin_n_bins_slider_id = `${this.id_string()}_violin_n_bins_slider`
     const violin_n_bins_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.violin_resolution || 'Violin resolution',
-        parent: this.controls_container,
+        parent: container,
+        style: {'margin-block': 'auto'},
     })
     violin_n_bins_label.setAttribute('for', violin_n_bins_slider_id)
     const violin_n_bins_slider = common.create_dom_element({
@@ -1372,7 +1412,7 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
         type: 'range',
         class_name: KEY_CHANGE_LISTENER_CLASS_NAME,
         id: violin_n_bins_slider_id,
-        parent: this.controls_container,
+        parent: container,
     })
     violin_n_bins_slider.setAttribute('min', 2)
     const reset = () => {
@@ -1396,7 +1436,7 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
         element_type: 'button',
         type: 'button',
         text_content: tstring.reset || 'Reset',
-        parent: this.controls_container,
+        parent: container,
     })
     violin_n_bins_slider_reset.addEventListener('click', () => {
         violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
@@ -1408,7 +1448,7 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
         element_type: 'button',
         type: 'button',
         text_content: tstring.reset_all_violins || 'Reset all violins',
-        parent: this.controls_container,
+        parent: container,
     })
     violin_all_n_bins_slider_reset.addEventListener('click', () => {
         // Update the value of the slider

@@ -801,7 +801,6 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
             .attr('stroke-width', 2)
         // Circle events for tooltip
         circle.on('mouseover', () => {
-            console.log(this)
             this._graphics.tooltip_div.style('display', null)
             this.tooltip_hover(i)
         }).on('mouseout', () => {

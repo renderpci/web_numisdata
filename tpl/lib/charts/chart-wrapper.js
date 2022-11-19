@@ -175,7 +175,7 @@ chart_wrapper.prototype._render_download_panel = function () {
             element_type: 'select',
             id: `${this.id_string()}_chart_export_format`,
             style: {
-                'width': '80%',
+                'width': '75%',
             },
             parent: this.download_chart_container,
             // TODO: add ARIA attributes?
@@ -190,9 +190,9 @@ chart_wrapper.prototype._render_download_panel = function () {
         }
         const chart_download_button = common.create_dom_element({
             element_type: 'button',
-            text_content: 'Download',
+            text_content: tstring.download || 'Download',
             style: {
-                'width': '20%',
+                'width': '25%',
             },
             parent: this.download_chart_container,
         })

@@ -150,9 +150,11 @@
     "types": "Tipos",
     "typology": "Tipología",
     "uri": "URI",
+    "violin_interpolator": "Interpolador de violín",
     "violin_resolution": "Resolución del violín",
     "violin_width": "Anchura de violines",
     "volume": "Volumen",
     "weight": "Peso",
-    "work_in_progress": "Versión en pruebas. Numeración provisional. No referenciar"
+    "work_in_progress": "Versión en pruebas. Numeración provisional. No referenciar",
+    "xticklabel_angle": "Ángulo de las etiquetas del eje X"
 }

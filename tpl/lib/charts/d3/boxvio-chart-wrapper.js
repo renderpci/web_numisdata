@@ -879,6 +879,12 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
  */
 boxvio_chart_wrapper.prototype._render_grid_select = function () {
     const grid_select_id = `${this.id_string()}_grid_select`
+    const grid_select_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.grid || 'Grid',
+        parent: this.controls_container,
+    })
+    grid_select_label.setAttribute('for', grid_select_id)
     const grid_select = common.create_dom_element({
         element_type: 'select',
         id: grid_select_id,
@@ -916,10 +922,18 @@ boxvio_chart_wrapper.prototype._render_grid_select = function () {
  * @name boxvio_chart_wrapper#_render_xticklabel_angle_slider
  */
 boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
+    const xticklabel_angle_slider_id = `${this.id_string()}_xticklabel_angle_slider`
+    const xticklabel_angle_slider_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.xticklabel_angle || "X-Tick label angle",
+        parent: this.controls_container,
+    })
+    xticklabel_angle_slider_label.setAttribute('for', xticklabel_angle_slider_id)
     /** @type {Element} */
     const xticklabel_angle_slider = common.create_dom_element({
         element_type: 'input',
         type: 'range',
+        id: xticklabel_angle_slider_id,
         parent: this.controls_container,
     })
     xticklabel_angle_slider.setAttribute('min', 0)
@@ -939,6 +953,12 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
  */
 boxvio_chart_wrapper.prototype._render_violin_curve_selector = function () {
     const curve_select_id = `${this.id_string()}_curve_select`
+    const curve_select_label = common.create_dom_element({
+        element_type: 'label',
+        text_content: tstring.violin_interpolator || 'Violin interpolator',
+        parent: this.controls_container,
+    })
+    curve_select_label.setAttribute('for', curve_select_id)
     const curve_select = common.create_dom_element({
         element_type: 'select',
         id: curve_select_id,
@@ -1092,7 +1112,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
     violin_scale_slider.setAttribute('min', 0)
     violin_scale_slider.setAttribute('max', 1)
     violin_scale_slider.setAttribute('step', 0.05)
-    violin_scale_slider.value = this._chart.violin_scale_default
+    violin_scale_slider.value = this._chart.violin_scale.initial
     violin_scale_slider.addEventListener('input', () => {
         this.set_violin_scale(Number(violin_scale_slider.value))
     })
@@ -1107,7 +1127,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         parent: this.controls_container,
     })
     violin_scale_slider_reset.addEventListener('click', () => {
-        violin_scale_slider.value = this._chart.violin_scale_default
+        violin_scale_slider.value = this._chart.violin_scale.initial
         this.set_violin_scale(Number(violin_scale_slider.value))
     })
 

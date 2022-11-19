@@ -20,6 +20,18 @@ const TOOLTIP_STYLE = {
 }
 
 /**
+ * Default flex gap
+ * @type {string}
+ */
+const DEFAULT_FLEX_GAP = '1em'
+/**
+ * Default margin
+ * @type {string}
+ */
+const DEFUALT_MARGIN = '1em'
+
+
+/**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
  * use of x and y axis
@@ -865,9 +877,19 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
     d3_chart_wrapper.prototype.render_control_panel.call(this)
 
-    this._render_grid_select()
-    this._render_xticklabel_angle_slider()
-    this._render_violin_curve_selector()
+    const upper_container = common.create_dom_element({
+        element_type: 'div',
+        parent: this.controls_container,
+        style: {
+            'display': 'flex',
+            'direction': 'flex-row',
+            'justify-content': 'space-between',
+            'align-items': 'center',
+        },
+    })
+    this._render_grid_select(upper_container)
+    this._render_xticklabel_angle_slider(upper_container)
+    this._render_violin_curve_selector(upper_container)
     this._render_checkboxes()
     this._render_scale_sliders()
     this._render_n_bins_control()
@@ -878,20 +900,30 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
  * Render the selector for grid mode
  * @function
  * @private
+ * @param {Element} container the container element
  * @name boxvio_chart_wrapper#_render_grid_select
  */
-boxvio_chart_wrapper.prototype._render_grid_select = function () {
+boxvio_chart_wrapper.prototype._render_grid_select = function (container) {
+    const select_container = common.create_dom_element({
+        element_type: 'div',
+        parent: container,
+        style: {
+            'display': 'flex',
+            'gap': DEFAULT_FLEX_GAP,
+        },
+    })
     const grid_select_id = `${this.id_string()}_grid_select`
     const grid_select_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.grid || 'Grid',
-        parent: this.controls_container,
+        parent: select_container,
+        style: {'margin-block': 'auto'},
     })
     grid_select_label.setAttribute('for', grid_select_id)
     const grid_select = common.create_dom_element({
         element_type: 'select',
         id: grid_select_id,
-        parent: this.controls_container,
+        parent: select_container,
         // TODO: add ARIA attributes?
     })
     common.create_dom_element({
@@ -922,14 +954,24 @@ boxvio_chart_wrapper.prototype._render_grid_select = function () {
  * Render the slider for the xticklabel angle
  * @function
  * @private
+ * @param {Element} container the container element
  * @name boxvio_chart_wrapper#_render_xticklabel_angle_slider
  */
-boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
+boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function (container) {
+    const slider_container = common.create_dom_element({
+        element_type: 'div',
+        parent: container,
+        style: {
+            'display': 'flex',
+            'gap': DEFAULT_FLEX_GAP,
+        },
+    })
     const xticklabel_angle_slider_id = `${this.id_string()}_xticklabel_angle_slider`
     const xticklabel_angle_slider_label = common.create_dom_element({
         element_type: 'label',
         text_content: tstring.xticklabel_angle || "X-Tick label angle",
-        parent: this.controls_container,
+        parent: slider_container,
+        style: {'margin-block': 'auto'},
     })
     xticklabel_angle_slider_label.setAttribute('for', xticklabel_angle_slider_id)
     /** @type {Element} */
@@ -937,7 +979,7 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
         element_type: 'input',
         type: 'range',
         id: xticklabel_angle_slider_id,
-        parent: this.controls_container,
+        parent: slider_container,
     })
     xticklabel_angle_slider.setAttribute('min', 0)
     xticklabel_angle_slider.setAttribute('max', 90)
@@ -952,20 +994,30 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function () {
  * Render the selector for the violin curve
  * @function
  * @private
+ * @param {Element} container the container element
  * @name boxvio_chart_wrapper#_render_violin_curve_selector
  */
-boxvio_chart_wrapper.prototype._render_violin_curve_selector = function () {
+boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (container) {
+    const select_container = common.create_dom_element({
+        element_type: 'div',
+        parent: container,
+        style: {
+            'display': 'flex',
+            'gap': DEFAULT_FLEX_GAP,
+        },
+    })
     const curve_select_id = `${this.id_string()}_curve_select`
     const curve_select_label = common.create_dom_element({
         element_type: 'label',
-        text_content: tstring.violin_interpolator || 'Violin interpolator',
-        parent: this.controls_container,
+        text_content: tstring.violin_curve || 'Violin curve',
+        parent: select_container,
+        style: {'margin-block': 'auto'},
     })
     curve_select_label.setAttribute('for', curve_select_id)
     const curve_select = common.create_dom_element({
         element_type: 'select',
         id: curve_select_id,
-        parent: this.controls_container,
+        parent: select_container,
         // TODO: add ARIA attributes?
     })
     for (const curve_name of this._chart.supported_curves) {
@@ -997,6 +1049,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
             'direction': 'flex-row',
             'justify-content': 'space-between',
             'align-items': 'center',
+            'margin-top': DEFUALT_MARGIN,
         },
     })
 
@@ -1133,9 +1186,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         parent: container_div,
         style: {
             'display': 'flex',
-            'direction': 'flex-row',
-            'justify-content': 'space-between',
-            'align-items': 'center',
+            'gap': DEFAULT_FLEX_GAP,
         },
     })
     const violin_scale_slider_id = `${this.id_string()}_violin_scale_slider`
@@ -1180,9 +1231,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
         parent: container_div,
         style: {
             'display': 'flex',
-            'direction': 'flex-row',
-            'justify-content': 'space-between',
-            'align-items': 'center',
+            'gap': DEFAULT_FLEX_GAP,
         },
     })
     const box_scale_slider_id = `${this.id_string()}_box_scale_slider`

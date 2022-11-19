@@ -301,8 +301,8 @@ export const analysis =  {
 				).map(
 					(ele) => {return {key: [ele.mint, ele.number_key], values: ele.weight}}
 				)
-				console.log('Weights:')
-				console.log(weights)
+				// console.log('Weights:')
+				// console.log(weights)
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
 					this.weight_chart_container,
 					weights,
@@ -323,21 +323,21 @@ export const analysis =  {
 				).map(
 					(ele) => {return {key: [ele.mint, ele.number_key], values: ele.diameter_max}}
 				)
-				console.log('Diameters:')
-				console.log(diameters)
-				// this.diameter_chart_wrapper = new boxvio_chart_wrapper(
-				// 	this.diameter_chart_container,
-				// 	diameters,
-				//  [tstring.mint || 'Mint', tstring.number_key || 'Number & Key'],
-				// 	{
-				// 		ylabel: tstring.diameter || 'Diameter',
-				// 		overflow: true,
-				// 		display_control_panel: true,
-				// 		display_download: true,
-				// 		sort_xaxis: true,
-				// 	}
-				// )
-				// this.diameter_chart_wrapper.render()
+				// console.log('Diameters:')
+				// console.log(diameters)
+				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
+					this.diameter_chart_container,
+					diameters,
+				 [tstring.mint || 'Mint', tstring.number_key || 'Number & Key'],
+					{
+						ylabel: tstring.diameter || 'Diameter',
+						overflow: true,
+						display_control_panel: true,
+						display_download: true,
+						sort_xaxis: true,
+					}
+				)
+				this.diameter_chart_wrapper.render()
 
 			})
 

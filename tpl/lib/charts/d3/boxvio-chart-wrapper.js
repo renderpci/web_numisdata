@@ -172,7 +172,9 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
      * Full width of svg
      * @type {number}
      */
-    this._full_width = 330.664701211*Math.sqrt(this._data.length) + -170.664701211 + this.yaxis_padding
+    this._full_width = this._data.length < 150
+        ? 330.664701211*Math.sqrt(this._data.length) - 170.664701211 + this.yaxis_padding
+        : 26*this._data.length + this.yaxis_padding
     /**
      * Full height of svg
      * @type {number}

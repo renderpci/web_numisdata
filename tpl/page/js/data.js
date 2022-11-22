@@ -627,7 +627,7 @@ page.parse_catalog_data = function(data) {
 					? JSON.parse(row.ref_type_design_obverse_data)
 					: null
 
-			    row.ref_type_design_reverse_data = row.ref_type_design_reverse_data
+				row.ref_type_design_reverse_data = row.ref_type_design_reverse_data
 					? JSON.parse(row.ref_type_design_reverse_data)
 					: null
 

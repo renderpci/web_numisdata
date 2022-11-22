@@ -45,57 +45,57 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
  */
 export function chart_wrapper(div_wrapper, options) {
-    if (this.constructor === chart_wrapper) {
-        throw new Error("Abstract class 'chart_wrapper' cannot be instantiated")
-    }
-    chart_wrapper._n_charts_created++;
-    /**
-     * Unique identifier for the chart.
-     * 
-     * Subclasses MUST use this in order to assing IDs
-     * to DOM elements, in order to avoid bugs and cross-chart events
-     * @type {number}
-     * @protected
-     */
-    this.id = chart_wrapper._n_charts_created
-    /**
-     * Div element wrapping the chart itself and
-     * the controls
-     * @type {Element}
-     * @protected
-     */
-    this.div_wrapper = div_wrapper
-    /**
-     * Whether to display the download panel
-     * @type {boolean}
-     * @private
-     */
-    this._display_download = options.display_download || false
-    /**
-     * Div container for chart download
-     * @type {Element}
-     * @private
-     */
-    this._download_chart_container = undefined
-    /**
-     * Div inside the div_wrapper, that just wraps the drawing
-     * @type {Element}
-     * @protected
-     */
-    this.plot_container = undefined
-    /**
-     * Whether to display the control panel
-     * @type {boolean}
-     * @private
-     */
-     this._display_control_panel = options.display_control_panel || false
-    /**
-     * Div container for user controls
-     * Used freely by each subclass
-     * @type {Element}
-     * @protected
-     */
-    this.controls_container = undefined
+	if (this.constructor === chart_wrapper) {
+		throw new Error("Abstract class 'chart_wrapper' cannot be instantiated")
+	}
+	chart_wrapper._n_charts_created++;
+	/**
+	 * Unique identifier for the chart.
+	 * 
+	 * Subclasses MUST use this in order to assing IDs
+	 * to DOM elements, in order to avoid bugs and cross-chart events
+	 * @type {number}
+	 * @protected
+	 */
+	this.id = chart_wrapper._n_charts_created
+	/**
+	 * Div element wrapping the chart itself and
+	 * the controls
+	 * @type {Element}
+	 * @protected
+	 */
+	this.div_wrapper = div_wrapper
+	/**
+	 * Whether to display the download panel
+	 * @type {boolean}
+	 * @private
+	 */
+	this._display_download = options.display_download || false
+	/**
+	 * Div container for chart download
+	 * @type {Element}
+	 * @private
+	 */
+	this._download_chart_container = undefined
+	/**
+	 * Div inside the div_wrapper, that just wraps the drawing
+	 * @type {Element}
+	 * @protected
+	 */
+	this.plot_container = undefined
+	/**
+	 * Whether to display the control panel
+	 * @type {boolean}
+	 * @private
+	 */
+	 this._display_control_panel = options.display_control_panel || false
+	/**
+	 * Div container for user controls
+	 * Used freely by each subclass
+	 * @type {Element}
+	 * @protected
+	 */
+	this.controls_container = undefined
 }
 
 /**
@@ -112,7 +112,7 @@ chart_wrapper._n_charts_created = 0;
  *          (`'chart1'`, `'chart2'`, ...)
  */
 chart_wrapper.prototype.id_string = function () {
-    return `chart${this.id}`
+	return `chart${this.id}`
 }
 
 /**
@@ -127,27 +127,27 @@ chart_wrapper.prototype.id_string = function () {
  * @public
  */
 chart_wrapper.prototype.render = function () {
-    // Save this chart_wrapper intance
-    /**
-     * This chart_wrapper intance
-     * @type {chart_wrapper}
-     */
-    const self = this
-    // Remove all children in the div_wrapper
-    this.div_wrapper.replaceChildren()
+	// Save this chart_wrapper intance
+	/**
+	 * This chart_wrapper intance
+	 * @type {chart_wrapper}
+	 */
+	const self = this
+	// Remove all children in the div_wrapper
+	this.div_wrapper.replaceChildren()
 
-    // Create the chart download section
-    if (this._display_download) {
-        this._render_download_panel()
-    }
+	// Create the chart download section
+	if (this._display_download) {
+		this._render_download_panel()
+	}
 
-    // Create the div for wrapping the plot
-    this.render_plot()
+	// Create the div for wrapping the plot
+	this.render_plot()
 
-    // Create the div for the control panel
-    if (this._display_control_panel) {
-        this.render_control_panel()
-    }
+	// Create the div for the control panel
+	if (this._display_control_panel) {
+		this.render_control_panel()
+	}
 
 }
 
@@ -158,48 +158,48 @@ chart_wrapper.prototype.render = function () {
  * @name chart_wrapper#_render_download_panel
  */
 chart_wrapper.prototype._render_download_panel = function () {
-    const supported_formats = this.get_supported_export_formats()
-    if (supported_formats.length) {
-        this.download_chart_container = common.create_dom_element({
-            element_type: 'div',
-            id: `${this.id_string()}_download_chart_container`,
-            class_name: 'o-purple download_chart_container',
-            style: {
-                'display': 'flex',
-                'flex-direction': 'row',
-                'justify-content': 'center',
-            },
-            parent: this.div_wrapper,
-        })
-        const format_select = common.create_dom_element({
-            element_type: 'select',
-            id: `${this.id_string()}_chart_export_format`,
-            style: {
-                'width': '75%',
-            },
-            parent: this.download_chart_container,
-            // TODO: add ARIA attributes?
-        })
-        for (const format of supported_formats) {
-            common.create_dom_element({
-                element_type: 'option',
-                value: format,
-                text_content: format.toUpperCase(),
-                parent: format_select,
-            })
-        }
-        const chart_download_button = common.create_dom_element({
-            element_type: 'button',
-            text_content: tstring.download || 'Download',
-            style: {
-                'width': '25%',
-            },
-            parent: this.download_chart_container,
-        })
-        chart_download_button.addEventListener('click', () => {
-            this.download_chart(format_select.value)
-        })
-    }
+	const supported_formats = this.get_supported_export_formats()
+	if (supported_formats.length) {
+		this.download_chart_container = common.create_dom_element({
+			element_type: 'div',
+			id: `${this.id_string()}_download_chart_container`,
+			class_name: 'o-purple download_chart_container',
+			style: {
+				'display': 'flex',
+				'flex-direction': 'row',
+				'justify-content': 'center',
+			},
+			parent: this.div_wrapper,
+		})
+		const format_select = common.create_dom_element({
+			element_type: 'select',
+			id: `${this.id_string()}_chart_export_format`,
+			style: {
+				'width': '75%',
+			},
+			parent: this.download_chart_container,
+			// TODO: add ARIA attributes?
+		})
+		for (const format of supported_formats) {
+			common.create_dom_element({
+				element_type: 'option',
+				value: format,
+				text_content: format.toUpperCase(),
+				parent: format_select,
+			})
+		}
+		const chart_download_button = common.create_dom_element({
+			element_type: 'button',
+			text_content: tstring.download || 'Download',
+			style: {
+				'width': '25%',
+			},
+			parent: this.download_chart_container,
+		})
+		chart_download_button.addEventListener('click', () => {
+			this.download_chart(format_select.value)
+		})
+	}
 }
 
 /**
@@ -212,12 +212,12 @@ chart_wrapper.prototype._render_download_panel = function () {
  * @name chart_wrapper#render_plot
  */
 chart_wrapper.prototype.render_plot = function () {
-    this.plot_container = common.create_dom_element({
-        element_type: 'div',
-        id: `${this.id_string()}_plot_container`,
-        class_name: 'o-purple plot_container',
-        parent: this.div_wrapper,
-    })
+	this.plot_container = common.create_dom_element({
+		element_type: 'div',
+		id: `${this.id_string()}_plot_container`,
+		class_name: 'o-purple plot_container',
+		parent: this.div_wrapper,
+	})
 }
 
 /**
@@ -230,12 +230,12 @@ chart_wrapper.prototype.render_plot = function () {
  * @name chart_wrapper#render_control_panel
  */
 chart_wrapper.prototype.render_control_panel = function () {
-    this.controls_container = common.create_dom_element({
-        element_type: 'div',
-        id: `${this.id_string()}_control_panel`,
-        class_name: 'o-green control_panel',
-        parent: this.div_wrapper,
-    })
+	this.controls_container = common.create_dom_element({
+		element_type: 'div',
+		id: `${this.id_string()}_control_panel`,
+		class_name: 'o-green control_panel',
+		parent: this.div_wrapper,
+	})
 }
 
 /**
@@ -251,20 +251,20 @@ chart_wrapper.prototype.render_control_panel = function () {
  * @name chart_wrapper#download_chart
  */
 chart_wrapper.prototype.download_chart = function (format) {
-    /**
-     * File name for the chart
-     * @type {string}
-     */
-    const filename = `${DEFAULT_CHART_NAME}.${format}`
-    /**
-     * Function name for downloading with the particular format
-     * @type {string}
-     */
-    const download_func_name = `download_chart_as_${format}`
-    if (this[download_func_name] === undefined) {
-        throw new Error(`${download_func_name} is not implemented!`)
-    }
-    this[download_func_name](filename)
+	/**
+	 * File name for the chart
+	 * @type {string}
+	 */
+	const filename = `${DEFAULT_CHART_NAME}.${format}`
+	/**
+	 * Function name for downloading with the particular format
+	 * @type {string}
+	 */
+	const download_func_name = `download_chart_as_${format}`
+	if (this[download_func_name] === undefined) {
+		throw new Error(`${download_func_name} is not implemented!`)
+	}
+	this[download_func_name](filename)
 }
 
 /**
@@ -278,5 +278,5 @@ chart_wrapper.prototype.download_chart = function (format) {
  * @name chart_wrapper#get_supported_export_formats
  */
 chart_wrapper.prototype.get_supported_export_formats = function () {
-    return []
+	return []
 }

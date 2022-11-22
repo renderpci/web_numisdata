@@ -20,15 +20,15 @@ import { chart_wrapper } from "../chart-wrapper";
  * @extends chart_wrapper
  */
 export function d3_chart_wrapper(div_wrapper, options) {
-    if (this.constructor === d3_chart_wrapper) {
-        throw new Error("Abstract class 'd3_chart_wrapper' cannot be instantiated")
-    }
-    chart_wrapper.call(this, div_wrapper, options)
-    /**
-     * D3 selection object for the root `svg` tag
-     * @protected
-     */
-    this.svg = undefined
+	if (this.constructor === d3_chart_wrapper) {
+		throw new Error("Abstract class 'd3_chart_wrapper' cannot be instantiated")
+	}
+	chart_wrapper.call(this, div_wrapper, options)
+	/**
+	 * D3 selection object for the root `svg` tag
+	 * @protected
+	 */
+	this.svg = undefined
 
 }
 // Set prototype chain
@@ -45,14 +45,14 @@ Object.setPrototypeOf(d3_chart_wrapper.prototype, chart_wrapper.prototype)
  * @name chart_wrapper#render_plot
  */
 d3_chart_wrapper.prototype.render_plot = function () {
-    chart_wrapper.prototype.render_plot.call(this)
+	chart_wrapper.prototype.render_plot.call(this)
 
-    this.svg = d3.select(this.plot_container)
-        .append('svg')
-        // When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
-        .attr('version', '1.1')
-        .attr('xmlns', 'http://www.w3.org/2000/svg')
-        .attr('width', '100%')
+	this.svg = d3.select(this.plot_container)
+		.append('svg')
+		// When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
+		.attr('version', '1.1')
+		.attr('xmlns', 'http://www.w3.org/2000/svg')
+		.attr('width', '100%')
 }
 
 /**
@@ -62,7 +62,7 @@ d3_chart_wrapper.prototype.render_plot = function () {
  * @name d3_chart_wrapper#get_supported_export_formats
  */
 d3_chart_wrapper.prototype.get_supported_export_formats = function () {
-    return ['svg']
+	return ['svg']
 }
 
 /**
@@ -72,19 +72,19 @@ d3_chart_wrapper.prototype.get_supported_export_formats = function () {
  * @name d3_chart_wrapper#_download_chart_as_svg
  */
 d3_chart_wrapper.prototype.download_chart_as_svg = function (filename) {
-    const svg_data = this.svg.node().outerHTML
-    const svg_blob = new Blob([svg_data], { type: "image/svg+xml;charset=utf-8" })
-    const url = URL.createObjectURL(svg_blob)
-    /**
-     * Temporary link
-     * @type {Element}
-     */
-    const tmpLink = common.create_dom_element({
-        element_type: 'a',
-        href: url,
-    })
-    tmpLink.setAttribute('download', filename)
-    tmpLink.click()
-    tmpLink.remove()
-    URL.revokeObjectURL(url)
+	const svg_data = this.svg.node().outerHTML
+	const svg_blob = new Blob([svg_data], { type: "image/svg+xml;charset=utf-8" })
+	const url = URL.createObjectURL(svg_blob)
+	/**
+	 * Temporary link
+	 * @type {Element}
+	 */
+	const tmpLink = common.create_dom_element({
+		element_type: 'a',
+		href: url,
+	})
+	tmpLink.setAttribute('download', filename)
+	tmpLink.click()
+	tmpLink.remove()
+	URL.revokeObjectURL(url)
 }

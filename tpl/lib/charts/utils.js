@@ -13,7 +13,7 @@ export function deepcopy(obj) {
  * @param {Element} existing_node the one to add after of
  */
 export function insert_after(new_node, existing_node) {
-    existing_node.parentNode.insertBefore(new_node, existing_node.nextSibling);
+	existing_node.parentNode.insertBefore(new_node, existing_node.nextSibling);
 }
 
 /**

@@ -1,0 +1,156 @@
+
+
+
+
+// chart_wrapper
+.chart_wrapper {
+
+	label {
+		font-weight: 400;
+	}
+
+
+	.plot_container {
+		outline: 1px solid #f2f0f0;
+	}
+
+	.control_panel {
+		// background-color: #fffff7;
+		margin-bottom: 0.25rem;
+
+		>.control_panel_item {
+			display: flex;
+			justify-content: space-between;
+			align-items: stretch;
+			gap: 1rem;
+			padding: 0.5rem;
+			// background-color: #f8f8f8;
+
+			&.control_panel {
+
+				>div {
+					label {
+						display: block;
+						width: 100%;
+						margin-bottom: 0.25rem;
+						line-height: 2.5rem;
+					}
+					select, input {
+						padding-left: 1rem;
+						height: 2.5rem;
+						margin-top: 0;
+					}
+				}
+			}
+
+			&.checkboxes {
+
+			}
+
+			&.scale_sliders {
+				>div {
+					width: 50%;
+
+					label {
+						display: block;
+						width: 100%;
+						margin-bottom: 0.25rem;
+					}
+					select, input {
+						padding-left: 1rem;
+						height: 2.5rem;
+						margin-top: 0;
+					}
+					// slider
+					input {
+						width: 65%;
+					}
+					// button
+					.small {
+						margin-left: 0.5rem;
+						vertical-align: top;
+						opacity: 0.5;
+					}
+				}
+			}
+
+			&.key_selects {
+				justify-content: start;
+
+				>div {
+					display: flex;
+					flex: 1 0 auto;
+					label {
+						display: inline-block;
+						padding-right: 1rem;
+						height: 2.5rem;
+						white-space: nowrap;
+						margin: 0;
+						line-height: 2.5rem;
+					}
+					select, input {
+						padding-left: 1rem;
+						height: 2.5rem;
+						margin-top: 0;
+					}
+				}
+			}
+
+			&.n_bins_control {
+				margin-top: 1rem;
+
+				label {
+					display: inline-block;
+					padding-right: 1rem;
+					height: 2.5rem;
+					white-space: nowrap;
+					margin: 0;
+					line-height: 2.5rem;
+				}
+				// slider
+				input {
+					padding-left: 1rem;
+					height: 2.5rem;
+					margin-top: 0;
+					width: 65%;
+					width: 38%;
+				}
+				// button
+				.small {
+					margin-left: 0.5rem;
+					vertical-align: top;
+					opacity: 0.5;
+				}
+			}
+		}
+	}
+
+	.download_chart_container {
+		margin-top: 1rem;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+
+		.format_select {
+			width: auto;
+		}
+
+		.button_download {
+
+		}
+	}
+
+
+	.tooltip_div {
+		background-color: rgb(249, 247, 247);
+		border-bottom-left-radius: 1rem;
+		border-bottom-right-radius: 1rem;
+		outline: 1px solid #f2f0f0;
+	}
+
+	svg {
+		circle {
+			cursor: pointer;
+		}
+	}
+}//end .chart_wrapper

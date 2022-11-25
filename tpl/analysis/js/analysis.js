@@ -1,4 +1,4 @@
-/*global tstring, page_globals, Promise, data_manager, common */
+/*global tstring, page_globals, Promise, data_manager, common, event_manager */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -92,7 +92,7 @@ export const analysis =  {
 					})
 				}
 			})
-		
+
 		// number
 			self.form.item_factory({
 				id 			: "number",
@@ -110,7 +110,7 @@ export const analysis =  {
 					})
 				}
 			})
-		
+
 		// material
 			self.form.item_factory({
 				id 			: "material",
@@ -127,7 +127,7 @@ export const analysis =  {
 					})
 				}
 			})
-		
+
 		// denomination
 			self.form.item_factory({
 				id 			: "denomination",
@@ -200,7 +200,7 @@ export const analysis =  {
 	 * Form submit launch search
 	 */
 	form_submit : function(form_obj, options={}) {
-		
+
 		const self = this
 
 		// options
@@ -211,18 +211,39 @@ export const analysis =  {
 			const filter = self.form.build_filter({
 				form_items: form_items
 			})
-		
+
 		// empty filter case
 			if (!filter || filter.length<1) {
 				return false
 			}
 
+		// loading
+			// cleanup html
+				const info_lines = document.querySelectorAll('.info_line')
+				const info_lines_length	= info_lines.length
+				for (let i = 0; i < info_lines_length; i++) {
+					info_lines[i].classList.add('hide')
+				}
+				while (self.diameter_chart_container.hasChildNodes()) {
+					self.diameter_chart_container.removeChild(self.diameter_chart_container.lastChild);
+				}
+				while (self.weight_chart_container.hasChildNodes()) {
+					self.weight_chart_container.removeChild(self.weight_chart_container.lastChild);
+				}
+			// spinner
+				const result = document.getElementById('result')
+				const spinner = common.create_dom_element({
+					element_type	: 'div',
+					class_name		: 'spinner',
+					parent			: result
+				})
+
 		// scroll to head result
-			if (scroll_result) {
-				this.diameter_chart_container.scrollIntoView(
-					{behavior: "smooth", block: "start", inline: "nearest"}
-				);
-			}
+			// if (scroll_result) {
+				// result.scrollIntoView(
+				// 	{behavior: "smooth", block: "start", inline: "nearest"}
+				// );
+			// }
 
 		// search rows exec against API
 			const js_promise = self.search_rows({
@@ -234,10 +255,9 @@ export const analysis =  {
 				}
 			})
 			.then((parsed_data)=>{
+				// console.log(parsed_data)
 
 				event_manager.publish('form_submit', parsed_data)
-
-				console.log(parsed_data)
 
 				// const diameters = parsed_data
 				// 	.map((ele) => ele.full_coins_reference_diameter_max)
@@ -254,46 +274,47 @@ export const analysis =  {
 				// )
 				// this.diameter_chart_wrapper.render()
 
-				const data = []
-				for (const [i, ele] of parsed_data.entries()) {
-					const number_key = ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})`
-					const mint = ele.p_mint ? ele.p_mint[0] : `Missing mint (${i})`
-					const material = ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})` 
-					const denomination = ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
-					// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
-					// if (!['59', '62'].includes(name)) continue
-					const tmp_data = {}
-					const calculable = ele.full_coins_reference_calculable
-					const diameter_max = ele.full_coins_reference_diameter_max
-					const diameter_min = ele.full_coins_reference_diameter_min
-					const weight = ele.full_coins_reference_weight
-					if (diameter_max && diameter_max.length) {
-						const tmp_diameter_max = diameter_max.filter((v, i) => v && calculable[i])
-						if (tmp_diameter_max.length) {
-							tmp_data.diameter_max = tmp_diameter_max
+				// data
+					const data = []
+					for (const [i, ele] of parsed_data.entries()) {
+						const number_key = ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})`
+						const mint = ele.p_mint ? ele.p_mint[0] : `Missing mint (${i})`
+						const material = ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
+						const denomination = ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
+						// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
+						// if (!['59', '62'].includes(name)) continue
+						const tmp_data = {}
+						const calculable = ele.full_coins_reference_calculable
+						const diameter_max = ele.full_coins_reference_diameter_max
+						const diameter_min = ele.full_coins_reference_diameter_min
+						const weight = ele.full_coins_reference_weight
+						if (diameter_max && diameter_max.length) {
+							const tmp_diameter_max = diameter_max.filter((v, i) => v && calculable[i])
+							if (tmp_diameter_max.length) {
+								tmp_data.diameter_max = tmp_diameter_max
+							}
+						}
+						if (diameter_min && diameter_min.length) {
+							const tmp_diameter_min = diameter_min.filter((v, i) => v && calculable[i])
+							if (tmp_diameter_min.length) {
+								tmp_data.diameter_min = tmp_diameter_min
+							}
+						}
+						if (weight && weight.length) {
+							const tmp_weight = weight.filter((v, i) => v && calculable[i])
+							if (tmp_weight.length) {
+								tmp_data.weight = tmp_weight
+							}
+						}
+						if (Object.keys(tmp_data).length) {
+							tmp_data.number_key = number_key
+							tmp_data.mint = mint
+							tmp_data.material = material
+							tmp_data.denomination = denomination
+							data.push(tmp_data)
 						}
 					}
-					if (diameter_min && diameter_min.length) {
-						const tmp_diameter_min = diameter_min.filter((v, i) => v && calculable[i])
-						if (tmp_diameter_min.length) {
-							tmp_data.diameter_min = tmp_diameter_min
-						}
-					}
-					if (weight && weight.length) {
-						const tmp_weight = weight.filter((v, i) => v && calculable[i])
-						if (tmp_weight.length) {
-							tmp_data.weight = tmp_weight
-						}
-					}
-					if (Object.keys(tmp_data).length) {
-						tmp_data.number_key = number_key
-						tmp_data.mint = mint
-						tmp_data.material = material
-						tmp_data.denomination = denomination
-						data.push(tmp_data)
-					}
-				}
-				console.log(data)
+					// console.log(data)
 
 				// Weights
 				const weights = data.filter(
@@ -303,6 +324,9 @@ export const analysis =  {
 				)
 				// console.log('Weights:')
 				// console.log(weights)
+
+				spinner.remove()
+
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(
 					this.weight_chart_container,
 					weights,
@@ -339,13 +363,19 @@ export const analysis =  {
 				)
 				this.diameter_chart_wrapper.render()
 
+				// show Weights and Diameters block labels
+					for (let i = 0; i < info_lines_length; i++) {
+						info_lines[i].classList.remove('hide')
+					}
 			})
 
+
+		return js_promise
 	},
 
 	/**
 	 * SEARCH_ROWS
-	 * Call to API and load json data results of search
+	 * Call to API and load JSON data results of search
 	 */
 	search_rows : function(options) {
 
@@ -359,8 +389,8 @@ export const analysis =  {
 			const process_result	= options.process_result || null
 			const limit				= options.limit != undefined
 										? options.limit
-										: 30
-		
+										: 100
+
 		return new Promise(function(resolve){
 			// parse_sql_filter
 				const group = []
@@ -383,13 +413,13 @@ export const analysis =  {
 					body : request_body
 				})
 				.then((response)=>{
+
 					// data parsed
 					const data = page.parse_catalog_data(response.result)
 
 					resolve(data)
 				})
 		})
-
 	},
 
 }//end analysis

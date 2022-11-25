@@ -63,12 +63,12 @@ const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
  * use of x and y axis
  *
  * Boxplot + violin chart wrapper
- * 
+ *
  * Inspired in:
  * - http://bl.ocks.org/asielen/d15a4f16fa618273e10f,
  * - https://d3-graph-gallery.com/graph/violin_basicHist.html,
  * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
- * 
+ *
  * @param {Element} div_wrapper the div to work in
  * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
  *        with key (array of components, from general to specific) and values (the datapoints)
@@ -408,7 +408,7 @@ boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) 
 
 /**
  * Get the index of a key
- * @param {string[]} key the key 
+ * @param {string[]} key the key
  * @returns the index of the key
  */
 boxvio_chart_wrapper.prototype.get_index_of_key = function (key) {
@@ -434,7 +434,7 @@ boxvio_chart_wrapper.prototype.set_violin_scale = function (scale) {
 
 /**
  * Set the number of bins for a particular violin
- * 
+ *
  * Updates the chart accordingly
  * @param {number} i the index of the violin
  * @param {number} n_bins number of bins
@@ -455,9 +455,9 @@ boxvio_chart_wrapper.prototype.set_n_bins = function (i, n_bins) {
 
 /**
  * Set the curve for the violins
- * 
+ *
  * Updates the chart accordingly
- * @param {string} curve_name name of the curve 
+ * @param {string} curve_name name of the curve
  * @name boxvio_chart_wrapper#set_violin_curve
  */
 boxvio_chart_wrapper.prototype.set_violin_curve = function (curve_name) {
@@ -534,7 +534,7 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 		.attr('y', 50)
 		.attr('x', this._chart.width / 2)
 		.text(this._key_titles[this._key_titles.length-1])
-	
+
 	// Render y axis
 	this._graphics.yaxwl_g = g.append('g')
 	const yaxwl_g = this._graphics.yaxwl_g
@@ -840,12 +840,29 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 			.attr('stroke', 'black')
 			.attr('stroke-width', 2)
 		// Circle events for tooltip
-		circle.on('mouseover', () => {
-			this._graphics.tooltip_div.style('display', null)
-			this.tooltip_hover(i)
-		}).on('mouseout', () => {
-			this._graphics.tooltip_div.style('display', 'none')
+		this.tooltip_active = null;
+		circle.on('click', (e) => {
+			e.stopPropagation()
+
+			// already displayed. Hide
+				if (this.tooltip_active==i) {
+					this._graphics.tooltip_div.style('display', 'none')
+					this.tooltip_active = null
+					return
+				}
+
+			// hover set and fix
+				this.tooltip_hover(i)
+				this._graphics.tooltip_div.style('display', null)
+				this.tooltip_active = i
+
+			// old
+			// this._graphics.tooltip_div.style('display', null)
+			// this.tooltip_hover(i)
 		})
+		// .on('mouseout', () => {
+		// 	this._graphics.tooltip_div.style('display', 'none')
+		// })
 	}
 
 }
@@ -858,9 +875,9 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
  */
 boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	const tooltip_element = common.create_dom_element({
-		element_type: 'div',
-		id: `${this.id_string()}_tooltip_div`,
-		class_name: 'o-red',
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_div`,
+		class_name		: 'o-red tooltip_div'
 	})
 	insert_after(tooltip_element, this.plot_container)
 	this._graphics.tooltip_div = d3.select(tooltip_element)
@@ -868,7 +885,6 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	for (const [k, v] of Object.entries(TOOLTIP_STYLE)) {
 		tooltip_div.style(k, v)
 	}
-		
 }
 
 /**
@@ -907,14 +923,15 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 
 	// TODO: refactor the first three (together)
 	const upper_container = common.create_dom_element({
-		element_type: 'div',
-		parent: this.controls_container,
-		style: {
-			'display': 'flex',
-			'direction': 'flex-row',
-			'justify-content': 'space-between',
-			'align-items': 'center',
-		},
+		element_type	: 'div',
+		class_name		: 'control_panel_item control_panel',
+		parent			: this.controls_container
+		// style			: {
+		// 	'display': 'flex',
+		// 	'direction': 'flex-row',
+		// 	'justify-content': 'space-between',
+		// 	'align-items': 'center',
+		// }
 	})
 	this._render_grid_select(upper_container)
 	this._render_xticklabel_angle_slider(upper_container)
@@ -937,10 +954,10 @@ boxvio_chart_wrapper.prototype._render_grid_select = function (container) {
 	const select_container = common.create_dom_element({
 		element_type: 'div',
 		parent: container,
-		style: {
-			'display': 'flex',
-			'gap': DEFAULT_FLEX_GAP,
-		},
+		// style: {
+		// 	'display': 'flex',
+		// 	'gap': DEFAULT_FLEX_GAP,
+		// },
 	})
 	const grid_select_id = `${this.id_string()}_grid_select`
 	const grid_select_label = common.create_dom_element({
@@ -991,17 +1008,17 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function (conta
 	const slider_container = common.create_dom_element({
 		element_type: 'div',
 		parent: container,
-		style: {
-			'display': 'flex',
-			'gap': DEFAULT_FLEX_GAP,
-		},
+		// style: {
+		// 	'display': 'flex',
+		// 	'gap': DEFAULT_FLEX_GAP,
+		// },
 	})
 	const xticklabel_angle_slider_id = `${this.id_string()}_xticklabel_angle_slider`
 	const xticklabel_angle_slider_label = common.create_dom_element({
 		element_type: 'label',
 		text_content: tstring.xticklabel_angle || "X-Tick label angle",
 		parent: slider_container,
-		style: {'margin-block': 'auto'},
+		// style: {'margin-block': 'auto'},
 	})
 	xticklabel_angle_slider_label.setAttribute('for', xticklabel_angle_slider_id)
 	/** @type {Element} */
@@ -1031,17 +1048,17 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (contain
 	const select_container = common.create_dom_element({
 		element_type: 'div',
 		parent: container,
-		style: {
-			'display': 'flex',
-			'gap': DEFAULT_FLEX_GAP,
-		},
+		// style: {
+		// 	'display': 'flex',
+		// 	'gap': DEFAULT_FLEX_GAP,
+		// },
 	})
 	const curve_select_id = `${this.id_string()}_curve_select`
 	const curve_select_label = common.create_dom_element({
 		element_type: 'label',
 		text_content: tstring.violin_curve || 'Violin curve',
 		parent: select_container,
-		style: {'margin-block': 'auto'},
+		// style: {'margin-block': 'auto'},
 	})
 	curve_select_label.setAttribute('for', curve_select_id)
 	const curve_select = common.create_dom_element({
@@ -1072,15 +1089,16 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (contain
 boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	// Container div
 	const container_div = common.create_dom_element({
-		element_type: 'div',
-		parent: this.controls_container,
-		style: {
-			'display': 'flex',
-			'direction': 'flex-row',
-			'justify-content': 'space-between',
-			'align-items': 'center',
-			'margin-top': DEFAULT_MARGIN,
-		},
+		element_type	: 'div',
+		class_name		: 'control_panel_item checkboxes',
+		parent			: this.controls_container
+		// style: {
+		// 	'display': 'flex',
+		// 	'direction': 'flex-row',
+		// 	'justify-content': 'space-between',
+		// 	'align-items': 'center',
+		// 	'margin-top': DEFAULT_MARGIN,
+		// },
 	})
 
 	// Show key 2
@@ -1109,7 +1127,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	show_key2_checkbox.addEventListener('change', () => {
 		toggle_visibility(this._graphics.key2_dividers_g)
 	})
-	
+
 	// Show violins
 	const show_violins_div = common.create_dom_element({
 		element_type: 'div',
@@ -1200,33 +1218,34 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	// Container div
 	const container_div = common.create_dom_element({
-		element_type: 'div',
-		parent: this.controls_container,
-		style: {
-			'display': 'flex',
-			'direction': 'flex-row',
-			'justify-content': 'space-between',
-			'align-items': 'center',
-		},
+		element_type	: 'div',
+		parent			: this.controls_container,
+		class_name		: 'control_panel_item scale_sliders',
+		// style			: {
+		// 	'display': 'flex',
+		// 	'direction': 'flex-row',
+		// 	'justify-content': 'space-between',
+		// 	'align-items': 'center',
+		// },
 	})
 
 	// Violin scale
 	const violin_container_div = common.create_dom_element({
 		element_type: 'div',
 		parent: container_div,
-		style: {
-			'display': 'flex',
-			'gap': DEFAULT_FLEX_GAP,
-		},
+		// style: {
+		// 	'display': 'flex',
+		// 	'gap': DEFAULT_FLEX_GAP,
+		// },
 	})
 	const violin_scale_slider_id = `${this.id_string()}_violin_scale_slider`
 	const violin_scale_slider_label = common.create_dom_element({
 		element_type: 'label',
 		text_content: tstring.violin_width || 'Violin width',
 		parent: violin_container_div,
-		style: {
-			'margin-block': 'auto',
-		},
+		// style: {
+		// 	'margin-block': 'auto',
+		// },
 	})
 	violin_scale_slider_label.setAttribute('for', violin_scale_slider_id)
 	/** @type {Element} */
@@ -1245,10 +1264,11 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	})
 	/** @type {Element} */
 	const violin_scale_slider_reset = common.create_dom_element({
-		element_type: 'button',
-		type: 'button',
-		text_content: tstring.reset || 'Reset',
-		parent: violin_container_div,
+		element_type	: 'button',
+		type			: 'button',
+		class_name		: 'small',
+		text_content	: tstring.reset || 'Reset',
+		parent			: violin_container_div
 	})
 	violin_scale_slider_reset.addEventListener('click', () => {
 		violin_scale_slider.value = this._chart.violin_scale.initial
@@ -1259,19 +1279,19 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	const box_container_div = common.create_dom_element({
 		element_type: 'div',
 		parent: container_div,
-		style: {
-			'display': 'flex',
-			'gap': DEFAULT_FLEX_GAP,
-		},
+		// style: {
+		// 	'display': 'flex',
+		// 	'gap': DEFAULT_FLEX_GAP,
+		// },
 	})
 	const box_scale_slider_id = `${this.id_string()}_box_scale_slider`
 	const box_scale_slider_label = common.create_dom_element({
 		element_type: 'label',
 		text_content: tstring.box_width || 'Box width',
 		parent: box_container_div,
-		style: {
-			'margin-block': 'auto',
-		},
+		// style: {
+		// 	'margin-block': 'auto',
+		// },
 	})
 	box_scale_slider_label.setAttribute('for', box_scale_slider_id)
 	/** @type {Element} */
@@ -1290,10 +1310,11 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	})
 	/** @type {Element} */
 	const box_scale_slider_reset = common.create_dom_element({
-		element_type: 'button',
-		type: 'button',
-		text_content: tstring.reset || 'Reset',
-		parent: box_container_div,
+		element_type	: 'button',
+		type			: 'button',
+		class_name		: 'small',
+		text_content	: tstring.reset || 'Reset',
+		parent			: box_container_div,
 	})
 	box_scale_slider_reset.addEventListener('click', () => {
 		box_scale_slider.value = this._chart.box_scale.initial
@@ -1309,21 +1330,22 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
  */
 boxvio_chart_wrapper.prototype._render_key_selects = function () {
 	const container = common.create_dom_element({
-		element_type: 'div',
-		parent: this.controls_container,
-		style: {
-			'display': 'flex',
-			'align-items': 'center',
-			'gap': DEFAULT_FLEX_GAP_BIG,
-			'margin-top': DEFAULT_MARGIN_BIG,
-		},
+		element_type	: 'div',
+		class_name		: 'control_panel_item key_selects',
+		parent			: this.controls_container
+		// style			: {
+		// 	'display': 'flex',
+		// 	'align-items': 'center',
+		// 	'gap': DEFAULT_FLEX_GAP_BIG,
+		// 	'margin-top': DEFAULT_MARGIN_BIG,
+		// },
 	})
 	// Render selects for the different key components
 	const key_selects = []
 	/**
 	 * Inner function for populating a key select tag
 	 * Previous key tags must be populated already
-	 * @param {number} i index of the key select 
+	 * @param {number} i index of the key select
 	 */
 	const populate_key_select = (i) => {
 		key_selects[i].replaceChildren()  // Delete existing children
@@ -1342,17 +1364,17 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 		const select_container = common.create_dom_element({
 			element_type: 'div',
 			parent: container,
-			style: {
-				'display': 'flex',
-				'gap': DEFAULT_FLEX_GAP,
-			},
+			// style: {
+			// 	'display': 'flex',
+			// 	'gap': DEFAULT_FLEX_GAP,
+			// },
 		})
 		const select_id = `${this.id_string()}_key${this._key_size-i}_select`
 		const label = common.create_dom_element({
 			element_type: 'label',
 			text_content: this._key_titles[i],
 			parent: select_container,
-			style: {'margin-block': 'auto'},
+			// style: {'margin-block': 'auto'},
 		})
 		label.setAttribute('for', select_id)
 		const key_select = common.create_dom_element({
@@ -1378,7 +1400,7 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 			for (const ele of listeners) {
 				ele.dispatchEvent(KEY_CHANGE_EVENT)
 			}
-			
+
 		})
 	}
 }
@@ -1391,30 +1413,31 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
  */
 boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	const container = common.create_dom_element({
-		element_type: 'div',
-		parent: this.controls_container,
-		style: {
-			'display': 'flex',
-			'align-items': 'center',
-			'gap': DEFAULT_FLEX_GAP,
-			'margin-top': DEFAULT_MARGIN,
-		},
+		element_type	: 'div',
+		parent			: this.controls_container,
+		class_name		: 'control_panel_item n_bins_control'
+		// style			: {
+		// 	'display': 'flex',
+		// 	'align-items': 'center',
+		// 	'gap': DEFAULT_FLEX_GAP,
+		// 	'margin-top': DEFAULT_MARGIN,
+		// },
 	})
 	// Slider for n bins
 	const violin_n_bins_slider_id = `${this.id_string()}_violin_n_bins_slider`
 	const violin_n_bins_label = common.create_dom_element({
-		element_type: 'label',
-		text_content: tstring.violin_resolution || 'Violin resolution',
-		parent: container,
-		style: {'margin-block': 'auto'},
+		element_type	: 'label',
+		text_content	: tstring.violin_resolution || 'Violin resolution',
+		parent			: container
+		// style: {'margin-block': 'auto'},
 	})
 	violin_n_bins_label.setAttribute('for', violin_n_bins_slider_id)
 	const violin_n_bins_slider = common.create_dom_element({
-		element_type: 'input',
-		type: 'range',
-		class_name: KEY_CHANGE_LISTENER_CLASS_NAME,
-		id: violin_n_bins_slider_id,
-		parent: container,
+		element_type	: 'input',
+		type			: 'range',
+		class_name		: KEY_CHANGE_LISTENER_CLASS_NAME,
+		id				: violin_n_bins_slider_id,
+		parent			: container
 	})
 	violin_n_bins_slider.setAttribute('min', 2)
 	const reset = () => {
@@ -1435,10 +1458,11 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 
 	// Reset n bins
 	const violin_n_bins_slider_reset = common.create_dom_element({
-		element_type: 'button',
-		type: 'button',
-		text_content: tstring.reset || 'Reset',
-		parent: container,
+		element_type	: 'button',
+		type			: 'button',
+		class_name		: 'small',
+		text_content	: tstring.reset || 'Reset',
+		parent			: container
 	})
 	violin_n_bins_slider_reset.addEventListener('click', () => {
 		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
@@ -1447,10 +1471,11 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 
 	// Reset all n bins
 	const violin_all_n_bins_slider_reset = common.create_dom_element({
-		element_type: 'button',
-		type: 'button',
-		text_content: tstring.reset_all_violins || 'Reset all violins',
-		parent: container,
+		element_type	: 'button',
+		type			: 'button',
+		class_name		: 'small',
+		text_content	: tstring.reset_all_violins || 'Reset all violins',
+		parent			: container
 	})
 	violin_all_n_bins_slider_reset.addEventListener('click', () => {
 		// Update the value of the slider

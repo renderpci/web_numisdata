@@ -22,19 +22,19 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
 
 /**
  * Chart wrapper class (download panel, plot, and control panel)
- * 
+ *
  * The `render` method must be called for the chart to be rendered to the DOM!!!
- * 
+ *
  * Within the provided div wrapper, it will create three divs:
  * 1. If download is supported, a div to containing the download section, with
  *    id `chart<id>_download_chart_container` class `download_chart_container`
- * 2. A div to contain the plot itself, with id `chart<id>_plot_wrapper` class `plot_wrapper` 
+ * 2. A div to contain the plot itself, with id `chart<id>_plot_wrapper` class `plot_wrapper`
  * 3. A div to contain the control panel, with id `chart<id>_control_panel` and class `control_panel`
- * 
+ *
  * It clears the container div during render, so subclasses should work with the dom
  * after the render methods of this superclass (`render_plot` and `render_control_panel`) have been called.
  * In other words, subclasses should override those specific methods instead of the general `render` function
- * 
+ *
  * Last reminder, the constructor is the place to do data processing exclusively. All rendering to the DOM
  * must be done in the specific render methods. Otherwise, bugs WILL appear.
  * @class
@@ -51,7 +51,7 @@ export function chart_wrapper(div_wrapper, options) {
 	chart_wrapper._n_charts_created++;
 	/**
 	 * Unique identifier for the chart.
-	 * 
+	 *
 	 * Subclasses MUST use this in order to assing IDs
 	 * to DOM elements, in order to avoid bugs and cross-chart events
 	 * @type {number}
@@ -117,9 +117,9 @@ chart_wrapper.prototype.id_string = function () {
 
 /**
  * Render the chart
- * 
+ *
  * Empties the div wrapper and resets properties
- * 
+ *
  * Subclasses must call this method at the top
  * of their own implementation
  * @name chart_wrapper#render
@@ -136,11 +136,6 @@ chart_wrapper.prototype.render = function () {
 	// Remove all children in the div_wrapper
 	this.div_wrapper.replaceChildren()
 
-	// Create the chart download section
-	if (this._display_download) {
-		this._render_download_panel()
-	}
-
 	// Create the div for wrapping the plot
 	this.render_plot()
 
@@ -149,6 +144,10 @@ chart_wrapper.prototype.render = function () {
 		this.render_control_panel()
 	}
 
+	// Create the chart download section
+	if (this._display_download) {
+		this._render_download_panel()
+	}
 }
 
 /**
@@ -164,37 +163,40 @@ chart_wrapper.prototype._render_download_panel = function () {
 			element_type: 'div',
 			id: `${this.id_string()}_download_chart_container`,
 			class_name: 'o-purple download_chart_container',
-			style: {
-				'display': 'flex',
-				'flex-direction': 'row',
-				'justify-content': 'center',
-			},
+			// style: {
+			// 	'display': 'flex',
+			// 	'flex-direction': 'row',
+			// 	'justify-content': 'center',
+			// },
 			parent: this.div_wrapper,
 		})
 		const format_select = common.create_dom_element({
-			element_type: 'select',
-			id: `${this.id_string()}_chart_export_format`,
-			style: {
-				'width': '75%',
-			},
-			parent: this.download_chart_container,
+			element_type	: 'select',
+			id				: `${this.id_string()}_chart_export_format`,
+			class_name		: 'format_select',
+			// style		: {
+			// 	'width'		: '75%',
+			// },
+			parent			: this.download_chart_container,
 			// TODO: add ARIA attributes?
 		})
 		for (const format of supported_formats) {
 			common.create_dom_element({
-				element_type: 'option',
-				value: format,
-				text_content: format.toUpperCase(),
-				parent: format_select,
+				element_type	: 'option',
+				value			: format,
+				text_content	: format.toUpperCase(),
+				parent			: format_select
 			})
 		}
 		const chart_download_button = common.create_dom_element({
-			element_type: 'button',
-			text_content: tstring.download || 'Download',
-			style: {
-				'width': '25%',
-			},
-			parent: this.download_chart_container,
+			element_type	: 'input',
+			type			: 'button',
+			class_name		: 'btn primary button_download chart',
+			value			: tstring.download || 'Download',
+			// style		: {
+			// 	'width'		: '25%',
+			// },
+			parent			: this.download_chart_container
 		})
 		chart_download_button.addEventListener('click', () => {
 			this.download_chart(format_select.value)
@@ -204,7 +206,7 @@ chart_wrapper.prototype._render_download_panel = function () {
 
 /**
  * Render the plot to the DOM
- * 
+ *
  * Subclasses should override this method and make
  * use of the plot container
  * @function
@@ -222,7 +224,7 @@ chart_wrapper.prototype.render_plot = function () {
 
 /**
  * Render the control panel to the DOM
- * 
+ *
  * Subclasses should override this method and make
  * use of the controls container
  * @function
@@ -231,16 +233,16 @@ chart_wrapper.prototype.render_plot = function () {
  */
 chart_wrapper.prototype.render_control_panel = function () {
 	this.controls_container = common.create_dom_element({
-		element_type: 'div',
-		id: `${this.id_string()}_control_panel`,
-		class_name: 'o-green control_panel',
-		parent: this.div_wrapper,
+		element_type	: 'div',
+		id				: `${this.id_string()}_control_panel`,
+		class_name		: 'o-green control_panel',
+		parent			: this.div_wrapper
 	})
 }
 
 /**
  * Download the chart as an image
- * 
+ *
  * For each supported format in the subclass,
  * @see chart_wrapper#get_supported_export_formats
  * the subclass must implement a method called
@@ -269,7 +271,7 @@ chart_wrapper.prototype.download_chart = function (format) {
 
 /**
  * Get the supported chart export formats
- * 
+ *
  * Subclasses must return their own supported formats, if any, e.g.,
  * `['png', 'jpg', 'eps']`. If no format is supported, there is no
  * need to override this method.

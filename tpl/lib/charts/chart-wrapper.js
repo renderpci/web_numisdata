@@ -127,12 +127,6 @@ chart_wrapper.prototype.id_string = function () {
  * @public
  */
 chart_wrapper.prototype.render = function () {
-	// Save this chart_wrapper intance
-	/**
-	 * This chart_wrapper intance
-	 * @type {chart_wrapper}
-	 */
-	const self = this
 	// Remove all children in the div_wrapper
 	this.div_wrapper.replaceChildren()
 
@@ -173,7 +167,7 @@ chart_wrapper.prototype._render_download_panel = function () {
 		const format_select = common.create_dom_element({
 			element_type	: 'select',
 			id				: `${this.id_string()}_chart_export_format`,
-			class_name		: 'format_select',
+			class_name		: 'chart_format_select',
 			// style		: {
 			// 	'width'		: '75%',
 			// },

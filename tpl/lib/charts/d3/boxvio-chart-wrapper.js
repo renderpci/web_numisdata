@@ -498,6 +498,12 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 	// Set viewBox of svg
 	this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)
 
+	// Hide tooltip when clicking in SVG
+	this.svg.on('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
+
 	// Root g tag
 	this._graphics.root_g = this.svg.append('g')
 		.attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
@@ -846,8 +852,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 			// already displayed. Hide
 				if (this.tooltip_active==i) {
-					this._graphics.tooltip_div.style('display', 'none')
-					this.tooltip_active = null
+					this._hide_tooltip()
 					return
 				}
 
@@ -865,6 +870,17 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		// })
 	}
 
+}
+
+/**
+ * Hide the tooltip
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_hide_tooltip
+ */
+boxvio_chart_wrapper.prototype._hide_tooltip = function () {
+	this._graphics.tooltip_div.style('display', 'none')
+	this.tooltip_active = null
 }
 
 /**

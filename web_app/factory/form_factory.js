@@ -87,7 +87,9 @@ function form_factory() {
 			node_values		: null,
 			// input type and fixed values (case 'select')
 			input_type		: options.input_type,
-			input_values	: options.input_values
+			input_values	: options.input_values,
+			// operator between values of the field
+			group_op		: options.group_op || '$and'
 		}
 
 		// add node
@@ -487,17 +489,22 @@ function form_factory() {
 			const form_items = options.form_items || self.form_items
 
 		// global operator
-			const operators_node = self.operators_node
-			const operator_value = (operators_node)
-				? operators_node.querySelector('input[name="operators"]:checked').value
-				: '$and'
+			// const operators_node = self.operators_node
+			// const operator_value = (operators_node)
+			// 	? operators_node.querySelector('input[name="operators"]:checked').value
+			// 	: '$and'
 
 		const ar_query_elements = []
 		for (let [id, form_item] of Object.entries(form_items)) {
 
 			// const current_group = []
 
-			const group_op = (form_item.is_term===true) ? "$or" : "$and"
+			const group_op = (form_item.is_term===true)
+				? '$or'
+				: form_item.group_op
+					? form_item.group_op
+					: '$and'
+
 			// const group_op = operator_value || '$and'
 			const group = {}
 				  group[group_op] = []
@@ -644,7 +651,6 @@ function form_factory() {
 		// filter object
 			const filter = {}
 				  filter[operators_value] = ar_query_elements
-
 
 
 		return filter

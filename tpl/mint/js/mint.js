@@ -741,6 +741,13 @@ var mint = {
 
 				popUpContainer.appendChild(cite_data_node)
 
+				const click_to_copy = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "float-text_copy",
+					text_content	: tstring.click_to_copy || 'Click to copy',
+					parent 			: popUpContainer
+				})
+				
 			})
 
 		// name & place

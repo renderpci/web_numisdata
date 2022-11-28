@@ -627,7 +627,7 @@ page.parse_catalog_data = function(data) {
 					? JSON.parse(row.ref_type_design_obverse_data)
 					: null
 
-			    row.ref_type_design_reverse_data = row.ref_type_design_reverse_data
+				row.ref_type_design_reverse_data = row.ref_type_design_reverse_data
 					? JSON.parse(row.ref_type_design_reverse_data)
 					: null
 
@@ -717,7 +717,20 @@ page.parse_catalog_data = function(data) {
 				? JSON.parse(row.p_culture)
 				: null
 
-
+			// Aggregated (in an array) values for all coins in a type
+			row.full_coins_reference_diameter_max = row.full_coins_reference_diameter_max
+				? JSON.parse(row.full_coins_reference_diameter_max)
+				: null
+			row.full_coins_reference_diameter_min = row.full_coins_reference_diameter_min
+				? JSON.parse(row.full_coins_reference_diameter_min)
+				: null
+			row.full_coins_reference_weight = row.full_coins_reference_weight
+				? JSON.parse(row.full_coins_reference_weight)
+				: null
+			row.full_coins_reference_calculable = row.full_coins_reference_calculable
+				? JSON.parse(row.full_coins_reference_calculable)
+				: null
+				
 			new_data.push(row)
 		}
 

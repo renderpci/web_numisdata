@@ -331,9 +331,11 @@ var map = {
 				name			: "mint",
 				label			: tstring.mint || "mint",
 				q_column		: "mint",
+				value_wrapper	: ['["','"]'], // to obtain ["value"] in selected value only
 				eq				: "LIKE",
 				eq_in			: "%",
 				eq_out			: "%",
+				is_term			: true,
 				q_selected_eq	: "LIKE",
 				parent			: form_row,
 				callback		: function(form_item) {

@@ -1,0 +1,27 @@
+.button_icon_simple {
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  background-size: contain;
+  opacity: 0.7;
+}
+.button_icon_simple:active {
+  opacity: 0.5;
+}
+.button_icon_simple:hover {
+  opacity: 1;
+}
+#main {
+  overflow: hidden;
+  padding-bottom: 2rem;
+}
+#main > .inner {
+  min-height: 78vh;
+}
+#main > .inner .result .info_line {
+  margin-top: -1em;
+  margin-bottom: 2rem;
+}
+/*# sourceMappingURL=analysis.css.map */

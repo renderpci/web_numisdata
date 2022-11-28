@@ -717,6 +717,118 @@ body.touch .poptrox-popup .nav-next {
     display: none !important;
   }
 }
+.chart_wrapper label {
+  font-weight: 400;
+}
+.chart_wrapper .plot_container {
+  outline: 1px solid #f2f0f0;
+}
+.chart_wrapper .control_panel {
+  margin-bottom: 0.25rem;
+}
+.chart_wrapper .control_panel > .control_panel_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+.chart_wrapper .control_panel > .control_panel_item.control_panel > div label {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25rem;
+  line-height: 2.5rem;
+}
+.chart_wrapper .control_panel > .control_panel_item.control_panel > div select,
+.chart_wrapper .control_panel > .control_panel_item.control_panel > div input {
+  padding-left: 1rem;
+  height: 2.5rem;
+  margin-top: 0;
+}
+.chart_wrapper .control_panel > .control_panel_item.scale_sliders > div {
+  width: 50%;
+}
+.chart_wrapper .control_panel > .control_panel_item.scale_sliders > div label {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+.chart_wrapper .control_panel > .control_panel_item.scale_sliders > div select,
+.chart_wrapper .control_panel > .control_panel_item.scale_sliders > div input {
+  padding-left: 1rem;
+  height: 2.5rem;
+  margin-top: 0;
+}
+.chart_wrapper .control_panel > .control_panel_item.scale_sliders > div input {
+  width: 65%;
+}
+.chart_wrapper .control_panel > .control_panel_item.scale_sliders > div .small {
+  margin-left: 0.5rem;
+  vertical-align: top;
+  opacity: 0.5;
+}
+.chart_wrapper .control_panel > .control_panel_item.key_selects {
+  justify-content: start;
+}
+.chart_wrapper .control_panel > .control_panel_item.key_selects > div {
+  display: flex;
+  flex: 1 0 auto;
+}
+.chart_wrapper .control_panel > .control_panel_item.key_selects > div label {
+  display: inline-block;
+  padding-right: 1rem;
+  height: 2.5rem;
+  white-space: nowrap;
+  margin: 0;
+  line-height: 2.5rem;
+}
+.chart_wrapper .control_panel > .control_panel_item.key_selects > div select,
+.chart_wrapper .control_panel > .control_panel_item.key_selects > div input {
+  padding-left: 1rem;
+  height: 2.5rem;
+  margin-top: 0;
+}
+.chart_wrapper .control_panel > .control_panel_item.n_bins_control {
+  margin-top: 1rem;
+}
+.chart_wrapper .control_panel > .control_panel_item.n_bins_control label {
+  display: inline-block;
+  padding-right: 1rem;
+  height: 2.5rem;
+  white-space: nowrap;
+  margin: 0;
+  line-height: 2.5rem;
+}
+.chart_wrapper .control_panel > .control_panel_item.n_bins_control input {
+  padding-left: 1rem;
+  height: 2.5rem;
+  margin-top: 0;
+  width: 65%;
+  width: 38%;
+}
+.chart_wrapper .control_panel > .control_panel_item.n_bins_control .small {
+  margin-left: 0.5rem;
+  vertical-align: top;
+  opacity: 0.5;
+}
+.chart_wrapper .download_chart_container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.chart_wrapper .download_chart_container .chart_format_select {
+  width: auto;
+}
+.chart_wrapper .tooltip_div {
+  background-color: #f9f7f7;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  outline: 1px solid #f2f0f0;
+}
+.chart_wrapper svg circle {
+  cursor: pointer;
+}
 .font_logo {
   font-weight: 300;
   font-variant: small-caps;
@@ -1566,8 +1678,7 @@ input[type=button].btn.button_contact.unactive {
   background-color: #333333;
   display: flex;
   flex-flow: column;
-  padding: 2em;
-  padding-top: 1em;
+  padding: 1.5em;
   border-radius: 5px;
   box-shadow: 8px 8px 10px 0px rgba(180, 180, 180, 0.8);
   max-width: 600px;
@@ -1598,7 +1709,7 @@ input[type=button].btn.button_contact.unactive {
   top: 0.5em;
 }
 .float-cite .cite_this {
-  font-size: 1em;
+  font-size: 0.8em;
   color: white;
   background-color: transparent;
 }
@@ -1617,6 +1728,13 @@ input[type=button].btn.button_contact.unactive {
 }
 .float-cite .cite_this.copy a {
   color: black ;
+}
+.float-cite .float-text_copy {
+  font-size: 16px;
+  color: #a6a6a6;
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: -1em;
 }
 .legend_box {
   display: flex;
@@ -1970,4 +2088,93 @@ input[type=button].btn.button_contact.unactive {
 }
 .leaflet-touch .leaflet-bar a {
   line-height: 1rem;
+}
+input[type=range] {
+  height: 27px;
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000;
+  background: #9A905D;
+  border-radius: 4px;
+  border: 0px solid #010101;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000031;
+  border: 1px solid #FFFFFF;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  background: #9A905D;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -8px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #9A905D;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000;
+  background: #9A905D;
+  border-radius: 4px;
+  border: 0px solid #010101;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000031;
+  border: 1px solid #FFFFFF;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  background: #9A905D;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #9A905D;
+  border: 0px solid #010101;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0px #000000;
+}
+input[type=range]::-ms-fill-upper {
+  background: #9A905D;
+  border: 0px solid #010101;
+  border-radius: 8px;
+  box-shadow: 0px 0px 0px #000000;
+}
+input[type=range]::-ms-thumb {
+  margin-top: 1px;
+  box-shadow: 0px 0px 0px #000031;
+  border: 1px solid #FFFFFF;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  background: #9A905D;
+  cursor: pointer;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #9A905D;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #9A905D;
 }

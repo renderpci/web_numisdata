@@ -14,6 +14,7 @@
 	@import 'coins_common.less';
 	@import 'pagination.less';
 	@import 'poptrox.less';
+	@import 'chart.less';
 
 
 // Usage library
@@ -1341,8 +1342,7 @@
 	background-color: #333333;
 	display: flex;
 	flex-flow: column;
-	padding: 2em;
-	padding-top: 1em;
+	padding: 1.5em;
 	border-radius: 5px;
 	box-shadow: 8px 8px 10px 0px rgb(180 180 180 / 80%);
 	max-width: 600px;
@@ -1373,7 +1373,7 @@
 	top: 0.5em;
 }
 .float-cite .cite_this{
-	font-size: 1em;
+	font-size: 0.8em;
 	color: white;
 	a{
 		color: white;
@@ -1392,6 +1392,13 @@
 	a{
 		color: black ;
 	}
+}
+.float-cite .float-text_copy{
+	font-size: 16px;
+	color: #a6a6a6;
+	text-align: center;
+	margin-top: 1em;
+	margin-bottom: -1em;
 }
 
 // legend_box
@@ -1819,4 +1826,97 @@
 // leaflet overwrite
 	.leaflet-touch .leaflet-bar a {
 		line-height: 1rem;
+	}
+
+
+
+// input type range
+	input[type=range] {
+	  height: 27px;
+	  -webkit-appearance: none;
+	  margin: 10px 0;
+	  width: 100%;
+	}
+	input[type=range]:focus {
+	  outline: none;
+	}
+	input[type=range]::-webkit-slider-runnable-track {
+	  width: 100%;
+	  height: 5px;
+	  cursor: pointer;
+	  animate: 0.2s;
+	  box-shadow: 0px 0px 0px #000000;
+	  background: #9A905D;
+	  border-radius: 4px;
+	  border: 0px solid #010101;
+	}
+	input[type=range]::-webkit-slider-thumb {
+	  box-shadow: 0px 0px 0px #000031;
+	  border: 1px solid #FFFFFF;
+	  height: 20px;
+	  width: 20px;
+	  border-radius: 10px;
+	  background: #9A905D;
+	  cursor: pointer;
+	  -webkit-appearance: none;
+	  margin-top: -8px;
+	}
+	input[type=range]:focus::-webkit-slider-runnable-track {
+	  background: #9A905D;
+	}
+	input[type=range]::-moz-range-track {
+	  width: 100%;
+	  height: 5px;
+	  cursor: pointer;
+	  animate: 0.2s;
+	  box-shadow: 0px 0px 0px #000000;
+	  background: #9A905D;
+	  border-radius: 4px;
+	  border: 0px solid #010101;
+	}
+	input[type=range]::-moz-range-thumb {
+	  box-shadow: 0px 0px 0px #000031;
+	  border: 1px solid #FFFFFF;
+	  height: 20px;
+	  width: 20px;
+	  border-radius: 10px;
+	  background: #9A905D;
+	  cursor: pointer;
+	}
+	input[type=range]::-ms-track {
+	  width: 100%;
+	  height: 5px;
+	  cursor: pointer;
+	  animate: 0.2s;
+	  background: transparent;
+	  border-color: transparent;
+	  color: transparent;
+	}
+	input[type=range]::-ms-fill-lower {
+	  background: #9A905D;
+	  border: 0px solid #010101;
+	  border-radius: 8px;
+	  box-shadow: 0px 0px 0px #000000;
+	}
+	input[type=range]::-ms-fill-upper {
+	  background: #9A905D;
+	  border: 0px solid #010101;
+	  border-radius: 8px;
+	  box-shadow: 0px 0px 0px #000000;
+	}
+	input[type=range]::-ms-thumb {
+	  margin-top: 1px;
+	  box-shadow: 0px 0px 0px #000031;
+	  border: 1px solid #FFFFFF;
+	  height: 20px;
+	  width: 20px;
+	  border-radius: 10px;
+	  background: #9A905D;
+	  cursor: pointer;
+	}
+	input[type=range]:focus::-ms-fill-lower {
+	  background: #9A905D;
+	}
+	input[type=range]:focus::-ms-fill-upper {
+	  background: #9A905D;
 	}

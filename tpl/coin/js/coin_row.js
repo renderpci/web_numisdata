@@ -109,6 +109,12 @@ var coin_row = {
 
 				popUpContainer.appendChild(cite_data_node)
 
+				const click_to_copy = common.create_dom_element({
+					element_type	: "div",
+					class_name		: "float-text_copy",
+					text_content	: tstring.click_to_copy || 'Click to copy',
+					parent 			: popUpContainer
+				})
 			})
 
 		// identify_images
@@ -374,7 +380,7 @@ var coin_row = {
 								// + ' ' +label_mint.toLowerCase()
 								// + ' / ' +label_number.toLowerCase()
 								// +' ' +label_type_name.toLowerCase();
-			const type_section = row.type_data.find(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM) || {}
+			const type_section = row.type_data.filter(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM)[0]
 
 			// creators
 			const creators_data = typeof type_section!=="undefined"

@@ -19,6 +19,7 @@
     "catalogue": "Catalogue",
     "chronology": "Chronology",
     "cite_this_record": "cite this record",
+    "click_to_copy" : "(Click to copy)",
     "code": "Code",
     "coin": "Coin",
     "coin_file": "Coin file",
@@ -144,5 +145,6 @@
     "uri": "URI",
     "volume": "Volume",
     "weight": "Weight",
-    "work_in_progress": "Work in progress. Provisional numbering. Not for citation"
+    "work_in_progress": "Work in progress. Provisional numbering. Not for citation",
+    "show_violins": "Show violins"
 }

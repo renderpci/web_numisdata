@@ -6,12 +6,12 @@ acc
 .DS_Store
 *.sublime-workspace
 .phpintel
-acc
 *_OLD.*
 *_old.*
 *_DES
 sendmail
 config
+!sample.config.php
 # images
 library.less
 logo_head*
@@ -20,10 +20,12 @@ uni_val_hist.png
 LogoMuseoNegroValencia.png
 logo_mciu.jpg
 logo_mib_marron.svg
+logo_render_bn.png
 logo-inc.svg
 page.css
-logo_render_bn.png
 *-min.js
 *-min.js.map
 !app-min.js.map
 !app-min.js
+!analysis-min.js
+!analysis-min.js.map

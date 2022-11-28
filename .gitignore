@@ -23,8 +23,6 @@ logo_mib_marron.svg
 logo_render_bn.png
 logo-inc.svg
 page.css
-*-min.js
-*-min.js.map
 !app-min.js.map
 !app-min.js
 !analysis-min.js

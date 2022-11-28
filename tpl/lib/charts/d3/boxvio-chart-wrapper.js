@@ -12,11 +12,11 @@ import { array_equal, deepcopy, insert_after } from "../utils"
  * @type {Object.<string, string | number>}
  */
 const TOOLTIP_STYLE = {
-	'text-align': 'left',
-	'padding': '0.7em',
-	'padding-left': '0.8em',
-	'font-size': '0.9em',
-	'display': 'none',
+	'text-align'	: 'left',
+	'padding'		: '0.7em',
+	'padding-left'	: '0.8em',
+	'font-size'		: '0.9em',
+	'display'		: 'none',
 }
 
 /**
@@ -55,6 +55,12 @@ const KEY_CHANGE_EVENT = new Event(KEY_CHANGE_EVENT_NAME)
  * @type {string}
  */
 const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
+
+/**
+ * CSS class for the whiskers
+ * @type {string}
+ */
+const WHISKERS_CSS_CLASS = 'whiskers'
 
 
 /**
@@ -798,6 +804,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 		// Draw whiskers
 		const whiskers = group_box.append('g')
+			.classed(WHISKERS_CSS_CLASS, true)
 		whiskers.append('line')  // vertical line
 			.attr('x1', 0)
 			.attr('y1', chart.yscale(metrics.lower_fence))
@@ -1197,6 +1204,33 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
 	show_boxes_checkbox.addEventListener('change', () => {
 		toggle_visibility(this._graphics.boxes_g)
+		// (DISABLED) Disable the checkbox for outliers (defined below)
+		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+	})
+
+	// Show boxes
+	const show_whiskers_div = common.create_dom_element({
+		element_type: 'div',
+		parent: container_div,
+	})
+	const show_whiskers_checkbox_id = `${this.id_string()}_show_whiskers_checkbox`
+	/** @type {Element} */
+	const show_whiskers_checkbox = common.create_dom_element({
+		element_type: 'input',
+		type: 'checkbox',
+		id: show_whiskers_checkbox_id,
+		parent: show_whiskers_div,
+	})
+	show_whiskers_checkbox.checked = true
+	/** @type {Element} */
+	const show_whiskers_label = common.create_dom_element({
+		element_type: 'label',
+		text_content: tstring.whiskers || 'Whiskers',
+		parent: show_whiskers_div,
+	})
+	show_whiskers_label.setAttribute('for', show_whiskers_checkbox_id)
+	show_whiskers_checkbox.addEventListener('change', () => {
+		toggle_visibility(this._graphics.boxes_g.selectAll(`g g.${WHISKERS_CSS_CLASS}`))
 		// (DISABLED) Disable the checkbox for outliers (defined below)
 		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
 	})

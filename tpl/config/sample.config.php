@@ -182,3 +182,26 @@
 
 // safe images url
 	define('SAFE_IMAGES_URL', false);
+
+
+
+// sendmail
+	// mailer. Send configuration
+		$mconfig = (object)[
+			'Host'			=> 'smtp.mydomain.org',
+			'SMTPAuth'		=> true,
+			'Username'		=> 'user@mydomain.org',
+			'Password'		=> 'XXXXXXXXXXXXXXXXX',
+			'SMTPSecure'	=> 'tls',
+			'Port'			=> 587
+		];
+	// mail vars config
+		// sender info
+		$mconfig->From		= $mconfig->Username;
+		$mconfig->FromName	= "Site mydomain.org";
+		// target info
+		$mconfig->to		= 'user@mydomain.org';
+		$mconfig->reply_to	= 'no-reply@mydomain.org';
+		$mconfig->bcc		= 'webmaster@mydomain.org';
+	// mail header logo
+		$logo_url = 'https://mydomain.org/images/logo.svg';

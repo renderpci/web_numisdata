@@ -1,3 +1,8 @@
+/*
+* vars
+* Global less vars
+* (file included from library.less)
+*/
 .button_icon_simple {
   background-repeat: no-repeat;
   background-position: center center;
@@ -991,7 +996,7 @@ nav ul {
   height: 23em;
 }
 #header > .head_inner > a.logo {
-  background-color: #333333;
+  background-color: #622f2f;
   background-image: url("../../assets/images/logo_head-06.svg");
   background-repeat: no-repeat;
   height: 5em;
@@ -1074,7 +1079,7 @@ nav ul {
 }
 #header .symbol .title {
   font-size: 3em !important;
-  text-shadow: -2px -2px 0 #333333, 2px -2px 0 #333333, -2px 2px 0 #333333, 2px 2px 0 #333333;
+  text-shadow: -2px -2px 0 #622f2f, 2px -2px 0 #622f2f, -2px 2px 0 #622f2f, 2px 2px 0 #622f2f;
 }
 @media screen and (max-width: 736px) {
   #header {
@@ -1196,7 +1201,7 @@ nav ul {
   }
 }
 #footer {
-  background-color: #333333;
+  background-color: #622f2f;
   padding: 0;
   padding-top: 0.75em;
   padding-bottom: 0.75em;
@@ -1492,7 +1497,7 @@ a.image_link img {
 .float-prompt {
   position: fixed;
   top: 100px;
-  background-color: #333333;
+  background-color: #622f2f;
   display: flex;
   flex-flow: column;
   padding: 2em;

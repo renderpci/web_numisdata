@@ -1117,6 +1117,13 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		// },
 	})
 
+	// Show text
+	const show_text_div = common.create_dom_element({
+		element_type: 'div',
+		text_content: `${tstring.show || "Show"}:`,
+		parent: container_div,
+	})
+
 	// Show key 2
 	const show_key2_div = common.create_dom_element({
 		element_type: 'div',
@@ -1134,9 +1141,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_key2_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: (tstring.show || 'Show')
-					  + ' '
-					  + this._key_titles[this._key_size-2].toLowerCase(),
+		text_content: this._key_titles[this._key_size-2],
 		parent: show_key2_div,
 	})
 	show_key2_label.setAttribute('for', show_key2_checkbox_id)
@@ -1161,7 +1166,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_violins_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_violins || 'Show violins',
+		text_content: tstring.violins || 'Violins',
 		parent: show_violins_div,
 	})
 	show_violins_label.setAttribute('for', show_violins_checkbox_id)
@@ -1186,7 +1191,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_boxes_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_boxes || 'Show boxes',
+		text_content: tstring.boxes || 'Boxes',
 		parent: show_boxes_div,
 	})
 	show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
@@ -1213,7 +1218,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_outliers_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_outliers || 'Show outliers',
+		text_content: tstring.outliers || 'Outliers',
 		parent: show_outliers_div,
 	})
 	show_outliers_label.setAttribute('for', show_outliers_checkbox_id)

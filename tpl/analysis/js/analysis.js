@@ -424,7 +424,7 @@ export const analysis =  {
 					const data = []
 					for (const [i, ele] of parsed_data.entries()) {
 						const number_key = ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})`
-						const mint = ele.p_mint ? ele.p_mint[0] : `Missing mint (${i})`
+						const mint = ele.p_mint ? ele.p_mint[0] : `Missing mint (${ele.section_id})`
 						const material = ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
 						const denomination = ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
 						// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue

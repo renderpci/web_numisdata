@@ -1,4 +1,6 @@
 config.php
+config.*
+!sample.config.php
 config.codekit3
 .codekit-cache
 *codekit*
@@ -10,8 +12,6 @@ acc
 *_old.*
 *_DES
 sendmail
-config
-!sample.config.php
 # images
 library.less
 logo_head*

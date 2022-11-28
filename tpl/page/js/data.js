@@ -730,7 +730,7 @@ page.parse_catalog_data = function(data) {
 			row.full_coins_reference_calculable = row.full_coins_reference_calculable
 				? JSON.parse(row.full_coins_reference_calculable)
 				: null
-
+				
 			new_data.push(row)
 		}
 

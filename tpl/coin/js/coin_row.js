@@ -115,7 +115,6 @@ var coin_row = {
 					text_content	: tstring.click_to_copy || 'Click to copy',
 					parent 			: popUpContainer
 				})
-
 			})
 
 		// identify_images

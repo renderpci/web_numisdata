@@ -894,19 +894,19 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
  * @name boxvio_chart_wrapper#tooltip_hover
  */
 boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
-	const decimals = 3
+	const decimals = 2
 	const key = this._data[i].key
 	const values = this._data[i].values
 	const metrics = this._data[i].metrics
 	const tooltip_text = `<b>${key.join(', ')}</b>`
 		+ '<span style="font-size: smaller;">'
-		+ `<br>Datapoints: ${values.length}`
-		+ `<br>Mean: ${metrics.mean.toFixed(decimals)}`
-		+ `<br>Max: ${metrics.max.toFixed(decimals)}`
-		+ `<br>Q3: ${metrics.quartile3.toFixed(decimals)}`
-		+ `<br>Median: ${metrics.median.toFixed(decimals)}`
-		+ `<br>Q1: ${metrics.quartile1.toFixed(decimals)}`
-		+ `<br>Min: ${metrics.min.toFixed(decimals)}`
+		+ `<br>${tstring.datapoints || 'Datapoints'}: ${values.length}`
+		+ `<br>${tstring.mean || 'Mean'}: ${metrics.mean.toFixed(decimals)}`
+		+ `<br>${tstring.max || 'Maximum'}: ${metrics.max.toFixed(decimals)}`
+		+ `<br>${tstring.quantile || 'Quantile'}-75: ${metrics.quartile3.toFixed(decimals)}`
+		+ `<br>${tstring.median || 'Median'}: ${metrics.median.toFixed(decimals)}`
+		+ `<br>${tstring.quantile || 'Quantile'}-25: ${metrics.quartile1.toFixed(decimals)}`
+		+ `<br>${tstring.min || 'Minimum'}: ${metrics.min.toFixed(decimals)}`
 		+ '</span>'
 	this._graphics.tooltip_div
 		.html(tooltip_text)

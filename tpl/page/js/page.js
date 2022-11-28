@@ -563,7 +563,6 @@ var page = {
 
 			return remote_url
 		}
-		// /dedalo/media_test/media_monedaiberica
 
 		return null
 	},//end remote_image

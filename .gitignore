@@ -14,6 +14,7 @@ acc
 sendmail
 # images
 # library.less
+# page.css
 logo_head*
 default.jpg
 uni_val_hist.png
@@ -22,7 +23,6 @@ logo_mciu.jpg
 logo_mib_marron.svg
 logo_render_bn.png
 logo-inc.svg
-page.css
 !app-min.js.map
 !app-min.js
 !analysis-min.js

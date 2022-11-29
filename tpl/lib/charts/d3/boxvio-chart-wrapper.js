@@ -9,6 +9,7 @@ import { array_equal, deepcopy, insert_after } from "../utils"
 
 /**
  * CSS style for the tooltip
+ * TODO: put this in CSS
  * @type {Object.<string, string | number>}
  */
 const TOOLTIP_STYLE = {
@@ -77,12 +78,14 @@ const WHISKERS_CSS_CLASS = 'whiskers'
  *
  * @param {Element} div_wrapper the div to work in
  * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
- *        with key (array of components, from general to specific) and values (the datapoints)
- *        (KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
+ * 		with key (array of components, from general to specific) and values (the datapoints)
+ * 		(KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
+ * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
+ * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
  * @param {string} options.ylabel the y-label (default `null`)
  * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
@@ -92,6 +95,13 @@ const WHISKERS_CSS_CLASS = 'whiskers'
  */
 export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	d3_chart_wrapper.call(this, div_wrapper, options)
+	/**
+	 * overrides default behavior of the whiskers by specifying
+	 * the quantiles of the lower and upper
+	 * @type {[number, number]}
+	 */
+	this._whiskers_quantiles = options.whiskers_quantiles || null
+	console.log(this._whiskers_quantiles)
 	/**
 	 * Whether to go beyond the width of the plot container
 	 * @type {boolean}
@@ -128,7 +138,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 				 ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
 				 : data
 	for (const [i, ele] of this._data.entries()) {
-		ele.metrics = calc_metrics(ele.values)
+		ele.metrics = this._calc_metrics(ele.values)
 		ele.outliers = ele.values.filter(
 			(v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
 		)
@@ -316,6 +326,53 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
+
+/**
+ * Compute (boxplot) metrics for the data
+ * @function
+ * @private
+ * @param {number[]} values the data values
+ * @returns {{
+ *  max: number,
+ *  upper_fence: number,
+ *  quartile3: number,
+ *  median: number,
+ *  mean: number,
+ *  iqr: number,
+ *  quartile1: number,
+ *  lower_fence: number,
+ *  min: number,
+ * }}
+ */
+boxvio_chart_wrapper.prototype._calc_metrics = function (values) {
+	const metrics = {
+		max: 			null,
+		upper_fence:	null,
+		quartile3: 		null,
+		median: 		null,
+		mean: 			null,
+		iqr: 			null,
+		quartile1: 		null,
+		lower_fence: 	null,
+		min: 			null,
+	}
+
+	metrics.min = d3.min(values)
+	metrics.quartile1 = d3.quantile(values, 0.25)
+	metrics.median = d3.median(values)
+	metrics.mean = d3.mean(values)
+	metrics.quartile3 = d3.quantile(values, 0.75)
+	metrics.max = d3.max(values)
+	metrics.iqr = metrics.quartile3 - metrics.quartile1
+	metrics.lower_fence = this._whiskers_quantiles
+		? d3.quantile(values, this._whiskers_quantiles[0]/100)
+		: metrics.quartile1 - 1.5 * metrics.iqr
+	metrics.upper_fence = this._whiskers_quantiles
+		? d3.quantile(values, this._whiskers_quantiles[1]/100)
+		: metrics.quartile3 + 1.5 * metrics.iqr
+
+	return metrics
+}
 
 /**
  * Query the data given a key template
@@ -926,9 +983,15 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 		+ `<br>${tstring.datapoints || 'Datapoints'}: ${values.length}`
 		+ `<br>${tstring.mean || 'Mean'}: ${metrics.mean.toFixed(decimals)}`
 		+ `<br>${tstring.max || 'Maximum'}: ${metrics.max.toFixed(decimals)}`
+		+ (this._whiskers_quantiles
+			? `<br>${tstring.quantile}-${this._whiskers_quantiles[1]}: ${metrics.upper_fence.toFixed(decimals)}`
+			: '')
 		+ `<br>${tstring.quantile || 'Quantile'}-75: ${metrics.quartile3.toFixed(decimals)}`
 		+ `<br>${tstring.median || 'Median'}: ${metrics.median.toFixed(decimals)}`
 		+ `<br>${tstring.quantile || 'Quantile'}-25: ${metrics.quartile1.toFixed(decimals)}`
+		+ (this._whiskers_quantiles
+			? `<br>${tstring.quantile}-${this._whiskers_quantiles[0]}: ${metrics.lower_fence.toFixed(decimals)}`
+			: '')
 		+ `<br>${tstring.min || 'Minimum'}: ${metrics.min.toFixed(decimals)}`
 		+ '</span>'
 	this._graphics.tooltip_div
@@ -1543,47 +1606,6 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 
 
 // HELPER FUNCTIONS
-
-/**
- * Compute (boxplot) metrics for the data
- * @param {number[]} values the data values
- * @returns {{
- *  max: number,
- *  upper_fence: number,
- *  quartile3: number,
- *  median: number,
- *  mean: number,
- *  iqr: number,
- *  quartile1: number,
- *  lower_fence: number,
- *  min: number,
- * }}
- */
-function calc_metrics(values) {
-	const metrics = {
-		max: null,
-		upper_fence: null,
-		quartile3: null,
-		median: null,
-		mean: null,
-		iqr: null,
-		quartile1: null,
-		lower_fence: null,
-		min: null,
-	}
-
-	metrics.min = d3.min(values)
-	metrics.quartile1 = d3.quantile(values, 0.25)
-	metrics.median = d3.median(values)
-	metrics.mean = d3.mean(values)
-	metrics.quartile3 = d3.quantile(values, 0.75)
-	metrics.max = d3.max(values)
-	metrics.iqr = metrics.quartile3 - metrics.quartile1
-	metrics.lower_fence = metrics.quartile1 - 1.5 * metrics.iqr
-	metrics.upper_fence = metrics.quartile3 + 1.5 * metrics.iqr
-
-	return metrics
-}
 
 /**
  * Splitter string

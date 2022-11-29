@@ -478,6 +478,7 @@ export const analysis =  {
 					weights,
 					[tstring.mint || 'Mint', tstring.number || 'Number'],
 					{
+						whiskers_quantiles: [10, 90],
 						ylabel: tstring.weight || 'Weight',
 						overflow: true,
 						display_control_panel: true,
@@ -500,6 +501,7 @@ export const analysis =  {
 					diameters,
 				 [tstring.mint || 'Mint', tstring.number || 'Number'],
 					{
+						whiskers_quantiles: [10, 90],
 						ylabel: tstring.diameter || 'Diameter',
 						overflow: true,
 						display_control_panel: true,

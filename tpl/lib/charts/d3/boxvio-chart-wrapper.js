@@ -8,19 +8,6 @@ import { array_equal, deepcopy, insert_after } from "../utils"
 
 
 /**
- * CSS style for the tooltip
- * TODO: put this in CSS
- * @type {Object.<string, string | number>}
- */
-const TOOLTIP_STYLE = {
-	'text-align'	: 'left',
-	'padding'		: '0.7em',
-	'padding-left'	: '0.8em',
-	'font-size'		: '0.9em',
-	'display'		: 'none',
-}
-
-/**
  * Default flex gap
  * @type {string}
  */
@@ -922,7 +909,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 			// hover set and fix
 				this.tooltip_hover(i)
-				this._graphics.tooltip_div.style('display', null)
+				this._graphics.tooltip_div.style('display', 'flex')
 				this.tooltip_active = i
 
 			// old
@@ -961,10 +948,18 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	})
 	insert_after(tooltip_element, this.plot_container)
 	this._graphics.tooltip_div = d3.select(tooltip_element)
-	const tooltip_div = this._graphics.tooltip_div
-	for (const [k, v] of Object.entries(TOOLTIP_STYLE)) {
-		tooltip_div.style(k, v)
-	}
+	const tooltip_metric_names = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metric_names_div`,
+		class_name		: 'o-black tooltip_metric_names_div',
+		parent			: tooltip_element
+	})
+	const tooltip_metric_values = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metric_values_div`,
+		class_name		: 'o-black tooltip_metric_values_div',
+		parent			: tooltip_element
+	})
 }
 
 /**
@@ -978,24 +973,38 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 	const key = this._data[i].key
 	const values = this._data[i].values
 	const metrics = this._data[i].metrics
-	const tooltip_text = `<b>${key.join(', ')}</b>`
-		+ '<span style="font-size: smaller;">'
-		+ `<br>${tstring.datapoints || 'Datapoints'}: ${values.length}`
-		+ `<br>${tstring.mean || 'Mean'}: ${metrics.mean.toFixed(decimals)}`
-		+ `<br>${tstring.max || 'Maximum'}: ${metrics.max.toFixed(decimals)}`
+	// const tooltip_text = `<b>${key.join(', ')}</b>`
+
+	const metric_names = `${tstring.datapoints || 'Datapoints'}`
+		+ `<br>${tstring.mean || 'Mean'}`
+		+ `<br>${tstring.max || 'Maximum'}`
 		+ (this._whiskers_quantiles
-			? `<br>${tstring.quantile}-${this._whiskers_quantiles[1]}: ${metrics.upper_fence.toFixed(decimals)}`
+			? `<br>${tstring.quantile}-${this._whiskers_quantiles[1]}`
 			: '')
-		+ `<br>${tstring.quantile || 'Quantile'}-75: ${metrics.quartile3.toFixed(decimals)}`
-		+ `<br>${tstring.median || 'Median'}: ${metrics.median.toFixed(decimals)}`
-		+ `<br>${tstring.quantile || 'Quantile'}-25: ${metrics.quartile1.toFixed(decimals)}`
+		+ `<br>${tstring.quantile || 'Quantile'}-75`
+		+ `<br>${tstring.median || 'Median'}`
+		+ `<br>${tstring.quantile || 'Quantile'}-25`
 		+ (this._whiskers_quantiles
-			? `<br>${tstring.quantile}-${this._whiskers_quantiles[0]}: ${metrics.lower_fence.toFixed(decimals)}`
+			? `<br>${tstring.quantile}-${this._whiskers_quantiles[0]}`
 			: '')
-		+ `<br>${tstring.min || 'Minimum'}: ${metrics.min.toFixed(decimals)}`
-		+ '</span>'
-	this._graphics.tooltip_div
-		.html(tooltip_text)
+		+ `<br>${tstring.min || 'Minimum'}`
+	const metric_values = `${values.length}`
+		+ `<br>${metrics.mean.toFixed(decimals)}`
+		+ `<br>${metrics.max.toFixed(decimals)}`
+		+ (this._whiskers_quantiles
+			? `<br>${metrics.upper_fence.toFixed(decimals)}`
+			: '')
+		+ `<br>${metrics.quartile3.toFixed(decimals)}`
+		+ `<br>${metrics.median.toFixed(decimals)}`
+		+ `<br>${metrics.quartile1.toFixed(decimals)}`
+		+ (this._whiskers_quantiles
+			? `<br>${metrics.lower_fence.toFixed(decimals)}`
+			: '')
+		+ `<br>${metrics.min.toFixed(decimals)}`
+	this._graphics.tooltip_div.select('div.tooltip_metric_names_div')
+		.html(metric_names)
+	this._graphics.tooltip_div.select('div.tooltip_metric_values_div')
+		.html(metric_values)
 }
 
 /**

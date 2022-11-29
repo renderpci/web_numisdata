@@ -825,6 +825,18 @@ body.touch .poptrox-popup .nav-next {
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
   outline: 1px solid #f2f0f0;
+  padding-block: 0.7em;
+  display: none;
+  flex-direction: row;
+}
+.chart_wrapper .tooltip_div .tooltip_metric_values_div {
+  font-size: smaller;
+  padding-left: 1em;
+}
+.chart_wrapper .tooltip_div .tooltip_metric_names_div {
+  text-align: right;
+  font-size: smaller;
+  padding-left: 1.5em;
 }
 .chart_wrapper svg circle {
   cursor: pointer;
@@ -2178,3 +2190,4 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #9A905D;
 }
+/*# sourceMappingURL=page.css.map */

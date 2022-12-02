@@ -1203,7 +1203,13 @@ var type_row_fields = {
 			for (let i = 0; i < coins_group_length; i++) {
 
 				const el			= data[i]
-				const coinsLenght	= el.coins.length;
+				const coinsLenght	= el.coins
+					? el.coins.length
+					: 0;
+
+				if (coinsLenght<1) {
+					continue; // ignore empty coins
+				}
 
 				if (el.typology_id==1) continue; // ignore identify images typology
 
@@ -1317,7 +1323,7 @@ var type_row_fields = {
 		// collection
 			if (data.collection && data.collection.length>0){
 
-				const collection_former = (data.former_collection.length>0)
+				const collection_former = (data.former_collection && data.former_collection.length>0)
 					? data.collection + " ("+data.former_collection+")"
 					: data.collection
 

@@ -1317,7 +1317,7 @@ var type_row_fields = {
 		// collection
 			if (data.collection && data.collection.length>0){
 
-				const collection_former = (data.former_collection.length>0)
+				const collection_former = (data.former_collection && data.former_collection.length>0)
 					? data.collection + " ("+data.former_collection+")"
 					: data.collection
 

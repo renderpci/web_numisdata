@@ -145,7 +145,7 @@ var coin_row = {
 
 					//GALLERY IMAGE CAPTIONS
 					if (row.collection && row.collection.length>0){
-						const collection_former = (row.former_collection.length>0)
+						const collection_former = (row.former_collection && row.former_collection.length>0)
 							? row.collection + " ("+row.former_collection+")"
 							: row.collection
 

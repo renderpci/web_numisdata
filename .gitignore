@@ -10,7 +10,6 @@ acc
 *_OLD.*
 *_old.*
 *_DES
-sendmail
 config
 # images
 library.less

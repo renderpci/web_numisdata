@@ -289,13 +289,18 @@ var type =  {
 
 		for (let i = 0; i < typology_data_length; i++) {
 
-			const typology_id = JSON.parse(typology_data[i])[0] // format is ["1"]
+			const typology_id = typology_data[i]
+				? JSON.parse(typology_data[i])[0] // format is ["1"]
+				: null
+
+			const current_coins = ref_coins[i]
+				? JSON.parse(ref_coins[i])
+				: []
 
 			const parsed_item = {
 				typology_id	: typology_id,
 				typology	: typology[i] || null,
-				coins		: JSON.parse(ref_coins[i]) || null
-
+				coins		: current_coins
 			}
 
 			parsed_data.push(parsed_item)

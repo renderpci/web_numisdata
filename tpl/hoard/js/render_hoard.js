@@ -39,7 +39,7 @@ var render_hoard = {
 					element_type	: "a",
 					class_name		: "section_id go_to_dedalo",
 					text_content	: row.section_id,
-					href			: '/dedalo/lib/dedalo/main/?t=numisdata6&id=' + row.section_id,
+					href			: '/dedalo/lib/dedalo/main/?t=numisdata5&id=' + row.section_id,
 					parent			: line
 				})
 				link.setAttribute('target', '_blank');

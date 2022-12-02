@@ -8,18 +8,6 @@ import { array_equal, deepcopy, insert_after } from "../utils"
 
 
 /**
- * CSS style for the tooltip
- * @type {Object.<string, string | number>}
- */
-const TOOLTIP_STYLE = {
-	'text-align': 'left',
-	'padding': '0.7em',
-	'padding-left': '0.8em',
-	'font-size': '0.9em',
-	'display': 'none',
-}
-
-/**
  * Default flex gap
  * @type {string}
  */
@@ -56,6 +44,12 @@ const KEY_CHANGE_EVENT = new Event(KEY_CHANGE_EVENT_NAME)
  */
 const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
 
+/**
+ * CSS class for the whiskers
+ * @type {string}
+ */
+const WHISKERS_CSS_CLASS = 'whiskers'
+
 
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
@@ -71,12 +65,14 @@ const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
  *
  * @param {Element} div_wrapper the div to work in
  * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
- *        with key (array of components, from general to specific) and values (the datapoints)
- *        (KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
+ * 		with key (array of components, from general to specific) and values (the datapoints)
+ * 		(KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
+ * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
+ * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
  * @param {string} options.ylabel the y-label (default `null`)
  * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
@@ -86,6 +82,13 @@ const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
  */
 export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	d3_chart_wrapper.call(this, div_wrapper, options)
+	/**
+	 * overrides default behavior of the whiskers by specifying
+	 * the quantiles of the lower and upper
+	 * @type {[number, number]}
+	 */
+	this._whiskers_quantiles = options.whiskers_quantiles || null
+	console.log(this._whiskers_quantiles)
 	/**
 	 * Whether to go beyond the width of the plot container
 	 * @type {boolean}
@@ -122,7 +125,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 				 ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
 				 : data
 	for (const [i, ele] of this._data.entries()) {
-		ele.metrics = calc_metrics(ele.values)
+		ele.metrics = this._calc_metrics(ele.values)
 		ele.outliers = ele.values.filter(
 			(v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
 		)
@@ -312,6 +315,53 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
 
 /**
+ * Compute (boxplot) metrics for the data
+ * @function
+ * @private
+ * @param {number[]} values the data values
+ * @returns {{
+ *  max: number,
+ *  upper_fence: number,
+ *  quartile3: number,
+ *  median: number,
+ *  mean: number,
+ *  iqr: number,
+ *  quartile1: number,
+ *  lower_fence: number,
+ *  min: number,
+ * }}
+ */
+boxvio_chart_wrapper.prototype._calc_metrics = function (values) {
+	const metrics = {
+		max: 			null,
+		upper_fence:	null,
+		quartile3: 		null,
+		median: 		null,
+		mean: 			null,
+		iqr: 			null,
+		quartile1: 		null,
+		lower_fence: 	null,
+		min: 			null,
+	}
+
+	metrics.min = d3.min(values)
+	metrics.quartile1 = d3.quantile(values, 0.25)
+	metrics.median = d3.median(values)
+	metrics.mean = d3.mean(values)
+	metrics.quartile3 = d3.quantile(values, 0.75)
+	metrics.max = d3.max(values)
+	metrics.iqr = metrics.quartile3 - metrics.quartile1
+	metrics.lower_fence = this._whiskers_quantiles
+		? d3.quantile(values, this._whiskers_quantiles[0]/100)
+		: metrics.quartile1 - 1.5 * metrics.iqr
+	metrics.upper_fence = this._whiskers_quantiles
+		? d3.quantile(values, this._whiskers_quantiles[1]/100)
+		: metrics.quartile3 + 1.5 * metrics.iqr
+
+	return metrics
+}
+
+/**
  * Query the data given a key template
  * @param {string[]} key_tpl the key template. Parts will be matched,
  * `null` counts as wildcard
@@ -497,6 +547,12 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 
 	// Set viewBox of svg
 	this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)
+
+	// Hide tooltip when clicking in SVG
+	this.svg.on('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
 
 	// Root g tag
 	this._graphics.root_g = this.svg.append('g')
@@ -792,6 +848,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 		// Draw whiskers
 		const whiskers = group_box.append('g')
+			.classed(WHISKERS_CSS_CLASS, true)
 		whiskers.append('line')  // vertical line
 			.attr('x1', 0)
 			.attr('y1', chart.yscale(metrics.lower_fence))
@@ -846,14 +903,13 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 			// already displayed. Hide
 				if (this.tooltip_active==i) {
-					this._graphics.tooltip_div.style('display', 'none')
-					this.tooltip_active = null
+					this._hide_tooltip()
 					return
 				}
 
 			// hover set and fix
 				this.tooltip_hover(i)
-				this._graphics.tooltip_div.style('display', null)
+				this._graphics.tooltip_div.style('display', 'flex')
 				this.tooltip_active = i
 
 			// old
@@ -865,6 +921,17 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		// })
 	}
 
+}
+
+/**
+ * Hide the tooltip
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_hide_tooltip
+ */
+boxvio_chart_wrapper.prototype._hide_tooltip = function () {
+	this._graphics.tooltip_div.style('display', 'none')
+	this.tooltip_active = null
 }
 
 /**
@@ -881,10 +948,18 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	})
 	insert_after(tooltip_element, this.plot_container)
 	this._graphics.tooltip_div = d3.select(tooltip_element)
-	const tooltip_div = this._graphics.tooltip_div
-	for (const [k, v] of Object.entries(TOOLTIP_STYLE)) {
-		tooltip_div.style(k, v)
-	}
+	const tooltip_metric_names = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metric_names_div`,
+		class_name		: 'o-black tooltip_metric_names_div',
+		parent			: tooltip_element
+	})
+	const tooltip_metric_values = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metric_values_div`,
+		class_name		: 'o-black tooltip_metric_values_div',
+		parent			: tooltip_element
+	})
 }
 
 /**
@@ -894,22 +969,42 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
  * @name boxvio_chart_wrapper#tooltip_hover
  */
 boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
-	const decimals = 3
+	const decimals = 2
 	const key = this._data[i].key
 	const values = this._data[i].values
 	const metrics = this._data[i].metrics
-	const tooltip_text = `<b>${key.join(', ')}</b>`
-		+ '<span style="font-size: smaller;">'
-		+ `<br>Datapoints: ${values.length}`
-		+ `<br>Mean: ${metrics.mean.toFixed(decimals)}`
-		+ `<br>Max: ${metrics.max.toFixed(decimals)}`
-		+ `<br>Q3: ${metrics.quartile3.toFixed(decimals)}`
-		+ `<br>Median: ${metrics.median.toFixed(decimals)}`
-		+ `<br>Q1: ${metrics.quartile1.toFixed(decimals)}`
-		+ `<br>Min: ${metrics.min.toFixed(decimals)}`
-		+ '</span>'
-	this._graphics.tooltip_div
-		.html(tooltip_text)
+	// const tooltip_text = `<b>${key.join(', ')}</b>`
+
+	const metric_names = `${tstring.datapoints || 'Datapoints'}`
+		+ `<br>${tstring.mean || 'Mean'}`
+		+ `<br>${tstring.max || 'Maximum'}`
+		+ (this._whiskers_quantiles
+			? `<br>${tstring.quantile}-${this._whiskers_quantiles[1]}`
+			: '')
+		+ `<br>${tstring.quantile || 'Quantile'}-75`
+		+ `<br>${tstring.median || 'Median'}`
+		+ `<br>${tstring.quantile || 'Quantile'}-25`
+		+ (this._whiskers_quantiles
+			? `<br>${tstring.quantile}-${this._whiskers_quantiles[0]}`
+			: '')
+		+ `<br>${tstring.min || 'Minimum'}`
+	const metric_values = `${values.length}`
+		+ `<br>${metrics.mean.toFixed(decimals)}`
+		+ `<br>${metrics.max.toFixed(decimals)}`
+		+ (this._whiskers_quantiles
+			? `<br>${metrics.upper_fence.toFixed(decimals)}`
+			: '')
+		+ `<br>${metrics.quartile3.toFixed(decimals)}`
+		+ `<br>${metrics.median.toFixed(decimals)}`
+		+ `<br>${metrics.quartile1.toFixed(decimals)}`
+		+ (this._whiskers_quantiles
+			? `<br>${metrics.lower_fence.toFixed(decimals)}`
+			: '')
+		+ `<br>${metrics.min.toFixed(decimals)}`
+	this._graphics.tooltip_div.select('div.tooltip_metric_names_div')
+		.html(metric_names)
+	this._graphics.tooltip_div.select('div.tooltip_metric_values_div')
+		.html(metric_values)
 }
 
 /**
@@ -1101,6 +1196,13 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		// },
 	})
 
+	// Show text
+	const show_text_div = common.create_dom_element({
+		element_type: 'div',
+		text_content: `${tstring.show || "Show"}:`,
+		parent: container_div,
+	})
+
 	// Show key 2
 	const show_key2_div = common.create_dom_element({
 		element_type: 'div',
@@ -1118,9 +1220,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_key2_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: (tstring.show || 'Show')
-					  + ' '
-					  + this._key_titles[this._key_size-2].toLowerCase(),
+		text_content: this._key_titles[this._key_size-2],
 		parent: show_key2_div,
 	})
 	show_key2_label.setAttribute('for', show_key2_checkbox_id)
@@ -1145,7 +1245,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_violins_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_violins || 'Show violins',
+		text_content: tstring.violins || 'Violins',
 		parent: show_violins_div,
 	})
 	show_violins_label.setAttribute('for', show_violins_checkbox_id)
@@ -1170,12 +1270,39 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_boxes_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_boxes || 'Show boxes',
+		text_content: tstring.boxes || 'Boxes',
 		parent: show_boxes_div,
 	})
 	show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
 	show_boxes_checkbox.addEventListener('change', () => {
 		toggle_visibility(this._graphics.boxes_g)
+		// (DISABLED) Disable the checkbox for outliers (defined below)
+		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+	})
+
+	// Show boxes
+	const show_whiskers_div = common.create_dom_element({
+		element_type: 'div',
+		parent: container_div,
+	})
+	const show_whiskers_checkbox_id = `${this.id_string()}_show_whiskers_checkbox`
+	/** @type {Element} */
+	const show_whiskers_checkbox = common.create_dom_element({
+		element_type: 'input',
+		type: 'checkbox',
+		id: show_whiskers_checkbox_id,
+		parent: show_whiskers_div,
+	})
+	show_whiskers_checkbox.checked = true
+	/** @type {Element} */
+	const show_whiskers_label = common.create_dom_element({
+		element_type: 'label',
+		text_content: tstring.whiskers || 'Whiskers',
+		parent: show_whiskers_div,
+	})
+	show_whiskers_label.setAttribute('for', show_whiskers_checkbox_id)
+	show_whiskers_checkbox.addEventListener('change', () => {
+		toggle_visibility(this._graphics.boxes_g.selectAll(`g g.${WHISKERS_CSS_CLASS}`))
 		// (DISABLED) Disable the checkbox for outliers (defined below)
 		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
 	})
@@ -1197,7 +1324,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_outliers_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_outliers || 'Show outliers',
+		text_content: tstring.outliers || 'Outliers',
 		parent: show_outliers_div,
 	})
 	show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
@@ -1488,47 +1615,6 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 
 
 // HELPER FUNCTIONS
-
-/**
- * Compute (boxplot) metrics for the data
- * @param {number[]} values the data values
- * @returns {{
- *  max: number,
- *  upper_fence: number,
- *  quartile3: number,
- *  median: number,
- *  mean: number,
- *  iqr: number,
- *  quartile1: number,
- *  lower_fence: number,
- *  min: number,
- * }}
- */
-function calc_metrics(values) {
-	const metrics = {
-		max: null,
-		upper_fence: null,
-		quartile3: null,
-		median: null,
-		mean: null,
-		iqr: null,
-		quartile1: null,
-		lower_fence: null,
-		min: null,
-	}
-
-	metrics.min = d3.min(values)
-	metrics.quartile1 = d3.quantile(values, 0.25)
-	metrics.median = d3.median(values)
-	metrics.mean = d3.mean(values)
-	metrics.quartile3 = d3.quantile(values, 0.75)
-	metrics.max = d3.max(values)
-	metrics.iqr = metrics.quartile3 - metrics.quartile1
-	metrics.lower_fence = metrics.quartile1 - 1.5 * metrics.iqr
-	metrics.upper_fence = metrics.quartile3 + 1.5 * metrics.iqr
-
-	return metrics
-}
 
 /**
  * Splitter string

@@ -33,10 +33,13 @@ BASE_LINKS='<?php echo ''. BASE_LINKS ?>';
 IS_PRODUCTION=<?php echo json_encode(IS_PRODUCTION) ?>;
 const dedalo_logged = typeof document!=='undefined' && document.cookie.indexOf('dedalo_logged')!==-1 ? true : false;
 
+<?php if (defined('DEDALO_CONTROL_ACCESS') && DEDALO_CONTROL_ACCESS===true){ ?>
 // dedalo_logged redirect
-// if (dedalo_logged!==true) {
-// 	window.location.href = "/dedalo";
-// }
+if (dedalo_logged!==true) {
+	window.location.href = "/dedalo";
+}
+<?php } ?>
+
 
 function dom_ready(fn) {
 	if (document.readyState!=='loading'){

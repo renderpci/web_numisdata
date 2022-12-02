@@ -21,3 +21,8 @@ logo_mciu.jpg
 logo_mib_marron.svg
 logo-inc.svg
 page.css
+logo_render_bn.png
+*-min.js
+*-min.js.map
+!app-min.js.map
+!app-min.js

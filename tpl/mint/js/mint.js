@@ -747,7 +747,7 @@ var mint = {
 					text_content	: tstring.click_to_copy || 'Click to copy',
 					parent 			: popUpContainer
 				})
-
+				
 			})
 
 		// name & place

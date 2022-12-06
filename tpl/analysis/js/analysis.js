@@ -546,6 +546,7 @@ export const analysis =  {
 				const group = []
 			// parsed filters
 				const sql_filter = self.form.parse_sql_filter(filter)
+				console.log(sql_filter)
 			// request
 				const request_body = {
 					dedalo_get		: 'records',
@@ -638,25 +639,28 @@ async function type_tooltip_callback(key) {
 	const [mint, number] = key
 	console.log(`HELLO WORLD with mint ${mint} and number ${number}!`)
 
-	const sql_filter = `term_table='types' AND term_data LIKE '${number}%' AND coin_references IS NOT NULL`
+	// CALL DEDALO API TO OBTAIN INFO
+	const sql_filter =
+		`(\`p_mint\` = '["${mint}"]' AND \`p_mint\` != '')`
+		+ `AND (\`term\` LIKE '${number}%' AND \`term\` != '')`
+	console.log(sql_filter)
 	const catalog_ar_fields = ['*']
 
 	const catalog_request_options = {
 		dedalo_get	: 'records',
-		db_name		: page_globals.WEB_DB,
 		lang		: page_globals.WEB_CURRENT_LANG_CODE,
 		table		: 'catalog',
 		ar_fields	: catalog_ar_fields,
 		sql_filter	: sql_filter,
-		limit		: 0,
+		limit		: 1,
 		count		: false,
-		offset		: 0,
-		order		: "term ASC"
+		order		: "norder ASC"
 	}
 
 	const api_response = await data_manager.request({
 		body: catalog_request_options
 	})
+
 	if (!api_response.result || !api_response.result.length) {
 		return common.create_dom_element({
 			element_type: 'div',
@@ -664,7 +668,9 @@ async function type_tooltip_callback(key) {
 		})
 	}
 
-	console.log(api_response.result)
+	const type_row = page.parse_catalog_data(api_response.result)[0]
+
+	// TODO: CREATE THE RESULTING HTML Element
 
 	return common.create_dom_element({element_type: 'div'})
 

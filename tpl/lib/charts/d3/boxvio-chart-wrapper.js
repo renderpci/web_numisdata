@@ -548,8 +548,12 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 	// Set viewBox of svg
 	this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)
 
-	// Hide tooltip when clicking in SVG
+	// Hide tooltip when clicking in SVG or plot_container
 	this.svg.on('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
+	this.plot_container.addEventListener('click', (e) => {
 		e.stopPropagation()
 		this._hide_tooltip()
 	})

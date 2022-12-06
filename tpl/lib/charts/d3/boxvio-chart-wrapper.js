@@ -50,7 +50,6 @@ const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
  */
 const WHISKERS_CSS_CLASS = 'whiskers'
 
-
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
@@ -77,21 +76,32 @@ const WHISKERS_CSS_CLASS = 'whiskers'
  * @param {string} options.ylabel the y-label (default `null`)
  * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
  * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
+ * @param {(key: string[]) => Promise<Element>} options.tooltip_callback called to fill space in the tooltip
+ * 	next to the metrics. It takes the key as argument and returns a Promise of an HTML element to add to the
+ * 	tooltip
  * @class
  * @extends d3_chart_wrapper
  */
 export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	d3_chart_wrapper.call(this, div_wrapper, options)
 	/**
+	 * Called when the tooltip is shown to render extra info
+	 * @private
+	 * @type {(key: string[]) => Promise<Element>}
+	 */
+	this._tooltip_callback = options.tooltip_callback || null
+	/**
 	 * overrides default behavior of the whiskers by specifying
 	 * the quantiles of the lower and upper
 	 * @type {[number, number]}
+	 * @private
 	 */
 	this._whiskers_quantiles = options.whiskers_quantiles || null
 	console.log(this._whiskers_quantiles)
 	/**
 	 * Whether to go beyond the width of the plot container
 	 * @type {boolean}
+	 * @private
 	 */
 	this._overflow = options.overflow || false
 	const sort_xaxis = options.sort_xaxis || false
@@ -952,17 +962,23 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	})
 	insert_after(tooltip_element, this.plot_container)
 	this._graphics.tooltip_div = d3.select(tooltip_element)
+	const tooltip_metrics = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metrics`,
+		class_name		: 'tooltip_metrics_div',
+		parent			: tooltip_element
+	})
 	const tooltip_metric_names = common.create_dom_element({
 		element_type	: 'div',
 		id				: `${this.id_string()}_tooltip_metric_names_div`,
-		class_name		: 'o-black tooltip_metric_names_div',
-		parent			: tooltip_element
+		class_name		: 'tooltip_metric_names_div',
+		parent			: tooltip_metrics
 	})
 	const tooltip_metric_values = common.create_dom_element({
 		element_type	: 'div',
 		id				: `${this.id_string()}_tooltip_metric_values_div`,
-		class_name		: 'o-black tooltip_metric_values_div',
-		parent			: tooltip_element
+		class_name		: 'tooltip_metric_values_div',
+		parent			: tooltip_metrics
 	})
 }
 
@@ -1009,6 +1025,22 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 		.html(metric_names)
 	this._graphics.tooltip_div.select('div.tooltip_metric_values_div')
 		.html(metric_values)
+	
+	// Call the tooltip callback
+	if (this._tooltip_callback) {
+		this._tooltip_callback(key)
+			.then((ele) => {
+				const tooltip_element = this._graphics.tooltip_div.node()
+				ele.id = `${this.id_string()}_tooltip_callback_div`
+				ele.classList.add('tooltip_callback_div')
+				const last_child = tooltip_element.lastChild
+				// If the last child is already a callback, delete it!
+				if (last_child.classList.contains('tooltip_callback_div')) {
+					last_child.remove()
+				}
+				tooltip_element.appendChild(ele)
+			})
+	}
 }
 
 /**

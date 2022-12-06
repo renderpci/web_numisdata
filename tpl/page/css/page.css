@@ -826,17 +826,27 @@ body.touch .poptrox-popup .nav-next {
   border-bottom-right-radius: 1rem;
   outline: 1px solid #f2f0f0;
   padding-block: 0.7em;
+  padding-inline: 0.7em;
   display: none;
   flex-direction: row;
+  justify-content: space-between;
 }
-.chart_wrapper .tooltip_div .tooltip_metric_values_div {
+.chart_wrapper .tooltip_div .tooltip_metrics_div {
+  display: flex;
+  flex-direction: row;
+}
+.chart_wrapper .tooltip_div .tooltip_metrics_div .tooltip_metric_values_div {
   font-size: smaller;
   padding-left: 1em;
+  border: 1px solid red;
 }
-.chart_wrapper .tooltip_div .tooltip_metric_names_div {
+.chart_wrapper .tooltip_div .tooltip_metrics_div .tooltip_metric_names_div {
+  border: 1px solid blue;
   text-align: right;
   font-size: smaller;
-  padding-left: 1.5em;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div {
+  border: 1px solid green;
 }
 .chart_wrapper svg circle {
   cursor: pointer;

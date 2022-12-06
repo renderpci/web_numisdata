@@ -484,6 +484,7 @@ export const analysis =  {
 						display_control_panel: true,
 						display_download: true,
 						sort_xaxis: true,
+						tooltip_callback: type_tooltip_callback
 					}
 				)
 				this.weight_chart_wrapper.render()
@@ -499,7 +500,7 @@ export const analysis =  {
 				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
 					this.diameter_chart_container,
 					diameters,
-				 [tstring.mint || 'Mint', tstring.number || 'Number'],
+					[tstring.mint || 'Mint', tstring.number || 'Number'],
 					{
 						whiskers_quantiles: [10, 90],
 						ylabel: tstring.diameter || 'Diameter',
@@ -507,6 +508,7 @@ export const analysis =  {
 						display_control_panel: true,
 						display_download: true,
 						sort_xaxis: true,
+						tooltip_callback: type_tooltip_callback
 					}
 				)
 				this.diameter_chart_wrapper.render()
@@ -625,3 +627,45 @@ export const analysis =  {
 
 }//end analysis
 
+
+/**
+ * Callback for tooptip in violin-boxplot
+ * @param {string[]} key the key of the violin/box
+ * @returns {Promise<Element>} the html element to add to the tooltip 
+ */
+async function type_tooltip_callback(key) {
+
+	const [mint, number] = key
+	console.log(`HELLO WORLD with mint ${mint} and number ${number}!`)
+
+	const sql_filter = `term_table='types' AND term_data LIKE '${number}%' AND coin_references IS NOT NULL`
+	const catalog_ar_fields = ['*']
+
+	const catalog_request_options = {
+		dedalo_get	: 'records',
+		db_name		: page_globals.WEB_DB,
+		lang		: page_globals.WEB_CURRENT_LANG_CODE,
+		table		: 'catalog',
+		ar_fields	: catalog_ar_fields,
+		sql_filter	: sql_filter,
+		limit		: 0,
+		count		: false,
+		offset		: 0,
+		order		: "term ASC"
+	}
+
+	const api_response = await data_manager.request({
+		body: catalog_request_options
+	})
+	if (!api_response.result || !api_response.result.length) {
+		return common.create_dom_element({
+			element_type: 'div',
+			text_content: `Could not find number ${number} for mint ${mint} in the database.`
+		})
+	}
+
+	console.log(api_response.result)
+
+	return common.create_dom_element({element_type: 'div'})
+
+}

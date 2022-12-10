@@ -1,4 +1,4 @@
-/*global tstring, page_globals, Promise, data_manager, common, event_manager */
+/*global tstring, page_globals, Promise, data_manager, common, event_manager, catalog_row_fields */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -546,7 +546,6 @@ export const analysis =  {
 				const group = []
 			// parsed filters
 				const sql_filter = self.form.parse_sql_filter(filter)
-				console.log(sql_filter)
 			// request
 				const request_body = {
 					dedalo_get		: 'records',
@@ -643,7 +642,6 @@ async function type_tooltip_callback(key) {
 	const sql_filter =
 		`(\`p_mint\` = '["${mint}"]' AND \`p_mint\` != '')`
 		+ `AND (\`term\` LIKE '${number}%' AND \`term\` != '')`
-	console.log(sql_filter)
 	const catalog_ar_fields = ['*']
 
 	const catalog_request_options = {
@@ -670,8 +668,10 @@ async function type_tooltip_callback(key) {
 
 	const type_row = page.parse_catalog_data(api_response.result)[0]
 
-	// TODO: CREATE THE RESULTING HTML Element
-
-	return common.create_dom_element({element_type: 'div'})
+	// CREATE THE RESULTING HTML Element
+	const ele = catalog_row_fields.draw_item(type_row)
+	// Remove style of coins images container, since it is hardcoded to 124mm
+	ele.getElementsByClassName('coins_images')[0].removeAttribute('style')
+	return ele
 
 }

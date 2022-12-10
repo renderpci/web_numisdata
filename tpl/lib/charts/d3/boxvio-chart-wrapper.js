@@ -1036,6 +1036,7 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 				const last_child = tooltip_element.lastChild
 				// If the last child is already a callback, delete it!
 				if (last_child.classList.contains('tooltip_callback_div')) {
+					console.log('HELLO!');
 					last_child.remove()
 				}
 				tooltip_element.appendChild(ele)

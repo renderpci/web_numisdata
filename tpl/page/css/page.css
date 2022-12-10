@@ -844,9 +844,32 @@ body.touch .poptrox-popup .nav-next {
   border: 1px solid blue;
   text-align: right;
   font-size: smaller;
+  min-width: 10em;
 }
 .chart_wrapper .tooltip_div .tooltip_callback_div {
+  border-top: none;
   border: 1px solid green;
+  margin-left: 2em;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container {
+  margin-block: 0;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.term {
+  display: block;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container span.ref_type_equivalents {
+  align-self: end;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .coins_images_container .coins_images {
+  display: flex;
+  width: 100%;
+  padding-left: 0.5em;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .coins_images_container .coins_images a.image_link {
+  width: 50%;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .collection_auction span.ref_coins_auction {
+  align-self: flex-end;
 }
 .chart_wrapper svg circle {
   cursor: pointer;

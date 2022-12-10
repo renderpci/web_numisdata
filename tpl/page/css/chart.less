@@ -166,11 +166,45 @@
 				border: 1px solid blue;
 				text-align: right;
 				font-size: smaller;
+				min-width: 10em;
 			}
 		}
 
 		.tooltip_callback_div {
+			border-top: none;
 			border: 1px solid green;
+			margin-left: 2em;
+
+			.type_container {
+				margin-block: 0;
+
+				.type_info {
+					span.term {
+						display: block;
+					}
+				}
+
+				span.ref_type_equivalents {
+					align-self: end;
+				}
+
+				.coins_images_container {
+					.coins_images {
+						display: flex;
+						width: 100%;
+						padding-left: 0.5em;
+						a.image_link {
+							width: 50%;
+						}
+					}
+				}
+
+				.collection_auction {
+					span.ref_coins_auction {
+						align-self: flex-end;
+					}
+				}
+			}
 		}
 	}
 

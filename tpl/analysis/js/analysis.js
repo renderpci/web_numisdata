@@ -434,6 +434,7 @@ export const analysis =  {
 						const diameter_max = ele.full_coins_reference_diameter_max
 						const diameter_min = ele.full_coins_reference_diameter_min
 						const weight = ele.full_coins_reference_weight
+						const axis = ele.full_coins_reference_axis
 						if (diameter_max && diameter_max.length) {
 							const tmp_diameter_max = diameter_max.filter((v, i) => v && calculable[i])
 							if (tmp_diameter_max.length) {
@@ -452,6 +453,12 @@ export const analysis =  {
 								tmp_data.weight = tmp_weight
 							}
 						}
+						if (axis && axis.length) {
+							const tmp_axis = axis.filter((v) => v)
+							if (tmp_axis.length) {
+								tmp_data.axis = tmp_axis
+							}
+						}
 						if (Object.keys(tmp_data).length) {
 							tmp_data.number_key = number_key
 							tmp_data.mint = mint
@@ -460,7 +467,7 @@ export const analysis =  {
 							data.push(tmp_data)
 						}
 					}
-					// console.log(data)
+					console.log(data)
 
 				// Weights
 				const weights = data.filter(

@@ -74,7 +74,7 @@ const WHISKERS_CSS_CLASS = 'whiskers'
  * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
  * @param {string} options.ylabel the y-label (default `null`)
- * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
+ * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`)
  * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
  * @param {(key: string[]) => Promise<Element>} options.tooltip_callback called to fill space in the tooltip
  * 	next to the metrics. It takes the key as argument and returns a Promise of an HTML element to add to the

@@ -1057,7 +1057,7 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	const upper_container = common.create_dom_element({
 		element_type	: 'div',
 		class_name		: 'control_panel_item control_panel',
-		parent			: this.controls_container
+		parent			: this.controls_content_container
 		// style			: {
 		// 	'display': 'flex',
 		// 	'direction': 'flex-row',
@@ -1223,7 +1223,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	const container_div = common.create_dom_element({
 		element_type	: 'div',
 		class_name		: 'control_panel_item checkboxes',
-		parent			: this.controls_container
+		parent			: this.controls_content_container
 		// style: {
 		// 	'display': 'flex',
 		// 	'direction': 'flex-row',
@@ -1383,7 +1383,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	// Container div
 	const container_div = common.create_dom_element({
 		element_type	: 'div',
-		parent			: this.controls_container,
+		parent			: this.controls_content_container,
 		class_name		: 'control_panel_item scale_sliders',
 		// style			: {
 		// 	'display': 'flex',
@@ -1496,7 +1496,7 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 	const container = common.create_dom_element({
 		element_type	: 'div',
 		class_name		: 'control_panel_item key_selects',
-		parent			: this.controls_container
+		parent			: this.controls_content_container
 		// style			: {
 		// 	'display': 'flex',
 		// 	'align-items': 'center',
@@ -1560,7 +1560,7 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 
 			// Dispatch key change event to all listeners
 			const listeners
-				= this.controls_container.getElementsByClassName(KEY_CHANGE_LISTENER_CLASS_NAME)
+				= this.controls_content_container.getElementsByClassName(KEY_CHANGE_LISTENER_CLASS_NAME)
 			for (const ele of listeners) {
 				ele.dispatchEvent(KEY_CHANGE_EVENT)
 			}
@@ -1578,7 +1578,7 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	const container = common.create_dom_element({
 		element_type	: 'div',
-		parent			: this.controls_container,
+		parent			: this.controls_content_container,
 		class_name		: 'control_panel_item n_bins_control'
 		// style			: {
 		// 	'display': 'flex',

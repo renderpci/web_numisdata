@@ -14,9 +14,37 @@
 		outline: 1px solid #f2f0f0;
 	}
 
+	.control_panel_toggle {
+		margin-top: 1rem;
+		cursor: pointer;
+
+		&:after {
+			content: " ";
+			display: inline-block;
+			width: 1rem;
+			height: 1rem;
+			vertical-align: text-top;
+			background-image: url(../../assets/images/icon_arrow.svg);
+			background-repeat: no-repeat;
+			background-size: contain;
+			margin-left: 0.5rem;
+			margin-top: 0.25rem;
+		}
+
+		&.opened {
+			&:after {
+				transform: rotate(180deg);
+			}
+		}
+	}
+
 	.control_panel {
+		padding-left: 1rem;
+	}
+
+	.control_panel_content {
 		// background-color: #fffff7;
-		margin-bottom: 0.25rem;
+		// margin-bottom: 0.25rem;
 
 		>.control_panel_item {
 			display: flex;
@@ -126,7 +154,7 @@
 	}
 
 	.download_chart_container {
-		margin-top: 1rem;
+		// margin-top: 1rem;
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;

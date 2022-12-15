@@ -865,6 +865,12 @@ body.touch .poptrox-popup .nav-next {
 .chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.term {
   display: block;
 }
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.ref_type_material {
+  margin-right: 1em;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.ref_type_denomination {
+  margin-right: 1em;
+}
 .chart_wrapper .tooltip_div .tooltip_callback_div .type_container span.ref_type_equivalents {
   align-self: end;
 }

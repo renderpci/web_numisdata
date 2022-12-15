@@ -51,6 +51,12 @@ const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
 const WHISKERS_CSS_CLASS = 'whiskers'
 
 /**
+ * Margin for the key2 label
+ * @type {number}
+ */
+const KEY2_MARGIN = 50
+
+/**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
  * use of x and y axis
@@ -72,7 +78,7 @@ const WHISKERS_CSS_CLASS = 'whiskers'
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
  * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
  * 		by specifying the quantiles of the lower and upper
- * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
+ * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
  * @param {string} options.ylabel the y-label (default `null`)
  * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`)
  * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
@@ -104,7 +110,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @private
 	 */
 	this._overflow = options.overflow || false
-	const sort_xaxis = options.sort_xaxis || false
+	const sort_xaxis = options.sort_xaxis || data[0].key.length > 1 || false
 	if (!data.length) {
 		throw new Error("Data array is empty")
 	}
@@ -188,6 +194,9 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	this._full_width = this._data.length < 150
 		? 330.664701211*Math.sqrt(this._data.length) - 170.664701211 + this.yaxis_padding
 		: 26*this._data.length + this.yaxis_padding
+	if (this._key_size > 1) {  // If we have a key-2, add some margin
+		this._full_width += this._get_next_key_component_values([]).length*KEY2_MARGIN
+	}
 	/**
 	 * Full height of svg
 	 * @type {number}
@@ -212,6 +221,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  violin_scale: {initial: number, value: number},
 	 *  box_scale: {initial: number, value: number},
 	 *  xscale: d3.scaleBand,
+	 *  key2_start_x: {[key2: string]: number},
 	 *  xaxis: d3.axisGenerator,
 	 *  xticklabel_angle: number,
 	 *  n_bins: {initial: number, value: number}[],
@@ -240,6 +250,9 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		.domain(this._key_strings)
 		.range([0, this._chart.width])
 		// .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+	this._chart.key2_start_x = this._key_size > 1  // Compute start point of key-2s if necessary, before creating the space
+		? this._compute_key2_start_x()
+		: null
 	this._chart.xaxis = d3.axisBottom(this._chart.xscale)
 		.tickFormat((d) => split_key(d)[1])
 	this._chart.xticklabel_angle = options.xticklabel_angle || 0
@@ -411,10 +424,10 @@ boxvio_chart_wrapper.prototype._query_data = function (key_tpl) {
 /**
  * Get key templates up to a key number
  * @param {number} i the key number. If 1, all existing keys
- *        will be returned. If 2, all existing keys with a wildcard in
- *        the last component will be returned. If 3, all existing keys
+ *        will be returned. If 2, all existing key templates with a wildcard in
+ *        the last component will be returned. If 3, all existing key templates
  *        with a wildcard in the last and second-to-last component will
- *        be returned.
+ *        be returned. Etc.
  * @returns {string[][]} the templates
  */
 boxvio_chart_wrapper.prototype._get_key_templates = function (i) {
@@ -469,7 +482,7 @@ boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) 
 /**
  * Get the index of a key
  * @param {string[]} key the key
- * @returns the index of the key
+ * @returns {number} the index of the key
  */
 boxvio_chart_wrapper.prototype.get_index_of_key = function (key) {
 	const i = this._data.findIndex((ele) => ele.key.join() === key.join())
@@ -477,6 +490,28 @@ boxvio_chart_wrapper.prototype.get_index_of_key = function (key) {
 		throw new Error(`Key ${key} was not found in data`)
 	}
 	return i
+}
+
+/**
+ * Compute starting points (in plot x-coordinates) for the different
+ * key2s. There we will draw the key2 labels and separating line
+ * @returns {{[key2: string]: number}} the starting position for each key2
+ */
+boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
+	const positions = {}
+
+	const key_tpls = this._get_key_templates(2)
+
+	let i = 0;
+	for (const key_tpl of key_tpls) {
+		const queried_data = this._query_data(key_tpl)
+		const x = this._chart.xscale(this._key_strings[i])
+		positions[key_tpl[key_tpl.length-2]] = x
+		// Increase the index by the number of groups in the class
+		i += queried_data.length
+	}
+
+	return positions
 }
 
 /**
@@ -719,12 +754,9 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 	this._graphics.key2_dividers_g = this._graphics.root_g.append('g')
 	const dividers_g = this._graphics.key2_dividers_g
 	const color = 'gray'
-	const key_tpls = this._get_key_templates(2)
 
-	let i = 0;
-	for (const [index, key_tpl] of key_tpls.entries()) {
-		const queried_data = this._query_data(key_tpl)
-		const x = this._chart.xscale(this._key_strings[i])
+	for (const [index, key2] of this._get_next_key_component_values([]).entries()) {
+		const x = this._chart.key2_start_x[key2]
 		const divider_g = dividers_g.append('g')
 			.attr('transform', `translate(${x},0)`)
 		if (index !== 0) {
@@ -744,9 +776,7 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 			.attr('x', '-0.6em')  // This is the vertical axis now
 			.attr('font-size', '0.8em')
 			.attr('fill', color)
-			.text(key_tpl[key_tpl.length-2])
-		// Increase the index by the number of groups in the class
-		i += queried_data.length
+			.text(key2)
 	}
 }
 
@@ -1036,7 +1066,6 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 				const last_child = tooltip_element.lastChild
 				// If the last child is already a callback, delete it!
 				if (last_child.classList.contains('tooltip_callback_div')) {
-					console.log('HELLO!');
 					last_child.remove()
 				}
 				tooltip_element.appendChild(ele)

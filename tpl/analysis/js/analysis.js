@@ -467,7 +467,7 @@ export const analysis =  {
 							data.push(tmp_data)
 						}
 					}
-					console.log(data)
+					// console.log(data)
 
 				// Weights
 				const weights = data.filter(
@@ -504,21 +504,21 @@ export const analysis =  {
 				)
 				// console.log('Diameters:')
 				// console.log(diameters)
-				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
-					this.diameter_chart_container,
-					diameters,
-					[tstring.mint || 'Mint', tstring.number || 'Number'],
-					{
-						whiskers_quantiles: [10, 90],
-						ylabel: tstring.diameter || 'Diameter',
-						overflow: true,
-						display_control_panel: true,
-						display_download: true,
-						sort_xaxis: true,
-						tooltip_callback: type_tooltip_callback
-					}
-				)
-				this.diameter_chart_wrapper.render()
+				// this.diameter_chart_wrapper = new boxvio_chart_wrapper(
+				// 	this.diameter_chart_container,
+				// 	diameters,
+				// 	[tstring.mint || 'Mint', tstring.number || 'Number'],
+				// 	{
+				// 		whiskers_quantiles: [10, 90],
+				// 		ylabel: tstring.diameter || 'Diameter',
+				// 		overflow: true,
+				// 		display_control_panel: true,
+				// 		display_download: true,
+				// 		sort_xaxis: true,
+				// 		tooltip_callback: type_tooltip_callback
+				// 	}
+				// )
+				// this.diameter_chart_wrapper.render()
 
 				// show Weights and Diameters block labels
 					for (let i = 0; i < info_lines_length; i++) {
@@ -643,7 +643,6 @@ export const analysis =  {
 async function type_tooltip_callback(key) {
 
 	const [mint, number] = key
-	console.log(`HELLO WORLD with mint ${mint} and number ${number}!`)
 
 	// CALL DEDALO API TO OBTAIN INFO
 	const sql_filter =

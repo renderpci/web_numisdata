@@ -1054,49 +1054,59 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
  * @name boxvio_chart_wrapper#tooltip_hover
  */
 boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
+
+	const self = this
+
 	const decimals = 2
-	const key = this._data[i].key
-	const values = this._data[i].values
-	const metrics = this._data[i].metrics
+	const section_id	= self._data[i].section_id
+	const key			= self._data[i].key
+	const values		= self._data[i].values
+	const metrics		= self._data[i].metrics
+	const mint			= self._data[i].mint
+	const type_number	= self._data[i].type_number
 	// const tooltip_text = `<b>${key.join(', ')}</b>`
 
 	const metric_names = `${tstring.datapoints || 'Datapoints'}`
 		+ `<br>${tstring.mean || 'Mean'}`
 		+ `<br>${tstring.max || 'Maximum'}`
-		+ (this._whiskers_quantiles
-			? `<br>${tstring.quantile}-${this._whiskers_quantiles[1]}`
+		+ (self._whiskers_quantiles
+			? `<br>${tstring.quantile}-${self._whiskers_quantiles[1]}`
 			: '')
 		+ `<br>${tstring.quantile || 'Quantile'}-75`
 		+ `<br>${tstring.median || 'Median'}`
 		+ `<br>${tstring.quantile || 'Quantile'}-25`
-		+ (this._whiskers_quantiles
-			? `<br>${tstring.quantile}-${this._whiskers_quantiles[0]}`
+		+ (self._whiskers_quantiles
+			? `<br>${tstring.quantile}-${self._whiskers_quantiles[0]}`
 			: '')
 		+ `<br>${tstring.min || 'Minimum'}`
 	const metric_values = `${values.length}`
 		+ `<br>${metrics.mean.toFixed(decimals)}`
 		+ `<br>${metrics.max.toFixed(decimals)}`
-		+ (this._whiskers_quantiles
+		+ (self._whiskers_quantiles
 			? `<br>${metrics.upper_fence.toFixed(decimals)}`
 			: '')
 		+ `<br>${metrics.quartile3.toFixed(decimals)}`
 		+ `<br>${metrics.median.toFixed(decimals)}`
 		+ `<br>${metrics.quartile1.toFixed(decimals)}`
-		+ (this._whiskers_quantiles
+		+ (self._whiskers_quantiles
 			? `<br>${metrics.lower_fence.toFixed(decimals)}`
 			: '')
 		+ `<br>${metrics.min.toFixed(decimals)}`
-	this._graphics.tooltip_div.select('div.tooltip_metric_names_div')
+	self._graphics.tooltip_div.select('div.tooltip_metric_names_div')
 		.html(metric_names)
-	this._graphics.tooltip_div.select('div.tooltip_metric_values_div')
+	self._graphics.tooltip_div.select('div.tooltip_metric_values_div')
 		.html(metric_values)
 	
 	// Call the tooltip callback
-	if (this._tooltip_callback) {
-		this._tooltip_callback(key)
+	if (self._tooltip_callback) {
+		self._tooltip_callback({
+			section_id	: section_id,
+			type_number	: type_number,
+			mint		: mint
+		})
 			.then((ele) => {
-				const tooltip_element = this._graphics.tooltip_div.node()
-				ele.id = `${this.id_string()}_tooltip_callback_div`
+				const tooltip_element = self._graphics.tooltip_div.node()
+				ele.id = `${self.id_string()}_tooltip_callback_div`
 				ele.classList.add('tooltip_callback_div')
 				const last_child = tooltip_element.lastChild
 				// If the last child is already a callback, delete it!

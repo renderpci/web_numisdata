@@ -491,7 +491,7 @@ page.parse_coin_data = function(data) {
 * @return object row | array rows
 */
 page.parse_catalog_data = function(data) {
-	// console.log("------------> parse_catalog_data data:",data);
+
 	const self = this
 
 	if (!data) {

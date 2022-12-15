@@ -219,9 +219,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  yticks_division: number,
 	 *  yaxis: d3.axisGenerator,
 	 *  violin_scale: {initial: number, value: number},
+	 *  violin_bandwidth: number,
 	 *  box_scale: {initial: number, value: number},
 	 *  xscale: d3.scaleBand,
 	 *  key2_start_x: {[key2: string]: number},
+	 *  datum_start_x: number[],
 	 *  xaxis: d3.axisGenerator,
 	 *  xticklabel_angle: number,
 	 *  n_bins: {initial: number, value: number}[],
@@ -245,6 +247,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		.tickFormat((d, i) => i % this._chart.yticks_division ? '' : d.toFixed(1))
 		.ticks(19)
 	this._chart.violin_scale = {initial: 0.8, value: 0.8}
+	this._chart.violin_bandwidth =
+		(this._chart.width - this._get_next_key_component_values([]).length*KEY2_MARGIN)/this._data.length
 	this._chart.box_scale = {initial: 0.3, value: 0.3}
 	this._chart.xscale = d3.scaleBand()
 		.domain(this._key_strings)
@@ -253,6 +257,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	this._chart.key2_start_x = this._key_size > 1  // Compute start point of key-2s if necessary, before creating the space
 		? this._compute_key2_start_x()
 		: null
+	this._chart.datum_start_x = this._compute_datum_start_x()
 	this._chart.xaxis = d3.axisBottom(this._chart.xscale)
 		.tickFormat((d) => split_key(d)[1])
 	this._chart.xticklabel_angle = options.xticklabel_angle || 0
@@ -515,6 +520,31 @@ boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
 }
 
 /**
+ * Compute starting points (in plot x-coordinates) for the datum (each population)
+ * @returns {number[]} the starting position for each datum
+ */
+boxvio_chart_wrapper.prototype._compute_datum_start_x = function () {
+	if (this._key_size === 1) {
+		return this._key_strings.map((key_string) => this._chart.xscale(key_string))
+	}
+	// Key size is 2 (for now. Maybe in the future, greater than 2)
+	const datum_start_x = []
+	let current_x = 0
+	let current_key2 = ''
+	for (const datum of this._data) {
+		const key2 = datum.key[this._key_size-2]
+		if (key2 !== current_key2) {
+			current_key2 = key2
+			// Add space for the key2 margin
+			current_x += KEY2_MARGIN
+		}
+		datum_start_x.push(current_x)
+		current_x += this._chart.violin_bandwidth
+	}
+	return datum_start_x
+}
+
+/**
  * Set the scale for the violins
  * @function
  * @param {number} scale the scale [0, 1]
@@ -632,6 +662,12 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 	const xaxwl_g = this._graphics.xaxwl_g
 	this._graphics.xaxis_g = xaxwl_g.append('g')
 		.call(this._chart.xaxis)
+	// If we have key2s, relocate the ticks at their desired positions
+	// to leave space for the key2 labels and separators
+	if (this._key_size > 1) {
+		const xaxis_ticks = this._graphics.xaxis_g.selectAll('g.tick')
+		// TODO: MOVE
+	}
 	this.apply_xticklabel_angle()
 	// Render X axis label
 	xaxwl_g.append('text')
@@ -797,9 +833,9 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 		this._graphics.violins_g = g.append('g')
 	}
 	const violins_g = this._graphics.violins_g
-	for (const [i, key_string] of this._key_strings.entries()) {
+	for (let i = 0; i < this._data.length; i++) {
 		this._graphics.violins[i] = violins_g.append('g')
-			.attr('transform', `translate(${chart.xscale(key_string)},0)`)
+			.attr('transform', `translate(${chart.datum_start_x[i]},0)`)
 		this._render_violin(i)
 	}
 
@@ -815,7 +851,7 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 boxvio_chart_wrapper.prototype._render_violin = function (i) {
 	const bins = this._chart.bins[i]
 	const violin_scale = this._chart.violin_scale.value
-	const bandwidth = this._chart.xscale.bandwidth()
+	const bandwidth = this._chart.violin_bandwidth
 	const yscale = this._chart.yscale
 	const violin_curve = this._chart.violin_curve
 
@@ -862,7 +898,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		this._graphics.boxes_g = g.append('g')
 	}
 	const boxes = this._graphics.boxes_g
-	const bandwidth = chart.xscale.bandwidth()
+	const bandwidth = chart.violin_bandwidth
 	const box_width = this._chart.box_scale.value * bandwidth
 
 	const whiskers_lw = 2
@@ -873,10 +909,9 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 		const metrics = ele.metrics
 		const color = this._colors[i]
-		const key = ele.key
 
 		const group_box = boxes.append('g')
-			.attr('transform', `translate(${chart.xscale(join_key(key)) + bandwidth / 2},0)`)
+			.attr('transform', `translate(${chart.datum_start_x[i] + bandwidth / 2},0)`)
 
 		// Draw outliers
 		this._graphics.outliers[i] = group_box.append('g')

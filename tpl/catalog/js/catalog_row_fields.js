@@ -120,9 +120,10 @@ var catalog_row_fields = {
 						self.node_factory(item, "term", type_info, "span", null)
 
 					// conditionals
-						const my_parent 	 = item.parent ? item.parent[0] : null
-						const parent_element = self.ar_rows.find(el => el.section_id==my_parent)
-						if (parent_element && parent_element.term_table!=="types") {
+						const my_parent			= item.parent ? item.parent[0] : null
+						const add_denomination	= item.add_denomination ? item.add_denomination : null
+						const parent_element	= self.ar_rows.find(el => el.section_id==my_parent)
+						if (add_denomination || (parent_element && parent_element.term_table!=="types")) {
 							self.node_factory(item, "ref_type_material", type_info, null, null)
 							self.node_factory(item, "ref_type_denomination", type_info, null, null)
 						}

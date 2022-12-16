@@ -720,9 +720,6 @@ body.touch .poptrox-popup .nav-next {
 .chart_wrapper label {
   font-weight: 400;
 }
-.chart_wrapper .plot_container {
-  outline: 1px solid #f2f0f0;
-}
 .chart_wrapper .control_panel_toggle {
   margin-top: 1rem;
   cursor: pointer;
@@ -839,19 +836,13 @@ body.touch .poptrox-popup .nav-next {
   width: auto;
 }
 .chart_wrapper .tooltip_div {
-  background-color: #f9f7f7;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  outline: 1px solid #f2f0f0;
-  padding-block: 0.7em;
-  padding-inline: 0.7em;
-  display: none;
   flex-direction: row;
-  justify-content: space-between;
 }
 .chart_wrapper .tooltip_div .tooltip_metrics_div {
+  background-color: #f9f7f7;
   display: flex;
   flex-direction: row;
+  padding: 1rem;
 }
 .chart_wrapper .tooltip_div .tooltip_metrics_div .tooltip_metric_values_div {
   font-size: smaller;
@@ -865,12 +856,20 @@ body.touch .poptrox-popup .nav-next {
 .chart_wrapper .tooltip_div .tooltip_callback_div {
   border-top: none;
   margin-left: 2em;
+  background-color: #ffffff;
+  width: 90%;
 }
 .chart_wrapper .tooltip_div .tooltip_callback_div .type_container {
   margin-block: 0;
 }
 .chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.term {
   display: block;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.ref_type_material {
+  margin-right: 1em;
+}
+.chart_wrapper .tooltip_div .tooltip_callback_div .type_container .type_info span.ref_type_denomination {
+  margin-right: 1em;
 }
 .chart_wrapper .tooltip_div .tooltip_callback_div .type_container span.ref_type_equivalents {
   align-self: end;

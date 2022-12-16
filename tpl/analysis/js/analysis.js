@@ -423,18 +423,23 @@ export const analysis =  {
 				// data
 					const data = []
 					for (const [i, ele] of parsed_data.entries()) {
-						const number_key = ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})`
-						const mint = ele.p_mint ? ele.p_mint[0] : `Missing mint (${ele.section_id})`
-						const material = ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
-						const denomination = ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
+						// get section_id to be the key referent to search data again.
+						const section_id	= ele.section_id
+
+						const number_key	= ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})` // Why need to change the name???? MR POTATOE !!!!!!!!
+						const mint			= ele.p_mint ? ele.p_mint[0] : `Missing mint (${ele.section_id})`
+						const material		= ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
+						const denomination	= ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
 						// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 						// if (!['59', '62'].includes(name)) continue
-						const tmp_data = {}
-						const calculable = ele.full_coins_reference_calculable
-						const diameter_max = ele.full_coins_reference_diameter_max
-						const diameter_min = ele.full_coins_reference_diameter_min
-						const weight = ele.full_coins_reference_weight
-						const axis = ele.full_coins_reference_axis
+						const tmp_data		= {}
+
+						const calculable	= ele.full_coins_reference_calculable
+						const diameter_max	= ele.full_coins_reference_diameter_max
+						const diameter_min	= ele.full_coins_reference_diameter_min
+						const weight		= ele.full_coins_reference_weight
+						const axis			= ele.full_coins_reference_axis
+
 						if (diameter_max && diameter_max.length) {
 							const tmp_diameter_max = diameter_max.filter((v, i) => v && calculable[i])
 							if (tmp_diameter_max.length) {
@@ -460,27 +465,40 @@ export const analysis =  {
 							}
 						}
 						if (Object.keys(tmp_data).length) {
-							tmp_data.number_key = number_key
-							tmp_data.mint = mint
-							tmp_data.material = material
-							tmp_data.denomination = denomination
+							tmp_data.section_id 	= section_id
+							tmp_data.number_key		= number_key
+							tmp_data.mint			= mint
+							tmp_data.type_number	= number_key //type number is and will be type number! Raspa said.
+							tmp_data.material		= material
+							tmp_data.denomination	= denomination
 							data.push(tmp_data)
 						}
 					}
 					// console.log(data)
 
 				// Weights
-				const weights = data.filter(
-					(ele) => ele.weight
-				).map(
-					(ele) => {return {key: [ele.mint, ele.number_key], values: ele.weight}}
+				const weights = data.filter( (ele) => ele.weight ).map( (ele) => {
+						return {
+							key			: [ele.mint, ele.number_key], // MRS POTATOES AND CHIDREN !!!!!!!!!!!!!!!
+							values		: ele.weight,
+							section_id	: ele.section_id,
+							mint		: ele.mint,
+							type_number	: ele.number_key
+						}
+					}
 				)
 				
 				// Diameters
-				const diameters = data.filter(
-					(ele) => ele.diameter_max
-				).map(
-					(ele) => {return {key: [ele.mint, ele.number_key], values: ele.diameter_max}}
+				const diameters = data.filter( (ele) => ele.diameter_max ).map(
+					(ele) => {
+						return {
+							key			: [ele.mint, ele.number_key], // MR POTATOESSSSSSS !!!!!!!!!!!!!!!
+							values		: ele.diameter_max,
+							section_id	: ele.section_id,
+							mint		: ele.mint,
+							type_number	: ele.number_key
+						}
+					}
 				)
 
 				spinner.remove()
@@ -490,13 +508,13 @@ export const analysis =  {
 					weights,
 					[tstring.mint || 'Mint', tstring.number || 'Number'],
 					{
-						whiskers_quantiles: [10, 90],
-						ylabel: tstring.weight || 'Weight',
-						overflow: true,
-						display_control_panel: true,
-						display_download: true,
-						sort_xaxis: true,
-						tooltip_callback: type_tooltip_callback
+						whiskers_quantiles		: [10, 90],
+						ylabel					: tstring.weight || 'Weight',
+						overflow				: true,
+						display_control_panel	: true,
+						display_download		: true,
+						sort_xaxis				: true,
+						tooltip_callback		: type_tooltip_callback
 					}
 				)
 				this.weight_chart_wrapper.render()
@@ -637,14 +655,16 @@ export const analysis =  {
  * @param {string[]} key the key of the violin/box
  * @returns {Promise<Element>} the html element to add to the tooltip 
  */
-async function type_tooltip_callback(key) {
+async function type_tooltip_callback(options) {
 
-	const [mint, number] = key
+	const section_id	= options.section_id
+	const type_number	= options.type_number
+	const mint			= options.mint
 
 	// CALL DEDALO API TO OBTAIN INFO
-	const sql_filter =
-		`(\`p_mint\` = '["${mint}"]' AND \`p_mint\` != '')`
-		+ `AND (\`term\` LIKE '${number}%' AND \`term\` != '')`
+	// const sql_filter =
+	// 	`(\`p_mint\` = '["${mint}"]' AND \`p_mint\` != '')`
+	// 	+ `AND (\`term\` LIKE '${number}%' AND \`term\` != '')`
 	const catalog_ar_fields = ['*']
 
 	const catalog_request_options = {
@@ -652,26 +672,30 @@ async function type_tooltip_callback(key) {
 		lang		: page_globals.WEB_CURRENT_LANG_CODE,
 		table		: 'catalog',
 		ar_fields	: catalog_ar_fields,
-		sql_filter	: sql_filter,
+		// sql_filter	: sql_filter,
+		section_id 	: section_id, // unique id for the selected all data of the type
 		limit		: 1,
 		count		: false,
-		order		: "norder ASC"
+		// order		: "norder ASC"
 	}
 
 	const api_response = await data_manager.request({
 		body: catalog_request_options
 	})
+	const type_data = api_response.result || null
 
-	if (!api_response.result || !api_response.result.length) {
+	if (!type_data) {
 		return common.create_dom_element({
 			element_type: 'div',
-			text_content: `Could not find number ${number} for mint ${mint} in the database.`
+			text_content: `Could not find number ${type_number} for mint ${mint} in the database.`
 		})
 	}
+	const type_row = page.parse_catalog_data(type_data)[0]
 
-	const type_row = page.parse_catalog_data(api_response.result)[0]
-
+	// set true to render material and denonimation
+	type_row.add_denomination = true
 	// CREATE THE RESULTING HTML Element
+	// type_row.render_material	= true
 	const ele = catalog_row_fields.draw_item(type_row)
 	// Remove style of coins images container, since it is hardcoded to 124mm
 	ele.getElementsByClassName('coins_images')[0].removeAttribute('style')

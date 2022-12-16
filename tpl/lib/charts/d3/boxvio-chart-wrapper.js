@@ -52,9 +52,9 @@ const WHISKERS_CSS_CLASS = 'whiskers'
 
 /**
  * Margin for the key2 label
- * @type {number}
+ * @type {[number, number]}
  */
-const KEY2_MARGIN = 50
+const KEY2_MARGIN = [10, 33]
 
 /**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
@@ -103,7 +103,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @private
 	 */
 	this._whiskers_quantiles = options.whiskers_quantiles || null
-	console.log(this._whiskers_quantiles)
 	/**
 	 * Whether to go beyond the width of the plot container
 	 * @type {boolean}
@@ -171,6 +170,14 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._key_titles = key_titles
 	/**
+	 * Available key2 titles
+	 * @type {string[]}
+	 * @private
+	 */
+	this._key2_titles = this._key_size > 1
+		? this._get_next_key_component_values([])
+		: null
+	/**
 	 * Colors
 	 * @type {string[]}
 	 * @private
@@ -195,7 +202,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		? 330.664701211*Math.sqrt(this._data.length) - 170.664701211 + this.yaxis_padding
 		: 26*this._data.length + this.yaxis_padding
 	if (this._key_size > 1) {  // If we have a key-2, add some margin
-		this._full_width += this._get_next_key_component_values([]).length*KEY2_MARGIN
+		this._full_width += this._key2_titles.length*d3.sum(KEY2_MARGIN)
 	}
 	/**
 	 * Full height of svg
@@ -247,14 +254,15 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		.tickFormat((d, i) => i % this._chart.yticks_division ? '' : d.toFixed(1))
 		.ticks(19)
 	this._chart.violin_scale = {initial: 0.8, value: 0.8}
-	this._chart.violin_bandwidth =
-		(this._chart.width - this._get_next_key_component_values([]).length*KEY2_MARGIN)/this._data.length
+	this._chart.violin_bandwidth =  // Subtract key2 margins from the plot width
+		(this._chart.width - this._key2_titles.length*d3.sum(KEY2_MARGIN))
+		/ this._data.length
 	this._chart.box_scale = {initial: 0.3, value: 0.3}
 	this._chart.xscale = d3.scaleBand()
 		.domain(this._key_strings)
 		.range([0, this._chart.width])
 		// .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
-	this._chart.key2_start_x = this._key_size > 1  // Compute start point of key-2s if necessary, before creating the space
+	this._chart.key2_start_x = this._key_size > 1
 		? this._compute_key2_start_x()
 		: null
 	this._chart.datum_start_x = this._compute_datum_start_x()
@@ -508,10 +516,12 @@ boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
 	const key_tpls = this._get_key_templates(2)
 
 	let i = 0;
+	let current_x = 0
 	for (const key_tpl of key_tpls) {
 		const queried_data = this._query_data(key_tpl)
-		const x = this._chart.xscale(this._key_strings[i])
-		positions[key_tpl[key_tpl.length-2]] = x
+		positions[key_tpl[key_tpl.length-2]] = current_x
+		// Increase current_x
+		current_x += d3.sum(KEY2_MARGIN) + this._chart.violin_bandwidth*queried_data.length
 		// Increase the index by the number of groups in the class
 		i += queried_data.length
 	}
@@ -529,14 +539,15 @@ boxvio_chart_wrapper.prototype._compute_datum_start_x = function () {
 	}
 	// Key size is 2 (for now. Maybe in the future, greater than 2)
 	const datum_start_x = []
-	let current_x = 0
-	let current_key2 = ''
+	// Start here for the first key2
+	let current_x = KEY2_MARGIN[1]
+	let current_key2 = this._data[0].key[this._key_size-2]
 	for (const datum of this._data) {
 		const key2 = datum.key[this._key_size-2]
-		if (key2 !== current_key2) {
+		if (current_key2 !== key2) {
 			current_key2 = key2
 			// Add space for the key2 margin
-			current_x += KEY2_MARGIN
+			current_x += d3.sum(KEY2_MARGIN)
 		}
 		datum_start_x.push(current_x)
 		current_x += this._chart.violin_bandwidth
@@ -665,9 +676,14 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 	// If we have key2s, relocate the ticks at their desired positions
 	// to leave space for the key2 labels and separators
 	if (this._key_size > 1) {
-		const xaxis_ticks = this._graphics.xaxis_g.selectAll('g.tick')
-		// TODO: MOVE
+		const half_bandwidth = this._chart.violin_bandwidth/2
+		this._graphics.xaxis_g.selectAll('g.tick')
+			.attr(
+				'transform',
+				(_, i) => `translate(${this._chart.datum_start_x[i]+half_bandwidth},0)`
+			)
 	}
+	// Apply the xticklabel angle
 	this.apply_xticklabel_angle()
 	// Render X axis label
 	xaxwl_g.append('text')

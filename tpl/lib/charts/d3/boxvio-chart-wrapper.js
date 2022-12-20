@@ -324,7 +324,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		// per group: g tag grouping all outliers of each box
 		outliers: [],
 		// div tag of the tooltip
-		tooltip_div: null,
+		tooltip_div: null
 	}
 	/**
 	 * Control panel things

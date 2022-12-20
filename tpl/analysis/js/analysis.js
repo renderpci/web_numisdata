@@ -7,6 +7,7 @@
 import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
 import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio-chart-wrapper.js";
 import { histogram_wrapper } from "../../lib/charts/chartjs/histogram-wrapper.js";
+import { clock_chart_wrapper } from "../../lib/charts/d3/clock-chart-wrapper.js";
 
 
 export const analysis =  {
@@ -20,19 +21,25 @@ export const analysis =  {
 	// DOM containers
 	export_data_container		: null,
 	form_items_container		: null,
-	diameter_chart_container	: null,
 	weight_chart_container		: null,
+	diameter_chart_container	: null,
+	clock_chart_container		: null,
 
+	/**
+	 * Chart wrapper instance for weight
+	 * @type {chart_wrapper}
+	 */
+	weight_chart_wrapper: null,
 	/**
 	 * Chart wrapper instance for diameter
 	 * @type {chart_wrapper}
 	 */
 	diameter_chart_wrapper: null,
 	/**
-	 * Chart wrapper instance for weight
+	 * Chart wrapper instance for clock
 	 * @type {chart_wrapper}
 	 */
-	weight_chart_wrapper: null,
+	clock_chart_wrapper: null,
 
 
 	set_up : function(options) {
@@ -44,8 +51,9 @@ export const analysis =  {
 			self.export_data_container		= options.export_data_container
 			self.row						= options.row
 			self.form_items_container		= options.form_items_container
-			self.diameter_chart_container	= options.diameter_chart_container
 			self.weight_chart_container		= options.weight_chart_container
+			self.diameter_chart_container	= options.diameter_chart_container
+			self.clock_chart_container		= options.clock_chart_container
 
 		// form
 		const form_node = self.render_form()
@@ -534,6 +542,16 @@ export const analysis =  {
 					}
 				)
 				this.diameter_chart_wrapper.render()
+
+				this.clock_chart_wrapper = new clock_chart_wrapper(
+					this.clock_chart_container,
+					[5, 4, 3, 2, 1, 3, 0],
+					{
+						overflow: true,
+						display_download: true
+					}
+				)
+				this.clock_chart_wrapper.render()
 
 				// show Weights and Diameters block labels
 					for (let i = 0; i < info_lines_length; i++) {

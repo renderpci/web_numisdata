@@ -1043,6 +1043,8 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	})
 	insert_after(tooltip_element, this.plot_container)
 	this._graphics.tooltip_div = d3.select(tooltip_element)
+	// Hide tooltip in the beginning
+	this._hide_tooltip()
 	const tooltip_metrics = common.create_dom_element({
 		element_type	: 'div',
 		id				: `${this.id_string()}_tooltip_metrics`,

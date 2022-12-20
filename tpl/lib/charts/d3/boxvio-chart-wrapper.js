@@ -76,11 +76,12 @@ const KEY2_MARGIN = [10, 33]
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
+ * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`).
+ * 		if `false`, the svg will be stretched to fill the full width of its parent element
  * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
  * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
  * @param {string} options.ylabel the y-label (default `null`)
- * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`)
  * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
  * @param {(key: string[]) => Promise<Element>} options.tooltip_callback called to fill space in the tooltip
  * 	next to the metrics. It takes the key as argument and returns a Promise of an HTML element to add to the
@@ -103,12 +104,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @private
 	 */
 	this._whiskers_quantiles = options.whiskers_quantiles || null
-	/**
-	 * Whether to go beyond the width of the plot container
-	 * @type {boolean}
-	 * @private
-	 */
-	this._overflow = options.overflow || false
 	const sort_xaxis = options.sort_xaxis || data[0].key.length > 1 || false
 	if (!data.length) {
 		throw new Error("Data array is empty")
@@ -624,12 +619,6 @@ boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
  */
 boxvio_chart_wrapper.prototype.render_plot = function () {
 	d3_chart_wrapper.prototype.render_plot.call(this)
-
-	if (this._overflow) {
-		this.svg.attr('width', null)
-		this.svg.attr('height', '500px')
-		this.plot_container.style = "overflow: auto;"
-	}
 
 	// Set viewBox of svg
 	this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)

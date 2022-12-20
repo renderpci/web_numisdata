@@ -15,6 +15,8 @@ import { chart_wrapper } from "../chart-wrapper";
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `true`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `true`)
+ * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`).
+ * 		if `false`, the svg will be stretched to fill the full width of its parent element
  * @class
  * @abstract
  * @extends chart_wrapper
@@ -29,6 +31,12 @@ export function d3_chart_wrapper(div_wrapper, options) {
 	 * @protected
 	 */
 	this.svg = undefined
+	/**
+	 * Whether to go beyond the width of the plot container
+	 * @type {boolean}
+	 * @private
+	 */
+	this._overflow = options.overflow || false
 
 }
 // Set prototype chain
@@ -52,7 +60,14 @@ d3_chart_wrapper.prototype.render_plot = function () {
 		// When drawing SVG to canvas with an `Image`, if we don't add version and xmlns the `Image` will never load :(
 		.attr('version', '1.1')
 		.attr('xmlns', 'http://www.w3.org/2000/svg')
-		.attr('width', '100%')
+	if (this._overflow) {
+		this.svg
+			.attr('width', null)
+			.attr('height', '500px')
+		this.plot_container.style = "overflow: auto;"
+	} else {
+		this.svg.attr('width', '100%')
+	}
 }
 
 /**

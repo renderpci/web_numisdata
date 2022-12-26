@@ -32,6 +32,8 @@
 							<div id="weight_chart_container" class="chart_wrapper"></div>
 							<div class="info_line separator hide"><div class="big_label"><?php echo tstring('diameter')?></div></div>
 							<div id="diameter_chart_container" class="chart_wrapper"></div>
+							<div class="info_line separator hide"><div class="big_label">Clock</div></div>
+							<div id="clock_chart_container" class="chart_wrapper"></div>
 							<div id="export_data" class="export_data_container"></div>
 						</section>
 
@@ -52,8 +54,9 @@ dom_ready(function(){
 		area_name					: <?php echo json_encode($area_name) ?>,
 		export_data_container		: document.getElementById('export_data'),
 		form_items_container		: document.getElementById('items_container'),
+		weight_chart_container		: document.getElementById('weight_chart_container'),
 		diameter_chart_container	: document.getElementById('diameter_chart_container'),
-		weight_chart_container		: document.getElementById('weight_chart_container')
+		clock_chart_container		: document.getElementById('clock_chart_container')
 	})
 })
 </script>

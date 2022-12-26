@@ -264,12 +264,12 @@ var coins_row_fields = {
 			if (row.collection != null && row.collection.length>0){
 
 				const collection_label = tstring.collection || "Collection"
-				var collectionInfo = collection_label + ": " + row.collection
+				let collectionInfo = collection_label + ": " + row.collection
 
-				if (row.former_collection != null && row.former_collection.length>0){
+				if (row.former_collection && row.former_collection != null && row.former_collection.length>0){
 					collectionInfo += " | "+ row.former_collection
 				}
-				if (row.number != null && row.number.length>0){
+				if (row.number && row.number != null && row.number.length>0){
 					collectionInfo += " | "+ row.number
 				}
 
@@ -465,7 +465,7 @@ var coins_row_fields = {
 
 			//IMAGE GALLERY CAPTIONS
 			if (row.collection && row.collection.length>0){
-				const collection_former = (row.former_collection.length>0)
+				const collection_former = (row.former_collection && row.former_collection.length>0)
 					? row.collection + " ("+row.former_collection+")"
 					: row.collection
 

@@ -193,6 +193,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * axis generators, spacing, etc.
 	 * @private
 	 * @type {{
+	 * 	tooltip_active: number,
 	 *  margin: {
 	 *      top: number,
 	 *      right: number,
@@ -220,6 +221,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * }}
 	 */
 	this._chart = {}
+	this._chart.tooltip_active = null
 	this._chart.margin = { top: 15, right: 4, bottom: 61, left: this.yaxis_padding }
 	this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
 	this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
@@ -878,6 +880,10 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 	for (let i = 0; i < this._data.length; i++) {
 		this._graphics.violins[i] = violins_g.append('g')
 			.attr('transform', `translate(${chart.datum_start_x[i]},0)`)
+		this._graphics.violins[i].on('click', (e) => {
+			e.stopPropagation()
+			this.set_selected_index(i)
+		})
 		this._render_violin(i)
 	}
 
@@ -954,7 +960,10 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 
 		const group_box = boxes.append('g')
 			.attr('transform', `translate(${chart.datum_start_x[i] + bandwidth / 2},0)`)
-
+		group_box.on('click', (e) => {
+			e.stopPropagation()
+			this.set_selected_index(i)
+		})
 		// Draw outliers
 		this._graphics.outliers[i] = group_box.append('g')
 		const outliers = this._graphics.outliers[i]
@@ -1022,9 +1031,9 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		circle.on('click', (e) => {
 			e.stopPropagation()
 
-			// already displayed. Hide
-				if (this.tooltip_active==i) {
-					this._hide_tooltip()
+			// already displayed. (Hide) -> do nothing
+				if (this.tooltip_active == i) {
+					// this._hide_tooltip()
 					return
 				}
 
@@ -1042,6 +1051,18 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		// })
 	}
 
+}
+
+/**
+ * Set the selected index by the user
+ * @function
+ * @private
+ * @param {number} i the index
+ * @name boxvio_chart_wrapper#set_selected_index
+ */
+boxvio_chart_wrapper.prototype.set_selected_index = function (i) {
+	this._controls.selected_index = i
+	console.log(`Selected index ${i}`)
 }
 
 /**

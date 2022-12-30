@@ -45,12 +45,6 @@ const KEY_CHANGE_EVENT = new Event(KEY_CHANGE_EVENT_NAME)
 const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
 
 /**
- * CSS class for the whiskers
- * @type {string}
- */
-const WHISKERS_CSS_CLASS = 'whiskers'
-
-/**
  * Margin for the key2 label
  * @type {[number, number]}
  */
@@ -299,6 +293,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  violins: d3.selection[],
 	 *  boxes_g: d3.selection,
 	 *  outliers: d3.selection[],
+	 * 	whiskers: d3.selection[],
 	 *  tooltip_div: d3.selection
 	 * }}
 	 */
@@ -323,6 +318,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		boxes_g: null,
 		// per group: g tag grouping all outliers of each box
 		outliers: [],
+		// per group: g tag grouping the whiskers of each box
+		whiskers: [],
 		// div tag of the tooltip
 		tooltip_div: null
 	}
@@ -338,12 +335,30 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  selected_index: number,
 	 * 	grid_select: HTMLSelectElement,
 	 * 	xticklabel_angle_slider: HTMLInputElement,
-	 *	curve_select: HTMLSelectElement
+	 *	curve_select: HTMLSelectElement,
+	 *	show_checkboxes: {
+	 *		key2: HTMLInputElement,
+	 *		violins: HTMLInputElement,
+	 *		boxes: HTMLInputElement,
+	 *		whiskers: HTMLInputElement,
+	 *		outliers: HTMLInputElement
+	 *	}
 	 * }}
 	 */
-	this._controls = {}
-	this._controls.max_bins_multiplier = 3
-	this._controls.selected_index = 0
+	this._controls = {
+		max_bins_multiplier: 3,
+		selected_index: 0,
+		grid_select: null,
+		xticklabel_angle_slider: null,
+		curve_select: null,
+		show_checkboxes: {
+			key2: null,
+			violins: null,
+			boxes: null,
+			whiskers: null,
+			outliers: null
+		}
+	}
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
@@ -934,8 +949,8 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		}
 
 		// Draw whiskers
-		const whiskers = group_box.append('g')
-			.classed(WHISKERS_CSS_CLASS, true)
+		this._graphics.whiskers[i] = group_box.append('g')
+		const whiskers = this._graphics.whiskers[i]
 		whiskers.append('line')  // vertical line
 			.attr('x1', 0)
 			.attr('y1', chart.yscale(metrics.lower_fence))
@@ -1332,6 +1347,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_key2_div,
 	})
 	show_key2_checkbox.checked = true
+	this._controls.show_checkboxes.key2 = show_key2_checkbox
 	/** @type {Element} */
 	const show_key2_label = common.create_dom_element({
 		element_type: 'label',
@@ -1339,9 +1355,6 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_key2_div,
 	})
 	show_key2_label.setAttribute('for', show_key2_checkbox_id)
-	show_key2_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.key2_dividers_g)
-	})
 
 	// Show violins
 	const show_violins_div = common.create_dom_element({
@@ -1357,6 +1370,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_violins_div,
 	})
 	show_violins_checkbox.checked = true
+	this._controls.show_checkboxes.violins = show_violins_checkbox
 	/** @type {Element} */
 	const show_violins_label = common.create_dom_element({
 		element_type: 'label',
@@ -1364,9 +1378,6 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_violins_div,
 	})
 	show_violins_label.setAttribute('for', show_violins_checkbox_id)
-	show_violins_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.violins_g)
-	})
 
 	// Show boxes
 	const show_boxes_div = common.create_dom_element({
@@ -1382,6 +1393,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_boxes_div,
 	})
 	show_boxes_checkbox.checked = true
+	this._controls.show_checkboxes.boxes = show_boxes_checkbox
 	/** @type {Element} */
 	const show_boxes_label = common.create_dom_element({
 		element_type: 'label',
@@ -1389,13 +1401,8 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_boxes_div,
 	})
 	show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
-	show_boxes_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.boxes_g)
-		// (DISABLED) Disable the checkbox for outliers (defined below)
-		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
-	})
 
-	// Show boxes
+	// Show whiskers
 	const show_whiskers_div = common.create_dom_element({
 		element_type: 'div',
 		parent: container_div,
@@ -1409,6 +1416,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_whiskers_div,
 	})
 	show_whiskers_checkbox.checked = true
+	this._controls.show_checkboxes.whiskers = show_whiskers_checkbox
 	/** @type {Element} */
 	const show_whiskers_label = common.create_dom_element({
 		element_type: 'label',
@@ -1416,11 +1424,6 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_whiskers_div,
 	})
 	show_whiskers_label.setAttribute('for', show_whiskers_checkbox_id)
-	show_whiskers_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.boxes_g.selectAll(`g g.${WHISKERS_CSS_CLASS}`))
-		// (DISABLED) Disable the checkbox for outliers (defined below)
-		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
-	})
 
 	// Show outliers
 	const show_outliers_div = common.create_dom_element({
@@ -1436,6 +1439,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_outliers_div,
 	})
 	show_outliers_checkbox.checked = true
+	this._controls.show_checkboxes.outliers = show_outliers_checkbox
 	/** @type {Element} */
 	const show_outliers_label = common.create_dom_element({
 		element_type: 'label',
@@ -1443,11 +1447,6 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_outliers_div,
 	})
 	show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
-	show_outliers_checkbox.addEventListener('change', () => {
-		for (const group of this._graphics.outliers) {
-			toggle_visibility(group)
-		}
-	})
 }
 
 /**
@@ -1748,6 +1747,30 @@ boxvio_chart_wrapper.prototype._control_panel_logic = function () {
 	// Violin curve selector
 	this._controls.curve_select.addEventListener('change', () => {
 		this.set_violin_curve(this._controls.curve_select.value)
+	})
+	// Show checkboxes
+	this._controls.show_checkboxes.key2.addEventListener('change', () => {
+		toggle_visibility(this._graphics.key2_dividers_g)
+	})
+	this._controls.show_checkboxes.violins.addEventListener('change', () => {
+		toggle_visibility(this._graphics.violins_g)
+	})
+	this._controls.show_checkboxes.boxes.addEventListener('change', () => {
+		toggle_visibility(this._graphics.boxes_g)
+		// (DISABLED) Disable the checkbox for outliers (defined below)
+		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+	})
+	this._controls.show_checkboxes.whiskers.addEventListener('change', () => {
+		for (const whisker of this._graphics.whiskers) {
+			toggle_visibility(whisker)
+		}
+		// (DISABLED) Disable the checkbox for outliers (defined below)
+		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+	})
+	this._controls.show_checkboxes.outliers.addEventListener('change', () => {
+		for (const group of this._graphics.outliers) {
+			toggle_visibility(group)
+		}
 	})
 }
 

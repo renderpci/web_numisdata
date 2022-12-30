@@ -335,7 +335,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @private
 	 * @type {{
 	 *  max_bins_multiplier: number,
-	 *  selected_index: number
+	 *  selected_index: number,
+	 * 	grid_select: HTMLSelectElement,
+	 * 	xticklabel_angle_slider: HTMLInputElement,
+	 *	curve_select: HTMLSelectElement
 	 * }}
 	 */
 	this._controls = {}
@@ -1154,6 +1157,8 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	this._render_key_selects()
 	this._render_n_bins_control()
 
+	// Define the control panel logic
+	this._control_panel_logic()
 }
 
 /**
@@ -1186,6 +1191,7 @@ boxvio_chart_wrapper.prototype._render_grid_select = function (container) {
 		parent: select_container,
 		// TODO: add ARIA attributes?
 	})
+	this._controls.grid_select = grid_select
 	common.create_dom_element({
 		element_type: 'option',
 		value: 'None',
@@ -1203,10 +1209,6 @@ boxvio_chart_wrapper.prototype._render_grid_select = function (container) {
 		value: 'Major + Minor',
 		text_content: tstring.major_minor || 'Major + Minor',
 		parent: grid_select,
-	})
-	grid_select.addEventListener('change', () => {
-		const mode = grid_select.value
-		this.apply_ygrid_mode(mode)
 	})
 }
 
@@ -1241,13 +1243,10 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function (conta
 		id: xticklabel_angle_slider_id,
 		parent: slider_container,
 	})
+	this._controls.xticklabel_angle_slider = xticklabel_angle_slider
 	xticklabel_angle_slider.setAttribute('min', 0)
 	xticklabel_angle_slider.setAttribute('max', 90)
 	xticklabel_angle_slider.value = this._chart.xticklabel_angle
-	xticklabel_angle_slider.addEventListener('input', () => {
-		this._chart.xticklabel_angle = Number(xticklabel_angle_slider.value)
-		this.apply_xticklabel_angle()
-	})
 }
 
 /**
@@ -1280,6 +1279,7 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (contain
 		parent: select_container,
 		// TODO: add ARIA attributes?
 	})
+	this._controls.curve_select = curve_select
 	for (const curve_name of this._chart.supported_curves) {
 		common.create_dom_element({
 			element_type: 'option',
@@ -1288,9 +1288,6 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (contain
 			parent: curve_select,
 		})
 	}
-	curve_select.addEventListener('change', () => {
-		this.set_violin_curve(curve_select.value)
-	})
 }
 
 /**
@@ -1731,6 +1728,28 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	})
 }
 
+/**
+ * Defines control panel logic (change events and such)
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_control_panel_logic
+ */
+boxvio_chart_wrapper.prototype._control_panel_logic = function () {
+	// Grid mode select
+	this._controls.grid_select.addEventListener('change', () => {
+		const mode = this._controls.grid_select.value
+		this.apply_ygrid_mode(mode)
+	})
+	// X-tick label angle slider
+	this._controls.xticklabel_angle_slider.addEventListener('input', () => {
+		this._chart.xticklabel_angle = Number(this._controls.xticklabel_angle_slider.value)
+		this.apply_xticklabel_angle()
+	})
+	// Violin curve selector
+	this._controls.curve_select.addEventListener('change', () => {
+		this.set_violin_curve(this._controls.curve_select.value)
+	})
+}
 
 // HELPER FUNCTIONS
 

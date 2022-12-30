@@ -95,6 +95,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * Data: key (general to specific components), index, values,
 	 * boxplot metrics, outliers, extent (min and max)
 	 * @type {{
+	 * 	id: string,
 	 *  key: string[],
 	 *  index: number
 	 *  values: number[],
@@ -130,11 +131,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._data_extent = d3.extent(this._data.map((ele) => ele.extent).flat())
 	/**
-	 * Existing keys as strings
+	 * IDs for the data
 	 * @type {string[]}
 	 * @private
 	 */
-	this._key_strings = this._data.map((ele) => join_key(ele.key))
+	this._ids = this._data.map((ele) => ele.id)
 	/**
 	 * Number of components of the key
 	 * @type {number}
@@ -237,7 +238,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		/ this._data.length
 	this._chart.box_scale = {initial: 0.3, value: 0.3}
 	this._chart.xscale = d3.scaleBand()
-		.domain(this._key_strings)
+		.domain(this._ids)
 		.range([0, this._chart.width])
 		// .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
 	this._chart.key2_start_x = this._key_size > 1
@@ -245,7 +246,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		: null
 	this._chart.datum_start_x = this._compute_datum_start_x()
 	this._chart.xaxis = d3.axisBottom(this._chart.xscale)
-		.tickFormat((d) => split_key(d)[1])
+		.tickFormat((id) => this._data.find((datum) => datum.id === id).key[this._key_size - 1])
 	this._chart.xticklabel_angle = options.xticklabel_angle || 0
 	this._chart.n_bins = this._data.map((ele) => {
 		const initial_value = compute_n_bins.sturges(ele.values)
@@ -537,15 +538,12 @@ boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
 
 	const key_tpls = this._get_key_templates(2)
 
-	let i = 0;
 	let current_x = 0
 	for (const key_tpl of key_tpls) {
 		const queried_data = this._query_data(key_tpl)
 		positions[key_tpl[key_tpl.length-2]] = current_x
 		// Increase current_x
 		current_x += d3.sum(KEY2_MARGIN) + this._chart.violin_bandwidth*queried_data.length
-		// Increase the index by the number of groups in the class
-		i += queried_data.length
 	}
 
 	return positions
@@ -557,7 +555,7 @@ boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
  */
 boxvio_chart_wrapper.prototype._compute_datum_start_x = function () {
 	if (this._key_size === 1) {
-		return this._key_strings.map((key_string) => this._chart.xscale(key_string))
+		return this._ids.map((id) => this._chart.xscale(id))
 	}
 	// Key size is 2 (for now. Maybe in the future, greater than 2)
 	const datum_start_x = []

@@ -739,58 +739,63 @@ body.touch .poptrox-popup .nav-next {
 .chart_wrapper .control_panel_toggle.opened:after {
   transform: rotate(180deg);
 }
+.chart_wrapper .control_panel_toggle.control_panel_toggle_section {
+  margin-top: 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
 .chart_wrapper .control_panel {
   padding-left: 1rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item {
+.chart_wrapper .control_panel_content .control_panel_item {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   gap: 1rem;
   padding: 0.5rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.control_panel > div label {
+.chart_wrapper .control_panel_content .control_panel_item.controls_block > div label {
   display: block;
   width: 100%;
   margin-bottom: 0.25rem;
   line-height: 2.5rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.control_panel > div select,
-.chart_wrapper .control_panel_content > .control_panel_item.control_panel > div input {
+.chart_wrapper .control_panel_content .control_panel_item.controls_block > div select,
+.chart_wrapper .control_panel_content .control_panel_item.controls_block > div input {
   padding-left: 1rem;
   height: 2.5rem;
   margin-top: 0;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.scale_sliders > div {
+.chart_wrapper .control_panel_content .control_panel_item.scale_sliders > div {
   width: 50%;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.scale_sliders > div label {
+.chart_wrapper .control_panel_content .control_panel_item.scale_sliders > div label {
   display: block;
   width: 100%;
   margin-bottom: 0.25rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.scale_sliders > div select,
-.chart_wrapper .control_panel_content > .control_panel_item.scale_sliders > div input {
+.chart_wrapper .control_panel_content .control_panel_item.scale_sliders > div select,
+.chart_wrapper .control_panel_content .control_panel_item.scale_sliders > div input {
   padding-left: 1rem;
   height: 2.5rem;
   margin-top: 0;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.scale_sliders > div input {
+.chart_wrapper .control_panel_content .control_panel_item.scale_sliders > div input {
   width: 65%;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.scale_sliders > div .small {
+.chart_wrapper .control_panel_content .control_panel_item.scale_sliders > div .small {
   margin-left: 0.5rem;
   vertical-align: top;
   opacity: 0.5;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.key_selects {
+.chart_wrapper .control_panel_content .control_panel_item.key_selects {
   justify-content: start;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.key_selects > div {
+.chart_wrapper .control_panel_content .control_panel_item.key_selects > div {
   display: flex;
   flex: 1 0 auto;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.key_selects > div label {
+.chart_wrapper .control_panel_content .control_panel_item.key_selects > div label {
   display: inline-block;
   padding-right: 1rem;
   height: 2.5rem;
@@ -798,16 +803,16 @@ body.touch .poptrox-popup .nav-next {
   margin: 0;
   line-height: 2.5rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.key_selects > div select,
-.chart_wrapper .control_panel_content > .control_panel_item.key_selects > div input {
+.chart_wrapper .control_panel_content .control_panel_item.key_selects > div select,
+.chart_wrapper .control_panel_content .control_panel_item.key_selects > div input {
   padding-left: 1rem;
   height: 2.5rem;
   margin-top: 0;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.n_bins_control {
+.chart_wrapper .control_panel_content .control_panel_item.n_bins_control {
   margin-top: 1rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.n_bins_control label {
+.chart_wrapper .control_panel_content .control_panel_item.n_bins_control label {
   display: inline-block;
   padding-right: 1rem;
   height: 2.5rem;
@@ -815,14 +820,14 @@ body.touch .poptrox-popup .nav-next {
   margin: 0;
   line-height: 2.5rem;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.n_bins_control input {
+.chart_wrapper .control_panel_content .control_panel_item.n_bins_control input {
   padding-left: 1rem;
   height: 2.5rem;
   margin-top: 0;
   width: 65%;
   width: 38%;
 }
-.chart_wrapper .control_panel_content > .control_panel_item.n_bins_control .small {
+.chart_wrapper .control_panel_content .control_panel_item.n_bins_control .small {
   margin-left: 0.5rem;
   vertical-align: top;
   opacity: 0.5;

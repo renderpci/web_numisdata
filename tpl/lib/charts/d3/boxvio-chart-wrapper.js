@@ -323,6 +323,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @type {{
 	 *  max_bins_multiplier: number,
 	 *  selected_index: number,
+	 *	sections: {
+	 *		general: {
+	 *			title: HTMLDivElement,
+	 *			content_container: HTMLDivElement
+	 *		}
+	 *	},
 	 * 	grid_select: HTMLSelectElement,
 	 * 	xticklabel_angle_slider: HTMLInputElement,
 	 *	curve_select: HTMLSelectElement,
@@ -348,6 +354,12 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	this._controls = {
 		max_bins_multiplier: 3,
 		selected_index: 0,
+		sections: {
+			general: {
+				title: null,
+				content_container: null
+			}
+		},
 		grid_select: null,
 		xticklabel_angle_slider: null,
 		curve_select: null,
@@ -1156,11 +1168,22 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	d3_chart_wrapper.prototype.render_control_panel.call(this)
 
+	// GENRAL SETTINGS
+	this._controls.sections.general.title = common.create_dom_element({
+		element_type	: 'div',
+		text_content	: tstring.general_settings || 'General settings',
+		class_name		: 'control_panel_toggle control_panel_toggle_section',
+		parent			: this.controls_content_container
+	})
+	this._controls.sections.general.content_container = common.create_dom_element({
+		element_type	: 'div',
+		parent			: this.controls_content_container
+	})
 	// TODO: refactor the first three (together)
 	const upper_container = common.create_dom_element({
 		element_type	: 'div',
-		class_name		: 'control_panel_item control_panel',
-		parent			: this.controls_content_container
+		class_name		: 'control_panel_item controls_block',
+		parent			: this._controls.sections.general.content_container
 		// style			: {
 		// 	'display': 'flex',
 		// 	'direction': 'flex-row',
@@ -1173,6 +1196,8 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	this._render_violin_curve_selector(upper_container)
 	this._render_checkboxes()
 	this._render_scale_sliders()
+
+	// PARTICULAR SETTINGS
 	this._render_key_selects()
 	this._render_n_bins_control()
 
@@ -1320,7 +1345,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	const container_div = common.create_dom_element({
 		element_type	: 'div',
 		class_name		: 'control_panel_item checkboxes',
-		parent			: this.controls_content_container
+		parent			: this._controls.sections.general.content_container
 		// style: {
 		// 	'display': 'flex',
 		// 	'direction': 'flex-row',
@@ -1464,7 +1489,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	// Container div
 	const container_div = common.create_dom_element({
 		element_type	: 'div',
-		parent			: this.controls_content_container,
+		parent			: this._controls.sections.general.content_container,
 		class_name		: 'control_panel_item scale_sliders',
 		// style			: {
 		// 	'display': 'flex',
@@ -1724,6 +1749,12 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
  * @name boxvio_chart_wrapper#_control_panel_logic
  */
 boxvio_chart_wrapper.prototype._control_panel_logic = function () {
+	// General section toggle
+	this._controls.sections.general.title.addEventListener('click', () => {
+		this._controls.sections.general.title.classList.toggle('opened')
+		this._controls.sections.general.content_container.classList.toggle('hide')
+	})
+
 	// Grid mode select
 	this._controls.grid_select.addEventListener('change', () => {
 		const mode = this._controls.grid_select.value

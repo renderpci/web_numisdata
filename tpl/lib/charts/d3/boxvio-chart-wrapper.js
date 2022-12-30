@@ -8,27 +8,6 @@ import { array_equal, deepcopy, insert_after } from "../utils"
 
 
 /**
- * Default flex gap
- * @type {string}
- */
-const DEFAULT_FLEX_GAP = '1em'
-/**
- * Default flex gap (bif)
- * @type {string}
- */
-const DEFAULT_FLEX_GAP_BIG = '3em'
-/**
- * Default margin
- * @type {string}
- */
-const DEFAULT_MARGIN = '0.7em'
-/**
- * Default margin (big)
- * @type {string}
- */
-const DEFAULT_MARGIN_BIG = '1em'
-
-/**
  * Name of the key change event
  * @type {string}
  */
@@ -63,8 +42,9 @@ const KEY2_MARGIN = [10, 33]
  * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  *
  * @param {Element} div_wrapper the div to work in
- * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
- * 		with key (array of components, from general to specific) and values (the datapoints)
+ * @param {{id: string, key: string[], values: number[]}[]} data the input data: an array of objects
+ * 		with id (unique identifier), key (array of components, from general to specific), and values
+ * 		(the datapoints). It may contain any other keys, that can be passed to the tooltip callback
  * 		(KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
@@ -77,9 +57,12 @@ const KEY2_MARGIN = [10, 33]
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
  * @param {string} options.ylabel the y-label (default `null`)
  * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
- * @param {(key: string[]) => Promise<Element>} options.tooltip_callback called to fill space in the tooltip
- * 	next to the metrics. It takes the key as argument and returns a Promise of an HTML element to add to the
- * 	tooltip
+ * @param {(options: Object) => Promise<Element>} options.tooltip_callback called to fill space in the tooltip
+ * 	next to the metrics. It takes an options object as argument and returns a Promise of an HTML element to add to the
+ * 	tooltip. The attributes of the options object come from the data and are determined by the
+ * `tooltip_callback_options_attributes` option
+ * @param {string[]} options.tooltip_callback_options_attributes list of datum attributes to include in the
+ * 	options object for the tooltip callback. If the callback is provided, this list MUST be provided as well
  * @class
  * @extends d3_chart_wrapper
  */
@@ -88,9 +71,15 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	/**
 	 * Called when the tooltip is shown to render extra info
 	 * @private
-	 * @type {(key: string[]) => Promise<Element>}
+	 * @type {(options: Object) => Promise<Element>}
 	 */
 	this._tooltip_callback = options.tooltip_callback || null
+	/**
+	 * List of datum attributes to include in the options argument of the tooltip callback
+	 * @private
+	 * @type {string[]}
+	 */
+	this._tooltip_callback_options_attributes = options.tooltip_callback_options_attributes || null
 	/**
 	 * overrides default behavior of the whiskers by specifying
 	 * the quantiles of the lower and upper
@@ -1103,12 +1092,9 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 	const self = this
 
 	const decimals = 2
-	const section_id	= self._data[i].section_id
 	const key			= self._data[i].key
 	const values		= self._data[i].values
 	const metrics		= self._data[i].metrics
-	const mint			= self._data[i].mint
-	const type_number	= self._data[i].type_number
 	// const tooltip_text = `<b>${key.join(', ')}</b>`
 
 	const metric_names = `${tstring.datapoints || 'Datapoints'}`
@@ -1144,11 +1130,11 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 	
 	// Call the tooltip callback
 	if (self._tooltip_callback) {
-		self._tooltip_callback({
-			section_id	: section_id,
-			type_number	: type_number,
-			mint		: mint
-		})
+		const options = {}
+		for (const attr_name of this._tooltip_callback_options_attributes) {
+			options[attr_name] = this._data[i][attr_name]
+		}
+		self._tooltip_callback(options)
 			.then((ele) => {
 				const tooltip_element = self._graphics.tooltip_div.node()
 				ele.id = `${self.id_string()}_tooltip_callback_div`

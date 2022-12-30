@@ -487,9 +487,9 @@ export const analysis =  {
 				// Weights
 				const weights = data.filter( (ele) => ele.weight ).map( (ele) => {
 						return {
-							key			: [ele.mint, ele.number_key], // MRS POTATOES AND CHIDREN !!!!!!!!!!!!!!!
+							key			: [ele.mint, ele.number_key],
 							values		: ele.weight,
-							section_id	: ele.section_id,
+							id			: ele.section_id,
 							mint		: ele.mint,
 							type_number	: ele.number_key
 						}
@@ -500,9 +500,9 @@ export const analysis =  {
 				const diameters = data.filter( (ele) => ele.diameter_max ).map(
 					(ele) => {
 						return {
-							key			: [ele.mint, ele.number_key], // MR POTATOESSSSSSS !!!!!!!!!!!!!!!
+							key			: [ele.mint, ele.number_key],
 							values		: ele.diameter_max,
-							section_id	: ele.section_id,
+							id			: ele.section_id,
 							mint		: ele.mint,
 							type_number	: ele.number_key
 						}
@@ -516,13 +516,14 @@ export const analysis =  {
 					weights,
 					[tstring.mint || 'Mint', tstring.number || 'Number'],
 					{
-						whiskers_quantiles		: [10, 90],
-						ylabel					: tstring.weight || 'Weight',
-						overflow				: true,
-						display_control_panel	: true,
-						display_download		: true,
-						sort_xaxis				: true,
-						tooltip_callback		: type_tooltip_callback
+						whiskers_quantiles					: [10, 90],
+						ylabel								: tstring.weight || 'Weight',
+						overflow							: true,
+						display_control_panel				: true,
+						display_download					: true,
+						sort_xaxis							: true,
+						tooltip_callback					: type_tooltip_callback,
+						tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
 					}
 				)
 				this.weight_chart_wrapper.render()
@@ -532,13 +533,14 @@ export const analysis =  {
 					diameters,
 					[tstring.mint || 'Mint', tstring.number || 'Number'],
 					{
-						whiskers_quantiles: [10, 90],
-						ylabel: tstring.diameter || 'Diameter',
-						overflow: true,
-						display_control_panel: true,
-						display_download: true,
-						sort_xaxis: true,
-						tooltip_callback: type_tooltip_callback
+						whiskers_quantiles					: [10, 90],
+						ylabel								: tstring.diameter || 'Diameter',
+						overflow							: true,
+						display_control_panel				: true,
+						display_download					: true,
+						sort_xaxis							: true,
+						tooltip_callback					: type_tooltip_callback,
+						tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
 					}
 				)
 				this.diameter_chart_wrapper.render()
@@ -670,12 +672,12 @@ export const analysis =  {
 
 /**
  * Callback for tooptip in violin-boxplot
- * @param {string[]} key the key of the violin/box
+ * @param {{id: string, type_number: string, mint: string}} options
  * @returns {Promise<Element>} the html element to add to the tooltip 
  */
 async function type_tooltip_callback(options) {
 
-	const section_id	= options.section_id
+	const section_id	= options.id
 	const type_number	= options.type_number
 	const mint			= options.mint
 

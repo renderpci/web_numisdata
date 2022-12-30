@@ -1782,25 +1782,7 @@ boxvio_chart_wrapper.prototype._control_panel_logic = function () {
 // HELPER FUNCTIONS
 
 /**
- * Splitter string
+ * Splitter string (EMERITUS)
  * @type {string}
  */
 const SPLITTER = '_^PoT3sRanaCantora_'
-
-/**
- * Join key array into a string
- * @param {string[]} key the key
- * @returns {string} the join
- */
-function join_key(key) {
-	return key.join(SPLITTER)
-}
-
-/**
- * Split key string into array
- * @param {string} key the key join
- * @returns {string[]} the split key
- */
-function split_key(key) {
-	return key.split(SPLITTER)
-}

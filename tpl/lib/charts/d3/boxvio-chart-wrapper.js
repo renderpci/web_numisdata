@@ -342,6 +342,16 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *		boxes: HTMLInputElement,
 	 *		whiskers: HTMLInputElement,
 	 *		outliers: HTMLInputElement
+	 *	},
+	 *	scale: {
+	 *		violin: {
+	 *			slider: HTMLInputElement,
+	 *			reset: HTMLButtonElement
+	 * 		},
+	 *		box: {
+	 *			slider: HTMLInputElement,
+	 *			reset: HTMLButtonElement
+	 * 		},
 	 *	}
 	 * }}
 	 */
@@ -357,6 +367,16 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 			boxes: null,
 			whiskers: null,
 			outliers: null
+		},
+		scale: {
+			violin: {
+				slider: null,
+				reset: null
+			},
+			box: {
+				slider: null,
+				reset: null
+			}
 		}
 	}
 }
@@ -1500,20 +1520,13 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	violin_scale_slider.setAttribute('max', 1)
 	violin_scale_slider.setAttribute('step', 0.05)
 	violin_scale_slider.value = this._chart.violin_scale.initial
-	violin_scale_slider.addEventListener('input', () => {
-		this.set_violin_scale(Number(violin_scale_slider.value))
-	})
-	/** @type {Element} */
-	const violin_scale_slider_reset = common.create_dom_element({
+	this._controls.scale.violin.slider = violin_scale_slider
+	this._controls.scale.violin.reset = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset || 'Reset',
 		parent			: violin_container_div
-	})
-	violin_scale_slider_reset.addEventListener('click', () => {
-		violin_scale_slider.value = this._chart.violin_scale.initial
-		this.set_violin_scale(Number(violin_scale_slider.value))
 	})
 
 	// Box scale
@@ -1546,20 +1559,13 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	box_scale_slider.setAttribute('max', 1)
 	box_scale_slider.setAttribute('step', 0.05)
 	box_scale_slider.value = this._chart.box_scale.initial
-	box_scale_slider.addEventListener('input', () => {
-		this.set_box_scale(Number(box_scale_slider.value))
-	})
-	/** @type {Element} */
-	const box_scale_slider_reset = common.create_dom_element({
+	this._controls.scale.box.slider = box_scale_slider
+	this._controls.scale.box.reset = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset || 'Reset',
 		parent			: box_container_div,
-	})
-	box_scale_slider_reset.addEventListener('click', () => {
-		box_scale_slider.value = this._chart.box_scale.initial
-		this.set_box_scale(Number(box_scale_slider.value))
 	})
 }
 
@@ -1771,6 +1777,21 @@ boxvio_chart_wrapper.prototype._control_panel_logic = function () {
 		for (const group of this._graphics.outliers) {
 			toggle_visibility(group)
 		}
+	})
+	// Scale controls
+	this._controls.scale.violin.slider.addEventListener('input', () => {
+		this.set_violin_scale(Number(this._controls.scale.violin.slider.value))
+	})
+	this._controls.scale.violin.reset.addEventListener('click', () => {
+		this._controls.scale.violin.slider.value = this._chart.violin_scale.initial
+		this.set_violin_scale(Number(this._controls.scale.violin.slider.value))
+	})
+	this._controls.scale.box.slider.addEventListener('input', () => {
+		this.set_box_scale(Number(this._controls.scale.box.slider.value))
+	})
+	this._controls.scale.box.reset.addEventListener('click', () => {
+		this._controls.scale.box.slider.value = this._chart.box_scale.initial
+		this.set_box_scale(Number(this._controls.scale.box.slider.value))
 	})
 }
 

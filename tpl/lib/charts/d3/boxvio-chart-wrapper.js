@@ -543,19 +543,6 @@ boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) 
 }
 
 /**
- * Get the index of a key
- * @param {string[]} key the key
- * @returns {number} the index of the key
- */
-boxvio_chart_wrapper.prototype.get_index_of_key = function (key) {
-	const i = this._data.findIndex((ele) => ele.key.join() === key.join())
-	if (i === -1) {
-		throw new Error(`Key ${key} was not found in data`)
-	}
-	return i
-}
-
-/**
  * Compute starting points (in plot x-coordinates) for the different
  * key2s. There we will draw the key2 labels and separating line
  * @returns {{[key2: string]: number}} the starting position for each key2

@@ -452,6 +452,7 @@ boxvio_chart_wrapper.prototype._calc_metrics = function (values) {
  * @param {string[]} key_tpl the key template. Parts will be matched,
  * `null` counts as wildcard
  * @return {{
+ * 	id: string,
  *  key: string[],
  *  values: number[],
  *  metrics: {

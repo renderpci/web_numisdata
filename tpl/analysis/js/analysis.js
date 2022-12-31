@@ -509,6 +509,21 @@ export const analysis =  {
 					}
 				)
 
+				// Axes
+				const axes = data.filter( (ele) => ele.axis && ele.axis.length).map(
+					(ele) => {
+						const axis = Array(12).fill(0)
+						for (const hour of ele.axis) {
+							axis[hour % 12]++
+						}
+						return {
+							key		: [ele.mint, ele.number_key],
+							values	: axis,
+							id		: ele.section_id
+						}
+					}
+				)
+
 				spinner.remove()
 
 				this.weight_chart_wrapper = new boxvio_chart_wrapper(

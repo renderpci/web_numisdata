@@ -720,6 +720,9 @@ body.touch .poptrox-popup .nav-next {
 .chart_wrapper label {
   font-weight: 400;
 }
+.chart_wrapper .clickable {
+  cursor: pointer;
+}
 .chart_wrapper .control_panel_toggle {
   margin-top: 1rem;
   cursor: pointer;
@@ -889,9 +892,6 @@ body.touch .poptrox-popup .nav-next {
 }
 .chart_wrapper .tooltip_div .tooltip_callback_div .type_container .collection_auction span.ref_coins_auction {
   align-self: flex-end;
-}
-.chart_wrapper svg circle {
-  cursor: pointer;
 }
 .font_logo {
   font-weight: 300;

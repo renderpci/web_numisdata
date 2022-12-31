@@ -8,20 +8,15 @@ import { array_equal, deepcopy, insert_after } from "../utils"
 
 
 /**
- * Name of the key change event
+ * Name of the group change event
  * @type {string}
  */
-const KEY_CHANGE_EVENT_NAME = 'ch_key_change'
+const GROUP_CHANGE_EVENT_NAME = 'ch_group_change'
 /**
- * Key change event
+ * Group change event
  * @type {Event}
  */
-const KEY_CHANGE_EVENT = new Event(KEY_CHANGE_EVENT_NAME)
-/**
- * Class name for key change listeners
- * @type {string}
- */
-const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
+const GROUP_CHANGE_EVENT = new Event(GROUP_CHANGE_EVENT_NAME)
 
 /**
  * Margin for the key2 label
@@ -329,6 +324,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *		general: {
 	 *			title: HTMLDivElement,
 	 *			content_container: HTMLDivElement
+	 *		},
+	 *		specific: {
+	 *			title: HTMLDivElement,
+	 *			content_container: HTMLDivElement
 	 *		}
 	 *	},
 	 * 	grid_select: HTMLSelectElement,
@@ -350,6 +349,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *			slider: HTMLInputElement,
 	 *			reset: HTMLButtonElement
 	 * 		},
+	 *	},
+	 *	violin_n_bins: {
+	 *		slider: HTMLInputElement,
+	 *		reset: HTMLButtonElement,
+	 *		reset_all: HTMLButtonElement
 	 *	}
 	 * }}
 	 */
@@ -358,6 +362,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		selected_index: 0,
 		sections: {
 			general: {
+				title: null,
+				content_container: null
+			},
+			specific: {
 				title: null,
 				content_container: null
 			}
@@ -381,6 +389,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 				slider: null,
 				reset: null
 			}
+		},
+		violin_n_bins: {
+			slider: null,
+			reset: null,
+			reset_all: null
 		}
 	}
 }
@@ -879,6 +892,7 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 	const violins_g = this._graphics.violins_g
 	for (let i = 0; i < this._data.length; i++) {
 		this._graphics.violins[i] = violins_g.append('g')
+			.classed('clickable', true)
 			.attr('transform', `translate(${chart.datum_start_x[i]},0)`)
 		this._graphics.violins[i].on('click', (e) => {
 			e.stopPropagation()
@@ -959,6 +973,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		const color = this._colors[i]
 
 		const group_box = boxes.append('g')
+			.classed('clickable', true)
 			.attr('transform', `translate(${chart.datum_start_x[i] + bandwidth / 2},0)`)
 		group_box.on('click', (e) => {
 			e.stopPropagation()
@@ -1026,6 +1041,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 			.style('fill', 'white')
 			.attr('stroke', 'black')
 			.attr('stroke-width', 2)
+			.classed('clickable', true)
 		// Circle events for tooltip
 		this.tooltip_active = null;
 		circle.on('click', (e) => {
@@ -1057,13 +1073,30 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 /**
  * Set the selected index by the user
  * @function
- * @private
  * @param {number} i the index
  * @name boxvio_chart_wrapper#set_selected_index
  */
 boxvio_chart_wrapper.prototype.set_selected_index = function (i) {
+	if (this._controls.selected_index === i) {
+		return
+	}
 	this._controls.selected_index = i
-	console.log(`Selected index ${i}`)
+	this._set_specific_controls_section_title(i)
+	// Tell specific controls that the selection has changed
+	this._controls.violin_n_bins.slider.dispatchEvent(GROUP_CHANGE_EVENT)
+}
+
+/**
+ * Set the title for the specific section of the controls
+ * @function
+ * @private
+ * @param {number} selected_index the selected group index
+ * @name boxvio_chart_wrapper#_set_specific_controls_section_title
+ */
+boxvio_chart_wrapper.prototype._set_specific_controls_section_title = function (selected_index) {
+	const datum = this._data[selected_index]
+	this._controls.sections.specific.title.innerText =
+		`${tstring.settings_for || 'Settings for'} ${datum.key.join(', ')} (${datum.id})`
 }
 
 /**
@@ -1220,7 +1253,16 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	this._render_scale_sliders()
 
 	// PARTICULAR SETTINGS
-	this._render_key_selects()
+	this._controls.sections.specific.title = common.create_dom_element({
+		element_type	: 'div',
+		class_name		: 'control_panel_toggle control_panel_toggle_section',
+		parent			: this.controls_content_container
+	})
+	this._set_specific_controls_section_title(this._controls.selected_index)
+	this._controls.sections.specific.content_container = common.create_dom_element({
+		element_type	: 'div',
+		parent			: this.controls_content_container
+	})
 	this._render_n_bins_control()
 
 	// Define the control panel logic
@@ -1601,89 +1643,6 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 }
 
 /**
- * Render the key select elements
- * @function
- * @private
- * @name boxvio_chart_wrapper#_render_key_select
- */
-boxvio_chart_wrapper.prototype._render_key_selects = function () {
-	const container = common.create_dom_element({
-		element_type	: 'div',
-		class_name		: 'control_panel_item key_selects',
-		parent			: this.controls_content_container
-		// style			: {
-		// 	'display': 'flex',
-		// 	'align-items': 'center',
-		// 	'gap': DEFAULT_FLEX_GAP_BIG,
-		// 	'margin-top': DEFAULT_MARGIN_BIG,
-		// },
-	})
-	// Render selects for the different key components
-	const key_selects = []
-	/**
-	 * Inner function for populating a key select tag
-	 * Previous key tags must be populated already
-	 * @param {number} i index of the key select
-	 */
-	const populate_key_select = (i) => {
-		key_selects[i].replaceChildren()  // Delete existing children
-		const pkey = key_selects.slice(0, i).map((key_select) => key_select.value)
-		const values = this._get_next_key_component_values(pkey)
-		for (const value of values) {
-			common.create_dom_element({
-				element_type: 'option',
-				value: value,
-				text_content: value,
-				parent: key_selects[i],
-			})
-		}
-	}
-	for (let i = 0; i < this._key_size; i++) {
-		const select_container = common.create_dom_element({
-			element_type: 'div',
-			parent: container,
-			// style: {
-			// 	'display': 'flex',
-			// 	'gap': DEFAULT_FLEX_GAP,
-			// },
-		})
-		const select_id = `${this.id_string()}_key${this._key_size-i}_select`
-		const label = common.create_dom_element({
-			element_type: 'label',
-			text_content: this._key_titles[i],
-			parent: select_container,
-			// style: {'margin-block': 'auto'},
-		})
-		label.setAttribute('for', select_id)
-		const key_select = common.create_dom_element({
-			element_type: 'select',
-			id: select_id,
-			parent: select_container,
-		})
-		key_selects.push(key_select)
-		populate_key_select(i)
-		key_select.addEventListener('change', () => {
-			// Repopulate the next key selects
-			for (let j = i+1; j < key_selects.length; j++) {
-				populate_key_select(j)
-			}
-			// Update the selected index
-			this._controls.selected_index = this.get_index_of_key(
-				key_selects.map((ks) => ks.value)
-			)
-
-			// Dispatch key change event to all listeners
-			const listeners
-				= this.controls_content_container.getElementsByClassName(KEY_CHANGE_LISTENER_CLASS_NAME)
-			for (const ele of listeners) {
-				ele.dispatchEvent(KEY_CHANGE_EVENT)
-			}
-
-		})
-	}
-}
-
-/**
  * Render the control elements to change the number of bins
  * @function
  * @private
@@ -1692,7 +1651,7 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	const container = common.create_dom_element({
 		element_type	: 'div',
-		parent			: this.controls_content_container,
+		parent			: this._controls.sections.specific.content_container,
 		class_name		: 'control_panel_item n_bins_control'
 		// style			: {
 		// 	'display': 'flex',
@@ -1713,54 +1672,34 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	const violin_n_bins_slider = common.create_dom_element({
 		element_type	: 'input',
 		type			: 'range',
-		class_name		: KEY_CHANGE_LISTENER_CLASS_NAME,
 		id				: violin_n_bins_slider_id,
 		parent			: container
 	})
+	this._controls.violin_n_bins.slider = violin_n_bins_slider
 	violin_n_bins_slider.setAttribute('min', 2)
-	const reset = () => {
-		violin_n_bins_slider.setAttribute(
-			'max',
-			this._controls.max_bins_multiplier
-				* this._chart.n_bins[this._controls.selected_index].initial
-		)
-		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
-	}
-	reset()
-	violin_n_bins_slider.addEventListener('input', () => {
-		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
-	})
-	violin_n_bins_slider.addEventListener(KEY_CHANGE_EVENT_NAME, () => {
-		reset()
-	})
+	violin_n_bins_slider.setAttribute(
+		'max',
+		this._controls.max_bins_multiplier
+			* this._chart.n_bins[this._controls.selected_index].initial
+	)
+	violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
 
 	// Reset n bins
-	const violin_n_bins_slider_reset = common.create_dom_element({
+	this._controls.violin_n_bins.reset = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset || 'Reset',
 		parent			: container
 	})
-	violin_n_bins_slider_reset.addEventListener('click', () => {
-		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
-		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
-	})
 
 	// Reset all n bins
-	const violin_all_n_bins_slider_reset = common.create_dom_element({
+	this._controls.violin_n_bins.reset_all = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset_all_violins || 'Reset all violins',
 		parent			: container
-	})
-	violin_all_n_bins_slider_reset.addEventListener('click', () => {
-		// Update the value of the slider
-		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
-		for (const [i, n_bins] of this._chart.n_bins.entries()) {
-			this.set_n_bins(i, n_bins.initial)
-		}
 	})
 }
 
@@ -1829,6 +1768,36 @@ boxvio_chart_wrapper.prototype._control_panel_logic = function () {
 	this._controls.scale.box.reset.addEventListener('click', () => {
 		this._controls.scale.box.slider.value = this._chart.box_scale.initial
 		this.set_box_scale(Number(this._controls.scale.box.slider.value))
+	})
+
+	// Particular section toggle
+	this._controls.sections.specific.title.addEventListener('click', () => {
+		this._controls.sections.specific.title.classList.toggle('opened')
+		this._controls.sections.specific.content_container.classList.toggle('hide')
+	})
+	// Violin n bins controls
+	const violin_n_bins_slider = this._controls.violin_n_bins.slider
+	violin_n_bins_slider.addEventListener('input', () => {
+		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
+	})
+	violin_n_bins_slider.addEventListener(GROUP_CHANGE_EVENT_NAME, () => {
+		violin_n_bins_slider.setAttribute(
+			'max',
+			this._controls.max_bins_multiplier
+				* this._chart.n_bins[this._controls.selected_index].initial
+		)
+		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
+	})
+	this._controls.violin_n_bins.reset.addEventListener('click', () => {
+		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
+		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
+	})
+	this._controls.violin_n_bins.reset_all.addEventListener('click', () => {
+		// Update the value of the slider
+		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
+		for (const [i, n_bins] of this._chart.n_bins.entries()) {
+			this.set_n_bins(i, n_bins.initial)
+		}
 	})
 }
 

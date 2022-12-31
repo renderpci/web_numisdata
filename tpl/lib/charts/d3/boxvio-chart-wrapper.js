@@ -1030,6 +1030,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		this.tooltip_active = null;
 		circle.on('click', (e) => {
 			e.stopPropagation()
+			this.set_selected_index(i)
 
 			// already displayed. (Hide) -> do nothing
 				if (this.tooltip_active == i) {

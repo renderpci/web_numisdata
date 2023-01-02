@@ -4,7 +4,8 @@ import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { COLOR_PALETTE } from "../chart-wrapper";
 import { toggle_visibility, linspace, CURVES } from "./utils";
 import { compute_n_bins } from "../compute-n-bins";
-import { array_equal, deepcopy, insert_after } from "../utils"
+import { insert_after } from "../utils";
+import { keyed_data } from "../keyed-data";
 
 
 /**
@@ -132,24 +133,24 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._ids = this._data.map((ele) => ele.id)
 	/**
-	 * Number of components of the key
-	 * @type {number}
-	 * @private
-	 */
-	this._key_size = data[0].key.length
-	/**
 	 * Title for each key component
 	 * @type {string[]}
 	 * @private
 	 */
 	this._key_titles = key_titles
 	/**
-	 * Available key2 titles
+	 * Data manager (to handle keys)
+	 * @type {keyed_data}
+	 * @private
+	 */
+	this._kdm = new keyed_data(this._data)
+	/**
+	 * Available key2 values
 	 * @type {string[]}
 	 * @private
 	 */
-	this._key2_titles = this._key_size > 1
-		? this._get_next_key_component_values([])
+	this._key2_values = this._kdm.key_size > 1
+		? this._kdm.key_values(2)
 		: null
 	/**
 	 * Colors
@@ -175,8 +176,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	this._full_width = this._data.length < 150
 		? 330.664701211*Math.sqrt(this._data.length) - 170.664701211 + this.yaxis_padding
 		: 26*this._data.length + this.yaxis_padding
-	if (this._key_size > 1) {  // If we have a key-2, add some margin
-		this._full_width += this._key2_titles.length*d3.sum(KEY2_MARGIN)
+	if (this._kdm.key_size > 1) {  // If we have a key-2, add some margin
+		this._full_width += this._key2_values.length*d3.sum(KEY2_MARGIN)
 	}
 	/**
 	 * Full height of svg
@@ -231,19 +232,19 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		.ticks(19)
 	this._chart.violin_scale = {initial: 0.8, value: 0.8}
 	this._chart.violin_bandwidth =  // Subtract key2 margins from the plot width
-		(this._chart.width - this._key2_titles.length*d3.sum(KEY2_MARGIN))
+		(this._chart.width - this._key2_values.length*d3.sum(KEY2_MARGIN))
 		/ this._data.length
 	this._chart.box_scale = {initial: 0.3, value: 0.3}
 	this._chart.xscale = d3.scaleBand()
 		.domain(this._ids)
 		.range([0, this._chart.width])
 		// .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
-	this._chart.key2_start_x = this._key_size > 1
+	this._chart.key2_start_x = this._kdm.key_size > 1
 		? this._compute_key2_start_x()
 		: null
 	this._chart.datum_start_x = this._compute_datum_start_x()
 	this._chart.xaxis = d3.axisBottom(this._chart.xscale)
-		.tickFormat((id) => this._data.find((datum) => datum.id === id).key[this._key_size - 1])
+		.tickFormat((id) => this._data.find((datum) => datum.id === id).key[this._kdm.key_size - 1])
 	this._chart.xticklabel_angle = options.xticklabel_angle || 0
 	this._chart.n_bins = this._data.map((ele) => {
 		const initial_value = compute_n_bins.sturges(ele.values)
@@ -448,75 +449,6 @@ boxvio_chart_wrapper.prototype._calc_metrics = function (values) {
 }
 
 /**
- * Query the data given a key template
- * @param {string[]} key_tpl the key template. Parts will be matched,
- * `null` counts as wildcard
- * @return {{
- * 	id: string,
- *  key: string[],
- *  values: number[],
- *  metrics: {
- *      max: number,
- *      upper_fence: number,
- *      quartile3: number,
- *      median: number,
- *      mean: number,
- *      iqr: number,
- *      quartile1: number,
- *      lower_fence: number,
- *      min: number
- *  },
- *  outliers: number[],
- *  extent: [number, number]
- * }[]} the filtered data
- */
-boxvio_chart_wrapper.prototype._query_data = function (key_tpl) {
-	if (key_tpl.length !== this._key_size) {
-		throw new Error("Key template is of different size than the plot keys")
-	}
-	return this._data.filter((ele) => {
-		const key = ele.key
-		for (let i = 0; i < key.length; i++) {
-			if (key_tpl[i] && key_tpl[i] !== key[i]) {
-				return false
-			}
-		}
-		return true
-	})
-}
-
-/**
- * Get key templates up to a key number
- * @param {number} i the key number. If 1, all existing keys
- *        will be returned. If 2, all existing key templates with a wildcard in
- *        the last component will be returned. If 3, all existing key templates
- *        with a wildcard in the last and second-to-last component will
- *        be returned. Etc.
- * @returns {string[][]} the templates
- */
-boxvio_chart_wrapper.prototype._get_key_templates = function (i) {
-	if (i < 1 || i > this._key_size) {
-		throw new Error(`Invalid key number ${i}`)
-	}
-	// Convert to real index
-	i = this._key_size - i
-	const templates_wd = this._data.map((ele) => {
-		return deepcopy(ele.key.slice(0,i+1)).concat(Array(this._key_size-i-1).fill(null))
-	})
-	if (!templates_wd.length) return templates_wd
-	// Remove duplicates
-	const templates = [templates_wd[0]]
-	let tmp_template = templates_wd[0]
-	for (const template of templates_wd.slice(1)) {
-		if (!array_equal(tmp_template, template)) {
-			templates.push(template)
-			tmp_template = template
-		}
-	}
-	return templates
-}
-
-/**
  * Get the possible values of the next key component, given a partial key.
  * E.g., if there are 4 components, and you provide the two leftmost ones
  * in the partial key, possible values for the third leftmost one will be
@@ -526,11 +458,11 @@ boxvio_chart_wrapper.prototype._get_key_templates = function (i) {
  */
 boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) {
 	const psize = pkey.length
-	if (psize >= this._key_size) {
+	if (psize >= this._kdm.key_size) {
 		throw new Error(`Input key ${pkey} is longer than the data keys`)
 	}
-	const key_tpl = pkey.concat(Array(this._key_size-psize).fill(null))
-	const values_wd = this._query_data(key_tpl).map((ele) => ele.key[psize])
+	const key_tpl = pkey.concat(Array(this._kdm.key_size-psize).fill(null))
+	const values_wd = this._kdm.query(key_tpl).map((ele) => ele.key[psize])
 	if (!values_wd.length) return values_wd
 	const values = [values_wd[0]]
 	let current_value = values_wd[0]
@@ -551,11 +483,11 @@ boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) 
 boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
 	const positions = {}
 
-	const key_tpls = this._get_key_templates(2)
+	const key_tpls = this._kdm.get_key_templates(2)
 
 	let current_x = 0
 	for (const key_tpl of key_tpls) {
-		const queried_data = this._query_data(key_tpl)
+		const queried_data = this._kdm.query(key_tpl)
 		positions[key_tpl[key_tpl.length-2]] = current_x
 		// Increase current_x
 		current_x += d3.sum(KEY2_MARGIN) + this._chart.violin_bandwidth*queried_data.length
@@ -569,16 +501,16 @@ boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
  * @returns {number[]} the starting position for each datum
  */
 boxvio_chart_wrapper.prototype._compute_datum_start_x = function () {
-	if (this._key_size === 1) {
+	if (this._kdm.key_size === 1) {
 		return this._ids.map((id) => this._chart.xscale(id))
 	}
 	// Key size is 2 (for now. Maybe in the future, greater than 2)
 	const datum_start_x = []
 	// Start here for the first key2
 	let current_x = KEY2_MARGIN[1]
-	let current_key2 = this._data[0].key[this._key_size-2]
+	let current_key2 = this._data[0].key[this._kdm.key_size-2]
 	for (const datum of this._data) {
-		const key2 = datum.key[this._key_size-2]
+		const key2 = datum.key[this._kdm.key_size-2]
 		if (current_key2 !== key2) {
 			current_key2 = key2
 			// Add space for the key2 margin
@@ -679,7 +611,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 
 	this._render_axis()
 	this._render_ygrid()
-	if (this._key_size > 1) {
+	if (this._kdm.key_size > 1) {
 		this._render_key2_dividers()
 	}
 	this._render_violins()
@@ -704,7 +636,7 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 		.call(this._chart.xaxis)
 	// If we have key2s, relocate the ticks at their desired positions
 	// to leave space for the key2 labels and separators
-	if (this._key_size > 1) {
+	if (this._kdm.key_size > 1) {
 		const half_bandwidth = this._chart.violin_bandwidth/2
 		this._graphics.xaxis_g.selectAll('g.tick')
 			.attr(
@@ -836,7 +768,7 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 	const dividers_g = this._graphics.key2_dividers_g
 	const color = 'gray'
 
-	for (const [index, key2] of this._get_next_key_component_values([]).entries()) {
+	for (const [index, key2] of this._kdm.get_next_key_component_values([]).entries()) {
 		const x = this._chart.key2_start_x[key2]
 		const divider_g = dividers_g.append('g')
 			.attr('transform', `translate(${x},0)`)
@@ -1432,7 +1364,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	/** @type {Element} */
 	const show_key2_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: this._key_titles[this._key_size-2],
+		text_content: this._key_titles[this._kdm.key_size-2],
 		parent: show_key2_div,
 	})
 	show_key2_label.setAttribute('for', show_key2_checkbox_id)

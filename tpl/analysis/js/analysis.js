@@ -560,15 +560,15 @@ export const analysis =  {
 				)
 				this.diameter_chart_wrapper.render()
 
-				this.clock_chart_wrapper = new clock_chart_wrapper(
-					this.clock_chart_container,
-					[5, 4, 3, 2, 1, 3, 0],
-					{
-						overflow: true,
-						display_download: true
-					}
-				)
-				this.clock_chart_wrapper.render()
+				// this.clock_chart_wrapper = new clock_chart_wrapper(
+				// 	this.clock_chart_container,
+				// 	axes,
+				// 	{
+				// 		overflow: true,
+				// 		display_download: true
+				// 	}
+				// )
+				// this.clock_chart_wrapper.render()
 
 				// show Weights and Diameters block labels
 					for (let i = 0; i < info_lines_length; i++) {

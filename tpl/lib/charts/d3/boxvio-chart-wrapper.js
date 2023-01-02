@@ -88,12 +88,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		throw new Error("Data array is empty")
 	}
 	/**
-	 * Data: key (general to specific components), index, values,
+	 * Data: id, key (general to specific components), values,
 	 * boxplot metrics, outliers, extent (min and max)
 	 * @type {{
 	 * 	id: string,
 	 *  key: string[],
-	 *  index: number
 	 *  values: number[],
 	 *  metrics: {
 	 *      max: number,

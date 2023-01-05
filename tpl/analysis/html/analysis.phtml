@@ -28,13 +28,19 @@
 
 					<!-- Result -->
 						<section id="result" class="result">
-							<div class="info_line separator hide"><div class="big_label"><?php echo tstring('weight')?></div></div>
-							<div id="weight_chart_container" class="chart_wrapper"></div>
-							<div class="info_line separator hide"><div class="big_label"><?php echo tstring('diameter')?></div></div>
-							<div id="diameter_chart_container" class="chart_wrapper"></div>
-							<div class="info_line separator hide"><div class="big_label">Clock</div></div>
-							<div id="clock_chart_container" class="chart_wrapper"></div>
-							<div id="export_data" class="export_data_container"></div>
+							<div id='weight_section' class='hide'>
+								<div class="info_line separator"><div class="big_label"><?php echo tstring('weight')?></div></div>
+								<div id="weight_chart_container" class="chart_wrapper"></div>
+							</div>
+							<div id="diameter_section" class="hide">
+								<div class="info_line separator"><div class="big_label"><?php echo tstring('diameter')?></div></div>
+								<div id="diameter_chart_container" class="chart_wrapper"></div>
+							</div>
+							<div id="clock_section" class="hide">
+								<div class="info_line separator"><div class="big_label">Clock</div></div>
+								<div id="clock_chart_container" class="chart_wrapper"></div>
+							</div>
+							<!-- <div id="export_data" class="export_data_container"></div> -->
 						</section>
 
 				</div>

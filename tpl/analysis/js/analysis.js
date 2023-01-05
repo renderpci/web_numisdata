@@ -373,17 +373,26 @@ export const analysis =  {
 
 		// loading
 			// cleanup html
-				const info_lines = document.querySelectorAll('.info_line')
-				const info_lines_length	= info_lines.length
-				for (let i = 0; i < info_lines_length; i++) {
-					info_lines[i].classList.add('hide')
+				const section_container = {
+					weight: document.getElementById('weight_section'),
+					diameter: document.getElementById('diameter_section'),
+					clock: document.getElementById('clock_section')
 				}
-				while (self.diameter_chart_container.hasChildNodes()) {
-					self.diameter_chart_container.removeChild(self.diameter_chart_container.lastChild);
+				for (const [sec_name, container] of Object.entries(section_container)) {
+					container.classList.add('hide')
 				}
-				while (self.weight_chart_container.hasChildNodes()) {
-					self.weight_chart_container.removeChild(self.weight_chart_container.lastChild);
-				}
+				self.diameter_chart_container.replaceChildren()
+				self.weight_chart_container.replaceChildren()
+				self.clock_chart_container.replaceChildren()
+				// while (self.diameter_chart_container.hasChildNodes()) {
+				// 	self.diameter_chart_container.removeChild(self.diameter_chart_container.lastChild);
+				// }
+				// while (self.weight_chart_container.hasChildNodes()) {
+				// 	self.weight_chart_container.removeChild(self.weight_chart_container.lastChild);
+				// }
+				// while (self.clock_chart_container.hasChildNodes()) {
+				// 	self.clock_chart_container.removeChild(self.clock_chart_container.lastChild);
+				// }
 			// spinner
 				const result = document.getElementById('result')
 				const spinner = common.create_dom_element({
@@ -526,54 +535,60 @@ export const analysis =  {
 
 				spinner.remove()
 
-				this.weight_chart_wrapper = new boxvio_chart_wrapper(
-					this.weight_chart_container,
-					weights,
-					[tstring.mint || 'Mint', tstring.number || 'Number'],
-					{
-						whiskers_quantiles					: [10, 90],
-						ylabel								: tstring.weight || 'Weight',
-						overflow							: true,
-						display_control_panel				: true,
-						display_download					: true,
-						sort_xaxis							: true,
-						tooltip_callback					: type_tooltip_callback,
-						tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
-					}
-				)
-				this.weight_chart_wrapper.render()
+				if (weights.length) {
+					section_container.weight.classList.remove('hide')
+					this.weight_chart_wrapper = new boxvio_chart_wrapper(
+						this.weight_chart_container,
+						weights,
+						[tstring.mint || 'Mint', tstring.number || 'Number'],
+						{
+							whiskers_quantiles					: [10, 90],
+							ylabel								: tstring.weight || 'Weight',
+							overflow							: true,
+							display_control_panel				: true,
+							display_download					: true,
+							sort_xaxis							: true,
+							tooltip_callback					: type_tooltip_callback,
+							tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
+						}
+					)
+					this.weight_chart_wrapper.render()
+				}
 
-				this.diameter_chart_wrapper = new boxvio_chart_wrapper(
-					this.diameter_chart_container,
-					diameters,
-					[tstring.mint || 'Mint', tstring.number || 'Number'],
-					{
-						whiskers_quantiles					: [10, 90],
-						ylabel								: tstring.diameter || 'Diameter',
-						overflow							: true,
-						display_control_panel				: true,
-						display_download					: true,
-						sort_xaxis							: true,
-						tooltip_callback					: type_tooltip_callback,
-						tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
-					}
-				)
-				this.diameter_chart_wrapper.render()
+				if (diameters.length) {
+					section_container.diameter.classList.remove('hide')
+					this.diameter_chart_wrapper = new boxvio_chart_wrapper(
+						this.diameter_chart_container,
+						diameters,
+						[tstring.mint || 'Mint', tstring.number || 'Number'],
+						{
+							whiskers_quantiles					: [10, 90],
+							ylabel								: tstring.diameter || 'Diameter',
+							overflow							: true,
+							display_control_panel				: true,
+							display_download					: true,
+							sort_xaxis							: true,
+							tooltip_callback					: type_tooltip_callback,
+							tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
+						}
+					)
+					this.diameter_chart_wrapper.render()
+				}
 
-				// this.clock_chart_wrapper = new clock_chart_wrapper(
-				// 	this.clock_chart_container,
-				// 	axes,
-				// 	{
-				// 		overflow: true,
-				// 		display_download: true
-				// 	}
-				// )
-				// this.clock_chart_wrapper.render()
+				if (axes.length) {
+					section_container.clock.classList.remove('hide')
+					this.clock_chart_wrapper = new clock_chart_wrapper(
+						this.clock_chart_container,
+						axes,
+						{
+							overflow: true,
+							outer_height: '300px',
+							display_download: true
+						}
+					)
+					this.clock_chart_wrapper.render()
+				}
 
-				// show Weights and Diameters block labels
-					for (let i = 0; i < info_lines_length; i++) {
-						info_lines[i].classList.remove('hide')
-					}
 			})
 
 

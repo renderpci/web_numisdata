@@ -17,6 +17,8 @@ import { chart_wrapper } from "../chart-wrapper";
  * @param {boolean} options.display_control_panel whether to display the control panel (default `true`)
  * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`).
  * 		if `false`, the svg will be stretched to fill the full width of its parent element
+ * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
+ * 		overflow must be enabled for outer_height to work
  * @class
  * @abstract
  * @extends chart_wrapper
@@ -37,6 +39,12 @@ export function d3_chart_wrapper(div_wrapper, options) {
 	 * @private
 	 */
 	this._overflow = options.overflow || false
+	/**
+	 * Outer height of the plot, will be the height applied to the SVG
+	 * @type {string}
+	 * @private
+	 */
+	this._outer_height = options.outer_height || '500px'
 
 }
 // Set prototype chain
@@ -63,7 +71,7 @@ d3_chart_wrapper.prototype.render_plot = function () {
 	if (this._overflow) {
 		this.svg
 			.attr('width', null)
-			.attr('height', '500px')
+			.attr('height', this._outer_height)
 		this.plot_container.style = "overflow: auto;"
 	} else {
 		this.svg.attr('width', '100%')

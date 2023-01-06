@@ -1,6 +1,7 @@
 "use strict";
 
 
+import { COLOR_PALETTE } from "../../chart-wrapper";
 import { compute_n_bins } from "../compute-n-bins";
 import { d3_chart_wrapper } from "./d3-chart-wrapper";
 import { linspace } from "./utils";
@@ -49,6 +50,14 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 * @type {[number, number]}
 	 */
 	this._data_extent = d3.extent(data)
+	/**
+	 * Outliers
+	 * @type {number[]}
+	 * @private
+	 */
+	this._outliers = data.filter(
+		(v) => v < this._metrics.lower_fence || v > this._metrics.upper_fence
+	)
 	/**
 	 * Boxplot metrics
 	 * @private
@@ -202,5 +211,74 @@ minimal_boxvio_chart_wrapper.prototype._render_violin = function () {
  * @private
  */
 minimal_boxvio_chart_wrapper.prototype._render_box = function () {
+	const yscale = this._chart.yscale
+	const color = COLOR_PALETTE[0]
+	const metrics = this._metrics
+	const whiskers_lw = 2
+	const median_lw = 3
+	const box_width = this._chart.box_scale * this._chart.width
 
+	const g = this._graphics.root_g.append('g')
+		.attr('translate', `transform(${this._chart.width/2},0)`)
+
+	// Outliers
+	const outliers_g = g.append('g')
+	for (const outlier of this._outliers) {
+		outliers_g.append('circle')
+			.attr('cx', 0)
+			.attr('cy', yscale(outlier))
+			.attr('r', 4)
+			.style('fill', color)
+			.style('opacity', 0.7)
+	}
+
+	// Whiskers
+	const whiskers_g = g.append('g')
+	whiskers_g.append('line')  // vertical line
+		.attr('x1', 0)
+		.attr('y1', yscale(metrics.lower_fence))
+		.attr('x2', 0)
+		.attr('y2', yscale(metrics.upper_fence))
+		.attr('stroke', color)
+		.attr('stroke-width', whiskers_lw)
+	whiskers_g.append('line') // lower horizontal
+		.attr('x1', -box_width / 2)
+		.attr('y1', yscale(metrics.lower_fence))
+		.attr('x2', box_width / 2)
+		.attr('y2', yscale(metrics.lower_fence))
+		.attr('stroke', color)
+		.attr('stroke-width', whiskers_lw)
+	whiskers_g.append('line') // upper horizontal
+		.attr('x1', -box_width / 2)
+		.attr('y1', yscale(metrics.upper_fence))
+		.attr('x2', box_width / 2)
+		.attr('y2', yscale(metrics.upper_fence))
+		.attr('stroke', color)
+		.attr('stroke-width', whiskers_lw)
+	
+	// IQR Box
+	const iqr_g = g.append('g')
+	if (ele.values.length > 1) {
+		iqr_g.append('rect')  // iqr rect
+		.attr('x', -box_width / 2)
+		.attr('y', yscale(metrics.quartile3))
+		.attr('width', box_width)
+		.attr('height', yscale(metrics.quartile1) - yscale(metrics.quartile3))
+		.attr('fill', color)
+	}
+	iqr_g.append('line')  // median line
+		.attr('x1', -box_width / 2)
+		.attr('y1', yscale(metrics.median))
+		.attr('x2', box_width / 2)
+		.attr('y2', yscale(metrics.median))
+		.attr('stroke', 'black')
+		.attr('stroke-width', median_lw)
+	iqr_g.append('circle')  // median dot
+		.attr('cx', 0)
+		.attr('cy', yscale(metrics.median))
+		.attr('r', 4.5)
+		.style('fill', 'white')
+		.attr('stroke', 'black')
+		.attr('stroke-width', 2)
+		.classed('clickable', true)
 }

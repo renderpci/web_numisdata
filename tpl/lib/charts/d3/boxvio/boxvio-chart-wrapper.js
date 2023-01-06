@@ -215,7 +215,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  histogram: d3.binGenerator[],
 	 *  bins: d3.Bin[][],
 	 *  supported_curves: string[],
-	 *  violin_curve: string
+	 *  violin_curve: d3.curve
 	 * }}
 	 */
 	this._chart = {}

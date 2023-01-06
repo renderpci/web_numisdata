@@ -62,13 +62,22 @@ minimal_clock_chart_wrapper.prototype.render_plot = function () {
 
 	const delta = 2*Math.PI/this._data.length
 	let angle = Math.PI/2
+	const max_value = d3.max(this._data)
 	const scale = d3.scaleLinear()
-		.domain([0, d3.max(this._data)])
+		.domain([0, max_value])
 		.range([0, CLOCK_RADIUS])
 	const g = this.svg.append('g')
 		.attr('transform', `translate(${CLOCK_RADIUS},${CLOCK_RADIUS})`)
 	for (const datum of this._data) {
-		g.append('line')
+		const handle_g = g.append('g')
+		handle_g.append('line')
+			.attr('x1', 0)
+			.attr('y1', 0)
+			.attr('x2', scale(max_value)*Math.cos(angle))
+			.attr('y2', -scale(max_value)*Math.sin(angle))  // Mirror vertically!
+			.attr('stroke', '#e3e3e3')
+			.attr('stroke-width', 0.6)
+		handle_g.append('line')
 			.attr('x1', 0)
 			.attr('y1', 0)
 			.attr('x2', scale(datum)*Math.cos(angle))
@@ -77,6 +86,9 @@ minimal_clock_chart_wrapper.prototype.render_plot = function () {
 			.attr('stroke-width', 1)
 		angle -= delta
 	}
+	g.append('circle')
+		.style('fill', 'black')
+		.attr('r', 2.5)
 
 }
 

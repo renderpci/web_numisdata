@@ -2,9 +2,9 @@
 
 
 import { COLOR_PALETTE } from "../../chart-wrapper";
-import { compute_n_bins } from "../compute-n-bins";
-import { d3_chart_wrapper } from "./d3-chart-wrapper";
-import { linspace } from "./utils";
+import { compute_n_bins } from "../../compute-n-bins";
+import { d3_chart_wrapper } from "../d3-chart-wrapper";
+import { CURVES, linspace } from "../utils";
 import { calc_boxplot_metrics } from "./utils";
 
 
@@ -51,14 +51,6 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 */
 	this._data_extent = d3.extent(data)
 	/**
-	 * Outliers
-	 * @type {number[]}
-	 * @private
-	 */
-	this._outliers = data.filter(
-		(v) => v < this._metrics.lower_fence || v > this._metrics.upper_fence
-	)
-	/**
 	 * Boxplot metrics
 	 * @private
 	 * @type {{
@@ -74,6 +66,14 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 * }}
 	 */
 	this._metrics = calc_boxplot_metrics(data, this._whiskers_quantiles)
+	/**
+	 * Outliers
+	 * @type {number[]}
+	 * @private
+	 */
+	this._outliers = data.filter(
+		(v) => v < this._metrics.lower_fence || v > this._metrics.upper_fence
+	)
 	/**
 	 * Full height of svg
 	 * @type {number}
@@ -106,11 +106,11 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 *  n_bins: number,
 	 * 	histogram: d3.binGenerator,
 	 * 	bins: d3.Bin[],
-	 * 	violin_curve: string
+	 * 	violin_curve: d3.curve
 	 * }}
 	 */
 	this._chart = {}
-	this._chart.margin = { top: 15, right: 0, bottom: 15, left: 30 }
+	this._chart.margin = { top: 10, right: 0, bottom: 10, left: 33 }
 	this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
 	this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
 	this._chart.yscale = d3.scaleLinear()
@@ -128,7 +128,7 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 			linspace(this._data_extent[0], this._data_extent[1], this._chart.n_bins+1)
 		)
 	this._chart.bins = this._chart.histogram(this._data)
-	this._chart.violin_curve = 'Basis'
+	this._chart.violin_curve = CURVES['Basis']
 	/**
 	 * Graphic components of the chart
 	 * @private
@@ -162,6 +162,7 @@ minimal_boxvio_chart_wrapper.prototype.render_plot = function () {
 	
 	this._render_y_axis()
 	this._render_violin()
+	this._render_box()
 }
 
 /**
@@ -180,17 +181,16 @@ minimal_boxvio_chart_wrapper.prototype._render_y_axis = function () {
 minimal_boxvio_chart_wrapper.prototype._render_violin = function () {
 	const bins = this._chart.bins
 	const violin_scale = this._chart.violin_scale
-	const bandwidth = this._chart.width
 	const yscale = this._chart.yscale
 	const violin_curve = this._chart.violin_curve
 
 	const g = this._graphics.root_g.append('g')
 	const max_count = d3.max(bins, (bin) => bin.length)
 	const x_num = d3.scaleLinear()
-		.range([0, bandwidth])
+		.range([0, this._chart.width])
 		.domain([-max_count, max_count])
 
-	if (this._data[i].values.length <= 1) {
+	if (this._data.length <= 1) {
 		return
 	}
 	g.append('path')
@@ -219,7 +219,7 @@ minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 	const box_width = this._chart.box_scale * this._chart.width
 
 	const g = this._graphics.root_g.append('g')
-		.attr('translate', `transform(${this._chart.width/2},0)`)
+		.attr('transform', `translate(${this._chart.width/2},0)`)
 
 	// Outliers
 	const outliers_g = g.append('g')
@@ -258,7 +258,7 @@ minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 	
 	// IQR Box
 	const iqr_g = g.append('g')
-	if (ele.values.length > 1) {
+	if (this._data.length > 1) {
 		iqr_g.append('rect')  // iqr rect
 		.attr('x', -box_width / 2)
 		.attr('y', yscale(metrics.quartile3))
@@ -280,5 +280,4 @@ minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 		.style('fill', 'white')
 		.attr('stroke', 'black')
 		.attr('stroke-width', 2)
-		.classed('clickable', true)
 }

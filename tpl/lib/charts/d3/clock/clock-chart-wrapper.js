@@ -296,13 +296,22 @@ clock_chart_wrapper.prototype._render_handles = function (container_g, values) {
 	// 	.style('stroke-width', 0.5)
 	const delta = 2*Math.PI/values.length
 	let angle = Math.PI/2
+	const max_value = d3.max(values)
 	const scale = d3.scaleLinear()
-		.domain([0, d3.max(values)])
+		.domain([0, max_value])
 		.range([0, CLOCK_RADIUS])
 	const g = container_g.append('g')
 		.attr('transform', `translate(${CLOCK_RADIUS},${CLOCK_RADIUS})`)
 	for (const value of values) {
-		g.append('line')
+		const handle_g = g.append('g')
+		handle_g.append('line')
+			.attr('x1', 0)
+			.attr('y1', 0)
+			.attr('x2', scale(max_value)*Math.cos(angle))
+			.attr('y2', -scale(max_value)*Math.sin(angle))  // Mirror vertically!
+			.attr('stroke', '#e3e3e3')
+			.attr('stroke-width', 0.6)
+		handle_g.append('line')
 			.attr('x1', 0)
 			.attr('y1', 0)
 			.attr('x2', scale(value)*Math.cos(angle))
@@ -311,6 +320,9 @@ clock_chart_wrapper.prototype._render_handles = function (container_g, values) {
 			.attr('stroke-width', 1)
 		angle -= delta
 	}
+	g.append('circle')
+		.style('fill', 'black')
+		.attr('r', 2.5)
 }
 
 
@@ -347,8 +359,8 @@ clock_chart_wrapper.prototype._render_label = function (container_g, datum) {
 		.text(key1)
 	g.append('text')
 		.attr('text-anchor', 'middle')
-		.attr('y', '3.1em')
+		.attr('y', '3.2em')
 		.attr('font-size', '0.2em')
 		.attr('fill', 'black')
-		.text(`(${id})`)
+		.text(`(ID: ${id})`)
 }

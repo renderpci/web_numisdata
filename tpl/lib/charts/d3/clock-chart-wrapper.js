@@ -32,10 +32,9 @@ const LABEL_HEIGHT = 14
 
 /**
  * Clock chart
- * 
- * Given a series of numbers, it draws equidistant (angle-wise) lines (like clock handles) around
- * the origin so that the length is proportional to the corresponding number.
- * For instance, if 4 numbers are given, lines wil be drawn with angles (pi/2, 0, -pi/2, -pi).
+ *
+ * Draws a clock (see minimal clock chart) for every provided group. Utilizes keyed data to draw labels
+ * and separators.
  * 
  * @param {Element} div_wrapper the div to work in
  * @param {{
@@ -302,12 +301,12 @@ clock_chart_wrapper.prototype._render_handles = function (container_g, values) {
 		.range([0, CLOCK_RADIUS])
 	const g = container_g.append('g')
 		.attr('transform', `translate(${CLOCK_RADIUS},${CLOCK_RADIUS})`)
-	for (const datum of values) {
+	for (const value of values) {
 		g.append('line')
 			.attr('x1', 0)
 			.attr('y1', 0)
-			.attr('x2', scale(datum)*Math.cos(angle))
-			.attr('y2', -scale(datum)*Math.sin(angle))  // Mirror vertically!
+			.attr('x2', scale(value)*Math.cos(angle))
+			.attr('y2', -scale(value)*Math.sin(angle))  // Mirror vertically!
 			.attr('stroke', 'black')
 			.attr('stroke-width', 1)
 		angle -= delta

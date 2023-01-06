@@ -150,4 +150,57 @@ minimal_boxvio_chart_wrapper.prototype.render_plot = function () {
 	// Root g tag
 	this._graphics.root_g = this.svg.append('g')
 		.attr('transform', `translate(${this._chart.margin.left},${this._chart.margin.top})`)
+	
+	this._render_y_axis()
+	this._render_violin()
+}
+
+/**
+ * Render Y-axis
+ * @private
+ */
+minimal_boxvio_chart_wrapper.prototype._render_y_axis = function () {
+	const g = this._graphics.root_g.append('g')
+		.call(this._chart.yaxis)
+}
+
+/**
+ * Render violin
+ * @private
+ */
+minimal_boxvio_chart_wrapper.prototype._render_violin = function () {
+	const bins = this._chart.bins
+	const violin_scale = this._chart.violin_scale
+	const bandwidth = this._chart.width
+	const yscale = this._chart.yscale
+	const violin_curve = this._chart.violin_curve
+
+	const g = this._graphics.root_g.append('g')
+	const max_count = d3.max(bins, (bin) => bin.length)
+	const x_num = d3.scaleLinear()
+		.range([0, bandwidth])
+		.domain([-max_count, max_count])
+
+	if (this._data[i].values.length <= 1) {
+		return
+	}
+	g.append('path')
+		.datum(bins)
+			.style('stroke', 'gray')
+			.style('stroke-width', 0.4)
+			.style('fill', '#d2d2d2')
+			.attr('d', d3.area()
+				.x0((d) => x_num(-d.length*violin_scale))
+				.x1((d) => x_num(d.length*violin_scale))
+				.y((d) => yscale(d.x0))
+				.curve(violin_curve)
+			)
+}
+
+/**
+ * Render box
+ * @private
+ */
+minimal_boxvio_chart_wrapper.prototype._render_box = function () {
+
 }

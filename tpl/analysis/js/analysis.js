@@ -5,9 +5,8 @@
 
 
 import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
-import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio-chart-wrapper.js";
-import { histogram_wrapper } from "../../lib/charts/chartjs/histogram-wrapper.js";
-import { clock_chart_wrapper } from "../../lib/charts/d3/clock-chart-wrapper.js";
+import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/boxvio-chart-wrapper.js";
+import { clock_chart_wrapper } from "../../lib/charts/d3/clock/clock-chart-wrapper.js";
 
 
 export const analysis =  {

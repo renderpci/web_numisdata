@@ -1,11 +1,12 @@
 "use strict";
 
-import { d3_chart_wrapper } from "./d3-chart-wrapper";
-import { COLOR_PALETTE } from "../chart-wrapper";
-import { toggle_visibility, linspace, CURVES } from "./utils";
-import { compute_n_bins } from "../compute-n-bins";
-import { insert_after } from "../utils";
-import { keyed_data } from "../keyed-data";
+import { d3_chart_wrapper } from "../d3-chart-wrapper";
+import { COLOR_PALETTE } from "../../chart-wrapper";
+import { toggle_visibility, linspace, CURVES } from "../utils";
+import { compute_n_bins } from "../../compute-n-bins";
+import { insert_after } from "../../utils";
+import { keyed_data } from "../../keyed-data";
+import { calc_boxplot_metrics } from "./utils";
 
 
 /**
@@ -79,7 +80,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._tooltip_callback_options_attributes = options.tooltip_callback_options_attributes || null
 	/**
-	 * overrides default behavior of the whiskers by specifying
+	 * Overrides default behavior of the whiskers by specifying
 	 * the quantiles of the lower and upper
 	 * @type {[number, number]}
 	 * @private
@@ -116,7 +117,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 				 ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
 				 : data
 	for (const [i, ele] of this._data.entries()) {
-		ele.metrics = this._calc_metrics(ele.values)
+		ele.metrics = calc_boxplot_metrics(ele.values, this._whiskers_quantiles)
 		ele.outliers = ele.values.filter(
 			(v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
 		)
@@ -401,53 +402,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
-
-/**
- * Compute (boxplot) metrics for the data
- * @function
- * @private
- * @param {number[]} values the data values
- * @returns {{
- *  max: number,
- *  upper_fence: number,
- *  quartile3: number,
- *  median: number,
- *  mean: number,
- *  iqr: number,
- *  quartile1: number,
- *  lower_fence: number,
- *  min: number,
- * }}
- */
-boxvio_chart_wrapper.prototype._calc_metrics = function (values) {
-	const metrics = {
-		max: 			null,
-		upper_fence:	null,
-		quartile3: 		null,
-		median: 		null,
-		mean: 			null,
-		iqr: 			null,
-		quartile1: 		null,
-		lower_fence: 	null,
-		min: 			null,
-	}
-
-	metrics.min = d3.min(values)
-	metrics.quartile1 = d3.quantile(values, 0.25)
-	metrics.median = d3.median(values)
-	metrics.mean = d3.mean(values)
-	metrics.quartile3 = d3.quantile(values, 0.75)
-	metrics.max = d3.max(values)
-	metrics.iqr = metrics.quartile3 - metrics.quartile1
-	metrics.lower_fence = this._whiskers_quantiles
-		? d3.quantile(values, this._whiskers_quantiles[0]/100)
-		: metrics.quartile1 - 1.5 * metrics.iqr
-	metrics.upper_fence = this._whiskers_quantiles
-		? d3.quantile(values, this._whiskers_quantiles[1]/100)
-		: metrics.quartile3 + 1.5 * metrics.iqr
-
-	return metrics
-}
 
 /**
  * Get the possible values of the next key component, given a partial key.

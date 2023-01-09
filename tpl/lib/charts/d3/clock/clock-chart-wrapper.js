@@ -362,5 +362,5 @@ clock_chart_wrapper.prototype._render_label = function (container_g, datum) {
 		.attr('y', '3.2em')
 		.attr('font-size', '0.2em')
 		.attr('fill', 'black')
-		.text(`(ID: ${id})`)
+		.text(`(${d3.sum(datum.values)})`)
 }

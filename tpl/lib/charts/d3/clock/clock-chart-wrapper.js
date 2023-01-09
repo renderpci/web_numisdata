@@ -2,6 +2,7 @@
 
 import { d3_chart_wrapper } from "../d3-chart-wrapper";
 import { keyed_data } from "../../keyed-data";
+import { insert_after } from "../../utils";
 
 
 /**
@@ -50,12 +51,30 @@ const LABEL_HEIGHT = 14
  * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
  * 		overflow must be enabled for outer_height to work
  * @param {boolean} options.sort whether to sort the clocks (default `false`). When there is more than one key-2, sorting is mandatory.
+ * @param {(options: Object) => Promise<Element>} options.tooltip_callback called to fill the tooltip.
+ *  It takes an options object as argument and returns a Promise of an HTML element to add to the
+ * 	tooltip. The attributes of the options object come from the data and are determined by the
+ * `tooltip_callback_options_attributes` option
+ * @param {string[]} options.tooltip_callback_options_attributes list of datum attributes to include in the
+ * 	options object for the tooltip callback. If the callback is provided, this list MUST be provided as well
  * @class
  * @extends d3_chart_wrapper
  */
 export function clock_chart_wrapper(div_wrapper, data, options) {
 	d3_chart_wrapper.call(this, div_wrapper, options)
 
+	/**
+	 * Called when the tooltip is shown to render extra info
+	 * @private
+	 * @type {(options: Object) => Promise<Element>}
+	 */
+	this._tooltip_callback = options.tooltip_callback || null
+	/**
+	 * List of datum attributes to include in the options argument of the tooltip callback
+	 * @private
+	 * @type {string[]}
+	 */
+	this._tooltip_callback_options_attributes = options.tooltip_callback_options_attributes || null
 	const sort = options.sort || data[0].key.length > 1 || false
 	/**
 	 * Input data
@@ -100,7 +119,8 @@ export function clock_chart_wrapper(div_wrapper, data, options) {
 	 * @private
 	 * @type {{
 	 * 	key2_start_x: {[key2: string]: number},
-	 * 	datum_start_x: number[]
+	 * 	datum_start_x: number[],
+	 * 	tooltip_active: number
 	 * }}
 	 */
 	this._chart = {}
@@ -108,13 +128,15 @@ export function clock_chart_wrapper(div_wrapper, data, options) {
 		? this._compute_key2_start_x()
 		: null
 	this._chart.datum_start_x = this._compute_datum_start_x()
+	this._chart.tooltip_active = null
 	/**
 	 * Graphic components of the chart
 	 * @private
 	 * @type {{
 	 *  root_g: d3.selection,
 	 * 	key2_dividers_g: d3.selection,
-	 * 	datum_g: d3.selection
+	 * 	datum_g: d3.selection,
+	 * 	tooltip_div: d3.selection
 	 * }}
 	 */
    	this._graphics = {
@@ -123,7 +145,9 @@ export function clock_chart_wrapper(div_wrapper, data, options) {
 		// g tag for the key2 dividers
 		key2_dividers_g: null,
 		// g tag for all datum (clock + label)
-		datum_g: null
+		datum_g: null,
+		// div tag for tooltip
+		tooltip_div: null
 	}
 }
 // Set prototype chain
@@ -208,6 +232,16 @@ clock_chart_wrapper.prototype.render_plot = function () {
 	// Set viewbox of svg
 	this.svg.attr('viewBox', `0 0 ${this._width} ${this._height}`)
 
+	// Hide tooltip when clicking in SVG or plot_container
+	this.svg.on('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
+	this.plot_container.addEventListener('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
+
 	// Root g tag
 	this._graphics.root_g = this.svg.append('g')
 
@@ -219,6 +253,9 @@ clock_chart_wrapper.prototype.render_plot = function () {
 	for (let i = 0; i < this._data.length; i++) {
 		this._render_datum(i)
 	}
+
+	// Render tooltip
+	this._render_tooltip()
 
 }
 
@@ -274,7 +311,7 @@ clock_chart_wrapper.prototype._render_datum = function (i) {
 	const datum = this._data[i]
 	const g = this._graphics.datum_g.append('g')
 		.attr('transform', `translate(${this._chart.datum_start_x[i]},0)`)
-	this._render_handles(g, datum.values)
+	this._render_handles(g, i, datum)
 	this._render_label(g, datum)
 }
 
@@ -284,9 +321,14 @@ clock_chart_wrapper.prototype._render_datum = function (i) {
  * @private
  * @name clock_chart_wrapper#_render_handles
  * @param {d3.selection} container_g the container g tag
- * @param {number[]} values the values of the clock
+ * @param {number} i the index of the datum
+ * @param {{
+ * 	id: string,
+ * 	key: string[],
+ * 	values: number[]
+ * }} datum the datum
  */
-clock_chart_wrapper.prototype._render_handles = function (container_g, values) {
+clock_chart_wrapper.prototype._render_handles = function (container_g, i, datum) {
 	// container_g.append('rect')
 	// 	.attr('x', 0)
 	// 	.attr('height', CLOCK_DIAMETER)
@@ -294,6 +336,7 @@ clock_chart_wrapper.prototype._render_handles = function (container_g, values) {
 	// 	.style('fill', 'none')
 	// 	.style('stroke', 'blue')
 	// 	.style('stroke-width', 0.5)
+	const values = datum.values
 	const delta = 2*Math.PI/values.length
 	let angle = Math.PI/2
 	const max_value = d3.max(values)
@@ -320,9 +363,21 @@ clock_chart_wrapper.prototype._render_handles = function (container_g, values) {
 			.attr('stroke-width', 1)
 		angle -= delta
 	}
-	g.append('circle')
+	const circle = g.append('circle')
 		.style('fill', 'black')
 		.attr('r', 2.5)
+	if (this._tooltip_callback) {
+		circle.classed('clickable', true)
+		circle.on('click', (e) => {
+			e.stopPropagation()
+			if (this._chart.tooltip_active === i) {
+				return
+			}
+			this.tooltip_show(datum)
+			this._graphics.tooltip_div.style('display', 'flex')
+			this._chart.tooltip_active = i
+		})
+	}
 }
 
 
@@ -363,4 +418,63 @@ clock_chart_wrapper.prototype._render_label = function (container_g, datum) {
 		.attr('font-size', '0.2em')
 		.attr('fill', 'black')
 		.text(`(${d3.sum(datum.values)})`)
+}
+
+/**
+ * Hide the tooltip
+ * @function
+ * @private
+ * @name clock_chart_wrapper#_hide_tooltip
+ */
+clock_chart_wrapper.prototype._hide_tooltip = function () {
+	this._graphics.tooltip_div.style('display', 'none')
+	this._chart.tooltip_active = null
+}
+
+/**
+ * Add the tooltip to the DOM
+ * @function
+ * @private
+ * @name clock_chart_wrapper#_render_tooltip
+ */
+clock_chart_wrapper.prototype._render_tooltip = function () {
+	const tooltip_element = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_div`,
+		class_name		: 'o-red tooltip_div'
+	})
+	insert_after(tooltip_element, this.plot_container)
+	this._graphics.tooltip_div = d3.select(tooltip_element)
+	// Hide tooltip in the beginning
+	this._hide_tooltip()
+}
+
+/**
+ * Set the tooltip to visible
+ * @param {{
+ * 	id: string,
+ * 	key: string[],
+ * 	values: number[]
+ * }} datum the datum
+ * @function
+ * @name clock_chart_wrapper#tooltip_show
+ */
+clock_chart_wrapper.prototype.tooltip_show = function (datum) {
+	const self = this
+
+	const options = {}
+	for (const attr_name of this._tooltip_callback_options_attributes) {
+		options[attr_name] = datum[attr_name]
+	}
+	self._tooltip_callback(options)
+		.then((ele) => {
+			const tooltip_element = self._graphics.tooltip_div.node()
+			ele.id = `${self.id_string()}_tooltip_callback_div`
+			ele.classList.add(
+				'tooltip_callback_div'
+			)
+			tooltip_element.replaceChildren(
+				ele
+			)
+		})
 }

@@ -844,7 +844,10 @@ body.touch .poptrox-popup .nav-next {
   width: auto;
 }
 .chart_wrapper .tooltip_div {
+  margin-top: 0.8em;
   flex-direction: row;
+  justify-content: space-between;
+  gap: 2em;
 }
 .chart_wrapper .tooltip_div .tooltip_metrics_div {
   background-color: #f9f7f7;
@@ -863,7 +866,6 @@ body.touch .poptrox-popup .nav-next {
 }
 .chart_wrapper .tooltip_div .tooltip_callback_div {
   border-top: none;
-  margin-left: 2em;
   background-color: #ffffff;
   width: 90%;
 }

@@ -404,33 +404,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
 
 /**
- * Get the possible values of the next key component, given a partial key.
- * E.g., if there are 4 components, and you provide the two leftmost ones
- * in the partial key, possible values for the third leftmost one will be
- * given
- * @param {string[]} pkey partial key
- * @returns {string[]} possible values for the next key component
- */
-boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) {
-	const psize = pkey.length
-	if (psize >= this._kdm.key_size) {
-		throw new Error(`Input key ${pkey} is longer than the data keys`)
-	}
-	const key_tpl = pkey.concat(Array(this._kdm.key_size-psize).fill(null))
-	const values_wd = this._kdm.query(key_tpl).map((ele) => ele.key[psize])
-	if (!values_wd.length) return values_wd
-	const values = [values_wd[0]]
-	let current_value = values_wd[0]
-	for (const value of values_wd.slice(1)) {
-		if (value !== current_value) {
-			values.push(value)
-			current_value = value
-		}
-	}
-	return values
-}
-
-/**
  * Compute starting points (in plot x-coordinates) for the different
  * key2s. There we will draw the key2 labels and separating line
  * @returns {{[key2: string]: number}} the starting position for each key2
@@ -918,25 +891,24 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 			.attr('stroke-width', 2)
 			.classed('clickable', true)
 		// Circle events for tooltip
-		this.tooltip_active = null;
 		circle.on('click', (e) => {
 			e.stopPropagation()
 			this.set_selected_index(i)
 
 			// already displayed. (Hide) -> do nothing
-				if (this.tooltip_active == i) {
+				if (this._chart.tooltip_active == i) {
 					// this._hide_tooltip()
 					return
 				}
 
 			// hover set and fix
-				this.tooltip_hover(i)
+				this.tooltip_show(i)
 				this._graphics.tooltip_div.style('display', 'flex')
-				this.tooltip_active = i
+				this._chart.tooltip_active = i
 
 			// old
 			// this._graphics.tooltip_div.style('display', null)
-			// this.tooltip_hover(i)
+			// this.tooltip_show(i)
 		})
 		// .on('mouseout', () => {
 		// 	this._graphics.tooltip_div.style('display', 'none')
@@ -982,7 +954,7 @@ boxvio_chart_wrapper.prototype._set_specific_controls_section_title = function (
  */
 boxvio_chart_wrapper.prototype._hide_tooltip = function () {
 	this._graphics.tooltip_div.style('display', 'none')
-	this.tooltip_active = null
+	this._chart.tooltip_active = null
 }
 
 /**
@@ -1022,17 +994,16 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 }
 
 /**
- * Set the tooltip to visible when we hover over
+ * Set the tooltip to visible
  * @param {number} i index of data
  * @function
- * @name boxvio_chart_wrapper#tooltip_hover
+ * @name boxvio_chart_wrapper#tooltip_show
  */
-boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
+boxvio_chart_wrapper.prototype.tooltip_show = function (i) {
 
 	const self = this
 
 	const decimals = 2
-	const key			= self._data[i].key
 	const values		= self._data[i].values
 	const metrics		= self._data[i].metrics
 	// const tooltip_text = `<b>${key.join(', ')}</b>`

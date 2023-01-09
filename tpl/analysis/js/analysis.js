@@ -526,9 +526,11 @@ export const analysis =  {
 							axis[hour % 12]++
 						}
 						return {
-							key		: [ele.mint, ele.number_key],
-							values	: axis,
-							id		: ele.section_id
+							key			: [ele.mint, ele.number_key],
+							values		: axis,
+							id			: ele.section_id,
+							mint		: ele.mint,
+							type_number	: ele.number_key
 						}
 					}
 				)
@@ -581,9 +583,12 @@ export const analysis =  {
 						this.clock_chart_container,
 						axes,
 						{
-							overflow			: true,
-							outer_height		: '300px',
-							display_download	: true
+							overflow							: true,
+							outer_height						: '300px',
+							display_download					: true,
+							sort								: true,
+							tooltip_callback					: type_tooltip_callback,
+							tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
 						}
 					)
 					this.clock_chart_wrapper.render()

@@ -73,8 +73,8 @@ minimal_clock_chart_wrapper.prototype.render_plot = function () {
 		handle_g.append('line')
 			.attr('x1', 0)
 			.attr('y1', 0)
-			.attr('x2', scale(max_value)*Math.cos(angle))
-			.attr('y2', -scale(max_value)*Math.sin(angle))  // Mirror vertically!
+			.attr('x2', CLOCK_RADIUS*Math.cos(angle))
+			.attr('y2', -CLOCK_RADIUS*Math.sin(angle))  // Mirror vertically!
 			.attr('stroke', '#e3e3e3')
 			.attr('stroke-width', 0.6)
 		handle_g.append('line')

@@ -422,21 +422,6 @@ export const analysis =  {
 
 				event_manager.publish('form_submit', parsed_data)
 
-				// const diameters = parsed_data
-				// 	.map((ele) => ele.full_coins_reference_diameter_max)
-				// 	.flat()
-				// 	.filter((v) => v)
-				// console.log(diameters)
-
-				// this.diameter_chart_wrapper = new histogram_wrapper(
-				// 	this.diameter_chart_container,
-				// 	diameters,
-				// 	{
-				// 		xlabel: 'Diameter',
-				// 	}
-				// )
-				// this.diameter_chart_wrapper.render()
-
 				// data
 					const data = []
 					for (const [i, ele] of parsed_data.entries()) {

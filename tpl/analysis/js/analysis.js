@@ -6,7 +6,6 @@
 
 import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
 import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/boxvio-chart-wrapper.js";
-import { minimal_boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/minimal-boxvio-chart-wrapper.js";
 import { clock_chart_wrapper } from "../../lib/charts/d3/clock/clock-chart-wrapper.js";
 
 

@@ -27,3 +27,8 @@ logo_render_bn.png
 *-min.js.map
 !app-min.js.map
 !app-min.js
+
+# node
+node_modules
+package.json
+package-lock.json

@@ -1,11 +1,12 @@
 "use strict";
 
-import { d3_chart_wrapper } from "./d3-chart-wrapper";
-import { COLOR_PALETTE } from "../chart-wrapper";
-import { toggle_visibility, linspace, CURVES } from "./utils";
-import { compute_n_bins } from "../compute-n-bins";
-import { insert_after } from "../utils";
-import { keyed_data } from "../keyed-data";
+import { d3_chart_wrapper } from "../d3-chart-wrapper";
+import { COLOR_PALETTE } from "../../chart-wrapper";
+import { toggle_visibility, linspace, CURVES } from "../utils";
+import { compute_n_bins } from "../../compute-n-bins";
+import { insert_after } from "../../utils";
+import { keyed_data } from "../../keyed-data";
+import { calc_boxplot_metrics } from "./utils";
 
 
 /**
@@ -79,7 +80,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._tooltip_callback_options_attributes = options.tooltip_callback_options_attributes || null
 	/**
-	 * overrides default behavior of the whiskers by specifying
+	 * Overrides default behavior of the whiskers by specifying
 	 * the quantiles of the lower and upper
 	 * @type {[number, number]}
 	 * @private
@@ -116,7 +117,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 				 ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
 				 : data
 	for (const [i, ele] of this._data.entries()) {
-		ele.metrics = this._calc_metrics(ele.values)
+		ele.metrics = calc_boxplot_metrics(ele.values, this._whiskers_quantiles)
 		ele.outliers = ele.values.filter(
 			(v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
 		)
@@ -214,7 +215,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  histogram: d3.binGenerator[],
 	 *  bins: d3.Bin[][],
 	 *  supported_curves: string[],
-	 *  violin_curve: string
+	 *  violin_curve: d3.curve
 	 * }}
 	 */
 	this._chart = {}
@@ -401,80 +402,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
-
-/**
- * Compute (boxplot) metrics for the data
- * @function
- * @private
- * @param {number[]} values the data values
- * @returns {{
- *  max: number,
- *  upper_fence: number,
- *  quartile3: number,
- *  median: number,
- *  mean: number,
- *  iqr: number,
- *  quartile1: number,
- *  lower_fence: number,
- *  min: number,
- * }}
- */
-boxvio_chart_wrapper.prototype._calc_metrics = function (values) {
-	const metrics = {
-		max: 			null,
-		upper_fence:	null,
-		quartile3: 		null,
-		median: 		null,
-		mean: 			null,
-		iqr: 			null,
-		quartile1: 		null,
-		lower_fence: 	null,
-		min: 			null,
-	}
-
-	metrics.min = d3.min(values)
-	metrics.quartile1 = d3.quantile(values, 0.25)
-	metrics.median = d3.median(values)
-	metrics.mean = d3.mean(values)
-	metrics.quartile3 = d3.quantile(values, 0.75)
-	metrics.max = d3.max(values)
-	metrics.iqr = metrics.quartile3 - metrics.quartile1
-	metrics.lower_fence = this._whiskers_quantiles
-		? d3.quantile(values, this._whiskers_quantiles[0]/100)
-		: metrics.quartile1 - 1.5 * metrics.iqr
-	metrics.upper_fence = this._whiskers_quantiles
-		? d3.quantile(values, this._whiskers_quantiles[1]/100)
-		: metrics.quartile3 + 1.5 * metrics.iqr
-
-	return metrics
-}
-
-/**
- * Get the possible values of the next key component, given a partial key.
- * E.g., if there are 4 components, and you provide the two leftmost ones
- * in the partial key, possible values for the third leftmost one will be
- * given
- * @param {string[]} pkey partial key
- * @returns {string[]} possible values for the next key component
- */
-boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) {
-	const psize = pkey.length
-	if (psize >= this._kdm.key_size) {
-		throw new Error(`Input key ${pkey} is longer than the data keys`)
-	}
-	const key_tpl = pkey.concat(Array(this._kdm.key_size-psize).fill(null))
-	const values_wd = this._kdm.query(key_tpl).map((ele) => ele.key[psize])
-	if (!values_wd.length) return values_wd
-	const values = [values_wd[0]]
-	let current_value = values_wd[0]
-	for (const value of values_wd.slice(1)) {
-		if (value !== current_value) {
-			values.push(value)
-			current_value = value
-		}
-	}
-	return values
-}
 
 /**
  * Compute starting points (in plot x-coordinates) for the different
@@ -964,25 +891,24 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 			.attr('stroke-width', 2)
 			.classed('clickable', true)
 		// Circle events for tooltip
-		this.tooltip_active = null;
 		circle.on('click', (e) => {
 			e.stopPropagation()
 			this.set_selected_index(i)
 
 			// already displayed. (Hide) -> do nothing
-				if (this.tooltip_active == i) {
+				if (this._chart.tooltip_active == i) {
 					// this._hide_tooltip()
 					return
 				}
 
 			// hover set and fix
-				this.tooltip_hover(i)
+				this.tooltip_show(i)
 				this._graphics.tooltip_div.style('display', 'flex')
-				this.tooltip_active = i
+				this._chart.tooltip_active = i
 
 			// old
 			// this._graphics.tooltip_div.style('display', null)
-			// this.tooltip_hover(i)
+			// this.tooltip_show(i)
 		})
 		// .on('mouseout', () => {
 		// 	this._graphics.tooltip_div.style('display', 'none')
@@ -1028,7 +954,7 @@ boxvio_chart_wrapper.prototype._set_specific_controls_section_title = function (
  */
 boxvio_chart_wrapper.prototype._hide_tooltip = function () {
 	this._graphics.tooltip_div.style('display', 'none')
-	this.tooltip_active = null
+	this._chart.tooltip_active = null
 }
 
 /**
@@ -1068,17 +994,16 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 }
 
 /**
- * Set the tooltip to visible when we hover over
+ * Set the tooltip to visible
  * @param {number} i index of data
  * @function
- * @name boxvio_chart_wrapper#tooltip_hover
+ * @name boxvio_chart_wrapper#tooltip_show
  */
-boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
+boxvio_chart_wrapper.prototype.tooltip_show = function (i) {
 
 	const self = this
 
 	const decimals = 2
-	const key			= self._data[i].key
 	const values		= self._data[i].values
 	const metrics		= self._data[i].metrics
 	// const tooltip_text = `<b>${key.join(', ')}</b>`

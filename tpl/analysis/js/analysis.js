@@ -5,9 +5,8 @@
 
 
 import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
-import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio-chart-wrapper.js";
-import { histogram_wrapper } from "../../lib/charts/chartjs/histogram-wrapper.js";
-import { clock_chart_wrapper } from "../../lib/charts/d3/clock-chart-wrapper.js";
+import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/boxvio-chart-wrapper.js";
+import { clock_chart_wrapper } from "../../lib/charts/d3/clock/clock-chart-wrapper.js";
 
 
 export const analysis =  {
@@ -422,21 +421,6 @@ export const analysis =  {
 
 				event_manager.publish('form_submit', parsed_data)
 
-				// const diameters = parsed_data
-				// 	.map((ele) => ele.full_coins_reference_diameter_max)
-				// 	.flat()
-				// 	.filter((v) => v)
-				// console.log(diameters)
-
-				// this.diameter_chart_wrapper = new histogram_wrapper(
-				// 	this.diameter_chart_container,
-				// 	diameters,
-				// 	{
-				// 		xlabel: 'Diameter',
-				// 	}
-				// )
-				// this.diameter_chart_wrapper.render()
-
 				// data
 					const data = []
 					for (const [i, ele] of parsed_data.entries()) {
@@ -526,9 +510,11 @@ export const analysis =  {
 							axis[hour % 12]++
 						}
 						return {
-							key		: [ele.mint, ele.number_key],
-							values	: axis,
-							id		: ele.section_id
+							key			: [ele.mint, ele.number_key],
+							values		: axis,
+							id			: ele.section_id,
+							mint		: ele.mint,
+							type_number	: ele.number_key
 						}
 					}
 				)
@@ -581,9 +567,12 @@ export const analysis =  {
 						this.clock_chart_container,
 						axes,
 						{
-							overflow: true,
-							outer_height: '300px',
-							display_download: true
+							overflow							: true,
+							outer_height						: '300px',
+							display_download					: true,
+							sort								: true,
+							tooltip_callback					: type_tooltip_callback,
+							tooltip_callback_options_attributes	: ['id', 'type_number', 'mint']
 						}
 					)
 					this.clock_chart_wrapper.render()

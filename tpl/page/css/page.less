@@ -895,18 +895,23 @@
 			ul.copyright {
 				justify-content: center;
 				align-items: baseline;
-
+				flex-wrap: wrap;
 				margin-top: 0.8em;
 				margin-bottom: 1em;
 				opacity: 0.8;
 				font-size: 0.9em;
-				padding: 1em;
+				// padding: 1em;
 				padding-bottom: 0;
 				padding-top: 0;
 
 				.logo_dedalo {
 					height: 1.15em;
 					vertical-align: text-bottom;
+				}
+				@media (max-width: 1160px) { // @movil_max_width
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: space-evenly;
 				}
 			}
 		}

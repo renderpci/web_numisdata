@@ -4,7 +4,7 @@
 * Html page object. Render all pages
 *
 */
-class page {
+class page extends stdClass {
 
 
 	# Version. Important!
@@ -24,6 +24,9 @@ class page {
 
 	# area_table
 	public $area_table = false;
+
+	# area_section_id
+	public $area_section_id;
 
 	# menu_parent
 	public $menu_parent = false;
@@ -52,7 +55,26 @@ class page {
 	# data_combi
 	public $data_combi;
 
+	# lang_from_path
+	public $lang_from_path;
 
+	# global_page
+	public $global_page;
+
+	# term_id
+	public $term_id;
+
+	# footer_html
+	public $footer_html;
+
+	# menu_tree_html
+	public $menu_tree_html;
+
+	# footer_data
+	public $footer_data;
+
+	# footer_root
+	public $footer_root;
 
 	/**
 	* __CONSTRUCT

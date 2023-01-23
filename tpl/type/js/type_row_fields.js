@@ -360,6 +360,13 @@ var type_row_fields = {
 			}
 
 		// TODO: Weight, diameter, and alignment
+			fragment.appendChild(
+				common.create_dom_element({
+					element_type	: 'div',
+					text_content	: 'No tengo una rana cantora'
+				})
+			)
+			console.log(item)
 
 		// findspots - hoards_and_findspots - (hallazgos) list
 			// if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {

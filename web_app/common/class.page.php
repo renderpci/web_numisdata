@@ -4,7 +4,7 @@
 * Html page object. Render all pages
 *
 */
-class page {
+class page extends stdClass {
 
 
 	# Version. Important!

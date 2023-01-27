@@ -31,7 +31,7 @@ var biblio =  {
 					? JSON.parse(item.dataset.autocomplete)
 					: true
 
-				// Activate autocomplete behabiour for each input
+				// Activate autocomplete behavior for each input
 					if (autocomplete===true) {
 						self.activate_autocomplete(ar_form_inputs[i])
 					}

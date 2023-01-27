@@ -380,7 +380,9 @@ var coin_row = {
 								// + ' ' +label_mint.toLowerCase()
 								// + ' / ' +label_number.toLowerCase()
 								// +' ' +label_type_name.toLowerCase();
-			const type_section = row.type_data.filter(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM)[0]
+			const type_section = row.type_data.find(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM)
+				? row.type_data.find(item => item.catalogue === page_globals.OWN_CATALOG_ACRONYM)
+				: row.type_data[0]
 
 			// creators
 			const creators_data = typeof type_section!=="undefined"
@@ -444,11 +446,13 @@ var coin_row = {
 				? type_section.mint_number
 				: ''
 
-			const type_number = (type_section.mint_number)
+			const type_number = (type_section.number)
 				? type_section.number
 				: ''
 
-			const value_type = mint + ' ' +type_section.catalogue +' '+ mint_number+'/'+type_number
+			const value_type = mint
+				? mint + ' ' +type_section.catalogue +' '+ mint_number+'/'+type_number
+				: +type_section.catalogue +' '+ type_number
 
 			const type_uri	= page_globals.__WEB_ROOT_WEB__ + "/type/" + type_section.section_id
 			const type_uri_text	= "<a class=\"icon_link\" href=\""+type_uri+"\"></a> "
@@ -746,7 +750,6 @@ var coin_row = {
 						parent			: info_container
 					})
 				}
-
 
 		// find type
 			if (row.find_type && row.find_type.length>0) {

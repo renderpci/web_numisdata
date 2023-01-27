@@ -1,9 +1,9 @@
 <?php
 # REQUIRED FILES
-	$base_path = dirname(dirname(__FILE__));
-	$cwd 	   = basename($base_path); # Current dir name
+	$base_path	= dirname(dirname(__FILE__));
+	$cwd		= basename($base_path); # Current dir name
 
-	# Curent controller add
+	# Cu rent controller add
 	require($base_path .'/'. $cwd .'.php');
 ?>
 <!-- wrapper -->
@@ -18,13 +18,13 @@
 				<li id="lang_globe"><i class="fa fa-globe"></i></li>
 				<?php foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) { ?>
 				<li><a href="?lang=<?php echo $lang ?>"><?php echo $lang_name ?></a></li>
-				<?php } ?>
+				<?php }// end foreach (json_decode(WEB_AR_LANGS) as $lang => $lang_name) ?>
 			</ul>
 		*/ ?>
 
 		<!-- Main -->
 			<div id="main">
-				<h1 class="hide">Moneda Ibérica</h1>
+				<h1 class="hide">Numisdata</h1>
 				<div class="inner">
 					<!-- home image random -->
 					<a id="image_wrapper" class="img-wrapper"></a>
@@ -54,7 +54,7 @@
 									</div>
 								</a>
 							</article>
-							<?php } ?>
+							<?php }//end foreach ($menu_items as $key => $item) ?>
 						</section>
 						*/ ?>
 				</div>

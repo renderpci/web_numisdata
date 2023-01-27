@@ -64,8 +64,8 @@ page.render_export_data_buttons = function() {
 
 			const data_object = {
 				info		: "WARNING! This is a draft version data. Please do not use it in production",
-				source_org	: "MIB (Moneda Ibérica - Iberian Coin)",
-				source_url	: "https://monedaiberica.org",
+				source_org	: "Numisdata",
+				source_url	: page_globals.__WEB_BASE_URL__, // Like: "https://monedaiberica.org"
 				lang		: page_globals.WEB_CURRENT_LANG_CODE,
 				date		: common.get_today_date()
 			}

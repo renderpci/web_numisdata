@@ -1,0 +1,5 @@
+IMPORTANT:
+
+Note that 'analysis.js' file is NOT the final used file for web (because include imports).
+Use instead the compiled file 'analysis-min.js' to load in the page
+The target file is bundle with IIFE

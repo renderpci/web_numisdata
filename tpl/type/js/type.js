@@ -66,7 +66,7 @@ var type =  {
 						if (typeof type.result[0]!=="undefined") {
 
 							const row			= type.result[0]
-							const catalog_rows	= catalog.result[0] || null
+							const catalog_rows	= page.parse_catalog_data(catalog.result)[0] || null
 
 							// app property catalog with all catalog rows result
 								row.catalog = catalog_rows

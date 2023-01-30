@@ -9,10 +9,23 @@ import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/boxvio-chart-wr
 import { clock_chart_wrapper } from "../../lib/charts/d3/clock/clock-chart-wrapper.js";
 
 
+/**
+ * Default color when Dedalo API does not provide one
+ * @type {string}
+ */
+const DEFAULT_COLOR = '#1f77b4'
+
+
 export const analysis =  {
 
 	// Form factory instance
 	form: null,
+
+	/**
+	 * Form submit button
+	 * @type {HTMLButtonElement}
+	 */
+	submit_button: null,
 
 	area_name				: null,
 	row						: null,
@@ -23,6 +36,15 @@ export const analysis =  {
 	weight_chart_container		: null,
 	diameter_chart_container	: null,
 	clock_chart_container		: null,
+
+	/**
+	 * Color hexadecimal code for each denomination
+	 * @type {{
+	 * 	section_id: number,
+	 * 	color: string
+	 * }[]}
+	 */
+	denomination_colors: null,
 
 	/**
 	 * Chart wrapper instance for weight
@@ -54,12 +76,45 @@ export const analysis =  {
 			self.diameter_chart_container	= options.diameter_chart_container
 			self.clock_chart_container		= options.clock_chart_container
 
+		// denomination colors
+			self.load_denomination_colors()
+
 		// form
-		const form_node = self.render_form()
-		self.form_items_container.appendChild(form_node)
+			const form_node = self.render_form()
+			self.form_items_container.appendChild(form_node)
 
 		return true
 	},//end set_up
+
+	/**
+	 * Call the Dedalo API and obtain colors for the different denominations
+	 */
+	load_denomination_colors : function() {
+		
+		const self = this
+
+		const request_body = {
+			dedalo_get		: 'records',
+			table			: 'denomination',
+			ar_fields		: ['color', 'section_id', 'term'],
+			lang			: page_globals.WEB_CURRENT_LANG_CODE
+		}
+		data_manager.request({
+			body : request_body
+		}).then((response)=>{
+			self.denomination_colors = response.result
+				.filter((ele) => ele.color && ele.color.length)
+				.map((ele) => {
+					return {
+						section_id	: ele.section_id,
+						color		: ele.color
+					}
+				})
+			// Enable submit button
+			self.submit_button.disabled = false
+		})
+
+	},
 
 	/**
 	 * RENDER FORM
@@ -304,7 +359,7 @@ export const analysis =  {
 				class_name		: "form-group field button_submit",
 				parent			: fragment
 			})
-			const submit_button = common.create_dom_element({
+			self.submit_button = common.create_dom_element({
 				element_type	: "input",
 				type			: "submit",
 				id				: "submit",
@@ -312,7 +367,8 @@ export const analysis =  {
 				class_name		: "btn btn-light btn-block primary",
 				parent			: submit_group
 			})
-			submit_button.addEventListener("click", function (e) {
+			self.submit_button.disabled = true  // disable the button until the denomination colors are loaded
+			self.submit_button.addEventListener("click", function (e) {
 				e.preventDefault()
 				self.form_submit(form)
 			})
@@ -425,12 +481,18 @@ export const analysis =  {
 					const data = []
 					for (const [i, ele] of parsed_data.entries()) {
 						// get section_id to be the key referent to search data again.
-						const section_id	= ele.section_id
+						const section_id				= ele.section_id
 
-						const number_key	= ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})` // Why need to change the name???? MR POTATOE !!!!!!!!
-						const mint			= ele.p_mint ? ele.p_mint[0] : `Missing mint (${ele.section_id})`
-						const material		= ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
-						const denomination	= ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
+						const number_key				= ele.ref_type_number ? ele.ref_type_number : `Missing Number & Key (${i})` // Why need to change the name???? MR POTATOE !!!!!!!!
+						const mint						= ele.p_mint ? ele.p_mint[0] : `Missing mint (${ele.section_id})`
+						const material					= ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
+						const denomination				= ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
+						const denomination_section_id	= (ele.ref_type_denomination_data && ele.ref_type_denomination_data.length)
+							? parseInt(ele.ref_type_denomination_data[0])
+							: null
+						const color						= denomination_section_id === null || !self.denomination_colors.find((ele)=>ele.section_id===denomination_section_id)
+							? DEFAULT_COLOR
+							: self.denomination_colors.find((ele)=>ele.section_id===denomination_section_id).color
 						// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 						// if (!['59', '62'].includes(name)) continue
 						const tmp_data		= {}
@@ -466,12 +528,14 @@ export const analysis =  {
 							}
 						}
 						if (Object.keys(tmp_data).length) {
-							tmp_data.section_id 	= section_id
-							tmp_data.number_key		= number_key
-							tmp_data.mint			= mint
-							tmp_data.type_number	= number_key //type number is and will be type number! Raspa said.
-							tmp_data.material		= material
-							tmp_data.denomination	= denomination
+							tmp_data.section_id 				= section_id
+							tmp_data.number_key					= number_key
+							tmp_data.mint						= mint
+							tmp_data.type_number				= number_key //type number is and will be type number! Raspa said.
+							tmp_data.material					= material
+							tmp_data.denomination				= denomination
+							tmp_data.denomination_section_id 	= denomination_section_id
+							tmp_data.color						= color
 							data.push(tmp_data)
 						}
 					}
@@ -484,7 +548,8 @@ export const analysis =  {
 							values		: ele.weight,
 							id			: ele.section_id,
 							mint		: ele.mint,
-							type_number	: ele.number_key
+							type_number	: ele.number_key,
+							color		: ele.color
 						}
 					}
 				)
@@ -497,7 +562,8 @@ export const analysis =  {
 							values		: ele.diameter_max,
 							id			: ele.section_id,
 							mint		: ele.mint,
-							type_number	: ele.number_key
+							type_number	: ele.number_key,
+							color		: ele.color
 						}
 					}
 				)
@@ -528,6 +594,7 @@ export const analysis =  {
 						weights,
 						[tstring.mint || 'Mint', tstring.number || 'Number'],
 						{
+							colors								: weights.map((ele)=>ele.color),
 							whiskers_quantiles					: [10, 90],
 							ylabel								: tstring.weight || 'Weight',
 							overflow							: true,
@@ -548,6 +615,7 @@ export const analysis =  {
 						diameters,
 						[tstring.mint || 'Mint', tstring.number || 'Number'],
 						{
+							colors								: diameters.map((ele)=>ele.color),
 							whiskers_quantiles					: [10, 90],
 							ylabel								: tstring.diameter || 'Diameter',
 							overflow							: true,

@@ -58,6 +58,7 @@ const KEY2_LABEL_CHARACTER_LIMIT = 45
  * 		if `false`, the svg will be stretched to fill the full width of its parent element
  * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
  * 		overflow must be enabled for outer_height to work
+ * @param {string[]} options.colors color for each box in the plot (default: follows the default color palette)
  * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
  * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
@@ -166,7 +167,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @type {string[]}
 	 * @private
 	 */
-	this._colors = this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
+	this._colors = options.colors || this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
 	/**
 	 * The label for the y axis
 	 * @type {string}

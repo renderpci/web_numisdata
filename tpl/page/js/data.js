@@ -618,11 +618,11 @@ page.parse_catalog_data = function(data) {
 				row.ref_coins_image_reverse_data = row.ref_coins_image_reverse_data
 					? JSON.parse(row.ref_coins_image_reverse_data)
 					: null
-
+			*/
 				row.ref_type_denomination_data = row.ref_type_denomination_data
 					? JSON.parse(row.ref_type_denomination_data)
 					: null
-
+			/*
 				row.ref_type_design_obverse_data = row.ref_type_design_obverse_data
 					? JSON.parse(row.ref_type_design_obverse_data)
 					: null

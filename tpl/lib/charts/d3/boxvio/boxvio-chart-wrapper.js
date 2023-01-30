@@ -27,6 +27,13 @@ const GROUP_CHANGE_EVENT = new Event(GROUP_CHANGE_EVENT_NAME)
 const KEY2_MARGIN = [10, 33]
 
 /**
+ * Limit for the amount of characters displayed in the labels of key 2
+ * @type {number}
+ */
+const KEY2_LABEL_CHARACTER_LIMIT = 45
+
+
+/**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
  * use of x and y axis
@@ -698,6 +705,9 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 
 	for (const [index, key2] of this._key2_values.entries()) {
 		const x = this._chart.key2_start_x[key2]
+		const key2_label = key2.length > KEY2_LABEL_CHARACTER_LIMIT
+			? key2.substring(0, KEY2_LABEL_CHARACTER_LIMIT-3) + '...'
+			: key2
 		const divider_g = dividers_g.append('g')
 			.attr('transform', `translate(${x},0)`)
 		if (index !== 0) {
@@ -717,7 +727,7 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 			.attr('x', '-0.6em')  // This is the vertical axis now
 			.attr('font-size', '0.8em')
 			.attr('fill', color)
-			.text(key2)
+			.text(key2_label)
 	}
 }
 

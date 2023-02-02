@@ -1,7 +1,7 @@
 "use strict";
 
 
-import { d3_chart_wrapper } from "./d3-chart-wrapper";
+import { d3_chart_wrapper } from "../d3-chart-wrapper";
 
 
 /**

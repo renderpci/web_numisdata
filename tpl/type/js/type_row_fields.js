@@ -3,8 +3,12 @@
 "use strict";
 
 
+import { COLOR_PALETTE, chart_wrapper } from "../../lib/charts/chart-wrapper";
+import { minimal_boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/minimal-boxvio-chart-wrapper";
+import { minimal_clock_chart_wrapper } from "../../lib/charts/d3/clock/minimal-clock-chart-wrapper";
 
-var type_row_fields = {
+
+export const type_row_fields = {
 
 
 	// caller. Like 'type'
@@ -12,7 +16,13 @@ var type_row_fields = {
 	type : '',
 	equivalents : '',
 
-
+	// charts
+	/** @type {chart_wrapper} */
+	weight_chat_wrapper: null,
+	/** @type {chart_wrapper} */
+	diameter_chart_wrapper: null,
+	/** @type {chart_wrapper} */
+	axis_chart_wrapper: null,
 
 	draw_item : function(item) {
 
@@ -359,8 +369,8 @@ var type_row_fields = {
 				}
 			}
 
-		// TODO: Weight, diameter, and alignment
-			console.log(item.catalog)
+		// Weight, diameter, and axis
+			// console.log(item.catalog)
 			const catalog_data = item.catalog
 			const calculable = catalog_data.full_coins_reference_calculable
 				? catalog_data.full_coins_reference_calculable
@@ -402,6 +412,20 @@ var type_row_fields = {
 						text_content	: tstring.weight || 'Weight',
 						parent			: separator
 					})
+					const chart_wrapper = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'chart_wrapper',
+						parent			: weight_wrapper
+					})
+					self.weight_chat_wrapper = new minimal_boxvio_chart_wrapper(
+						chart_wrapper,
+						weight,
+						{
+							color				: COLOR_PALETTE[0],
+							whiskers_quantiles	: [10, 90],
+						}
+					)
+					self.weight_chat_wrapper.render()
 				}
 
 				if (diameter.length) {
@@ -421,6 +445,20 @@ var type_row_fields = {
 						text_content	: tstring.diameter || 'Diameter',
 						parent			: separator
 					})
+					const chart_wrapper = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'chart_wrapper',
+						parent			: diameter_wrapper
+					})
+					self.diameter_chart_wrapper = new minimal_boxvio_chart_wrapper(
+						chart_wrapper,
+						diameter,
+						{
+							color				: COLOR_PALETTE[1],
+							whiskers_quantiles	: [10, 90],
+						}
+					)
+					self.diameter_chart_wrapper.render()
 				}
 
 				if (axis.length) {
@@ -440,6 +478,17 @@ var type_row_fields = {
 						text_content	: tstring.die_position || 'Die axis',
 						parent			: separator
 					})
+					const chart_wrapper = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'chart_wrapper',
+						parent			: axis_wrapper
+					})
+					self.axis_chart_wrapper = new minimal_clock_chart_wrapper(
+						chart_wrapper,
+						axis_counts,
+						{}
+					)
+					self.axis_chart_wrapper.render()
 				}
 			}
 

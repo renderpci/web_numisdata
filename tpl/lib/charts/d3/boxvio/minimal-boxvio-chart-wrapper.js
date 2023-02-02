@@ -21,6 +21,7 @@ import { calc_boxplot_metrics } from "./utils";
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
  * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`).
  * 		if `false`, the svg will be stretched to fill the full width of its parent element
+ * @param {string} options.color color for the box in the plot (default: gets the first color in the default color palette)
  * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
  * 		overflow must be enabled for outer_height to work
  * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
@@ -29,6 +30,11 @@ import { calc_boxplot_metrics } from "./utils";
 export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	d3_chart_wrapper.call(this, div_wrapper, options)
 
+	/**
+	 * The color for the box in the plot
+	 * @type {string}
+	 */
+	this._color = options.color || COLOR_PALETTE[0]
 	/**
 	 * Overrides default behavior of the whiskers by specifying
 	 * the quantiles of the lower and upper
@@ -85,7 +91,7 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 * @type {number}
 	 * @private
 	 */
-	this._full_width = 195
+	this._full_width = 300
 	/**
 	 * Non-graphic components of the chart: setting, scales,
 	 * axis generators, spacing, etc.
@@ -110,7 +116,7 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 * }}
 	 */
 	this._chart = {}
-	this._chart.margin = { top: 10, right: 0, bottom: 10, left: 33 }
+	this._chart.margin = { top: 4, right: 0, bottom: 10, left: 33 }
 	this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
 	this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
 	this._chart.yscale = d3.scaleLinear()
@@ -212,7 +218,6 @@ minimal_boxvio_chart_wrapper.prototype._render_violin = function () {
  */
 minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 	const yscale = this._chart.yscale
-	const color = COLOR_PALETTE[0]
 	const metrics = this._metrics
 	const whiskers_lw = 2
 	const median_lw = 3
@@ -228,7 +233,7 @@ minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 			.attr('cx', 0)
 			.attr('cy', yscale(outlier))
 			.attr('r', 4)
-			.style('fill', color)
+			.style('fill', this._color)
 			.style('opacity', 0.7)
 	}
 
@@ -239,21 +244,21 @@ minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 		.attr('y1', yscale(metrics.lower_fence))
 		.attr('x2', 0)
 		.attr('y2', yscale(metrics.upper_fence))
-		.attr('stroke', color)
+		.attr('stroke', this._color)
 		.attr('stroke-width', whiskers_lw)
 	whiskers_g.append('line') // lower horizontal
 		.attr('x1', -box_width / 2)
 		.attr('y1', yscale(metrics.lower_fence))
 		.attr('x2', box_width / 2)
 		.attr('y2', yscale(metrics.lower_fence))
-		.attr('stroke', color)
+		.attr('stroke', this._color)
 		.attr('stroke-width', whiskers_lw)
 	whiskers_g.append('line') // upper horizontal
 		.attr('x1', -box_width / 2)
 		.attr('y1', yscale(metrics.upper_fence))
 		.attr('x2', box_width / 2)
 		.attr('y2', yscale(metrics.upper_fence))
-		.attr('stroke', color)
+		.attr('stroke', this._color)
 		.attr('stroke-width', whiskers_lw)
 	
 	// IQR Box
@@ -264,7 +269,7 @@ minimal_boxvio_chart_wrapper.prototype._render_box = function () {
 		.attr('y', yscale(metrics.quartile3))
 		.attr('width', box_width)
 		.attr('height', yscale(metrics.quartile1) - yscale(metrics.quartile3))
-		.attr('fill', color)
+		.attr('fill', this._color)
 	}
 	iqr_g.append('line')  // median line
 		.attr('x1', -box_width / 2)

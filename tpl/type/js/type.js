@@ -1,4 +1,4 @@
-/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields, data_manager, Promise */
+/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields_min, data_manager, Promise */
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -252,8 +252,8 @@ var type =  {
 
 
 			// render row
-				type_row_fields.caller	= self
-				const row_node			= type_row_fields.draw_item(row)
+				type_row_fields_min.type_row_fields.caller = self
+				const row_node = type_row_fields_min.type_row_fields.draw_item(row)
 
 
 			resolve(row_node)

@@ -360,13 +360,88 @@ var type_row_fields = {
 			}
 
 		// TODO: Weight, diameter, and alignment
-			fragment.appendChild(
-				common.create_dom_element({
+			console.log(item.catalog)
+			const catalog_data = item.catalog
+			const calculable = catalog_data.full_coins_reference_calculable
+				? catalog_data.full_coins_reference_calculable
+				: []
+			const diameter = catalog_data.full_coins_reference_diameter_max
+				? catalog_data.full_coins_reference_diameter_max.filter((v, i) => v && calculable[i])
+				: []
+			const weight = catalog_data.full_coins_reference_weight.filter((v, i) => v && calculable[i])
+				? catalog_data.full_coins_reference_weight
+				: []
+			const axis = catalog_data.full_coins_reference_axis
+				? catalog_data.full_coins_reference_axis.filter((v) => v)
+				: []
+			const axis_counts = Array(12).fill(0)
+			for (const hour of axis) {
+				axis_counts[hour % 12]++
+			}
+			if (diameter.length || weight.length || axis.length) {
+				const analytics_div_wrapper = common.create_dom_element({
 					element_type	: 'div',
-					text_content	: 'No tengo una rana cantora'
+					id				: 'type_analytics'
 				})
-			)
-			console.log(item)
+				fragment.appendChild(analytics_div_wrapper)
+
+				if (weight.length) {
+					const weight_wrapper = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'type_analytics_component',
+						parent			: analytics_div_wrapper
+					})
+					const separator = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'info_line separator',
+						parent			: weight_wrapper
+					})
+					common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'big_label',
+						text_content	: tstring.weight || 'Weight',
+						parent			: separator
+					})
+				}
+
+				if (diameter.length) {
+					const diameter_wrapper = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'type_analytics_component',
+						parent			: analytics_div_wrapper
+					})
+					const separator = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'info_line separator',
+						parent			: diameter_wrapper
+					})
+					common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'big_label',
+						text_content	: tstring.diameter || 'Diameter',
+						parent			: separator
+					})
+				}
+
+				if (axis.length) {
+					const axis_wrapper = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'type_analytics_component',
+						parent			: analytics_div_wrapper
+					})
+					const separator = common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'info_line separator',
+						parent			: axis_wrapper
+					})
+					common.create_dom_element({
+						element_type	: 'div',
+						class_name		: 'big_label',
+						text_content	: tstring.die_position || 'Die axis',
+						parent			: separator
+					})
+				}
+			}
 
 		// findspots - hoards_and_findspots - (hallazgos) list
 			// if (item.ref_coins_findspots_data && item.ref_coins_findspots_data.length>0) {

@@ -508,7 +508,6 @@ page.parse_catalog_data = function(data) {
 
 		const data_length = data.length
 		for (let i = 0; i < data_length; i++) {
-
 			// const row = JSON.parse( JSON.stringify(data[i]) )
 			const row = data[i]
 
@@ -554,7 +553,7 @@ page.parse_catalog_data = function(data) {
 				row.ref_type_symbol_reverse = row.ref_type_symbol_reverse
 					? self.parse_legend_svg(row.ref_type_symbol_reverse)
 					: null
-
+			
 			if (IsJson(row.term_data)){
 				row.term_data = JSON.parse(row.term_data)
 			}
@@ -567,20 +566,22 @@ page.parse_catalog_data = function(data) {
 				}
 				return true
 			}
-
+			
 			row.term_section_id	= row.term_data ? row.term_data[0] : null
-			row.children		= JSON.parse(row.children)
-			row.parent			= row.parent && Array.isArray(row.parent)
-				? (function(parent_array){
-					// portal resolved case
-					return page.parse_catalog_data(parent_array)
-				  })(row.parent)
-				: JSON.parse(row.parent)
-
+			row.children		= row.children ? JSON.parse(row.children) : null
+			row.parent			= row.parent
+				? (
+					Array.isArray(row.parent)
+						? (function(parent_array){
+							// portal resolved case
+							return page.parse_catalog_data(parent_array)
+						})(row.parent)
+						: JSON.parse(row.parent)
+				)
+				: null
 			row.ref_type_averages_diameter = row.ref_type_averages_diameter
 				? parseFloat( row.ref_type_averages_diameter.replace(',', '.') )
 				: null
-
 			row.ref_type_total_diameter_items = row.ref_type_total_diameter_items
 				? parseFloat( row.ref_type_total_diameter_items.replace(',', '.') )
 				: null
@@ -618,11 +619,11 @@ page.parse_catalog_data = function(data) {
 				row.ref_coins_image_reverse_data = row.ref_coins_image_reverse_data
 					? JSON.parse(row.ref_coins_image_reverse_data)
 					: null
-
+			*/
 				row.ref_type_denomination_data = row.ref_type_denomination_data
 					? JSON.parse(row.ref_type_denomination_data)
 					: null
-
+			/*
 				row.ref_type_design_obverse_data = row.ref_type_design_obverse_data
 					? JSON.parse(row.ref_type_design_obverse_data)
 					: null
@@ -684,7 +685,7 @@ page.parse_catalog_data = function(data) {
 					: null
 				*/
 				//
-
+	
 			row.term_section_label = row.term_section_label
 				? JSON.parse(row.term_section_label)
 				: null
@@ -704,11 +705,15 @@ page.parse_catalog_data = function(data) {
 			row.p_territory = row.p_territory
 				? JSON.parse(row.p_territory)
 				: null
-
+			
 			row.parents = row.parents
-				? JSON.parse(row.parents)
+				? (
+					IsJson(row.parents)
+						? JSON.parse(row.parents)
+						: row.parents
+				)
 				: null
-
+			
 			row.parents_text = row.parents_text
 				? JSON.parse(row.parents_text)
 				: null

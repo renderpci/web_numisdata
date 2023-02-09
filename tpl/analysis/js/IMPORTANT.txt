@@ -2,4 +2,5 @@ IMPORTANT:
 
 Note that 'analysis.js' file is NOT the final used file for web (because include imports).
 Use instead the compiled file 'analysis-min.js' to load in the page
-The target file is bundle with IIFE
+The target file is bundled with IIFE
+(e.g., "rollup analysis.js --file analysis-min.js --format iife --name analysis_min")

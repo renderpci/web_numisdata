@@ -27,6 +27,13 @@ const GROUP_CHANGE_EVENT = new Event(GROUP_CHANGE_EVENT_NAME)
 const KEY2_MARGIN = [10, 33]
 
 /**
+ * Limit for the amount of characters displayed in the labels of key 2
+ * @type {number}
+ */
+const KEY2_LABEL_CHARACTER_LIMIT = 45
+
+
+/**
  * TODO: make a superclass (in the middle of this and d3_chart_wrapper) called xy-chart-wrapper
  * which manages the axes, grid, and so on. This will be useful if we add other charts that make
  * use of x and y axis
@@ -51,6 +58,7 @@ const KEY2_MARGIN = [10, 33]
  * 		if `false`, the svg will be stretched to fill the full width of its parent element
  * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
  * 		overflow must be enabled for outer_height to work
+ * @param {string[]} options.colors color for each box in the plot (default: follows the default color palette)
  * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
  * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
@@ -159,7 +167,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @type {string[]}
 	 * @private
 	 */
-	this._colors = this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
+	this._colors = options.colors || this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
 	/**
 	 * The label for the y axis
 	 * @type {string}
@@ -698,6 +706,9 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 
 	for (const [index, key2] of this._key2_values.entries()) {
 		const x = this._chart.key2_start_x[key2]
+		const key2_label = key2.length > KEY2_LABEL_CHARACTER_LIMIT
+			? key2.substring(0, KEY2_LABEL_CHARACTER_LIMIT-3) + '...'
+			: key2
 		const divider_g = dividers_g.append('g')
 			.attr('transform', `translate(${x},0)`)
 		if (index !== 0) {
@@ -717,7 +728,7 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 			.attr('x', '-0.6em')  // This is the vertical axis now
 			.attr('font-size', '0.8em')
 			.attr('fill', color)
-			.text(key2)
+			.text(key2_label)
 	}
 }
 

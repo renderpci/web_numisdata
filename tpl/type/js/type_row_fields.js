@@ -370,7 +370,13 @@ export const type_row_fields = {
 			}
 
 		// Weight, diameter, and axis
-			// console.log(item.catalog)
+			// console.log(item)
+			let color = COLOR_PALETTE[0]
+			if (item.denomination_data
+				&& item.denomination_data.length
+				&& item.denomination_data[0].color) {
+				color = item.denomination_data[0].color
+			}
 			const catalog_data = item.catalog
 			const calculable = catalog_data.full_coins_reference_calculable
 				? catalog_data.full_coins_reference_calculable
@@ -421,7 +427,7 @@ export const type_row_fields = {
 						chart_wrapper,
 						weight,
 						{
-							color				: COLOR_PALETTE[0],
+							color				: color,
 							whiskers_quantiles	: [10, 90],
 						}
 					)
@@ -454,7 +460,7 @@ export const type_row_fields = {
 						chart_wrapper,
 						diameter,
 						{
-							color				: COLOR_PALETTE[1],
+							color				: color,
 							whiskers_quantiles	: [10, 90],
 						}
 					)

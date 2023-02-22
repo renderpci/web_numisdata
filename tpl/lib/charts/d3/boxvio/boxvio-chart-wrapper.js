@@ -46,9 +46,9 @@ const KEY2_LABEL_CHARACTER_LIMIT = 45
  * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  *
  * @param {Element} div_wrapper the div to work in
- * @param {{id: string, key: string[], values: number[]}[]} data the input data: an array of objects
- * 		with id (unique identifier), key (array of components, from general to specific), and values
- * 		(the datapoints). It may contain any other keys, that can be passed to the tooltip callback
+ * @param {{id: string, key: string[], values: number[], color: string}[]} data the input data: an array of objects
+ * 		with id (unique identifier), key (array of components, from general to specific), values
+ * 		(the datapoints), and an optional color. It may contain any other keys, that can be passed to the tooltip callback
  * 		(KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
@@ -58,7 +58,6 @@ const KEY2_LABEL_CHARACTER_LIMIT = 45
  * 		if `false`, the svg will be stretched to fill the full width of its parent element
  * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
  * 		overflow must be enabled for outer_height to work
- * @param {string[]} options.colors color for each box in the plot (default: follows the default color palette)
  * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
  * 		by specifying the quantiles of the lower and upper
  * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
@@ -98,6 +97,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	if (!data.length) {
 		throw new Error("Data array is empty")
 	}
+	// Assign a color from the color palette if not provided
+	for (const [i, datum] of data.entries()) {
+		datum.color = datum.color || COLOR_PALETTE[i % COLOR_PALETTE.length]
+	}
 	/**
 	 * Data: id, key (general to specific components), values,
 	 * boxplot metrics, outliers, extent (min and max)
@@ -105,6 +108,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * 	id: string,
 	 *  key: string[],
 	 *  values: number[],
+	 *  color: string,
 	 *  metrics: {
 	 *      max: number,
 	 *      upper_fence: number,
@@ -162,12 +166,6 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	this._key2_values = this._kdm.key_size > 1
 		? this._kdm.key_values(2)
 		: null
-	/**
-	 * Colors
-	 * @type {string[]}
-	 * @private
-	 */
-	this._colors = options.colors || this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
 	/**
 	 * The label for the y axis
 	 * @type {string}
@@ -829,7 +827,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 	for (const [i, ele] of this._data.entries()) {
 
 		const metrics = ele.metrics
-		const color = this._colors[i]
+		const color = ele.color
 
 		const group_box = boxes.append('g')
 			.classed('clickable', true)

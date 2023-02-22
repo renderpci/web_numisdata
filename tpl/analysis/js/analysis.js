@@ -110,6 +110,7 @@ export const analysis =  {
 						color		: ele.color
 					}
 				})
+			// console.log(self.denomination_colors)
 			// Enable submit button
 			self.submit_button.disabled = false
 		})
@@ -493,6 +494,7 @@ export const analysis =  {
 						const color						= denomination_section_id === null || !self.denomination_colors.find((ele)=>ele.section_id===denomination_section_id)
 							? DEFAULT_COLOR
 							: self.denomination_colors.find((ele)=>ele.section_id===denomination_section_id).color
+						// console.log(`NumberKey ${number_key} Denomination section ID ${denomination_section_id} assigned color ${color}`)
 						// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 						// if (!['59', '62'].includes(name)) continue
 						const tmp_data		= {}
@@ -594,7 +596,6 @@ export const analysis =  {
 						weights,
 						[tstring.mint || 'Mint', tstring.number || 'Number'],
 						{
-							colors								: weights.map((ele)=>ele.color),
 							whiskers_quantiles					: [10, 90],
 							ylabel								: tstring.weight || 'Weight',
 							overflow							: true,
@@ -615,7 +616,6 @@ export const analysis =  {
 						diameters,
 						[tstring.mint || 'Mint', tstring.number || 'Number'],
 						{
-							colors								: diameters.map((ele)=>ele.color),
 							whiskers_quantiles					: [10, 90],
 							ylabel								: tstring.diameter || 'Diameter',
 							overflow							: true,

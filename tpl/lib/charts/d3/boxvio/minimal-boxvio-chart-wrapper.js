@@ -116,7 +116,7 @@ export function minimal_boxvio_chart_wrapper(div_wrapper, data, options) {
 	 * }}
 	 */
 	this._chart = {}
-	this._chart.margin = { top: 4, right: 0, bottom: 10, left: 33 }
+	this._chart.margin = { top: 5, right: 0, bottom: 5, left: 40 }
 	this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
 	this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
 	this._chart.yscale = d3.scaleLinear()
@@ -178,6 +178,8 @@ minimal_boxvio_chart_wrapper.prototype.render_plot = function () {
 minimal_boxvio_chart_wrapper.prototype._render_y_axis = function () {
 	const g = this._graphics.root_g.append('g')
 		.call(this._chart.yaxis)
+	g.selectAll('g.tick').selectAll('text')
+		.style('font-size', 15)
 }
 
 /**

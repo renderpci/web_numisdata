@@ -10,12 +10,17 @@
 					if (IS_PRODUCTION===false) {
 						echo ' DB: '.WEB_DB;
 					}
-				?></li>
-				<li>
-					<a href="https://portal.issn.org/resource/ISSN-L/2951-8547" class="issb_issn" rel="noreferrer" target="_blank">
-						<?php echo ISSB_ISSN ?>
-						</a>
-					</li>
+				?></li><?php
+					if (!empty(ISSB_ISSN)) {
+						$html	= '<li>';
+							$html	.= '<a href="'.ISSB_ISSN_URI.'" class="issb_issn" rel="noreferrer" target="_blank">';
+								$html	.= 'ISSB_ISSN ';
+							$html	.=  '</a>';
+						$html	.= '</li>';
+
+						echo $html;
+					}
+				?>
 				<li><a href="mailto:<?php echo EMAIL ?>"><?php echo EMAIL ?></a></li>
 				<li class="print_hide99">
 					Powered by

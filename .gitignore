@@ -32,4 +32,6 @@ package.json
 package-lock.json
 !analysis-min.js
 !analysis-min.js.map
+vars.less
+vars.css
 

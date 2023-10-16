@@ -90,7 +90,7 @@ var footer =  {
 			const image = row.images && row.images[0]
 				? (row.images[0].indexOf('http')===0)
 					? row.images[0]
-					: page_globals.__WEB_BASE_URL__ + row.images[0]
+					: page_globals.__WEB_MEDIA_BASE_URL__ + row.images[0]
 				: null
 			const url = (row.web_path.indexOf('http')===0)
 				? row.web_path

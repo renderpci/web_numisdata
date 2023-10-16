@@ -20,4 +20,4 @@
 		$ar_image	= $this->get_element_from_template_map('image', $template_map->{$mode});
 
 	// body images fix url paths
-		$body = str_replace('../../../media', __WEB_BASE_URL__ . '/dedalo/media', $body);
+		$body = str_replace('../../../media', __WEB_MEDIA_BASE_URL__ . '/dedalo/media', $body);

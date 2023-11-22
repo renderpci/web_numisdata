@@ -2,6 +2,7 @@ config.php
 config.*
 !sample.config.php
 config.codekit3
+prepros.config
 .codekit-cache
 *codekit*
 acc
@@ -11,9 +12,10 @@ acc
 *_OLD.*
 *_old.*
 *_DES
+config
 # images
-# library.less
-# page.css
+library.less
+page.css
 logo_head*
 default.jpg
 uni_val_hist.png
@@ -24,5 +26,12 @@ logo_render_bn.png
 logo-inc.svg
 !app-min.js.map
 !app-min.js
+# node
+node_modules
+package.json
+package-lock.json
 !analysis-min.js
 !analysis-min.js.map
+vars.less
+vars.css
+

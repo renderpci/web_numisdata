@@ -1,60 +1,36 @@
 "use strict";
 
-import { d3_chart_wrapper } from "./d3-chart-wrapper";
-import { COLOR_PALETTE } from "../chart-wrapper";
-import { toggle_visibility, linspace, CURVES } from "./utils";
-import { compute_n_bins } from "../compute-n-bins";
-import { array_equal, deepcopy, insert_after } from "../utils"
+import { d3_chart_wrapper } from "../d3-chart-wrapper";
+import { COLOR_PALETTE } from "../../chart-wrapper";
+import { toggle_visibility, linspace, CURVES } from "../utils";
+import { compute_n_bins } from "../../compute-n-bins";
+import { insert_after } from "../../utils";
+import { keyed_data } from "../../keyed-data";
+import { calc_boxplot_metrics } from "./utils";
 
 
 /**
- * CSS style for the tooltip
- * @type {Object.<string, string | number>}
- */
-const TOOLTIP_STYLE = {
-	'text-align': 'left',
-	'padding': '0.7em',
-	'padding-left': '0.8em',
-	'font-size': '0.9em',
-	'display': 'none',
-}
-
-/**
- * Default flex gap
+ * Name of the group change event
  * @type {string}
  */
-const DEFAULT_FLEX_GAP = '1em'
+const GROUP_CHANGE_EVENT_NAME = 'ch_group_change'
 /**
- * Default flex gap (bif)
- * @type {string}
- */
-const DEFAULT_FLEX_GAP_BIG = '3em'
-/**
- * Default margin
- * @type {string}
- */
-const DEFAULT_MARGIN = '0.7em'
-/**
- * Default margin (big)
- * @type {string}
- */
-const DEFAULT_MARGIN_BIG = '1em'
-
-/**
- * Name of the key change event
- * @type {string}
- */
-const KEY_CHANGE_EVENT_NAME = 'ch_key_change'
-/**
- * Key change event
+ * Group change event
  * @type {Event}
  */
-const KEY_CHANGE_EVENT = new Event(KEY_CHANGE_EVENT_NAME)
+const GROUP_CHANGE_EVENT = new Event(GROUP_CHANGE_EVENT_NAME)
+
 /**
- * Class name for key change listeners
- * @type {string}
+ * Margin for the key2 label
+ * @type {[number, number]}
  */
-const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
+const KEY2_MARGIN = [10, 33]
+
+/**
+ * Limit for the amount of characters displayed in the labels of key 2
+ * @type {number}
+ */
+const KEY2_LABEL_CHARACTER_LIMIT = 45
 
 
 /**
@@ -70,38 +46,69 @@ const KEY_CHANGE_LISTENER_CLASS_NAME = `${KEY_CHANGE_EVENT_NAME}_listener`
  * - https://d3-graph-gallery.com/graph/boxplot_show_individual_points.html
  *
  * @param {Element} div_wrapper the div to work in
- * @param {{key: string[], values: number[]}[]} data the input data: an array of objects
- *        with key (array of components, from general to specific) and values (the datapoints)
- *        (KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
+ * @param {{id: string, key: string[], values: number[], color: string}[]} data the input data: an array of objects
+ * 		with id (unique identifier), key (array of components, from general to specific), values
+ * 		(the datapoints), and an optional color. It may contain any other keys, that can be passed to the tooltip callback
+ * 		(KEY COMPONENTS MUST NOT INCLUDE `'_^PoT3sRanaCantora_'`, or things WILL break)
  * @param {string[]} key_titles the title for each key component
  * @param {Object} options configuration options
  * @param {boolean} options.display_download whether to display the download panel (default `false`)
  * @param {boolean} options.display_control_panel whether to display the control panel (default `false`)
- * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`)
+ * @param {boolean} options.overflow whether going beyond the width of the plot container is allowed (default `false`).
+ * 		if `false`, the svg will be stretched to fill the full width of its parent element
+ * @param {string} options.outer_height outer height of the plot, will be the height applied to the SVG (default `500px`)
+ * 		overflow must be enabled for outer_height to work
+ * @param {[number, number]} options.whiskers_quantiles overrides default behavior of the whiskers
+ * 		by specifying the quantiles of the lower and upper
+ * @param {boolean} options.sort_xaxis whether to sort the xaxis (default `false`). When there is more than one key-2, sorting is mandatory.
  * @param {string} options.ylabel the y-label (default `null`)
- * @param {boolean} options.overflow whether to go beyond the width of the plot container (default `false`)
  * @param {number} options.xticklabel_angle the angle (in degrees) for the xtick labels (default `0`)
+ * @param {(options: Object) => Promise<Element>} options.tooltip_callback called to fill space in the tooltip
+ * 	next to the metrics. It takes an options object as argument and returns a Promise of an HTML element to add to the
+ * 	tooltip. The attributes of the options object come from the data and are determined by the
+ * `tooltip_callback_options_attributes` option
+ * @param {string[]} options.tooltip_callback_options_attributes list of datum attributes to include in the
+ * 	options object for the tooltip callback. If the callback is provided, this list MUST be provided as well
  * @class
  * @extends d3_chart_wrapper
  */
 export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	d3_chart_wrapper.call(this, div_wrapper, options)
 	/**
-	 * Whether to go beyond the width of the plot container
-	 * @type {boolean}
+	 * Called when the tooltip is shown to render extra info
+	 * @private
+	 * @type {(options: Object) => Promise<Element>}
 	 */
-	this._overflow = options.overflow || false
-	const sort_xaxis = options.sort_xaxis || false
+	this._tooltip_callback = options.tooltip_callback || null
+	/**
+	 * List of datum attributes to include in the options argument of the tooltip callback
+	 * @private
+	 * @type {string[]}
+	 */
+	this._tooltip_callback_options_attributes = options.tooltip_callback_options_attributes || null
+	/**
+	 * Overrides default behavior of the whiskers by specifying
+	 * the quantiles of the lower and upper
+	 * @type {[number, number]}
+	 * @private
+	 */
+	this._whiskers_quantiles = options.whiskers_quantiles || null
+	const sort_xaxis = options.sort_xaxis || data[0].key.length > 1 || false
 	if (!data.length) {
 		throw new Error("Data array is empty")
 	}
+	// Assign a color from the color palette if not provided
+	for (const [i, datum] of data.entries()) {
+		datum.color = datum.color || COLOR_PALETTE[i % COLOR_PALETTE.length]
+	}
 	/**
-	 * Data: key (general to specific components), index, values,
+	 * Data: id, key (general to specific components), values,
 	 * boxplot metrics, outliers, extent (min and max)
 	 * @type {{
+	 * 	id: string,
 	 *  key: string[],
-	 *  index: number
 	 *  values: number[],
+	 *  color: string,
 	 *  metrics: {
 	 *      max: number,
 	 *      upper_fence: number,
@@ -122,7 +129,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 				 ? data.sort((a, b) => a.key.join().localeCompare(b.key.join()))
 				 : data
 	for (const [i, ele] of this._data.entries()) {
-		ele.metrics = calc_metrics(ele.values)
+		ele.metrics = calc_boxplot_metrics(ele.values, this._whiskers_quantiles)
 		ele.outliers = ele.values.filter(
 			(v) => v < ele.metrics.lower_fence || v > ele.metrics.upper_fence
 		)
@@ -134,17 +141,11 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._data_extent = d3.extent(this._data.map((ele) => ele.extent).flat())
 	/**
-	 * Existing keys as strings
+	 * IDs for the data
 	 * @type {string[]}
 	 * @private
 	 */
-	this._key_strings = this._data.map((ele) => join_key(ele.key))
-	/**
-	 * Number of components of the key
-	 * @type {number}
-	 * @private
-	 */
-	this._key_size = data[0].key.length
+	this._ids = this._data.map((ele) => ele.id)
 	/**
 	 * Title for each key component
 	 * @type {string[]}
@@ -152,11 +153,19 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 */
 	this._key_titles = key_titles
 	/**
-	 * Colors
+	 * Data manager (to handle keys)
+	 * @type {keyed_data}
+	 * @private
+	 */
+	this._kdm = new keyed_data(this._data)
+	/**
+	 * Available key2 values
 	 * @type {string[]}
 	 * @private
 	 */
-	this._colors = this._data.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length])
+	this._key2_values = this._kdm.key_size > 1
+		? this._kdm.key_values(2)
+		: null
 	/**
 	 * The label for the y axis
 	 * @type {string}
@@ -175,6 +184,9 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	this._full_width = this._data.length < 150
 		? 330.664701211*Math.sqrt(this._data.length) - 170.664701211 + this.yaxis_padding
 		: 26*this._data.length + this.yaxis_padding
+	if (this._kdm.key_size > 1) {  // If we have a key-2, add some margin
+		this._full_width += this._key2_values.length*d3.sum(KEY2_MARGIN)
+	}
 	/**
 	 * Full height of svg
 	 * @type {number}
@@ -185,6 +197,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * axis generators, spacing, etc.
 	 * @private
 	 * @type {{
+	 * 	tooltip_active: number,
 	 *  margin: {
 	 *      top: number,
 	 *      right: number,
@@ -197,18 +210,22 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  yticks_division: number,
 	 *  yaxis: d3.axisGenerator,
 	 *  violin_scale: {initial: number, value: number},
+	 *  violin_bandwidth: number,
 	 *  box_scale: {initial: number, value: number},
 	 *  xscale: d3.scaleBand,
+	 *  key2_start_x: {[key2: string]: number},
+	 *  datum_start_x: number[],
 	 *  xaxis: d3.axisGenerator,
 	 *  xticklabel_angle: number,
 	 *  n_bins: {initial: number, value: number}[],
 	 *  histogram: d3.binGenerator[],
 	 *  bins: d3.Bin[][],
 	 *  supported_curves: string[],
-	 *  violin_curve: string
+	 *  violin_curve: d3.curve
 	 * }}
 	 */
 	this._chart = {}
+	this._chart.tooltip_active = null
 	this._chart.margin = { top: 15, right: 4, bottom: 61, left: this.yaxis_padding }
 	this._chart.width = this._full_width - this._chart.margin.left - this._chart.margin.right
 	this._chart.height = this._full_height - this._chart.margin.top - this._chart.margin.bottom
@@ -222,13 +239,20 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		.tickFormat((d, i) => i % this._chart.yticks_division ? '' : d.toFixed(1))
 		.ticks(19)
 	this._chart.violin_scale = {initial: 0.8, value: 0.8}
+	this._chart.violin_bandwidth =  // Subtract key2 margins from the plot width
+		(this._chart.width - this._key2_values.length*d3.sum(KEY2_MARGIN))
+		/ this._data.length
 	this._chart.box_scale = {initial: 0.3, value: 0.3}
 	this._chart.xscale = d3.scaleBand()
-		.domain(this._key_strings)
+		.domain(this._ids)
 		.range([0, this._chart.width])
 		// .padding(1-this._chart.violin_scale)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+	this._chart.key2_start_x = this._kdm.key_size > 1
+		? this._compute_key2_start_x()
+		: null
+	this._chart.datum_start_x = this._compute_datum_start_x()
 	this._chart.xaxis = d3.axisBottom(this._chart.xscale)
-		.tickFormat((d) => split_key(d)[1])
+		.tickFormat((id) => this._data.find((datum) => datum.id === id).key[this._kdm.key_size - 1])
 	this._chart.xticklabel_angle = options.xticklabel_angle || 0
 	this._chart.n_bins = this._data.map((ele) => {
 		const initial_value = compute_n_bins.sturges(ele.values)
@@ -265,6 +289,7 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 *  violins: d3.selection[],
 	 *  boxes_g: d3.selection,
 	 *  outliers: d3.selection[],
+	 * 	whiskers: d3.selection[],
 	 *  tooltip_div: d3.selection
 	 * }}
 	 */
@@ -279,8 +304,8 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		yaxwl_g: null,
 		// g tag for the y-axis
 		yaxis_g: null,
-		// g tag for the class dividers
-		cdividers_g: null,
+		// g tag for the key2 dividers
+		key2_dividers_g: null,
 		// g tag grouping all violins
 		violins_g: null,
 		// individual g tag for each violin
@@ -289,8 +314,10 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 		boxes_g: null,
 		// per group: g tag grouping all outliers of each box
 		outliers: [],
+		// per group: g tag grouping the whiskers of each box
+		whiskers: [],
 		// div tag of the tooltip
-		tooltip_div: null,
+		tooltip_div: null
 	}
 	/**
 	 * Control panel things
@@ -301,122 +328,132 @@ export function boxvio_chart_wrapper(div_wrapper, data, key_titles, options) {
 	 * @private
 	 * @type {{
 	 *  max_bins_multiplier: number,
-	 *  selected_index: number
+	 *  selected_index: number,
+	 *	sections: {
+	 *		general: {
+	 *			title: HTMLDivElement,
+	 *			content_container: HTMLDivElement
+	 *		},
+	 *		specific: {
+	 *			title: HTMLDivElement,
+	 *			content_container: HTMLDivElement
+	 *		}
+	 *	},
+	 * 	grid_select: HTMLSelectElement,
+	 * 	xticklabel_angle_slider: HTMLInputElement,
+	 *	curve_select: HTMLSelectElement,
+	 *	show_checkboxes: {
+	 *		key2: HTMLInputElement,
+	 *		violins: HTMLInputElement,
+	 *		boxes: HTMLInputElement,
+	 *		whiskers: HTMLInputElement,
+	 *		outliers: HTMLInputElement
+	 *	},
+	 *	scale: {
+	 *		violin: {
+	 *			slider: HTMLInputElement,
+	 *			reset: HTMLButtonElement
+	 * 		},
+	 *		box: {
+	 *			slider: HTMLInputElement,
+	 *			reset: HTMLButtonElement
+	 * 		},
+	 *	},
+	 *	violin_n_bins: {
+	 *		slider: HTMLInputElement,
+	 *		reset: HTMLButtonElement,
+	 *		reset_all: HTMLButtonElement
+	 *	}
 	 * }}
 	 */
-	this._controls = {}
-	this._controls.max_bins_multiplier = 3
-	this._controls.selected_index = 0
+	this._controls = {
+		max_bins_multiplier: 3,
+		selected_index: 0,
+		sections: {
+			general: {
+				title: null,
+				content_container: null
+			},
+			specific: {
+				title: null,
+				content_container: null
+			}
+		},
+		grid_select: null,
+		xticklabel_angle_slider: null,
+		curve_select: null,
+		show_checkboxes: {
+			key2: null,
+			violins: null,
+			boxes: null,
+			whiskers: null,
+			outliers: null
+		},
+		scale: {
+			violin: {
+				slider: null,
+				reset: null
+			},
+			box: {
+				slider: null,
+				reset: null
+			}
+		},
+		violin_n_bins: {
+			slider: null,
+			reset: null,
+			reset_all: null
+		}
+	}
 }
 // Set prototype chain
 Object.setPrototypeOf(boxvio_chart_wrapper.prototype, d3_chart_wrapper.prototype)
 
 /**
- * Query the data given a key template
- * @param {string[]} key_tpl the key template. Parts will be matched,
- * `null` counts as wildcard
- * @return {{
- *  key: string[],
- *  values: number[],
- *  metrics: {
- *      max: number,
- *      upper_fence: number,
- *      quartile3: number,
- *      median: number,
- *      mean: number,
- *      iqr: number,
- *      quartile1: number,
- *      lower_fence: number,
- *      min: number
- *  },
- *  outliers: number[],
- *  extent: [number, number]
- * }[]} the filtered data
+ * Compute starting points (in plot x-coordinates) for the different
+ * key2s. There we will draw the key2 labels and separating line
+ * @returns {{[key2: string]: number}} the starting position for each key2
  */
-boxvio_chart_wrapper.prototype._query_data = function (key_tpl) {
-	if (key_tpl.length !== this._key_size) {
-		throw new Error("Key template is of different size than the plot keys")
+boxvio_chart_wrapper.prototype._compute_key2_start_x = function () {
+	const positions = {}
+
+	const key_tpls = this._kdm.get_key_templates(2)
+
+	let current_x = 0
+	for (const key_tpl of key_tpls) {
+		const queried_data = this._kdm.query(key_tpl)
+		positions[key_tpl[key_tpl.length-2]] = current_x
+		// Increase current_x
+		current_x += d3.sum(KEY2_MARGIN) + this._chart.violin_bandwidth*queried_data.length
 	}
-	return this._data.filter((ele) => {
-		const key = ele.key
-		for (let i = 0; i < key.length; i++) {
-			if (key_tpl[i] && key_tpl[i] !== key[i]) {
-				return false
-			}
-		}
-		return true
-	})
+
+	return positions
 }
 
 /**
- * Get key templates up to a key number
- * @param {number} i the key number. If 1, all existing keys
- *        will be returned. If 2, all existing keys with a wildcard in
- *        the last component will be returned. If 3, all existing keys
- *        with a wildcard in the last and second-to-last component will
- *        be returned.
- * @returns {string[][]} the templates
+ * Compute starting points (in plot x-coordinates) for the datum (each population)
+ * @returns {number[]} the starting position for each datum
  */
-boxvio_chart_wrapper.prototype._get_key_templates = function (i) {
-	if (i < 1 || i > this._key_size) {
-		throw new Error(`Invalid key number ${i}`)
+boxvio_chart_wrapper.prototype._compute_datum_start_x = function () {
+	if (this._kdm.key_size === 1) {
+		return this._ids.map((id) => this._chart.xscale(id))
 	}
-	// Convert to real index
-	i = this._key_size - i
-	const templates_wd = this._data.map((ele) => {
-		return deepcopy(ele.key.slice(0,i+1)).concat(Array(this._key_size-i-1).fill(null))
-	})
-	if (!templates_wd.length) return templates_wd
-	// Remove duplicates
-	const templates = [templates_wd[0]]
-	let tmp_template = templates_wd[0]
-	for (const template of templates_wd.slice(1)) {
-		if (!array_equal(tmp_template, template)) {
-			templates.push(template)
-			tmp_template = template
+	// Key size is 2 (for now. Maybe in the future, greater than 2)
+	const datum_start_x = []
+	// Start here for the first key2
+	let current_x = KEY2_MARGIN[1]
+	let current_key2 = this._data[0].key[this._kdm.key_size-2]
+	for (const datum of this._data) {
+		const key2 = datum.key[this._kdm.key_size-2]
+		if (current_key2 !== key2) {
+			current_key2 = key2
+			// Add space for the key2 margin
+			current_x += d3.sum(KEY2_MARGIN)
 		}
+		datum_start_x.push(current_x)
+		current_x += this._chart.violin_bandwidth
 	}
-	return templates
-}
-
-/**
- * Get the possible values of the next key component, given a partial key.
- * E.g., if there are 4 components, and you provide the two leftmost ones
- * in the partial key, possible values for the third leftmost one will be
- * given
- * @param {string[]} pkey partial key
- * @returns {string[]} possible values for the next key component
- */
-boxvio_chart_wrapper.prototype._get_next_key_component_values = function (pkey) {
-	const psize = pkey.length
-	if (psize >= this._key_size) {
-		throw new Error(`Input key ${pkey} is longer than the data keys`)
-	}
-	const key_tpl = pkey.concat(Array(this._key_size-psize).fill(null))
-	const values_wd = this._query_data(key_tpl).map((ele) => ele.key[psize])
-	if (!values_wd.length) return values_wd
-	const values = [values_wd[0]]
-	let current_value = values_wd[0]
-	for (const value of values_wd.slice(1)) {
-		if (value !== current_value) {
-			values.push(value)
-			current_value = value
-		}
-	}
-	return values
-}
-
-/**
- * Get the index of a key
- * @param {string[]} key the key
- * @returns the index of the key
- */
-boxvio_chart_wrapper.prototype.get_index_of_key = function (key) {
-	const i = this._data.findIndex((ele) => ele.key.join() === key.join())
-	if (i === -1) {
-		throw new Error(`Key ${key} was not found in data`)
-	}
-	return i
+	return datum_start_x
 }
 
 /**
@@ -489,14 +526,18 @@ boxvio_chart_wrapper.prototype.set_box_scale = function (scale) {
 boxvio_chart_wrapper.prototype.render_plot = function () {
 	d3_chart_wrapper.prototype.render_plot.call(this)
 
-	if (this._overflow) {
-		this.svg.attr('width', null)
-		this.svg.attr('height', '500px')
-		this.plot_container.style = "overflow: auto;"
-	}
-
 	// Set viewBox of svg
 	this.svg.attr('viewBox', `0 0 ${this._full_width} ${this._full_height}`)
+
+	// Hide tooltip when clicking in SVG or plot_container
+	this.svg.on('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
+	this.plot_container.addEventListener('click', (e) => {
+		e.stopPropagation()
+		this._hide_tooltip()
+	})
 
 	// Root g tag
 	this._graphics.root_g = this.svg.append('g')
@@ -504,7 +545,7 @@ boxvio_chart_wrapper.prototype.render_plot = function () {
 
 	this._render_axis()
 	this._render_ygrid()
-	if (this._key_size > 1) {
+	if (this._kdm.key_size > 1) {
 		this._render_key2_dividers()
 	}
 	this._render_violins()
@@ -527,6 +568,17 @@ boxvio_chart_wrapper.prototype._render_axis = function () {
 	const xaxwl_g = this._graphics.xaxwl_g
 	this._graphics.xaxis_g = xaxwl_g.append('g')
 		.call(this._chart.xaxis)
+	// If we have key2s, relocate the ticks at their desired positions
+	// to leave space for the key2 labels and separators
+	if (this._kdm.key_size > 1) {
+		const half_bandwidth = this._chart.violin_bandwidth/2
+		this._graphics.xaxis_g.selectAll('g.tick')
+			.attr(
+				'transform',
+				(_, i) => `translate(${this._chart.datum_start_x[i]+half_bandwidth},0)`
+			)
+	}
+	// Apply the xticklabel angle
 	this.apply_xticklabel_angle()
 	// Render X axis label
 	xaxwl_g.append('text')
@@ -649,12 +701,12 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 	this._graphics.key2_dividers_g = this._graphics.root_g.append('g')
 	const dividers_g = this._graphics.key2_dividers_g
 	const color = 'gray'
-	const key_tpls = this._get_key_templates(2)
 
-	let i = 0;
-	for (const [index, key_tpl] of key_tpls.entries()) {
-		const queried_data = this._query_data(key_tpl)
-		const x = this._chart.xscale(this._key_strings[i])
+	for (const [index, key2] of this._key2_values.entries()) {
+		const x = this._chart.key2_start_x[key2]
+		const key2_label = key2.length > KEY2_LABEL_CHARACTER_LIMIT
+			? key2.substring(0, KEY2_LABEL_CHARACTER_LIMIT-3) + '...'
+			: key2
 		const divider_g = dividers_g.append('g')
 			.attr('transform', `translate(${x},0)`)
 		if (index !== 0) {
@@ -674,9 +726,7 @@ boxvio_chart_wrapper.prototype._render_key2_dividers = function () {
 			.attr('x', '-0.6em')  // This is the vertical axis now
 			.attr('font-size', '0.8em')
 			.attr('fill', color)
-			.text(key_tpl[key_tpl.length-2])
-		// Increase the index by the number of groups in the class
-		i += queried_data.length
+			.text(key2_label)
 	}
 }
 
@@ -697,9 +747,14 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 		this._graphics.violins_g = g.append('g')
 	}
 	const violins_g = this._graphics.violins_g
-	for (const [i, key_string] of this._key_strings.entries()) {
+	for (let i = 0; i < this._data.length; i++) {
 		this._graphics.violins[i] = violins_g.append('g')
-			.attr('transform', `translate(${chart.xscale(key_string)},0)`)
+			.classed('clickable', true)
+			.attr('transform', `translate(${chart.datum_start_x[i]},0)`)
+		this._graphics.violins[i].on('click', (e) => {
+			e.stopPropagation()
+			this.set_selected_index(i)
+		})
 		this._render_violin(i)
 	}
 
@@ -715,7 +770,7 @@ boxvio_chart_wrapper.prototype._render_violins = function (is_g_ready=false) {
 boxvio_chart_wrapper.prototype._render_violin = function (i) {
 	const bins = this._chart.bins[i]
 	const violin_scale = this._chart.violin_scale.value
-	const bandwidth = this._chart.xscale.bandwidth()
+	const bandwidth = this._chart.violin_bandwidth
 	const yscale = this._chart.yscale
 	const violin_curve = this._chart.violin_curve
 
@@ -762,7 +817,7 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		this._graphics.boxes_g = g.append('g')
 	}
 	const boxes = this._graphics.boxes_g
-	const bandwidth = chart.xscale.bandwidth()
+	const bandwidth = chart.violin_bandwidth
 	const box_width = this._chart.box_scale.value * bandwidth
 
 	const whiskers_lw = 2
@@ -772,12 +827,15 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 	for (const [i, ele] of this._data.entries()) {
 
 		const metrics = ele.metrics
-		const color = this._colors[i]
-		const key = ele.key
+		const color = ele.color
 
 		const group_box = boxes.append('g')
-			.attr('transform', `translate(${chart.xscale(join_key(key)) + bandwidth / 2},0)`)
-
+			.classed('clickable', true)
+			.attr('transform', `translate(${chart.datum_start_x[i] + bandwidth / 2},0)`)
+		group_box.on('click', (e) => {
+			e.stopPropagation()
+			this.set_selected_index(i)
+		})
 		// Draw outliers
 		this._graphics.outliers[i] = group_box.append('g')
 		const outliers = this._graphics.outliers[i]
@@ -791,7 +849,8 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 		}
 
 		// Draw whiskers
-		const whiskers = group_box.append('g')
+		this._graphics.whiskers[i] = group_box.append('g')
+		const whiskers = this._graphics.whiskers[i]
 		whiskers.append('line')  // vertical line
 			.attr('x1', 0)
 			.attr('y1', chart.yscale(metrics.lower_fence))
@@ -839,32 +898,72 @@ boxvio_chart_wrapper.prototype._render_boxes = function (is_g_ready=false) {
 			.style('fill', 'white')
 			.attr('stroke', 'black')
 			.attr('stroke-width', 2)
+			.classed('clickable', true)
 		// Circle events for tooltip
-		this.tooltip_active = null;
 		circle.on('click', (e) => {
 			e.stopPropagation()
+			this.set_selected_index(i)
 
-			// already displayed. Hide
-				if (this.tooltip_active==i) {
-					this._graphics.tooltip_div.style('display', 'none')
-					this.tooltip_active = null
+			// already displayed. (Hide) -> do nothing
+				if (this._chart.tooltip_active == i) {
+					// this._hide_tooltip()
 					return
 				}
 
 			// hover set and fix
-				this.tooltip_hover(i)
-				this._graphics.tooltip_div.style('display', null)
-				this.tooltip_active = i
+				this.tooltip_show(i)
+				this._graphics.tooltip_div.style('display', 'flex')
+				this._chart.tooltip_active = i
 
 			// old
 			// this._graphics.tooltip_div.style('display', null)
-			// this.tooltip_hover(i)
+			// this.tooltip_show(i)
 		})
 		// .on('mouseout', () => {
 		// 	this._graphics.tooltip_div.style('display', 'none')
 		// })
 	}
 
+}
+
+/**
+ * Set the selected index by the user
+ * @function
+ * @param {number} i the index
+ * @name boxvio_chart_wrapper#set_selected_index
+ */
+boxvio_chart_wrapper.prototype.set_selected_index = function (i) {
+	if (this._controls.selected_index === i) {
+		return
+	}
+	this._controls.selected_index = i
+	this._set_specific_controls_section_title(i)
+	// Tell specific controls that the selection has changed
+	this._controls.violin_n_bins.slider.dispatchEvent(GROUP_CHANGE_EVENT)
+}
+
+/**
+ * Set the title for the specific section of the controls
+ * @function
+ * @private
+ * @param {number} selected_index the selected group index
+ * @name boxvio_chart_wrapper#_set_specific_controls_section_title
+ */
+boxvio_chart_wrapper.prototype._set_specific_controls_section_title = function (selected_index) {
+	const datum = this._data[selected_index]
+	this._controls.sections.specific.title.innerText =
+		`${tstring.settings_for || 'Settings for'} ${datum.key.join(', ')} (${datum.id})`
+}
+
+/**
+ * Hide the tooltip
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_hide_tooltip
+ */
+boxvio_chart_wrapper.prototype._hide_tooltip = function () {
+	this._graphics.tooltip_div.style('display', 'none')
+	this._chart.tooltip_active = null
 }
 
 /**
@@ -881,35 +980,93 @@ boxvio_chart_wrapper.prototype._render_tooltip = function () {
 	})
 	insert_after(tooltip_element, this.plot_container)
 	this._graphics.tooltip_div = d3.select(tooltip_element)
-	const tooltip_div = this._graphics.tooltip_div
-	for (const [k, v] of Object.entries(TOOLTIP_STYLE)) {
-		tooltip_div.style(k, v)
-	}
+	// Hide tooltip in the beginning
+	this._hide_tooltip()
+	const tooltip_metrics = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metrics`,
+		class_name		: 'tooltip_metrics_div',
+		parent			: tooltip_element
+	})
+	const tooltip_metric_names = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metric_names_div`,
+		class_name		: 'tooltip_metric_names_div',
+		parent			: tooltip_metrics
+	})
+	const tooltip_metric_values = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_tooltip_metric_values_div`,
+		class_name		: 'tooltip_metric_values_div',
+		parent			: tooltip_metrics
+	})
 }
 
 /**
- * Set the tooltip to visible when we hover over
+ * Set the tooltip to visible
  * @param {number} i index of data
  * @function
- * @name boxvio_chart_wrapper#tooltip_hover
+ * @name boxvio_chart_wrapper#tooltip_show
  */
-boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
-	const decimals = 3
-	const key = this._data[i].key
-	const values = this._data[i].values
-	const metrics = this._data[i].metrics
-	const tooltip_text = `<b>${key.join(', ')}</b>`
-		+ '<span style="font-size: smaller;">'
-		+ `<br>Datapoints: ${values.length}`
-		+ `<br>Mean: ${metrics.mean.toFixed(decimals)}`
-		+ `<br>Max: ${metrics.max.toFixed(decimals)}`
-		+ `<br>Q3: ${metrics.quartile3.toFixed(decimals)}`
-		+ `<br>Median: ${metrics.median.toFixed(decimals)}`
-		+ `<br>Q1: ${metrics.quartile1.toFixed(decimals)}`
-		+ `<br>Min: ${metrics.min.toFixed(decimals)}`
-		+ '</span>'
-	this._graphics.tooltip_div
-		.html(tooltip_text)
+boxvio_chart_wrapper.prototype.tooltip_show = function (i) {
+
+	const self = this
+
+	const decimals = 2
+	const values		= self._data[i].values
+	const metrics		= self._data[i].metrics
+	// const tooltip_text = `<b>${key.join(', ')}</b>`
+
+	const metric_names = `${tstring.datapoints || 'Datapoints'}`
+		+ `<br>${tstring.mean || 'Mean'}`
+		+ `<br>${tstring.max || 'Maximum'}`
+		+ (self._whiskers_quantiles
+			? `<br>${tstring.quantile}-${self._whiskers_quantiles[1]}`
+			: '')
+		+ `<br>${tstring.quantile || 'Quantile'}-75`
+		+ `<br>${tstring.median || 'Median'}`
+		+ `<br>${tstring.quantile || 'Quantile'}-25`
+		+ (self._whiskers_quantiles
+			? `<br>${tstring.quantile}-${self._whiskers_quantiles[0]}`
+			: '')
+		+ `<br>${tstring.min || 'Minimum'}`
+	const metric_values = `${values.length}`
+		+ `<br>${metrics.mean.toFixed(decimals)}`
+		+ `<br>${metrics.max.toFixed(decimals)}`
+		+ (self._whiskers_quantiles
+			? `<br>${metrics.upper_fence.toFixed(decimals)}`
+			: '')
+		+ `<br>${metrics.quartile3.toFixed(decimals)}`
+		+ `<br>${metrics.median.toFixed(decimals)}`
+		+ `<br>${metrics.quartile1.toFixed(decimals)}`
+		+ (self._whiskers_quantiles
+			? `<br>${metrics.lower_fence.toFixed(decimals)}`
+			: '')
+		+ `<br>${metrics.min.toFixed(decimals)}`
+	self._graphics.tooltip_div.select('div.tooltip_metric_names_div')
+		.html(metric_names)
+	self._graphics.tooltip_div.select('div.tooltip_metric_values_div')
+		.html(metric_values)
+	
+	// Call the tooltip callback
+	if (self._tooltip_callback) {
+		const options = {}
+		for (const attr_name of this._tooltip_callback_options_attributes) {
+			options[attr_name] = this._data[i][attr_name]
+		}
+		self._tooltip_callback(options)
+			.then((ele) => {
+				const tooltip_element = self._graphics.tooltip_div.node()
+				ele.id = `${self.id_string()}_tooltip_callback_div`
+				ele.classList.add('tooltip_callback_div')
+				const last_child = tooltip_element.lastChild
+				// If the last child is already a callback, delete it!
+				if (last_child.classList.contains('tooltip_callback_div')) {
+					last_child.remove()
+				}
+				tooltip_element.appendChild(ele)
+			})
+	}
 }
 
 /**
@@ -921,11 +1078,22 @@ boxvio_chart_wrapper.prototype.tooltip_hover = function (i) {
 boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	d3_chart_wrapper.prototype.render_control_panel.call(this)
 
+	// GENRAL SETTINGS
+	this._controls.sections.general.title = common.create_dom_element({
+		element_type	: 'div',
+		text_content	: tstring.general_settings || 'General settings',
+		class_name		: 'control_panel_toggle control_panel_toggle_section',
+		parent			: this.controls_content_container
+	})
+	this._controls.sections.general.content_container = common.create_dom_element({
+		element_type	: 'div',
+		parent			: this.controls_content_container
+	})
 	// TODO: refactor the first three (together)
 	const upper_container = common.create_dom_element({
 		element_type	: 'div',
-		class_name		: 'control_panel_item control_panel',
-		parent			: this.controls_container
+		class_name		: 'control_panel_item controls_block',
+		parent			: this._controls.sections.general.content_container
 		// style			: {
 		// 	'display': 'flex',
 		// 	'direction': 'flex-row',
@@ -938,9 +1106,22 @@ boxvio_chart_wrapper.prototype.render_control_panel = function () {
 	this._render_violin_curve_selector(upper_container)
 	this._render_checkboxes()
 	this._render_scale_sliders()
-	this._render_key_selects()
+
+	// PARTICULAR SETTINGS
+	this._controls.sections.specific.title = common.create_dom_element({
+		element_type	: 'div',
+		class_name		: 'control_panel_toggle control_panel_toggle_section',
+		parent			: this.controls_content_container
+	})
+	this._set_specific_controls_section_title(this._controls.selected_index)
+	this._controls.sections.specific.content_container = common.create_dom_element({
+		element_type	: 'div',
+		parent			: this.controls_content_container
+	})
 	this._render_n_bins_control()
 
+	// Define the control panel logic
+	this._control_panel_logic()
 }
 
 /**
@@ -973,6 +1154,7 @@ boxvio_chart_wrapper.prototype._render_grid_select = function (container) {
 		parent: select_container,
 		// TODO: add ARIA attributes?
 	})
+	this._controls.grid_select = grid_select
 	common.create_dom_element({
 		element_type: 'option',
 		value: 'None',
@@ -990,10 +1172,6 @@ boxvio_chart_wrapper.prototype._render_grid_select = function (container) {
 		value: 'Major + Minor',
 		text_content: tstring.major_minor || 'Major + Minor',
 		parent: grid_select,
-	})
-	grid_select.addEventListener('change', () => {
-		const mode = grid_select.value
-		this.apply_ygrid_mode(mode)
 	})
 }
 
@@ -1028,13 +1206,10 @@ boxvio_chart_wrapper.prototype._render_xticklabel_angle_slider = function (conta
 		id: xticklabel_angle_slider_id,
 		parent: slider_container,
 	})
+	this._controls.xticklabel_angle_slider = xticklabel_angle_slider
 	xticklabel_angle_slider.setAttribute('min', 0)
 	xticklabel_angle_slider.setAttribute('max', 90)
 	xticklabel_angle_slider.value = this._chart.xticklabel_angle
-	xticklabel_angle_slider.addEventListener('input', () => {
-		this._chart.xticklabel_angle = Number(xticklabel_angle_slider.value)
-		this.apply_xticklabel_angle()
-	})
 }
 
 /**
@@ -1067,6 +1242,7 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (contain
 		parent: select_container,
 		// TODO: add ARIA attributes?
 	})
+	this._controls.curve_select = curve_select
 	for (const curve_name of this._chart.supported_curves) {
 		common.create_dom_element({
 			element_type: 'option',
@@ -1075,9 +1251,6 @@ boxvio_chart_wrapper.prototype._render_violin_curve_selector = function (contain
 			parent: curve_select,
 		})
 	}
-	curve_select.addEventListener('change', () => {
-		this.set_violin_curve(curve_select.value)
-	})
 }
 
 /**
@@ -1091,7 +1264,7 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 	const container_div = common.create_dom_element({
 		element_type	: 'div',
 		class_name		: 'control_panel_item checkboxes',
-		parent			: this.controls_container
+		parent			: this._controls.sections.general.content_container
 		// style: {
 		// 	'display': 'flex',
 		// 	'direction': 'flex-row',
@@ -1099,6 +1272,13 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		// 	'align-items': 'center',
 		// 	'margin-top': DEFAULT_MARGIN,
 		// },
+	})
+
+	// Show text
+	const show_text_div = common.create_dom_element({
+		element_type: 'div',
+		text_content: `${tstring.show || "Show"}:`,
+		parent: container_div,
 	})
 
 	// Show key 2
@@ -1115,18 +1295,14 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_key2_div,
 	})
 	show_key2_checkbox.checked = true
+	this._controls.show_checkboxes.key2 = show_key2_checkbox
 	/** @type {Element} */
 	const show_key2_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: (tstring.show || 'Show')
-					  + ' '
-					  + this._key_titles[this._key_size-2].toLowerCase(),
+		text_content: this._key_titles[this._kdm.key_size-2],
 		parent: show_key2_div,
 	})
 	show_key2_label.setAttribute('for', show_key2_checkbox_id)
-	show_key2_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.key2_dividers_g)
-	})
 
 	// Show violins
 	const show_violins_div = common.create_dom_element({
@@ -1142,16 +1318,14 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_violins_div,
 	})
 	show_violins_checkbox.checked = true
+	this._controls.show_checkboxes.violins = show_violins_checkbox
 	/** @type {Element} */
 	const show_violins_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_violins || 'Show violins',
+		text_content: tstring.violins || 'Violins',
 		parent: show_violins_div,
 	})
 	show_violins_label.setAttribute('for', show_violins_checkbox_id)
-	show_violins_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.violins_g)
-	})
 
 	// Show boxes
 	const show_boxes_div = common.create_dom_element({
@@ -1167,18 +1341,37 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_boxes_div,
 	})
 	show_boxes_checkbox.checked = true
+	this._controls.show_checkboxes.boxes = show_boxes_checkbox
 	/** @type {Element} */
 	const show_boxes_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_boxes || 'Show boxes',
+		text_content: tstring.boxes || 'Boxes',
 		parent: show_boxes_div,
 	})
 	show_boxes_label.setAttribute('for', show_boxes_checkbox_id)
-	show_boxes_checkbox.addEventListener('change', () => {
-		toggle_visibility(this._graphics.boxes_g)
-		// (DISABLED) Disable the checkbox for outliers (defined below)
-		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+
+	// Show whiskers
+	const show_whiskers_div = common.create_dom_element({
+		element_type: 'div',
+		parent: container_div,
 	})
+	const show_whiskers_checkbox_id = `${this.id_string()}_show_whiskers_checkbox`
+	/** @type {Element} */
+	const show_whiskers_checkbox = common.create_dom_element({
+		element_type: 'input',
+		type: 'checkbox',
+		id: show_whiskers_checkbox_id,
+		parent: show_whiskers_div,
+	})
+	show_whiskers_checkbox.checked = true
+	this._controls.show_checkboxes.whiskers = show_whiskers_checkbox
+	/** @type {Element} */
+	const show_whiskers_label = common.create_dom_element({
+		element_type: 'label',
+		text_content: tstring.whiskers || 'Whiskers',
+		parent: show_whiskers_div,
+	})
+	show_whiskers_label.setAttribute('for', show_whiskers_checkbox_id)
 
 	// Show outliers
 	const show_outliers_div = common.create_dom_element({
@@ -1194,18 +1387,14 @@ boxvio_chart_wrapper.prototype._render_checkboxes = function () {
 		parent: show_outliers_div,
 	})
 	show_outliers_checkbox.checked = true
+	this._controls.show_checkboxes.outliers = show_outliers_checkbox
 	/** @type {Element} */
 	const show_outliers_label = common.create_dom_element({
 		element_type: 'label',
-		text_content: tstring.show_outliers || 'Show outliers',
+		text_content: tstring.outliers || 'Outliers',
 		parent: show_outliers_div,
 	})
 	show_outliers_label.setAttribute('for', show_outliers_checkbox_id)
-	show_outliers_checkbox.addEventListener('change', () => {
-		for (const group of this._graphics.outliers) {
-			toggle_visibility(group)
-		}
-	})
 }
 
 /**
@@ -1219,7 +1408,7 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	// Container div
 	const container_div = common.create_dom_element({
 		element_type	: 'div',
-		parent			: this.controls_container,
+		parent			: this._controls.sections.general.content_container,
 		class_name		: 'control_panel_item scale_sliders',
 		// style			: {
 		// 	'display': 'flex',
@@ -1259,20 +1448,13 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	violin_scale_slider.setAttribute('max', 1)
 	violin_scale_slider.setAttribute('step', 0.05)
 	violin_scale_slider.value = this._chart.violin_scale.initial
-	violin_scale_slider.addEventListener('input', () => {
-		this.set_violin_scale(Number(violin_scale_slider.value))
-	})
-	/** @type {Element} */
-	const violin_scale_slider_reset = common.create_dom_element({
+	this._controls.scale.violin.slider = violin_scale_slider
+	this._controls.scale.violin.reset = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset || 'Reset',
 		parent			: violin_container_div
-	})
-	violin_scale_slider_reset.addEventListener('click', () => {
-		violin_scale_slider.value = this._chart.violin_scale.initial
-		this.set_violin_scale(Number(violin_scale_slider.value))
 	})
 
 	// Box scale
@@ -1305,104 +1487,14 @@ boxvio_chart_wrapper.prototype._render_scale_sliders = function () {
 	box_scale_slider.setAttribute('max', 1)
 	box_scale_slider.setAttribute('step', 0.05)
 	box_scale_slider.value = this._chart.box_scale.initial
-	box_scale_slider.addEventListener('input', () => {
-		this.set_box_scale(Number(box_scale_slider.value))
-	})
-	/** @type {Element} */
-	const box_scale_slider_reset = common.create_dom_element({
+	this._controls.scale.box.slider = box_scale_slider
+	this._controls.scale.box.reset = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset || 'Reset',
 		parent			: box_container_div,
 	})
-	box_scale_slider_reset.addEventListener('click', () => {
-		box_scale_slider.value = this._chart.box_scale.initial
-		this.set_box_scale(Number(box_scale_slider.value))
-	})
-}
-
-/**
- * Render the key select elements
- * @function
- * @private
- * @name boxvio_chart_wrapper#_render_key_select
- */
-boxvio_chart_wrapper.prototype._render_key_selects = function () {
-	const container = common.create_dom_element({
-		element_type	: 'div',
-		class_name		: 'control_panel_item key_selects',
-		parent			: this.controls_container
-		// style			: {
-		// 	'display': 'flex',
-		// 	'align-items': 'center',
-		// 	'gap': DEFAULT_FLEX_GAP_BIG,
-		// 	'margin-top': DEFAULT_MARGIN_BIG,
-		// },
-	})
-	// Render selects for the different key components
-	const key_selects = []
-	/**
-	 * Inner function for populating a key select tag
-	 * Previous key tags must be populated already
-	 * @param {number} i index of the key select
-	 */
-	const populate_key_select = (i) => {
-		key_selects[i].replaceChildren()  // Delete existing children
-		const pkey = key_selects.slice(0, i).map((key_select) => key_select.value)
-		const values = this._get_next_key_component_values(pkey)
-		for (const value of values) {
-			common.create_dom_element({
-				element_type: 'option',
-				value: value,
-				text_content: value,
-				parent: key_selects[i],
-			})
-		}
-	}
-	for (let i = 0; i < this._key_size; i++) {
-		const select_container = common.create_dom_element({
-			element_type: 'div',
-			parent: container,
-			// style: {
-			// 	'display': 'flex',
-			// 	'gap': DEFAULT_FLEX_GAP,
-			// },
-		})
-		const select_id = `${this.id_string()}_key${this._key_size-i}_select`
-		const label = common.create_dom_element({
-			element_type: 'label',
-			text_content: this._key_titles[i],
-			parent: select_container,
-			// style: {'margin-block': 'auto'},
-		})
-		label.setAttribute('for', select_id)
-		const key_select = common.create_dom_element({
-			element_type: 'select',
-			id: select_id,
-			parent: select_container,
-		})
-		key_selects.push(key_select)
-		populate_key_select(i)
-		key_select.addEventListener('change', () => {
-			// Repopulate the next key selects
-			for (let j = i+1; j < key_selects.length; j++) {
-				populate_key_select(j)
-			}
-			// Update the selected index
-			this._controls.selected_index = this.get_index_of_key(
-				key_selects.map((ks) => ks.value)
-			)
-
-			// Dispatch key change event to all listeners
-			const listeners
-				= this.controls_container.getElementsByClassName(KEY_CHANGE_LISTENER_CLASS_NAME)
-			for (const ele of listeners) {
-				ele.dispatchEvent(KEY_CHANGE_EVENT)
-			}
-
-		})
-	}
 }
 
 /**
@@ -1414,7 +1506,7 @@ boxvio_chart_wrapper.prototype._render_key_selects = function () {
 boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	const container = common.create_dom_element({
 		element_type	: 'div',
-		parent			: this.controls_container,
+		parent			: this._controls.sections.specific.content_container,
 		class_name		: 'control_panel_item n_bins_control'
 		// style			: {
 		// 	'display': 'flex',
@@ -1435,49 +1527,127 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	const violin_n_bins_slider = common.create_dom_element({
 		element_type	: 'input',
 		type			: 'range',
-		class_name		: KEY_CHANGE_LISTENER_CLASS_NAME,
 		id				: violin_n_bins_slider_id,
 		parent			: container
 	})
+	this._controls.violin_n_bins.slider = violin_n_bins_slider
 	violin_n_bins_slider.setAttribute('min', 2)
-	const reset = () => {
-		violin_n_bins_slider.setAttribute(
-			'max',
-			this._controls.max_bins_multiplier
-				* this._chart.n_bins[this._controls.selected_index].initial
-		)
-		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
-	}
-	reset()
-	violin_n_bins_slider.addEventListener('input', () => {
-		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
-	})
-	violin_n_bins_slider.addEventListener(KEY_CHANGE_EVENT_NAME, () => {
-		reset()
-	})
+	violin_n_bins_slider.setAttribute(
+		'max',
+		this._controls.max_bins_multiplier
+			* this._chart.n_bins[this._controls.selected_index].initial
+	)
+	violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
 
 	// Reset n bins
-	const violin_n_bins_slider_reset = common.create_dom_element({
+	this._controls.violin_n_bins.reset = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset || 'Reset',
 		parent			: container
 	})
-	violin_n_bins_slider_reset.addEventListener('click', () => {
-		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
-		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
-	})
 
 	// Reset all n bins
-	const violin_all_n_bins_slider_reset = common.create_dom_element({
+	this._controls.violin_n_bins.reset_all = common.create_dom_element({
 		element_type	: 'button',
 		type			: 'button',
 		class_name		: 'small',
 		text_content	: tstring.reset_all_violins || 'Reset all violins',
 		parent			: container
 	})
-	violin_all_n_bins_slider_reset.addEventListener('click', () => {
+}
+
+/**
+ * Defines control panel logic (change events and such)
+ * @function
+ * @private
+ * @name boxvio_chart_wrapper#_control_panel_logic
+ */
+boxvio_chart_wrapper.prototype._control_panel_logic = function () {
+	// General section toggle
+	this._controls.sections.general.title.addEventListener('click', () => {
+		this._controls.sections.general.title.classList.toggle('opened')
+		this._controls.sections.general.content_container.classList.toggle('hide')
+	})
+
+	// Grid mode select
+	this._controls.grid_select.addEventListener('change', () => {
+		const mode = this._controls.grid_select.value
+		this.apply_ygrid_mode(mode)
+	})
+	// X-tick label angle slider
+	this._controls.xticklabel_angle_slider.addEventListener('input', () => {
+		this._chart.xticklabel_angle = Number(this._controls.xticklabel_angle_slider.value)
+		this.apply_xticklabel_angle()
+	})
+	// Violin curve selector
+	this._controls.curve_select.addEventListener('change', () => {
+		this.set_violin_curve(this._controls.curve_select.value)
+	})
+	// Show checkboxes
+	this._controls.show_checkboxes.key2.addEventListener('change', () => {
+		toggle_visibility(this._graphics.key2_dividers_g)
+	})
+	this._controls.show_checkboxes.violins.addEventListener('change', () => {
+		toggle_visibility(this._graphics.violins_g)
+	})
+	this._controls.show_checkboxes.boxes.addEventListener('change', () => {
+		toggle_visibility(this._graphics.boxes_g)
+		// (DISABLED) Disable the checkbox for outliers (defined below)
+		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+	})
+	this._controls.show_checkboxes.whiskers.addEventListener('change', () => {
+		for (const whisker of this._graphics.whiskers) {
+			toggle_visibility(whisker)
+		}
+		// (DISABLED) Disable the checkbox for outliers (defined below)
+		// show_outliers_checkbox.disabled = !show_boxes_checkbox.checked
+	})
+	this._controls.show_checkboxes.outliers.addEventListener('change', () => {
+		for (const group of this._graphics.outliers) {
+			toggle_visibility(group)
+		}
+	})
+	// Scale controls
+	this._controls.scale.violin.slider.addEventListener('input', () => {
+		this.set_violin_scale(Number(this._controls.scale.violin.slider.value))
+	})
+	this._controls.scale.violin.reset.addEventListener('click', () => {
+		this._controls.scale.violin.slider.value = this._chart.violin_scale.initial
+		this.set_violin_scale(Number(this._controls.scale.violin.slider.value))
+	})
+	this._controls.scale.box.slider.addEventListener('input', () => {
+		this.set_box_scale(Number(this._controls.scale.box.slider.value))
+	})
+	this._controls.scale.box.reset.addEventListener('click', () => {
+		this._controls.scale.box.slider.value = this._chart.box_scale.initial
+		this.set_box_scale(Number(this._controls.scale.box.slider.value))
+	})
+
+	// Particular section toggle
+	this._controls.sections.specific.title.addEventListener('click', () => {
+		this._controls.sections.specific.title.classList.toggle('opened')
+		this._controls.sections.specific.content_container.classList.toggle('hide')
+	})
+	// Violin n bins controls
+	const violin_n_bins_slider = this._controls.violin_n_bins.slider
+	violin_n_bins_slider.addEventListener('input', () => {
+		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
+	})
+	violin_n_bins_slider.addEventListener(GROUP_CHANGE_EVENT_NAME, () => {
+		violin_n_bins_slider.setAttribute(
+			'max',
+			this._controls.max_bins_multiplier
+				* this._chart.n_bins[this._controls.selected_index].initial
+		)
+		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].value
+	})
+	this._controls.violin_n_bins.reset.addEventListener('click', () => {
+		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
+		this.set_n_bins(this._controls.selected_index, Number(violin_n_bins_slider.value))
+	})
+	this._controls.violin_n_bins.reset_all.addEventListener('click', () => {
 		// Update the value of the slider
 		violin_n_bins_slider.value = this._chart.n_bins[this._controls.selected_index].initial
 		for (const [i, n_bins] of this._chart.n_bins.entries()) {
@@ -1486,70 +1656,10 @@ boxvio_chart_wrapper.prototype._render_n_bins_control = function () {
 	})
 }
 
-
 // HELPER FUNCTIONS
 
 /**
- * Compute (boxplot) metrics for the data
- * @param {number[]} values the data values
- * @returns {{
- *  max: number,
- *  upper_fence: number,
- *  quartile3: number,
- *  median: number,
- *  mean: number,
- *  iqr: number,
- *  quartile1: number,
- *  lower_fence: number,
- *  min: number,
- * }}
- */
-function calc_metrics(values) {
-	const metrics = {
-		max: null,
-		upper_fence: null,
-		quartile3: null,
-		median: null,
-		mean: null,
-		iqr: null,
-		quartile1: null,
-		lower_fence: null,
-		min: null,
-	}
-
-	metrics.min = d3.min(values)
-	metrics.quartile1 = d3.quantile(values, 0.25)
-	metrics.median = d3.median(values)
-	metrics.mean = d3.mean(values)
-	metrics.quartile3 = d3.quantile(values, 0.75)
-	metrics.max = d3.max(values)
-	metrics.iqr = metrics.quartile3 - metrics.quartile1
-	metrics.lower_fence = metrics.quartile1 - 1.5 * metrics.iqr
-	metrics.upper_fence = metrics.quartile3 + 1.5 * metrics.iqr
-
-	return metrics
-}
-
-/**
- * Splitter string
+ * Splitter string (EMERITUS)
  * @type {string}
  */
 const SPLITTER = '_^PoT3sRanaCantora_'
-
-/**
- * Join key array into a string
- * @param {string[]} key the key
- * @returns {string} the join
- */
-function join_key(key) {
-	return key.join(SPLITTER)
-}
-
-/**
- * Split key string into array
- * @param {string} key the key join
- * @returns {string[]} the split key
- */
-function split_key(key) {
-	return key.split(SPLITTER)
-}

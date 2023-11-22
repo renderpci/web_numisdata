@@ -9,16 +9,53 @@
 		font-weight: 400;
 	}
 
+	.clickable {
+		cursor: pointer;
+	}
 
 	.plot_container {
-		outline: 1px solid #f2f0f0;
+		// outline: 1px solid #f2f0f0;
+	}
+
+	.control_panel_toggle {
+		margin-top: 1rem;
+		cursor: pointer;
+
+		&:after {
+			content: " ";
+			display: inline-block;
+			width: 1rem;
+			height: 1rem;
+			vertical-align: text-top;
+			background-image: url(../../assets/images/icon_arrow.svg);
+			background-repeat: no-repeat;
+			background-size: contain;
+			margin-left: 0.5rem;
+			margin-top: 0.25rem;
+		}
+
+		&.opened {
+			&:after {
+				transform: rotate(180deg);
+			}
+		}
+
+		&.control_panel_toggle_section {
+			margin-top: 0;
+			font-size: 1.1rem;
+			text-align: center;
+		}
 	}
 
 	.control_panel {
-		// background-color: #fffff7;
-		margin-bottom: 0.25rem;
+		padding-left: 1rem;
+	}
 
-		>.control_panel_item {
+	.control_panel_content {
+		// background-color: #fffff7;
+		// margin-bottom: 0.25rem;
+
+		.control_panel_item {
 			display: flex;
 			justify-content: space-between;
 			align-items: stretch;
@@ -26,8 +63,7 @@
 			padding: 0.5rem;
 			// background-color: #f8f8f8;
 
-			&.control_panel {
-
+			&.controls_block {
 				>div {
 					label {
 						display: block;
@@ -126,7 +162,7 @@
 	}
 
 	.download_chart_container {
-		margin-top: 1rem;
+		// margin-top: 1rem;
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
@@ -142,15 +178,79 @@
 
 
 	.tooltip_div {
-		background-color: rgb(249, 247, 247);
-		border-bottom-left-radius: 1rem;
-		border-bottom-right-radius: 1rem;
-		outline: 1px solid #f2f0f0;
-	}
 
-	svg {
-		circle {
-			cursor: pointer;
+		// border-bottom-left-radius: 1rem;
+		// border-bottom-right-radius: 1rem;
+		// outline: 1px solid #f2f0f0;
+		// padding-block: 0.7em;
+		// padding-inline: 0.7em;
+		// display: none;
+		margin-top: 0.8em;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 2em;
+
+		.tooltip_metrics_div {
+			background-color: rgb(249, 247, 247);
+			display: flex;
+			flex-direction: row;
+			padding: 1rem;
+
+			.tooltip_metric_values_div {
+				font-size: smaller;
+				padding-left: 1em;
+			}
+	
+			.tooltip_metric_names_div {
+				text-align: right;
+				font-size: smaller;
+				min-width: 10em;
+			}
+		}
+
+		.tooltip_callback_div {
+			border-top: none;
+			// margin-left: 2em;
+			background-color: #ffffff;
+			width: 90%;
+
+			.type_container {
+				margin-block: 0;
+
+				.type_info {
+					span.term {
+						display: block;
+					}
+					span.ref_type_material{
+						margin-right: 1em;
+					}
+					span.ref_type_denomination{
+						margin-right: 1em;
+					}
+				}
+
+				span.ref_type_equivalents {
+					align-self: end;
+				}
+
+				.coins_images_container {
+					.coins_images {
+						display: flex;
+						width: 100%;
+						padding-left: 0.5em;
+						a.image_link {
+							width: 50%;
+						}
+					}
+				}
+
+				.collection_auction {
+					span.ref_coins_auction {
+						align-self: flex-end;
+					}
+				}
+			}
 		}
 	}
+
 }//end .chart_wrapper

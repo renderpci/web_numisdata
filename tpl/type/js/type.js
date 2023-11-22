@@ -1,4 +1,4 @@
-/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields, data_manager, Promise */
+/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields_min, data_manager, Promise */
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -66,7 +66,7 @@ var type =  {
 						if (typeof type.result[0]!=="undefined") {
 
 							const row			= type.result[0]
-							const catalog_rows	= catalog.result[0] || null
+							const catalog_rows	= page.parse_catalog_data(catalog.result)[0] || null
 
 							// app property catalog with all catalog rows result
 								row.catalog = catalog_rows
@@ -180,12 +180,15 @@ var type =  {
 			})
 
 		// catalog call
+			const ar_fields = ["section_id","term","term_data","term_table","term_section_tipo","parents",
+							   'ref_mint_number', 'full_coins_reference_calculable', 'full_coins_reference_diameter_max',
+							   'full_coins_reference_weight', 'full_coins_reference_axis']
 			ar_calls.push({
 				id		: "catalog",
 				options	: {
 					dedalo_get				: 'records',
 					table					: "catalog",
-					ar_fields				: ["section_id","term","term_data","term_table","term_section_tipo","parents",'ref_mint_number'],
+					ar_fields				: ar_fields,
 					lang					: lang,
 					count					: false,
 					sql_filter				: "term_data='[\"" + parseInt(section_id) + "\"]' AND term_table='types'",
@@ -249,8 +252,8 @@ var type =  {
 
 
 			// render row
-				type_row_fields.caller	= self
-				const row_node			= type_row_fields.draw_item(row)
+				type_row_fields_min.type_row_fields.caller = self
+				const row_node = type_row_fields_min.type_row_fields.draw_item(row)
 
 
 			resolve(row_node)

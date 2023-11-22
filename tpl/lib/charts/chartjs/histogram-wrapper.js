@@ -388,7 +388,7 @@ histogram_wrapper.prototype.render_control_panel = function () {
 		element_type: 'input',
 		type: 'range',
 		value: this._n_bins_default,
-		parent: this.controls_container,
+		parent: this.controls_content_container,
 	})
 	slider.setAttribute('min', 1)
 	slider.setAttribute('max', this._max_bins_multiplier * this._n_bins_default)
@@ -403,7 +403,7 @@ histogram_wrapper.prototype.render_control_panel = function () {
 		element_type: 'button',
 		type: 'button',
 		text_content: 'Reset',
-		parent: this.controls_container,
+		parent: this.controls_content_container,
 	})
 	slider_reset.addEventListener('click', () => {
 		slider.value = this._n_bins_default
@@ -419,7 +419,7 @@ histogram_wrapper.prototype.render_control_panel = function () {
 		element_type: 'input',
 		type: 'checkbox',
 		id: density_checkbox_id,
-		parent: this.controls_container,
+		parent: this.controls_content_container,
 	})
 	/**
 	 * Checkbox label for density plot
@@ -438,7 +438,7 @@ histogram_wrapper.prototype.render_control_panel = function () {
 	const color_picker_container = common.create_dom_element({
 		element_type: 'div',
 		id: `${this.id_string()}_color_picker_container`,
-		parent: this.controls_container
+		parent: this.controls_content_container
 	})
 	const color_picker = new window.iro.ColorPicker(color_picker_container, {
 		color: this._bar_color,

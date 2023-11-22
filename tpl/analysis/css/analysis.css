@@ -1,2 +1,15 @@
-#main{overflow:hidden;padding-bottom:2rem}#main>.inner{min-height:78vh}#main>.inner .result .info_line{margin-top:-1em;margin-bottom:2rem}
+#main {
+  overflow: hidden;
+  padding-bottom: 2rem;
+}
+#main > .inner {
+  min-height: 78vh;
+}
+#main > .inner .result .info_line {
+  margin-top: -1em;
+  margin-bottom: 2rem;
+}
+.span_parent_width {
+  width: 100%;
+}
 /*# sourceMappingURL=analysis.css.map */

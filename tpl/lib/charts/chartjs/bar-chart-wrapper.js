@@ -264,7 +264,7 @@ bar_chart_wrapper.prototype.render_control_panel = function () {
 	const bar_select = common.create_dom_element({
 		element_type: 'select',
 		id: bar_select_id,
-		parent: this.controls_container,
+		parent: this.controls_content_container,
 		// TODO: add ARIA attributes?
 	})
 	for (const [index, label] of this._data.labels.entries()) {
@@ -280,7 +280,7 @@ bar_chart_wrapper.prototype.render_control_panel = function () {
 	const color_picker_container = common.create_dom_element({
 		element_type: 'div',
 		id: `${this.id_string()}_color_picker_container`,
-		parent: this.controls_container
+		parent: this.controls_content_container
 	})
 	const color_picker = new window.iro.ColorPicker(color_picker_container, {
 		color: this._bar_colors[0],

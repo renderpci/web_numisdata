@@ -414,6 +414,8 @@ function map_factory() {
 					const feature_group = new L.featureGroup(ar_markers)
 					if (feature_group) {
 
+						self.feature_group = feature_group
+
 						self.map.fitBounds(feature_group.getBounds())
 
 						if (self.map.getZoom()>18) {

@@ -1,0 +1,6 @@
+IMPORTANT:
+
+Note that 'type_row_fields.js' file is NOT the final used file for web (because include imports).
+Use instead the compiled file 'type_row_fields-min.js' to load in the page
+The target file is bundled with IIFE
+(e.g., "rollup type_row_fields.js --file type_row_fields-min.js --format iife --name type_row_fields_min")

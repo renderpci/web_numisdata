@@ -30,7 +30,9 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
  *    id `chart<id>_download_chart_container` class `download_chart_container`
  * 2. A div to contain the plot itself, with id `chart<id>_plot_wrapper` class `plot_wrapper`
  * 3. A div to contain the control panel, with id `chart<id>_control_panel` and class `control_panel`
- *
+ * The third div contains two divs. The first for the visibility toggle (class `control_panel_toggle`)
+ * and the second one for the control elements themselves (class `control_panel_content`)
+ *  
  * It clears the container div during render, so subclasses should work with the dom
  * after the render methods of this superclass (`render_plot` and `render_control_panel`) have been called.
  * In other words, subclasses should override those specific methods instead of the general `render` function
@@ -88,14 +90,26 @@ export function chart_wrapper(div_wrapper, options) {
 	 * @type {boolean}
 	 * @private
 	 */
-	 this._display_control_panel = options.display_control_panel || false
+	this._display_control_panel = options.display_control_panel || false
 	/**
 	 * Div container for user controls
+	 * @type {Element}
+	 * @private
+	 */
+	this._controls_container = undefined
+	/**
+	 * Div that expands and collapses the control panel
+	 * @type {Element}
+	 * @private
+	*/
+	this._controls_toggle = undefined
+	/**
+	 * Div that contains all control elements
 	 * Used freely by each subclass
 	 * @type {Element}
 	 * @protected
 	 */
-	this.controls_container = undefined
+	this.controls_content_container = undefined
 }
 
 /**
@@ -152,50 +166,51 @@ chart_wrapper.prototype.render = function () {
  */
 chart_wrapper.prototype._render_download_panel = function () {
 	const supported_formats = this.get_supported_export_formats()
-	if (supported_formats.length) {
-		this.download_chart_container = common.create_dom_element({
-			element_type: 'div',
-			id: `${this.id_string()}_download_chart_container`,
-			class_name: 'o-purple download_chart_container',
-			// style: {
-			// 	'display': 'flex',
-			// 	'flex-direction': 'row',
-			// 	'justify-content': 'center',
-			// },
-			parent: this.div_wrapper,
-		})
-		const format_select = common.create_dom_element({
-			element_type	: 'select',
-			id				: `${this.id_string()}_chart_export_format`,
-			class_name		: 'chart_format_select',
-			// style		: {
-			// 	'width'		: '75%',
-			// },
-			parent			: this.download_chart_container,
-			// TODO: add ARIA attributes?
-		})
-		for (const format of supported_formats) {
-			common.create_dom_element({
-				element_type	: 'option',
-				value			: format,
-				text_content	: format.toUpperCase(),
-				parent			: format_select
-			})
-		}
-		const chart_download_button = common.create_dom_element({
-			element_type	: 'input',
-			type			: 'button',
-			class_name		: 'btn primary button_download chart',
-			value			: tstring.download || 'Download',
-			// style		: {
-			// 	'width'		: '25%',
-			// },
-			parent			: this.download_chart_container
-		})
-		chart_download_button.addEventListener('click', () => {
-			this.download_chart(format_select.value)
+	if (!supported_formats.length) {
+		return
+	}
+	this.download_chart_container = common.create_dom_element({
+		element_type: 'div',
+		id: `${this.id_string()}_download_chart_container`,
+		class_name: 'o-purple download_chart_container',
+		// style: {
+		// 	'display': 'flex',
+		// 	'flex-direction': 'row',
+		// 	'justify-content': 'center',
+		// },
+		parent: this.div_wrapper,
+	})
+	const format_select = common.create_dom_element({
+		element_type	: 'select',
+		id				: `${this.id_string()}_chart_export_format`,
+		class_name		: 'chart_format_select',
+		// style		: {
+		// 	'width'		: '75%',
+		// },
+		parent			: this.download_chart_container,
+		// TODO: add ARIA attributes?
+	})
+	for (const format of supported_formats) {
+		common.create_dom_element({
+			element_type	: 'option',
+			value			: format,
+			text_content	: format.toUpperCase(),
+			parent			: format_select
 		})
 	}
+	const chart_download_button = common.create_dom_element({
+		element_type	: 'input',
+		type			: 'button',
+		class_name		: 'btn primary button_download chart',
+		value			: tstring.download || 'Download',
+		// style		: {
+		// 	'width'		: '25%',
+		// },
+		parent			: this.download_chart_container
+	})
+	chart_download_button.addEventListener('click', () => {
+		this.download_chart(format_select.value)
+	})
 }
 
 /**
@@ -226,11 +241,30 @@ chart_wrapper.prototype.render_plot = function () {
  * @name chart_wrapper#render_control_panel
  */
 chart_wrapper.prototype.render_control_panel = function () {
-	this.controls_container = common.create_dom_element({
+	/** @type {chart_wrapper} */
+	const self = this
+	this._controls_container = common.create_dom_element({
 		element_type	: 'div',
 		id				: `${this.id_string()}_control_panel`,
-		class_name		: 'o-green control_panel',
+		class_name		: 'control_panel',
 		parent			: this.div_wrapper
+	})
+	this._controls_toggle = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_control_panel_toggle`,
+		text_content	: tstring.control_panel || 'Control panel',
+		class_name		: 'o-red control_panel_toggle opened',
+		parent			: this._controls_container
+	})
+	this._controls_toggle.addEventListener('click', function(){
+		self._controls_toggle.classList.toggle('opened')
+		self.controls_content_container.classList.toggle('hide')
+	})
+	this.controls_content_container = common.create_dom_element({
+		element_type	: 'div',
+		id				: `${this.id_string()}_control_panel_content`,
+		class_name		: 'o-green control_panel_content hide',
+		parent			: this._controls_container
 	})
 }
 

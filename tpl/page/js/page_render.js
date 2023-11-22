@@ -477,7 +477,7 @@ page.handleForm = function(currentUrl){
 	// row data
 		const body = {
 			mail : {
-				subject	: `${name} '${email}' MIB [${today}]`,
+				subject	: `${name} '${email}' NUMISDATA [${today}]`,
 				message	: message
 			},
 			data : {
@@ -492,8 +492,9 @@ page.handleForm = function(currentUrl){
 
 	// request
 		return new Promise(function(resolve){
-			const success_msn = "Mensaje enviado correctamente, gracias."
-			const error_msn = "Ha ocurrido un error. Por favor, prueba más tarde."
+
+			const success_msn	= "Mensaje enviado correctamente, gracias."
+			const error_msn		= "Ha ocurrido un error. Por favor, prueba más tarde."
 
 			data_manager.request({
 				url		: __WEB_TEMPLATE_WEB__ + '/assets/lib/sendmail/send.php',
@@ -511,13 +512,13 @@ page.handleForm = function(currentUrl){
 				}
 			})
 		})
-};
+};//end handleForm
 
 
 
 /**
 * RENDER_LEGEND
-* Genericunified legend renderer
+* Generic unified legend render
 * @return promise : DOM node
 */
 page.render_legend = function(options) {

@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, common, page, $, type_row_fields, map_factory, Promise, data_manager, event_manager, form_factory, catalog_row_fields */
+/*global tstring, page_globals, SHOW_DEBUG, common, page, $, type_row_fields_min, map_factory, Promise, data_manager, event_manager, form_factory, catalog_row_fields */
 /*eslint no-undef: "error"*/
 
 "use strict";
@@ -1066,7 +1066,7 @@ var map = {
 								// row nodes
 									for (let k = 0; k < ar_found_coin_row.length; k++) {
 										const coin_row	= ar_found_coin_row[k];
-										const coin_node	= type_row_fields.draw_coin(coin_row)
+										const coin_node	= type_row_fields_min.type_row_fields.draw_coin(coin_row)
 										coins_list.appendChild(coin_node)
 									}
 							}

@@ -14,24 +14,24 @@
 
 
 // custom development working vars (api client)
-	define('WEB_ENTITY' 		,'mib');
-	define('WEB_ENTITY_LABEL' 	,'Moneda Ibérica');
+	define('WEB_ENTITY' 		,'coins');
+	define('WEB_ENTITY_LABEL' 	,'My coins catalog');
 
 // db . force use this db instead of default (useful for multiple publications)
-	define('WEB_DB'	 ,'web_numisdata_mib');
-	// define('WEB_DB'	 ,'web_numisdata_mib_pre');
+	define('WEB_DB'	 ,'web_numisdata_coins');
+	// define('WEB_DB'	 ,'web_numisdata_coins_pre');
 
 
 // site config
 
 	// __web_base_url__ . absolute url base to target web. Used to build absolute calls to elements
-		define('__WEB_BASE_URL__', 'https://monedaiberica.org');
+		define('__WEB_BASE_URL__', 'https://mycatalog.org');
 
 	// media base url
-		define('__WEB_MEDIA_BASE_URL__', 'https://monedaiberica.org');
+		define('__WEB_MEDIA_BASE_URL__', 'https://mycatalog.org');
 
 	// __web_root_web__
-		$base = '/web_mib';
+		$base = '/web_mycatalog';
 		define('__WEB_ROOT_WEB__', $base);
 
 	// is_production. used like 'mib_web'
@@ -44,10 +44,14 @@
 		define('WEB_DISPATCH_DIR', 'web');
 
 	// OWN_CATALOG_ACRONYM
-		define('OWN_CATALOG_ACRONYM', 'MIB');
+		define('OWN_CATALOG_ACRONYM', 'COINS');
 
 	// EMAIL
-		define('EMAIL', 'mib@numisdata.org');
+		define('EMAIL', 'email@numisdata.org');
+
+		// ISSB_ISSN
+		define('ISSB_ISSN', null);
+		define('ISSB_ISSN_URI', 'https://');
 
 	// DEDALO_CONTROL_ACCESS
 		define('DEDALO_CONTROL_ACCESS', true);

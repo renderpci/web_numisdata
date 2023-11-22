@@ -14,6 +14,7 @@ var mint = {
 		export_data_container	: null,
 		row_detail				: null,
 		map_container			: null, // DOM node
+		map 					: null,
 
 
 	/**
@@ -29,6 +30,7 @@ var mint = {
 			self.row_detail				= options.row_detail
 			self.section_id				= options.section_id
 			self.map_container			= options.map_container
+			self.map 					= null
 
 		// export_data_buttons added once
 			const export_data_buttons = page.render_export_data_buttons()
@@ -68,6 +70,26 @@ var mint = {
 									description	: mint_data.public_info.trim()
 								},
 								types			: mint_data.relations_types
+							})
+
+							window.addEventListener('beforeprint', async function(e) {
+
+								self.map_container.style.width = '210mm'
+								self.map_container.style.height = '120mm'
+
+								await self.map.map.invalidateSize()
+								await self.map.map.fitBounds(self.map.feature_group.getBounds())
+
+							})
+
+							window.addEventListener('afterprint', async function(e) {
+
+								self.map_container.style.width	= null
+								self.map_container.style.height	= null
+
+								await self.map.map.invalidateSize()
+								await self.map.map.fitBounds(self.map.feature_group.getBounds())
+
 							})
 						}
 					}
@@ -1418,7 +1440,9 @@ var mint = {
 				self.map.parse_data_to_map(map_data_points, null)
 				.then(function(){
 					container.classList.remove("hide_opacity")
+					return true
 				})
+
 		})
 
 		function parse_popup_data(data){
@@ -1430,7 +1454,7 @@ var mint = {
 			return popup_data;
 		}
 
-		return true
+
 	},//end draw_map
 
 

@@ -326,7 +326,7 @@
 		.map_container {
 			// height: 60vh;
 		}
-
+	
 	}//end row_wrapper
 
 
@@ -357,6 +357,19 @@
 		// }
 }//end result
 
+#type_analytics {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+.type_analytics_component {
+	width: 25%;
+}
+.chart_wrapper {
+	margin-top: 0.8em;
+	width: 80%;
+	margin-inline: auto;
+}
 
 
 // update 9-3-2021 paco
@@ -386,5 +399,22 @@
 					min-height: 1.5em;
 				}
 			}
+		}
+
+	}
+
+// update 2023-02-02 julian
+	@media screen and (max-width: 700px) {
+		#type_analytics {
+			flex-direction: column;
+			justify-content: flex-start;
+		}
+		.type_analytics_component {
+			width: 100%;
+		}
+		.chart_wrapper {
+			width: 45%;
+			margin-inline: auto;
+			margin-top: 1.4em;
 		}
 	}

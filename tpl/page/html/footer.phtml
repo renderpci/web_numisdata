@@ -11,7 +11,7 @@
 						echo ' DB: '.WEB_DB;
 					}
 				?></li><?php
-					if (!empty(ISSB_ISSN)) {
+					if (defined('ISSB_ISSN') && !empty(ISSB_ISSN)) {
 						$html	= '<li>';
 							$html	.= '<a href="'.ISSB_ISSN_URI.'" class="issb_issn" rel="noreferrer" target="_blank">';
 								$html	.= 'ISSB_ISSN ';

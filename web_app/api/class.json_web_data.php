@@ -43,21 +43,16 @@ class json_web_data {
 		# URL . JSON URL IN SERVER SIDE
 		$url_base = $options->JSON_TRIGGER_URL . '' . $api_dir .'/';
 		$fields   = array(
-						"code"		=> $options->API_WEB_USER_CODE,
-						"db_name"	=> WEB_DB,
-						"options"	=> json_encode($request_options, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP ), // rawurlencode JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-						);
+			"code"		=> $options->API_WEB_USER_CODE,
+			"db_name"	=> WEB_DB,
+			"options"	=> json_encode($request_options, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP ), // rawurlencode JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+		);
 		$fields_pairs = array();
 		foreach ($fields as $key => $value) {
 			$fields_pairs[] = $key .'='. rawurlencode($value);
 		}
 		$fields_string = implode('&', $fields_pairs);
 		$url = $url_base . '?'. $fields_string;
-
-		if(SHOW_DEBUG===true) {
-			#echo "<pre>D4 API call: $url</pre>";
-			#dump(null, ' url ++ '.to_string($url));
-		}
 
 		#
 		# REQUEST CONTENT TO SERVER
@@ -70,7 +65,6 @@ class json_web_data {
 				$response 			= self::http_post($url, $fields);
 				$headers  			= $response['headers'];
 				$dedalo_data_file 	= $response['content'];
-					#dump($headers, ' $dedalo_data_file ++ '.to_string($url));
 				break;
 			case 'file_get_contents':
 			default:
@@ -81,7 +75,6 @@ class json_web_data {
 		#
 		# RECEIVED JSON DATA
 		$dedalo_data = json_decode( $dedalo_data_file, false, 512, JSON_UNESCAPED_UNICODE );
-			#dump($dedalo_data, ' dedalo_data ++ '.to_string($url)); die();
 
 		if (!is_object($dedalo_data)) {
 			if (is_string($dedalo_data)) {
@@ -96,29 +89,11 @@ class json_web_data {
 					$dedalo_data->debug->info = $info;
 				}
 		}
-		#error_log( to_string($dedalo_data->debug) );
 
-		$dedalo_data->debug = isset($dedalo_data->debug) && is_object($dedalo_data->debug) ? $dedalo_data->debug : new stdClass();
+		$dedalo_data->debug = isset($dedalo_data->debug) && is_object($dedalo_data->debug)
+			? $dedalo_data->debug
+			: new stdClass();
 		$dedalo_data->debug->total_time = round(microtime(1)-$start_time,3);
-
-
-		if(SHOW_DEBUG===true) {
-		# JS CONSOLE API RESPONSE
-		##$js  = '<script>';
-		##$js .= "console.group(\"D4 API call: \",";
-		##$js .= " \"".addslashes($url)." \");";
-		##$js .= "console.log(\"D4 API response: [".$dedalo_data->debug->total_time."s]\", ".json_encode($dedalo_data, JSON_PRETTY_PRINT) ;
-		##$js .= ');console.groupEnd();</script>';
-		#echo $js;
-		}
-
-		/*
-		if ($dedalo_data->result===false) {
-			if(SHOW_DEBUG===true) {
-				exit( $dedalo_data->msg );
-			}
-		}
-		*/
 
 
 		return (object)$dedalo_data;
@@ -130,10 +105,6 @@ class json_web_data {
 	* FILE_GET_CONTENTS_CURL
 	*/
 	public static function file_get_contents_curl($url, $ar_fields, $fields_string) {
-
-		#dump($url, ' url ++ '.to_string());
-		#dump($ar_fields, ' ar_fields ++ '.to_string());
-		#dump($fields_string, ' fields_string ++ '.to_string());
 
 		//open connection
 		$ch = curl_init();
@@ -154,8 +125,9 @@ class json_web_data {
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_path);
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_path);
 
-		# Avoid verify ssl certificates (very slow)
+		# Avoid verify SSL certificates (very slow)
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
 		//execute post
 		$result = curl_exec($ch);
@@ -164,20 +136,6 @@ class json_web_data {
 		curl_close($ch);
 
 		return $result;
-		/*
-
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-
-		$data = curl_exec($ch);
-		curl_close($ch);
-
-		return $data;
-		*/
 	}//end file_get_contents_curl
 
 
@@ -205,7 +163,6 @@ class json_web_data {
 	        , 'headers'=>$http_response_header
 	        );
 	}//end http_post
-
 
 
 

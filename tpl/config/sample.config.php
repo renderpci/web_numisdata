@@ -53,9 +53,6 @@
 		define('ISSB_ISSN', null);
 		define('ISSB_ISSN_URI', 'https://');
 
-	// DEDALO_CONTROL_ACCESS
-		define('DEDALO_CONTROL_ACCESS', true);
-
 	// __web_template_web_
 		define('__WEB_TEMPLATE_WEB__' , __WEB_ROOT_WEB__  .'/tpl' );
 		define('__WEB_TEMPLATE_PATH__', __WEB_BASE_PATH__ .'/tpl');
@@ -209,3 +206,8 @@
 		$mconfig->bcc		= 'webmaster@mydomain.org';
 	// mail header logo
 		$logo_url = 'https://mydomain.org/images/logo.svg';
+
+
+
+// DEDALO_CONTROL_ACCESS. On true, web environment search for 'dedalo_logged' cookie. If not found, redirect page to /dedalo
+	define('DEDALO_CONTROL_ACCESS', true);

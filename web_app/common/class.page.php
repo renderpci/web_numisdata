@@ -220,13 +220,20 @@ class page extends stdClass {
 			$global_page = array_find($menu_items, function($item){
 				return ($item->term_id===WEB_MENU_PARENT);
 			});
+			if (!is_object($global_page)) {
+				$this->data_combi	= [];
+				$this->global_page	= null;
+				return $this->data_combi;
+			}
 			// template_items
 			$template_items = $this->data_combi[0]->result;
 			$global_template = array_find($template_items, function($item) use($global_page) {
 				return ($item->name===$global_page->template_name);
 			});
 			// set
-			$global_page->template	= json_decode($global_template->data);
+			$global_page->template	= is_object($global_template) && !empty($global_template->data)
+				? json_decode($global_template->data)
+				: null;
 			$this->global_page		= $global_page;
 
 

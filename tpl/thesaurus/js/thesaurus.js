@@ -1253,6 +1253,10 @@ var thesaurus =  {
 					// q try
 						if (q && q.length>0) {
 
+							if(!q_column || !row[q_column]){
+								return false
+							}
+
 							// remove accents from text
 							const text_normalized = row[q_column].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 

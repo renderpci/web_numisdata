@@ -1015,8 +1015,6 @@ nav ul {
     min-height: calc(100vh - 24.9rem);
   }
 }
-@media screen and (max-width: 736px) {
-}
 #wrapper .active-pointer {
   cursor: pointer;
 }
@@ -2256,4 +2254,3 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #9A905D;
 }
-/*# sourceMappingURL=page.css.map */

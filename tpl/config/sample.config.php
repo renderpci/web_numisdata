@@ -12,7 +12,6 @@
 	$source_data_api = 'remote'; // remote , local
 
 
-
 // custom development working vars (api client)
 	define('WEB_ENTITY' 		,'coins');
 	define('WEB_ENTITY_LABEL' 	,'My coins catalog');

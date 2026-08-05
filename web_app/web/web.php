@@ -19,8 +19,6 @@
 		}
 	}
 
-
-
 // include config file
 	$site_safe_path = dirname(dirname(dirname($_SERVER["SCRIPT_FILENAME"]))) . '/tpl/config/config.php';
 	include($site_safe_path);

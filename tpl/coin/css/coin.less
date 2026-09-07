@@ -312,6 +312,73 @@
 				}
 			}
 		}
+
+		// related documentation record (the archive index card this coin was
+		// catalogued from, if any) - the reverse of what /documentation/{id}
+		// already shows in its own "Coins" section. The .info_line.separator +
+		// .big_label header comes from the shared page.less (#main .inner ...),
+		// same gold-tab section header the type page's own MONEDAS/PESO/etc.
+		// sections use. Card itself (image on top, details below, not a
+		// full-width bar with a small icon-thumbnail) matches the same
+		// .ref_documentation card type.less builds for the identical relation
+		// on the type page, rather than a one-off design just for this page -
+		// see type.less's own .ref_documentation for the shared pattern.
+		// One single clickable link (not two separate image/title links), so
+		// the title never inherits the site's default dotted <a> underline -
+		// border/color/text-decoration are all reset here instead. Absent
+		// entirely when there's no relation, see coin.js get_related_documentation
+		a.ref_documentation {
+			display: flex;
+			flex-direction: column;
+			// a single card, not a full-width bar - same order of magnitude as
+			// one cell of the type page's 3-across ref_documentation_grid
+			max-width: 22em;
+			margin-top: 1em;
+			padding: 0.5em;
+			border: 1px solid #e3e3e3;
+			border-radius: 4px;
+			text-decoration: none;
+			color: @color_grey_dark;
+			transition: border-color 0.15s ease;
+
+			&:hover {
+				border-color: @color_gold_logo;
+
+				.ref_documentation_title {
+					color: @color_gold_logo;
+				}
+			}
+
+			.ref_documentation_image_wrapper {
+				width: 100%;
+				background-color: #ffffff;
+
+				img {
+					display: block;
+					width: 100%;
+					height: auto;
+				}
+			}
+
+			.ref_documentation_info {
+				display: flex;
+				flex-direction: column;
+				gap: 0.3em;
+				padding-top: 0.5em;
+			}
+
+			.ref_documentation_title {
+				font-weight: 600;
+				font-size: 1.1em;
+				color: @color_grey_dark;
+				transition: color 0.15s ease;
+			}
+
+			.ref_documentation_field {
+				font-size: 0.85em;
+				color: #767676;
+			}
+		}
 	}
 
 

@@ -7,10 +7,7 @@
 		$abstract	= $this->get_element_from_template_map('abstract', $template_map->{$mode});
 		$body		= $this->get_element_from_template_map('body', $template_map->{$mode});
 
-	// section_id . optional record detail, like '/archive/143'
-		// web.php routes '/archive' and '/archive/143' to this same template,
-		// ignoring the id part at the routing level, so we parse it ourselves
-		// (same approach as tpl/coin/coin.php)
+	// section_id . optional record detail, like '/documentation/143'
 		$area_name	= $_GET['area_name'];
 		$ar_parts	= explode('/', $area_name);
 		$url_id		= $ar_parts[1] ?? '';

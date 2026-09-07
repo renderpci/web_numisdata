@@ -49,6 +49,12 @@ page.parse_type_data = function(data) {
 				? common.local_to_remote_path(data.ref_coins_image_reverse)
 				: page.default_image
 
+			// ref_documentation_image is optional (not every type has a linked archive
+			// record), so no default_image fallback - type_row_fields only draws it when truthy
+			row.ref_documentation_image = data.ref_documentation_image
+				? common.local_to_remote_path(data.ref_documentation_image)
+				: null
+
 		// ref_coins_union (resolved portal case)
 			if (row.ref_coins_union && Array.isArray(row.ref_coins_union)) {
 

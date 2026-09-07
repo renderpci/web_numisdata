@@ -3,7 +3,7 @@
 "use strict";
 
 
-import { COLOR_PALETTE, chart_wrapper } from "../../lib/charts/chart-wrapper";
+import { COLOR_PALETTE, chart_wrapper, normalize_color } from "../../lib/charts/chart-wrapper";
 import { minimal_boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/minimal-boxvio-chart-wrapper";
 import { minimal_clock_chart_wrapper } from "../../lib/charts/d3/clock/minimal-clock-chart-wrapper";
 
@@ -320,12 +320,10 @@ export const type_row_fields = {
 			}
 
 		// Weight, diameter, and axis
-			let color = COLOR_PALETTE[0]
-			if (item.denomination_data
-				&& item.denomination_data.length
-				&& item.denomination_data[0].color) {
-				color = item.denomination_data[0].color
-			}
+			const denomination_color = (item.denomination_data && item.denomination_data.length)
+				? item.denomination_data[0].color
+				: null
+			const color = normalize_color(denomination_color, COLOR_PALETTE[0])
 			const catalog_data = item.catalog || {}
 			const calculable = catalog_data.full_coins_reference_calculable
 				? catalog_data.full_coins_reference_calculable

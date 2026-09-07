@@ -16,6 +16,44 @@ var type_row_fields_min = (function (exports) {
 
 
 	/**
+	 * Normalize a color value coming from the Dedalo API into a usable color string.
+	 * Dedalo color components store empty values as the placeholder `["_"]`
+	 * (either as a JSON string or an already-parsed array) and populated values
+	 * as a plain hex string (e.g. `#f78a1c`) or a JSON-wrapped one (e.g. `["#f78a1c"]`).
+	 * An empty placeholder is treated as "no color" and resolved to `fallback`.
+	 * @param {string|string[]|null|undefined} color raw color value from the API
+	 * @param {string|null} fallback value returned when `color` is empty (default `COLOR_PALETTE[0]`)
+	 * @returns {string|null} a color string or `fallback`
+	 */
+	function normalize_color(color, fallback=COLOR_PALETTE[0]) {
+		if (color == null) {
+			return fallback
+		}
+		let value = color;
+		if (Array.isArray(value)) {
+			value = value[0];
+		} else if (typeof value === 'string' && value.trim().startsWith('[')) {
+			try {
+				value = JSON.parse(value);
+				if (Array.isArray(value)) {
+					value = value[0];
+				}
+			} catch (e) {
+				return fallback
+			}
+		}
+		if (typeof value !== 'string') {
+			return fallback
+		}
+		value = value.trim();
+		if (!value || value === '_') {
+			return fallback
+		}
+		return value
+	}
+
+
+	/**
 	 * Chart wrapper class (download panel, plot, and control panel)
 	 *
 	 * The `render` method must be called for the chart to be rendered to the DOM!!!
@@ -1308,12 +1346,10 @@ var type_row_fields_min = (function (exports) {
 				}
 
 			// Weight, diameter, and axis
-				let color = COLOR_PALETTE[0];
-				if (item.denomination_data
-					&& item.denomination_data.length
-					&& item.denomination_data[0].color) {
-					color = item.denomination_data[0].color;
-				}
+				const denomination_color = (item.denomination_data && item.denomination_data.length)
+					? item.denomination_data[0].color
+					: null;
+				const color = normalize_color(denomination_color, COLOR_PALETTE[0]);
 				const catalog_data = item.catalog || {};
 				const calculable = catalog_data.full_coins_reference_calculable
 					? catalog_data.full_coins_reference_calculable

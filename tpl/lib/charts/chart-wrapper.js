@@ -21,6 +21,44 @@ export const COLOR_PALETTE = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467
 
 
 /**
+ * Normalize a color value coming from the Dedalo API into a usable color string.
+ * Dedalo color components store empty values as the placeholder `["_"]`
+ * (either as a JSON string or an already-parsed array) and populated values
+ * as a plain hex string (e.g. `#f78a1c`) or a JSON-wrapped one (e.g. `["#f78a1c"]`).
+ * An empty placeholder is treated as "no color" and resolved to `fallback`.
+ * @param {string|string[]|null|undefined} color raw color value from the API
+ * @param {string|null} fallback value returned when `color` is empty (default `COLOR_PALETTE[0]`)
+ * @returns {string|null} a color string or `fallback`
+ */
+export function normalize_color(color, fallback=COLOR_PALETTE[0]) {
+	if (color == null) {
+		return fallback
+	}
+	let value = color
+	if (Array.isArray(value)) {
+		value = value[0]
+	} else if (typeof value === 'string' && value.trim().startsWith('[')) {
+		try {
+			value = JSON.parse(value)
+			if (Array.isArray(value)) {
+				value = value[0]
+			}
+		} catch (e) {
+			return fallback
+		}
+	}
+	if (typeof value !== 'string') {
+		return fallback
+	}
+	value = value.trim()
+	if (!value || value === '_') {
+		return fallback
+	}
+	return value
+}
+
+
+/**
  * Chart wrapper class (download panel, plot, and control panel)
  *
  * The `render` method must be called for the chart to be rendered to the DOM!!!

@@ -23,7 +23,7 @@
 "use strict";
 
 
-import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
+import { chart_wrapper, normalize_color } from "../../lib/charts/chart-wrapper.js";
 import { boxvio_chart_wrapper } from "../../lib/charts/d3/boxvio/boxvio-chart-wrapper.js";
 import { clock_chart_wrapper } from "../../lib/charts/d3/clock/clock-chart-wrapper.js";
 
@@ -232,13 +232,13 @@ export const analysis =  {
 
 		const result = api_response.result || []
 		self.denomination_colors = result
-			.filter((ele) => ele.color && ele.color.length)
 			.map((ele) => {
 				return {
 					section_id	: ele.section_id,
-					color		: ele.color
+					color		: normalize_color(ele.color, null)
 				}
 			})
+			.filter((ele) => ele.color)
 
 		if(SHOW_DEBUG) {
 			console.log('load_denomination_colors processed colors', self.denomination_colors)

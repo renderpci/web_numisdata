@@ -63,6 +63,7 @@
     "design_reverse": "Reverse design",
     "diameter": "Diameter",
     "die_position": "Die axis",
+    "die_estimation": "Statistical estimation of the number of dies",
     "dies": "Dies",
     "diploma": "Honorific mention",
     "documents": "Documents",

@@ -23,7 +23,8 @@
 
 
 // import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
-import { regression_logic } from "./regression_logic.js";
+// regression_logic is loaded as a plain global (tpl/regression/js/regression_logic.js)
+// and must be available before this bundle evaluates.
 
 
 /**
@@ -159,7 +160,7 @@ export const regression =  {
 		// data table download (CSV)
 			if (self.regression_model_table_download) {
 				self.regression_model_table_download.addEventListener('click', function() {
-					self.download_table_csv()
+					self.download_table_csv(self.regression_model_table_container)
 				})
 			}
 
@@ -822,6 +823,3 @@ export const regression =  {
 	}, //end get_catalog_range_years
 
 }//end analysis
-
-
-export { type_tooltip_callback } from "./regression_logic.js";

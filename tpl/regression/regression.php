@@ -8,6 +8,8 @@
 	// js
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/jquery-ui/jquery-ui.min.js';
 		// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/catalogo/js/catalogo'.JS_SUFFIX.'.js';
+		// regression_logic (plain global) must load before the regression-min.js bundle, which spreads it
+		array_unshift(page::$js_ar_url, __WEB_TEMPLATE_WEB__ . '/regression/js/regression_logic'.JS_SUFFIX.'.js');
 		page::$js_ar_url[]  = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog_row_fields'.JS_SUFFIX.'.js';
 
 	// area name

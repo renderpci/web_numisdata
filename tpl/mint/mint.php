@@ -21,6 +21,8 @@
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/mint/js/mint_row'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog'.JS_SUFFIX.'.js';
 		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog_row_fields'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/regression/js/regression_logic'.JS_SUFFIX.'.js';
+		page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/mint/js/die_estimation'.JS_SUFFIX.'.js';
 
 	// area name
 		$area_name 	= $_GET['area_name'];

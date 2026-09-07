@@ -1,4 +1,4 @@
-/*global tstring, page_globals, SHOW_DEBUG, event_manager, map_factory, biblio_row_fields, data_manager, dedalo_logged, Promise, common, page, console, mint_row, catalog, DocumentFragment  */
+/*global tstring, page_globals, SHOW_DEBUG, IS_PRODUCTION, event_manager, map_factory, biblio_row_fields, data_manager, dedalo_logged, Promise, common, page, console, mint_row, catalog, die_estimation, DocumentFragment  */
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -161,6 +161,9 @@ var mint = {
 										types_print_container.appendChild(types_node_print)
 									}
 								}
+
+								// die estimation (statistical estimation of the number of dies)
+								self.draw_die_estimation(ar_rows)
 							})
 						}else{
 							console.warn("Ignored invalid _mint_catalog:",_mint_catalog);
@@ -427,6 +430,74 @@ var mint = {
 		})
 	},//end draw_types
 
+
+	/**
+	* DRAW_DIE_ESTIMATION
+	* Renders the "statistical estimation of the number of dies" regression charts
+	* (Anverso / Reverso) when the mint has types with calculable reference data.
+	* @param array ar_rows
+	* @return void
+	*/
+	draw_die_estimation : function(ar_rows) {
+
+		// only available in PRE (regression_vars record lives in web_numisdata_mib_pre)
+		if (IS_PRODUCTION===true) {
+			return
+		}
+
+		const container = document.getElementById('die_estimation_chart_container')
+		const section   = document.getElementById('die_estimation')
+		if (!container || !section) {
+			return
+		}
+
+		// only draw when there is at least one type with calculable reference data
+		const calculable = (ar_rows || []).filter(function(el){
+			return el.full_coins_reference_calculable && el.full_coins_reference_calculable.length > 0
+		})
+		if (calculable.length < 1) {
+			return
+		}
+
+		section.classList.remove('hide')
+
+		if (typeof die_estimation === 'undefined' || typeof die_estimation.plot_rev_and_anv !== 'function') {
+			console.error('die_estimation module not loaded')
+			return
+		}
+
+		// data table (collapsible) + CSV download
+		const table_container  = document.getElementById('die_estimation_table_container')
+		const table_toggle     = document.getElementById('die_estimation_table_toggle')
+		const table_download   = document.getElementById('die_estimation_table_download')
+
+		if (table_toggle && table_container) {
+			table_toggle.addEventListener('click', function(){
+				const is_hidden = table_container.classList.toggle('hide')
+				table_toggle.setAttribute('aria-expanded', String(!is_hidden))
+				const icon = table_toggle.querySelector('.regression_table_toggle_icon')
+				if (icon) {
+					icon.textContent = is_hidden ? '\u25B6' : '\u25BC'
+				}
+			})
+		}
+
+		if (table_download && table_container) {
+			table_download.addEventListener('click', function(){
+				die_estimation.download_table_csv(table_container)
+			})
+		}
+
+		die_estimation.plot_rev_and_anv(container, ar_rows, {
+			table_container  : table_container || null,
+			download_button  : table_download || null
+		})
+			.catch(function(err){
+				if (SHOW_DEBUG===true) {
+					console.error('draw_die_estimation error:', err)
+				}
+			})
+	},//end draw_die_estimation
 
 
 	/**

@@ -10,6 +10,16 @@
 *     function exported from `analysis.js`. It fetches the full catalog record from the Dedalo API
 *     and returns a Promise resolving to an HTML Element with the rendered data for the tooltip.
 *     Example options: { id: section_id, type_number: ref_num, mint: mint_name }
+ */
+
+/*global tstring, page_globals, SHOW_DEBUG, data_manager, common, page, catalog_row_fields, Promise, console, d3, document, window, Map, Int32Array, Float64Array, Blob, URL, requestAnimationFrame  */
+/*eslint no-undef: "error"*/
+"use strict";
+
+/**
+* Plain global (loaded as `regression_logic` and `type_tooltip_callback` on both
+* the regression page and the mint page). Single source of truth for the die
+* estimation logic.
 */
 
 /**
@@ -22,6 +32,23 @@ let load_promise = null;
 
 
 /**
+ * Seeded pseudo-random number generator (mulberry32) so the bootstrap
+ * confidence bands are deterministic across pages and reloads.
+ * A fixed seed guarantees identical results every run.
+ * @type {number}
+ */
+let bootstrap_rng_state = 0;
+
+function bootstrap_random() {
+	bootstrap_rng_state |= 0;
+	bootstrap_rng_state = (bootstrap_rng_state + 0x6D2B79F5) | 0;
+	let t = Math.imul(bootstrap_rng_state ^ (bootstrap_rng_state >>> 15), 1 | bootstrap_rng_state);
+	t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+	return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+
+/**
  * Callback for tooltip rendering in violin-boxplot visualizations.
  * Fetches additional catalog data for a specific type and returns its rendered representation.
  * @param {Object} options - Tooltip options.
@@ -30,7 +57,7 @@ let load_promise = null;
  * @param {string} options.mint - Mint name.
  * @returns {Promise<Element>} The DOM element representing the tooltip content.
  */
-export async function type_tooltip_callback(options) {
+async function type_tooltip_callback(options) {
 	if (SHOW_DEBUG === true) {
 		console.warn("---> type_tooltip_callback options", options);
 	}
@@ -82,7 +109,7 @@ export async function type_tooltip_callback(options) {
 }
 
 
-export const regression_logic = {
+var regression_logic = {
 
 	regression_vars: null,
 	bootstrap_cache: null,
@@ -395,14 +422,17 @@ export const regression_logic = {
 			const YAb = new Float64Array(n);
 			const YRb = new Float64Array(n);
 
-			for (let b = 0; b < B; b++) {
-				// Resampling
-				for (let k = 0; k < n; k++) {
-					const r = (Math.random() * n) | 0; // Faster floor
-					Xb[k]  = log_IR[r];
-					YAb[k] = log_DA[r];
-					YRb[k] = log_DR[r];
-				}
+		// Reset the seeded RNG so the bootstrap is fully deterministic
+		bootstrap_rng_state = 0;
+
+		for (let b = 0; b < B; b++) {
+			// Resampling
+			for (let k = 0; k < n; k++) {
+				const r = (bootstrap_random() * n) | 0; // Faster floor
+				Xb[k]  = log_IR[r];
+				YAb[k] = log_DA[r];
+				YRb[k] = log_DR[r];
+			}
 
 				// Fits
 				const fit_a_b = this.coefficients(Xb, YAb);
@@ -623,7 +653,7 @@ export const regression_logic = {
 	* @returns {Promise<Array<Object>>}
 	*/
 	plot_points_regression_anv: function(parsed_data, regression_model_chart_container, max_ir = 1500) {
-		const emblems = Array.isArray(parsed_data) ? parsed_data.slice(1) : [];
+		const emblems = this._filter_emblems(parsed_data);
 
 		return Promise.all([
 			this.get_log_regression_coefficients(),
@@ -819,7 +849,7 @@ export const regression_logic = {
 	* @returns {Promise<Array<Object>>}
 	*/
 	plot_points_regression_rev: function(parsed_data, regression_model_chart_container, max_ir = 1500) {
-		const emblems = Array.isArray(parsed_data) ? parsed_data.slice(1) : [];
+		const emblems = this._filter_emblems(parsed_data);
 
 		return Promise.all([
 			this.get_log_regression_coefficients(),
@@ -965,7 +995,7 @@ export const regression_logic = {
 	 * @returns {Promise<Array<Object>>} Resolves to the array of per-emblem row objects keyed by section_id.
 	 */
 	_build_emblem_rows: function(parsed_data, side, max_ir) {
-		const emblems = (Array.isArray(parsed_data) ? parsed_data.slice(1) : []);
+		const emblems = this._filter_emblems(parsed_data);
 
 		return Promise.all([
 			this.get_log_regression_coefficients(),
@@ -1021,7 +1051,7 @@ export const regression_logic = {
 
 		root.replaceChildren();
 
-		const emblems = (Array.isArray(parsed_data) ? parsed_data.slice(1) : []);
+		const emblems = this._filter_emblems(parsed_data);
 		if (emblems.length === 0) {
 			root.replaceChildren();
 			return Promise.resolve();
@@ -1179,10 +1209,13 @@ export const regression_logic = {
 	 * Exports the rendered regression data table as a CSV file download.
 	 * Reads the table DOM directly, so it works as long as the table has been rendered.
 	 *
+	 * @param {HTMLElement} table_container - Container holding the rendered table.
 	 * @returns {boolean} True if the download was triggered, false otherwise.
 	 */
-	download_table_csv: function() {
-		const container = this.regression_model_table_container;
+	download_table_csv: function(table_container) {
+		const container = (typeof table_container === "string")
+			? document.querySelector(table_container)
+			: table_container;
 		if (!container) return false;
 
 		const table = container.querySelector('table.regression_data_table');
@@ -1286,6 +1319,37 @@ export const regression_logic = {
 	},
 
 	/**
+	 * Keeps only emblems that carry calculable reference data.
+	 * Replaces the previous `parsed_data.slice(1)` which silently dropped
+	 * the first record and caused results to diverge across pages.
+	 *
+	 * @private
+	 * @param {Array<Object>} parsed_data
+	 * @returns {Array<Object>}
+	 */
+	_filter_emblems: function(parsed_data) {
+		if (!Array.isArray(parsed_data)) return [];
+		return parsed_data.filter(el => {
+			return el.full_coins_reference_calculable && el.full_coins_reference_calculable.length > 0;
+		});
+	},
+
+	/**
+	 * Counts the number of true values in a calculable reference array.
+	 *
+	 * @private
+	 * @param {Array} index
+	 * @returns {number}
+	 */
+	_count_ir: function(index) {
+		let ir = 0;
+		for (let i = 0; i < index.length; i++) {
+			if (index[i] === true) ir++;
+		}
+		return ir;
+	},
+
+	/**
 	 * Calculates the maximum IR value from a parsed data set of emblems.
 	 *
 	 * @private
@@ -1293,13 +1357,8 @@ export const regression_logic = {
 	 * @returns {number}
 	 */
 	_get_max_ir_from_parsed_data: function(parsed_data) {
-		if (!Array.isArray(parsed_data)) return 0;
-		return parsed_data.slice(1).reduce((max, emblem) => {
-			const index = emblem.full_coins_reference_calculable || [];
-			let ir = 0;
-			for (let i = 0; i < index.length; i++) {
-				if (index[i] === true) ir++;
-			}
+		return this._filter_emblems(parsed_data).reduce((max, emblem) => {
+			const ir = this._count_ir(emblem.full_coins_reference_calculable || []);
 			return Math.max(max, ir);
 		}, 0);
 	},

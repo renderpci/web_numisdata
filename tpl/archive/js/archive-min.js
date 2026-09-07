@@ -5,7 +5,7 @@
 
 
 
-var archive = {
+var documentation = {
 
 
 	// root of the hierarchy, same convention as WEB_MENU_PARENT in config.php
@@ -84,13 +84,13 @@ var archive = {
 			// rebuilds its contents on every search - the toolbar must survive that
 				self.search_status = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "archive_search_status hide"
+					class_name		: "documentation_search_status hide"
 				})
 				self.rows_container.parentNode.insertBefore(self.search_status, self.rows_container)
 
 				self.search_status_info = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "archive_search_status_info",
+					class_name		: "documentation_search_status_info",
 					parent			: self.search_status
 				})
 
@@ -133,12 +133,12 @@ var archive = {
 			self.form.item_factory({
 				id			: "title",
 				name		: "title",
-				label		: tstring.search_archive || "Search by title...",
+				label		: tstring.search_documentation || "Search by title...",
 				// title+name, not title alone - resolve_title (below) documents why:
 				// records deep in the hierarchy often just inherit their parent's
 				// title verbatim and carry their own distinguishing text in 'name'
 				// instead, so a title-only search only ever turns up the top-level
-				// fund/archive records, never their child cards
+				// fund/documentation records, never their child cards
 				q_column	: "CONCAT_WS(' ', title, name)",
 				eq			: "LIKE",
 				eq_in		: "%",
@@ -250,7 +250,7 @@ var archive = {
 		// form node
 			self.form.node = common.create_dom_element({
 				element_type	: "form",
-				id				: "archive_search_form",
+				id				: "documentation_search_form",
 				class_name		: "form-inline"
 			})
 			self.form.node.appendChild(fragment)
@@ -275,19 +275,19 @@ var archive = {
 
 		const toolbar = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_toolbar"
+			class_name		: "documentation_toolbar"
 		})
 
 		const view_toggle = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_view_toggle",
+			class_name		: "documentation_view_toggle",
 			parent			: toolbar
 		})
 
 		self.list_button = common.create_dom_element({
 			element_type	: "button",
 			type			: "button",
-			class_name		: "archive_view_btn",
+			class_name		: "documentation_view_btn",
 			inner_html		: '<i class="fa fa-list"></i>',
 			title			: tstring.list_view || "List view",
 			parent			: view_toggle
@@ -299,7 +299,7 @@ var archive = {
 		self.grid_button = common.create_dom_element({
 			element_type	: "button",
 			type			: "button",
-			class_name		: "archive_view_btn",
+			class_name		: "documentation_view_btn",
 			inner_html		: '<i class="fa fa-th-large"></i>',
 			title			: tstring.grid_view || "Grid view",
 			parent			: view_toggle
@@ -460,7 +460,7 @@ var archive = {
 
 		common.create_dom_element({
 			element_type	: "span",
-			class_name		: "archive_search_status_text",
+			class_name		: "documentation_search_status_text",
 			text_content	: (tstring.search_results || 'Search results') + ' (' + total + ')',
 			parent			: self.search_status_info
 		})
@@ -468,8 +468,8 @@ var archive = {
 		const back_button = common.create_dom_element({
 			element_type	: "button",
 			type			: "button",
-			class_name		: "archive_back_to_browse",
-			inner_html		: '<i class="fa fa-angle-left"></i> ' + (tstring.browse_archive || 'Browse archive'),
+			class_name		: "documentation_back_to_browse",
+			inner_html		: '<i class="fa fa-angle-left"></i> ' + (tstring.browse_documentation || 'Browse documentation'),
 			parent			: self.search_status_info
 		})
 		back_button.addEventListener('click', function(){
@@ -512,7 +512,7 @@ var archive = {
 			if (response.error) {
 				common.create_dom_element({
 					element_type	: "p",
-					class_name		: "archive_empty_state archive_error_state",
+					class_name		: "documentation_empty_state documentation_error_state",
 					inner_html		: '<i class="fa fa-exclamation-triangle"></i> ' + (tstring.load_error || 'Something went wrong loading these records. Please try again.'),
 					parent			: rows_container
 				})
@@ -522,7 +522,7 @@ var archive = {
 			if (!response.rows.length) {
 				common.create_dom_element({
 					element_type	: "p",
-					class_name		: "archive_empty_state",
+					class_name		: "documentation_empty_state",
 					inner_html		: '<i class="fa fa-search"></i> ' + (tstring.no_results || 'No records found.'),
 					parent			: rows_container
 				})
@@ -555,7 +555,7 @@ var archive = {
 	*/
 	list_row_builder : function(row){
 
-		return archive.draw_item(row, { variant: 'search' })
+		return documentation.draw_item(row, { variant: 'search' })
 	},//end list_row_builder
 
 
@@ -583,14 +583,14 @@ var archive = {
 
 			common.create_dom_element({
 				element_type	: "h2",
-				class_name		: "archive_browse_heading",
-				text_content	: tstring.explore_the_archive || 'Explore the archive',
+				class_name		: "documentation_browse_heading",
+				text_content	: tstring.explore_the_documentation || 'Explore the documentation',
 				parent			: self.browse_container
 			})
 
 			const grid = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_fund_grid",
+				class_name		: "documentation_fund_grid",
 				parent			: self.browse_container
 			})
 
@@ -695,7 +695,7 @@ var archive = {
 		.then(function(api_response){
 
 			if (SHOW_DEBUG===true) {
-				console.log("-> archive api_response:", api_response);
+				console.log("-> documentation api_response:", api_response);
 			}
 
 			// data_manager's catch resolves (never rejects) with result:false on a
@@ -721,7 +721,7 @@ var archive = {
 
 	/**
 	* DRAW_ITEM
-	* Build one archive record card, linked to its detail page
+	* Build one documentation record card, linked to its detail page
 	* @param object row
 	* @param object options
 	* @param string options.variant. 'fund' (browse view, with an async item
@@ -738,9 +738,9 @@ var archive = {
 
 		const item_wrapper = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_item"
-				+ (variant==='fund' ? ' archive_item_fund' : '')
-				+ (variant==='child' ? ' archive_item_child' : '')
+			class_name		: "documentation_item"
+				+ (variant==='fund' ? ' documentation_item_fund' : '')
+				+ (variant==='child' ? ' documentation_item_child' : '')
 		})
 
 		const detail_url = page_globals.__WEB_ROOT_WEB__ + '/documentation/' + id
@@ -788,7 +788,7 @@ var archive = {
 				if (dating) {
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "archive_card_dating",
+						class_name		: "documentation_card_dating",
 						text_content	: dating,
 						parent			: image_wrapper
 					})
@@ -796,7 +796,7 @@ var archive = {
 			}else{
 				common.create_dom_element({
 					element_type	: "i",
-					class_name		: "fa fa-archive archive_image_placeholder",
+					class_name		: "fa fa-archive documentation_image_placeholder",
 					parent			: image_wrapper
 				})
 			}
@@ -813,11 +813,11 @@ var archive = {
 		// label instead of another stacked row, so the card doesn't grow taller than it
 		// needs to. Other variants keep it below the title, unchanged. Always reserves
 		// the slot (even with nothing to show) so every card in the grid comes out the
-		// same height - see .archive_card_tag.is_empty
+		// same height - see .documentation_card_tag.is_empty
 			if (variant==='child') {
 				const tag_el = common.create_dom_element({
 					element_type	: "span",
-					class_name		: "archive_card_tag",
+					class_name		: "documentation_card_tag",
 					text_content	: tag || '',
 					parent			: info_container
 				})
@@ -830,7 +830,7 @@ var archive = {
 			const display_title = this.resolve_title(row, options && options.parent_title) || ('ID ' + id)
 			common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_title",
+				class_name		: "documentation_title",
 				text_content	: display_title,
 				parent			: info_container
 			})
@@ -839,14 +839,14 @@ var archive = {
 
 			common.create_dom_element({
 				element_type	: "span",
-				class_name		: "archive_card_tag",
+				class_name		: "documentation_card_tag",
 				text_content	: tag,
 				parent			: info_container
 			})
 
 			const count_el = common.create_dom_element({
 				element_type	: "span",
-				class_name		: "archive_item_count",
+				class_name		: "documentation_item_count",
 				parent			: info_container
 			})
 			this.annotate_child_count(row.term_id, count_el)
@@ -856,7 +856,7 @@ var archive = {
 			if (variant!=='child' && tag) {
 				common.create_dom_element({
 					element_type	: "span",
-					class_name		: "archive_card_tag",
+					class_name		: "documentation_card_tag",
 					text_content	: tag,
 					parent			: info_container
 				})
@@ -868,7 +868,7 @@ var archive = {
 				if (variant==='child') {
 					const count_el = common.create_dom_element({
 						element_type	: "span",
-						class_name		: "archive_item_count",
+						class_name		: "documentation_item_count",
 						parent			: info_container
 					})
 					this.annotate_child_count(row.term_id, count_el)
@@ -933,7 +933,7 @@ var archive = {
 		if (has_error) {
 			common.create_dom_element({
 				element_type	: "p",
-				class_name		: "archive_empty_state archive_error_state",
+				class_name		: "documentation_empty_state documentation_error_state",
 				inner_html		: '<i class="fa fa-exclamation-triangle"></i> ' + (tstring.load_error || 'Something went wrong loading this record. Please try again.'),
 				parent			: container
 			})
@@ -943,7 +943,7 @@ var archive = {
 		if (!row) {
 			common.create_dom_element({
 				element_type	: "p",
-				class_name		: "archive_empty_state",
+				class_name		: "documentation_empty_state",
 				inner_html		: '<i class="fa fa-archive"></i> ' + (tstring.no_results || 'This record does not exist.'),
 				parent			: container
 			})
@@ -962,7 +962,7 @@ var archive = {
 		// resolve_ancestors resolves
 			const nav = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_detail_nav",
+				class_name		: "documentation_detail_nav",
 				parent			: row_wrapper
 			})
 
@@ -970,7 +970,7 @@ var archive = {
 		// (same parent), filled in below once fetch_children resolves
 			const sibling_nav = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_sibling_nav",
+				class_name		: "documentation_sibling_nav",
 				parent			: row_wrapper
 			})
 
@@ -983,7 +983,7 @@ var archive = {
 		// first thing read, with the images following as illustration of it
 			common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_title",
+				class_name		: "documentation_title",
 				text_content	: (row.title || '').trim() || row.name || ('ID ' + id),
 				parent			: row_wrapper
 			})
@@ -1091,7 +1091,7 @@ var archive = {
 					// past 7 extra images, collapse to just the first row and offer a
 					// "view all" toggle - same max-height expand/collapse choreography
 					// as draw_description's reading control below, reusing its already
-					// site-wide-button-proof .archive_description_toggle style directly
+					// site-wide-button-proof .documentation_description_toggle style directly
 					// rather than rebuilding it
 					if (thumbnail_data.length>7) {
 
@@ -1104,7 +1104,7 @@ var archive = {
 						const toggle = common.create_dom_element({
 							element_type	: "button",
 							type			: "button",
-							class_name		: "archive_description_toggle gallery_secondary_toggle",
+							class_name		: "documentation_description_toggle gallery_secondary_toggle",
 							text_content	: (tstring.view_all_images || 'View all images') + ' (' + thumbnail_data.length + ')',
 							parent			: secondary
 						})
@@ -1342,7 +1342,7 @@ var archive = {
 					const active = target_row && target_row.term_id!==row.term_id
 					const el = common.create_dom_element({
 						element_type	: active ? "a" : "span",
-						class_name		: "archive_sibling_link " + class_name + (active ? "" : " is_disabled"),
+						class_name		: "documentation_sibling_link " + class_name + (active ? "" : " is_disabled"),
 						href			: active ? sibling_url(target_row) : null,
 						inner_html		: '<i class="fa ' + icon_class + '"></i>',
 						parent			: container
@@ -1351,14 +1351,14 @@ var archive = {
 					return el
 				}
 
-			draw_edge_link('archive_sibling_first', 'fa-angle-double-left', tstring.first || 'First', first_row)
+			draw_edge_link('documentation_sibling_first', 'fa-angle-double-left', tstring.first || 'First', first_row)
 
 			// previous - prefetched, click hijacked to render from cache once ready
 				if (prev_row) {
 					self.prefetch_sibling(prev_row.term_id)
 					const prev_link = common.create_dom_element({
 						element_type	: "a",
-						class_name		: "archive_sibling_link archive_sibling_prev",
+						class_name		: "documentation_sibling_link documentation_sibling_prev",
 						href			: sibling_url(prev_row),
 						inner_html		: '<i class="fa fa-chevron-left"></i> ' + (tstring.prev || 'Previous'),
 						parent			: container
@@ -1367,7 +1367,7 @@ var archive = {
 				}else{
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "archive_sibling_link archive_sibling_prev is_disabled",
+						class_name		: "documentation_sibling_link documentation_sibling_prev is_disabled",
 						inner_html		: '<i class="fa fa-chevron-left"></i> ' + (tstring.prev || 'Previous'),
 						parent			: container
 					})
@@ -1376,14 +1376,14 @@ var archive = {
 			// position . "N / total", N editable to jump straight to that item
 				const position = common.create_dom_element({
 					element_type	: "span",
-					class_name		: "archive_sibling_position",
+					class_name		: "documentation_sibling_position",
 					parent			: container
 				})
 
 				const jump_input = common.create_dom_element({
 					element_type	: "input",
 					type			: "number",
-					class_name		: "archive_sibling_jump",
+					class_name		: "documentation_sibling_jump",
 					value			: String(index+1),
 					parent			: position
 				})
@@ -1420,7 +1420,7 @@ var archive = {
 					self.prefetch_sibling(next_row.term_id)
 					const next_link = common.create_dom_element({
 						element_type	: "a",
-						class_name		: "archive_sibling_link archive_sibling_next",
+						class_name		: "documentation_sibling_link documentation_sibling_next",
 						href			: sibling_url(next_row),
 						inner_html		: (tstring.next || 'Next') + ' <i class="fa fa-chevron-right"></i>',
 						parent			: container
@@ -1429,13 +1429,13 @@ var archive = {
 				}else{
 					common.create_dom_element({
 						element_type	: "span",
-						class_name		: "archive_sibling_link archive_sibling_next is_disabled",
+						class_name		: "documentation_sibling_link documentation_sibling_next is_disabled",
 						inner_html		: (tstring.next || 'Next') + ' <i class="fa fa-chevron-right"></i>',
 						parent			: container
 					})
 				}
 
-			draw_edge_link('archive_sibling_last', 'fa-angle-double-right', tstring.last || 'Last', last_row)
+			draw_edge_link('documentation_sibling_last', 'fa-angle-double-right', tstring.last || 'Last', last_row)
 		})
 	},//end draw_sibling_nav
 
@@ -1724,7 +1724,7 @@ var archive = {
 	/**
 	* DRAW_DESCRIPTION
 	* Render a record's description as its own archival-paper block (see
-	* .archive_description_paper in archive.css) instead of a plain
+	* .documentation_description_paper in archive.css) instead of a plain
 	* add_long_field line - warm parchment tone, serif type, drop cap, and a
 	* collapse/expand reading control once the text is long enough to need one.
 	* The full text is always in the DOM (never truncated); collapsing is
@@ -1744,40 +1744,40 @@ var archive = {
 
 		const section = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_description_section",
+			class_name		: "documentation_description_section",
 			parent			: row_wrapper
 		})
 
 		common.create_dom_element({
 			element_type	: "span",
-			class_name		: "archive_description_label",
+			class_name		: "documentation_description_label",
 			text_content	: tstring.description || 'Description',
 			parent			: section
 		})
 
 		const paper = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_description_paper",
+			class_name		: "documentation_description_paper",
 			parent			: section
 		})
 
 		common.create_dom_element({
 			element_type	: "p",
-			class_name		: "archive_description_text",
+			class_name		: "documentation_description_text",
 			inner_html		: value,
 			parent			: paper
 		})
 
 		common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_description_fade",
+			class_name		: "documentation_description_fade",
 			parent			: paper
 		})
 
 		const toggle = common.create_dom_element({
 			element_type	: "button",
 			type			: "button",
-			class_name		: "archive_description_toggle",
+			class_name		: "documentation_description_toggle",
 			text_content	: tstring.read_full_description || 'Read full description',
 			parent			: section
 		})
@@ -1862,20 +1862,20 @@ var archive = {
 
 		const section = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_documents_section",
+			class_name		: "documentation_documents_section",
 			parent			: row_wrapper
 		})
 
 		common.create_dom_element({
 			element_type	: "span",
-			class_name		: "archive_documents_label",
+			class_name		: "documentation_documents_label",
 			text_content	: tstring.documents || 'Documents',
 			parent			: section
 		})
 
 		const list = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_documents_list",
+			class_name		: "documentation_documents_list",
 			parent			: section
 		})
 
@@ -1885,7 +1885,7 @@ var archive = {
 
 			const card = common.create_dom_element({
 				element_type	: "a",
-				class_name		: "archive_document",
+				class_name		: "documentation_document",
 				href			: page_globals.__WEB_MEDIA_BASE_URL__ + path,
 				target			: "_blank",
 				title			: (tstring.download || 'Download') + ': ' + doc_title,
@@ -1895,13 +1895,13 @@ var archive = {
 
 			common.create_dom_element({
 				element_type	: "i",
-				class_name		: "fa fa-file-pdf-o archive_document_icon",
+				class_name		: "fa fa-file-pdf-o documentation_document_icon",
 				parent			: card
 			})
 
 			common.create_dom_element({
 				element_type	: "span",
-				class_name		: "archive_document_title",
+				class_name		: "documentation_document_title",
 				text_content	: doc_title,
 				parent			: card
 			})
@@ -1989,13 +1989,13 @@ var archive = {
 
 		const breadcrumb = common.create_dom_element({
 			element_type	: "nav",
-			class_name		: "archive_breadcrumb",
+			class_name		: "documentation_breadcrumb",
 			parent			: nav
 		})
 
 		common.create_dom_element({
 			element_type	: "i",
-			class_name		: "fa fa-archive archive_breadcrumb_icon",
+			class_name		: "fa fa-archive documentation_breadcrumb_icon",
 			parent			: breadcrumb
 		})
 
@@ -2005,7 +2005,7 @@ var archive = {
 
 			common.create_dom_element({
 				element_type	: "a",
-				class_name		: "archive_breadcrumb_link",
+				class_name		: "documentation_breadcrumb_link",
 				text_content	: ancestor.title,
 				href			: page_globals.__WEB_ROOT_WEB__ + '/documentation/' + ancestor_id,
 				parent			: breadcrumb
@@ -2014,7 +2014,7 @@ var archive = {
 			if (index<ancestors.length-1) {
 				common.create_dom_element({
 					element_type	: "i",
-					class_name		: "fa fa-angle-right archive_breadcrumb_separator",
+					class_name		: "fa fa-angle-right documentation_breadcrumb_separator",
 					parent			: breadcrumb
 				})
 			}
@@ -2080,13 +2080,13 @@ var archive = {
 
 			const section = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_contents_section",
+				class_name		: "documentation_contents_section",
 				parent			: row_wrapper
 			})
 
 			common.create_dom_element({
 				element_type	: "h3",
-				class_name		: "archive_contents_title",
+				class_name		: "documentation_contents_title",
 				inner_html		: '<i class="fa fa-folder-open"></i> ' + (tstring.contents || 'Contents') + ' (' + children.length + ')',
 				parent			: section
 			})
@@ -2096,7 +2096,7 @@ var archive = {
 				filter_input = common.create_dom_element({
 					element_type	: "input",
 					type			: "text",
-					class_name		: "archive_contents_filter",
+					class_name		: "documentation_contents_filter",
 					placeholder		: tstring.search_contents || 'Search within these items...',
 					parent			: section
 				})
@@ -2104,13 +2104,13 @@ var archive = {
 
 			const grid = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_contents_grid",
+				class_name		: "documentation_contents_grid",
 				parent			: section
 			})
 
 			const empty_state = common.create_dom_element({
 				element_type	: "p",
-				class_name		: "archive_empty_state hide",
+				class_name		: "documentation_empty_state hide",
 				inner_html		: '<i class="fa fa-search"></i> ' + (tstring.no_results || 'No records found.'),
 				parent			: section
 			})
@@ -2216,20 +2216,20 @@ var archive = {
 
 			const section = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_related_items_section",
+				class_name		: "documentation_related_items_section",
 				parent			: row_wrapper
 			})
 
 			common.create_dom_element({
 				element_type	: "span",
-				class_name		: "archive_related_items_label",
+				class_name		: "documentation_related_items_label",
 				text_content	: (tstring.related_items || 'Related items') + ' (' + items.length + ')',
 				parent			: section
 			})
 
 			const list = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_related_items_list",
+				class_name		: "documentation_related_items_list",
 				parent			: section
 			})
 
@@ -2240,7 +2240,7 @@ var archive = {
 
 				const chip		= common.create_dom_element({
 					element_type	: "a",
-					class_name		: "archive_related_item",
+					class_name		: "documentation_related_item",
 					href			: page_globals.__WEB_ROOT_WEB__ + '/documentation/' + item_id,
 					title			: display_title,
 					parent			: list
@@ -2251,7 +2251,7 @@ var archive = {
 					const thumb_url		= (page_globals.__WEB_MEDIA_BASE_URL__ + first_image).replace('/1.5MB/', '/thumb/')
 					const thumb_img = common.create_dom_element({
 						element_type	: "img",
-						class_name		: "archive_related_item_thumb",
+						class_name		: "documentation_related_item_thumb",
 						src				: thumb_url,
 						loading			: "lazy",
 						parent			: chip
@@ -2260,14 +2260,14 @@ var archive = {
 				}else{
 					common.create_dom_element({
 						element_type	: "i",
-						class_name		: "fa fa-file-o archive_related_item_thumb archive_related_item_thumb_placeholder",
+						class_name		: "fa fa-file-o documentation_related_item_thumb documentation_related_item_thumb_placeholder",
 						parent			: chip
 					})
 				}
 
 				common.create_dom_element({
 					element_type	: "span",
-					class_name		: "archive_related_item_title",
+					class_name		: "documentation_related_item_title",
 					text_content	: display_title,
 					parent			: chip
 				})
@@ -2397,20 +2397,20 @@ var archive = {
 
 			const section = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_related_coins_section",
+				class_name		: "documentation_related_coins_section",
 				parent			: row_wrapper
 			})
 
 			common.create_dom_element({
 				element_type	: "h3",
-				class_name		: "archive_contents_title",
+				class_name		: "documentation_contents_title",
 				inner_html		: '<i class="fa fa-money"></i> ' + (tstring.coins || 'Coins') + ' (' + coins.length + ')',
 				parent			: section
 			})
 
 			const grid = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "archive_related_coins_grid",
+				class_name		: "documentation_related_coins_grid",
 				parent			: section
 			})
 
@@ -2467,7 +2467,7 @@ var archive = {
 
 		const overlay = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_lightbox"
+			class_name		: "documentation_lightbox"
 		})
 		overlay.setAttribute('role', 'dialog')
 		overlay.setAttribute('aria-modal', 'true')
@@ -2475,25 +2475,25 @@ var archive = {
 
 		const stage = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_lightbox_stage",
+			class_name		: "documentation_lightbox_stage",
 			parent			: overlay
 		})
 
 		const img = common.create_dom_element({
 			element_type	: "img",
-			class_name		: "archive_lightbox_image",
+			class_name		: "documentation_lightbox_image",
 			parent			: stage
 		})
 
 		const spinner = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_lightbox_spinner",
+			class_name		: "documentation_lightbox_spinner",
 			parent			: stage
 		})
 
 		const caption = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "archive_lightbox_caption",
+			class_name		: "documentation_lightbox_caption",
 			parent			: overlay
 		})
 
@@ -2503,7 +2503,7 @@ var archive = {
 			prev_button = common.create_dom_element({
 				element_type	: "button",
 				type			: "button",
-				class_name		: "archive_lightbox_nav archive_lightbox_prev",
+				class_name		: "documentation_lightbox_nav documentation_lightbox_prev",
 				inner_html		: '<i class="fa fa-chevron-left"></i>',
 				parent			: overlay
 			})
@@ -2512,7 +2512,7 @@ var archive = {
 			next_button = common.create_dom_element({
 				element_type	: "button",
 				type			: "button",
-				class_name		: "archive_lightbox_nav archive_lightbox_next",
+				class_name		: "documentation_lightbox_nav documentation_lightbox_next",
 				inner_html		: '<i class="fa fa-chevron-right"></i>',
 				parent			: overlay
 			})
@@ -2812,4 +2812,4 @@ var archive = {
 	}//end open_lightbox
 
 
-}//end archive
+}//end documentation

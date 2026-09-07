@@ -974,6 +974,20 @@ var archive = {
 				parent			: row_wrapper
 			})
 
+		// title . the record's own title field, verbatim - unlike draw_item's
+		// card titles (see resolve_title), this is a single standalone record
+		// the user specifically opened, so it should always show its real
+		// title rather than being swapped for 'name' just because it happens
+		// to match its parent's title too. Placed above the gallery (not
+		// below it, where this used to sit) so the record's name is the
+		// first thing read, with the images following as illustration of it
+			common.create_dom_element({
+				element_type	: "div",
+				class_name		: "archive_title",
+				text_content	: (row.title || '').trim() || row.name || ('ID ' + id),
+				parent			: row_wrapper
+			})
+
 		// images . a record's images can be split across two separate fields
 		// (identifying_images_data plus images_data - confirmed live: a record
 		// with 1 "identifying" image plus 2 more only in images_data). Kept as
@@ -1073,6 +1087,87 @@ var archive = {
 							self.open_lightbox(lightbox_images, lightbox_index)
 						})
 					})
+
+					// past 7 extra images, collapse to just the first row and offer a
+					// "view all" toggle - same max-height expand/collapse choreography
+					// as draw_description's reading control below, reusing its already
+					// site-wide-button-proof .archive_description_toggle style directly
+					// rather than rebuilding it
+					if (thumbnail_data.length>7) {
+
+						const fade = common.create_dom_element({
+							element_type	: "div",
+							class_name		: "gallery_secondary_fade",
+							parent			: secondary_grid
+						})
+
+						const toggle = common.create_dom_element({
+							element_type	: "button",
+							type			: "button",
+							class_name		: "archive_description_toggle gallery_secondary_toggle",
+							text_content	: (tstring.view_all_images || 'View all images') + ' (' + thumbnail_data.length + ')',
+							parent			: secondary
+						})
+						toggle.setAttribute('aria-expanded', 'false')
+
+						requestAnimationFrame(function(){
+
+							// row height measured from the real rendered layout (where the
+							// second row's items first drop to a lower offsetTop), not a
+							// fixed guess - correct regardless of viewport width/thumbnail size
+							const items		= secondary_grid.children
+							const first_top	= items[0].offsetTop
+							let row_height	= secondary_grid.scrollHeight
+
+							for (let i=1; i<items.length; i++) {
+								if (items[i].offsetTop>first_top) {
+									row_height = items[i].offsetTop - first_top
+									break
+								}
+							}
+
+							if (secondary_grid.scrollHeight <= row_height+1) {
+								// everything already fits on one row at this width
+								fade.remove()
+								toggle.remove()
+								return
+							}
+
+							secondary_grid.style.maxHeight = row_height + 'px'
+
+							let expanded = false
+
+							toggle.addEventListener('click', function(){
+
+								expanded = !expanded
+
+								if (expanded) {
+									secondary_grid.style.maxHeight = secondary_grid.scrollHeight + 'px'
+									secondary_grid.classList.add('is_expanded')
+									toggle.textContent	= tstring.show_less || 'Show less'
+									toggle.setAttribute('aria-expanded', 'true')
+								}else{
+									// pin to the current full height first (no visual jump),
+									// force layout, then drop to the collapsed row height on
+									// the next frame so that step is what actually animates
+									secondary_grid.style.maxHeight = secondary_grid.scrollHeight + 'px'
+									secondary_grid.getBoundingClientRect()
+									requestAnimationFrame(function(){
+										secondary_grid.classList.remove('is_expanded')
+										secondary_grid.style.maxHeight = row_height + 'px'
+									})
+									toggle.textContent	= (tstring.view_all_images || 'View all images') + ' (' + thumbnail_data.length + ')'
+									toggle.setAttribute('aria-expanded', 'false')
+								}
+							})
+
+							secondary_grid.addEventListener('transitionend', function(e){
+								if (e.propertyName==='max-height' && expanded) {
+									secondary_grid.style.maxHeight = 'none'
+								}
+							})
+						})
+					}
 				}
 
 			}else if (row.identifying_images && row.identifying_images.length>0) {
@@ -1107,18 +1202,6 @@ var archive = {
 						})
 					})
 			}
-
-		// title . the record's own title field, verbatim - unlike draw_item's
-		// card titles (see resolve_title), this is a single standalone record
-		// the user specifically opened, so it should always show its real
-		// title rather than being swapped for 'name' just because it happens
-		// to match its parent's title too
-			common.create_dom_element({
-				element_type	: "div",
-				class_name		: "archive_title",
-				text_content	: (row.title || '').trim() || row.name || ('ID ' + id),
-				parent			: row_wrapper
-			})
 
 		const info_container = common.create_dom_element({
 			element_type	: "div",

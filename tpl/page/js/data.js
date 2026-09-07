@@ -49,7 +49,7 @@ page.parse_type_data = function(data) {
 				? common.local_to_remote_path(data.ref_coins_image_reverse)
 				: page.default_image
 
-			// ref_documentation_image is optional (not every type has a linked archive
+			// ref_documentation_image is optional (not every type has a linked documentation
 			// record), so no default_image fallback - type_row_fields only draws it when truthy
 			row.ref_documentation_image = data.ref_documentation_image
 				? common.local_to_remote_path(data.ref_documentation_image)

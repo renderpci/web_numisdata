@@ -1462,7 +1462,7 @@ var type_row_fields_min = (function (exports) {
 					);
 				}
 
-			// ref_documentation : archive record(s) (documentation table) this type
+			// ref_documentation : documentation record(s) this type
 			// illustrates - a ONE-TO-MANY relation (the same type can be documented
 			// across several index cards) - ref_documentation_data is already resolved
 			// (see type.js resolve_portals_custom) into the full array of linked
@@ -1477,7 +1477,7 @@ var type_row_fields_min = (function (exports) {
 			// block on this page (MONEDAS, PESO, ...)
 				if (item.ref_documentation_data && item.ref_documentation_data.length>0) {
 
-					fragment.appendChild( self.label(item, tstring.archive || "Archive") );
+					fragment.appendChild( self.label(item, tstring.documentation || "Documentation") );
 
 					const ref_documentation_grid = common.create_dom_element({
 						element_type	: "div",

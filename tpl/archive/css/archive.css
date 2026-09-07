@@ -50,7 +50,9 @@
 	.archive_description_paper,
 	.archive_description_fade,
 	.archive_description_toggle,
-	.archive_description_toggle:after {
+	.archive_description_toggle:after,
+	.gallery_secondary_grid,
+	.gallery_secondary_fade {
 		transition: none !important;
 		animation-duration: 0.001ms !important;
 	}
@@ -465,9 +467,9 @@ a.row_wrapper {
    tones are simply light tints of the page's own --archive_accent gold (b7996d),
    so the "paper" reads as warm parchment without introducing a foreign palette */
 .archive_description_section {
-	margin-top: var(--archive_space_md);
-	padding-top: var(--archive_space_sm);
-	border-top: 1px solid var(--archive_border);
+	position: relative;
+	margin-top: var(--archive_space_lg);
+	padding-top: var(--archive_space_lg);
 	max-width: var(--archive_text_measure);
 }
 
@@ -641,9 +643,14 @@ a.row_wrapper {
    edge as soon as a title wrapped past one line, so label and card visibly
    drifted apart. Standing on its own removes that mismatch entirely. */
 .archive_documents_section {
-	margin-top: var(--archive_space_md);
-	padding-top: var(--archive_space_sm);
-	border-top: 1px solid var(--archive_border);
+	position: relative;
+	margin-top: var(--archive_space_lg);
+	padding-top: var(--archive_space_lg);
+	/* same width cap as .info_container/.archive_description_section - without
+	   this, the gold rule below centers against this section's own (wider,
+	   uncapped) box instead of the same column the other rules align to,
+	   so the two don't visually line up with each other */
+	max-width: var(--archive_text_measure);
 }
 
 .archive_documents_label {
@@ -1042,9 +1049,33 @@ a.row_wrapper {
 }
 
 .gallery_secondary_grid {
+	position: relative;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.6em;
+	overflow: hidden;
+	transition: max-height 0.5s ease;
+}
+
+/* past 7 extra images, collapsed to the first row (see archive.js) - a
+   bottom fade like the description's own, hidden once expanded */
+.gallery_secondary_fade {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 3em;
+	background: linear-gradient(to bottom, rgba(255,255,255,0), var(--archive_card_bg));
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+.gallery_secondary_grid.is_expanded .gallery_secondary_fade {
+	opacity: 0;
+}
+
+.gallery_secondary_toggle {
+	margin-top: 0.8em;
 }
 
 .gallery_secondary_image {
@@ -1238,20 +1269,43 @@ a.row_wrapper {
 		padding: 0 3em;
 		font-size: 0.8em;
 	}
+
+	.row_wrapper.detail > .archive_title {
+		font-size: 1.4em;
+	}
 }
 
-/* cambria is already loaded site-wide and used the same way for editorial
-   headings on the biblio/catalog/mints pages - reused here rather than
-   adding a new font */
+/* cambria is already loaded site-wide for editorial headings on the
+   biblio/catalog/mints pages, reused here rather than adding a new font -
+   font-weight:100 and the small-caps/letter-spacing combo below is the same
+   treatment catalog.less's own .name uses, not a one-off invention. Now sits
+   above the gallery (a record-name placard for the images below it, not a
+   caption trailing after them) with the same short centered gold rule this
+   page already uses to mark a deliberate break (see .archive_contents_section) */
 .row_wrapper.detail > .archive_title {
+	position: relative;
 	font-family: cambria, serif;
-	font-size: 1.25em;
-	line-height: 1.35;
+	font-weight: 100;
+	font-size: 1.9em;
+	line-height: 1.3;
+	font-variant: small-caps;
+	letter-spacing: 0.04em;
 	text-align: center;
-	margin-top: 0.25em;
-	margin-bottom: 1.25em;
-	padding-bottom: 0.5em;
-	border-bottom: 2px solid var(--archive_accent);
+	color: var(--archive_ink);
+	margin: 0.4em 0 1.6em;
+	padding-bottom: 0.9em;
+}
+
+.row_wrapper.detail > .archive_title:after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: 3em;
+	height: 3px;
+	border-radius: 2px;
+	background-color: var(--archive_accent);
 }
 
 .row_wrapper.detail .go_to_dedalo {
@@ -1263,11 +1317,16 @@ a.row_wrapper {
 }
 
 .row_wrapper.detail .info_container {
+	position: relative;
 	align-items: baseline;
 	/* metadata/bibliography read better at a controlled width than stretched
 	   across the full column - the gallery/Contenido/Coins grids above and
 	   below deliberately keep the fuller width instead, see their own rules */
 	max-width: var(--archive_text_measure);
+	/* room for the gold rule below - a deliberate break from the gallery
+	   above. Less than the other sections' own --archive_space_lg since the
+	   gallery already carries its own margin-bottom right before this */
+	padding-top: var(--archive_space_md);
 }
 
 /* divider sits above each row instead of below - so the very last field in
@@ -1299,9 +1358,6 @@ a.row_wrapper {
 	line-height: 1.5;
 }
 
-/* a short centered gold rule instead of a full-width grey line - reads as a
-   deliberate section break rather than just one more row divider like the
-   thin lines running through .info_container above */
 .archive_contents_section,
 .archive_related_coins_section {
 	position: relative;
@@ -1309,11 +1365,37 @@ a.row_wrapper {
 	padding-top: var(--archive_space_lg);
 }
 
-.archive_contents_section::before {
+/* a short centered gold rule instead of a full-width grey line - reads as a
+   deliberate section break rather than just one more row divider like the
+   thin lines running through .info_container above. Shared by every major
+   section break on this page (images -> details, details -> description,
+   description/details -> documents) - .archive_related_coins_section is
+   deliberately excluded, it uses its own tinted-panel treatment instead
+   (see further down) */
+.row_wrapper.detail .info_container:before,
+.archive_description_section:before,
+.archive_documents_section:before {
 	content: "";
 	position: absolute;
 	top: 0;
 	left: 50%;
+	transform: translateX(-50%);
+	width: 3em;
+	height: 3px;
+	border-radius: 2px;
+	background-color: var(--archive_accent);
+}
+
+/* .archive_contents_section itself is deliberately NOT width-capped (its grid
+   wants the fuller column, see the section rule above), so its rule can't just
+   center on 50% of its own box like the ones above - that would land it at a
+   different x position than them. left is pinned to half of the SAME reading
+   width those capped sections share instead, so all the rules line up */
+.archive_contents_section:before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: calc(var(--archive_text_measure) / 2);
 	transform: translateX(-50%);
 	width: 3em;
 	height: 3px;

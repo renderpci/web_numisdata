@@ -1,73 +1,308 @@
-/* Reuses the site's existing primitives instead of inventing new ones:
-   - buttons / inputs: plain global styling from assets/sass/components/_button.scss
-     and tpl/page/css/form.less (.form-inline, .form-row.fields, .form-group.field,
-     .button_submit) - the exact same classes tpl/coins/js/coins.js uses.
-   - pagination: shared tpl/page/css/pagination.less via list_factory.
-   - row_wrapper / info_container / left-labels / rigth-values: same pattern as
-     tpl/coin and tpl/coins.
-   Only the grid/list toggle and the lightbox are genuinely new UI (nothing
-   equivalent exists elsewhere), so those are the only custom-styled pieces. */
-
 :root {
-	--archive_border: #e6dcc6;
-	--archive_card_bg: #fdfbf6;
-	--archive_media_bg: #f1e8d7;
-	--archive_accent: #be875a;
+	/* matches the shared design tokens coins/catalog/type already use -
+	   rgb(227,227,227) is the site's standard row/card border (coins_common.less,
+	   type.less, catalog.less), #b7996d is the same gold accent coins_common.less
+	   uses for .sorted_coin .type, #333333/#767676 are @color_grey_dark and the
+	   muted-text grey coin.less's ref_documentation_field already uses */
+	--archive_border: rgb(227, 227, 227);
+	--archive_card_bg: #ffffff;
+	--archive_media_bg: #f6f6f6;
+	--archive_accent: #b7996d;
+	--archive_ink: #333333;
+	--archive_muted: #767676;
+
+	/* small, local spacing vocabulary - not a design-system, just enough to keep
+	   the vertical rhythm on this page consistent instead of ad-hoc per rule */
+	--archive_space_xs: 0.6em;
+	--archive_space_sm: 1em;
+	--archive_space_md: 1.5em;
+	--archive_space_lg: 2.5em;
+
+	/* editorial reading width for text-heavy content (metadata, bibliography) -
+	   grids/gallery are deliberately not constrained by this, see section rules */
+	--archive_text_measure: 50em;
 }
 
-/* "Filtros" and "Buscar" sit right next to each other by default (both are
-   plain .form-group.field.button_submit children with no gap) */
+/* the shared page.css sizes #main as display:table (width:80%, margin:auto) -
+   a table's auto-layout still grows past that width to fit its widest unbreakable
+   content (here, the single-word "Documentación" h1), which overflows very narrow
+   viewports (~320px) site-wide. Overriding to display:block only here - archive.css
+   loads after page.css and only on this page - makes the width/max-width/margin
+   actually clamp instead of being a mere suggestion, with no visible difference at
+   any width where content already fits */
+#main {
+	display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.archive_item a.row_wrapper,
+	.archive_item .thumb,
+	.archive_breadcrumb_link,
+	.archive_back_to_browse,
+	.related_coin_item,
+	.row_wrapper.detail .gallery .gallery_image,
+	.archive_lightbox,
+	.archive_lightbox_stage,
+	.archive_lightbox_image,
+	.archive_view_btn,
+	#rows_container,
+	#rows_container .pagination a,
+	.archive_description_paper,
+	.archive_description_fade,
+	.archive_description_toggle,
+	.archive_description_toggle:after {
+		transition: none !important;
+		animation-duration: 0.001ms !important;
+	}
+	#rows_container.view_grid a.row_wrapper:hover,
+	.archive_item a.row_wrapper:hover,
+	.related_coin_item:hover,
+	.row_wrapper.detail .gallery .gallery_image:hover {
+		transform: none !important;
+	}
+	.archive_lightbox_image {
+		/* zoom/pan stays instant rather than easing, but remains fully functional -
+		   motion preference removes animation, not capability */
+		transition: none !important;
+	}
+}
+
+.archive_item a.row_wrapper:focus-visible,
+.archive_breadcrumb_link:focus-visible,
+.archive_back_to_browse:focus-visible {
+	outline: 2px solid var(--archive_accent);
+	outline-offset: 2px;
+}
+
+/* h1 and .golden-separator are deliberately NOT styled here - coins.phtml and
+   catalog.phtml render the exact same title markup and don't touch either one,
+   so they get the shared global look (main.css's h1: 2.75em/700/-0.035em, and
+   page.less's full-width golden .golden-separator). This page previously
+   overrode both with a smaller/lighter title and a short 3em accent underline,
+   which is why "Documentación" didn't match "Coins"/"Catalogo" - removed so
+   the title renders identically to every other page */
+
+#main .inner > p {
+	max-width: 42em;
+	font-size: 1.05em;
+	line-height: 1.6;
+	color: #767676;
+	margin-bottom: 2em;
+}
+
+/* the search bar/filters themselves are intentionally NOT styled here - they're
+   the same form_factory .form-inline markup (.global_search, .button_submit)
+   coins.js/catalog.js build, so they get the exact shared look from
+   page/css/form.less (plain underlined input[type=text], global button style)
+   instead of a one-off pill-shaped input with its own icon and focus ring.
+   Only the vertical gap before the form is set here - a little more room
+   between the golden-separator and the search bar than the 0 this used to be */
+#archive_search_form {
+	margin: var(--archive_space_md) 0 var(--archive_space_lg);
+}
+
+/* spacing between the Filtros/Buscar buttons - same 1rem gap form.less's own
+   .button_reset already uses between a form's two action buttons elsewhere,
+   just without that class's opacity:0.33 (both buttons here are equally live
+   actions, not a dim secondary reset) */
 #archive_search_form .button_submit input[type="button"] {
-	margin-right: 0.75em;
+	margin-right: 1rem;
 }
 
-/* pagination totals ("Mostrados 1 a 20 de 315") was wrapping onto two lines
-   because it shares a flex row with the page-number navigator; keep it on
-   one line and let the row wrap as a whole instead (pagination.less already
-   sets .pagination{flex-wrap:wrap}) */
 #rows_container .totals {
 	white-space: nowrap;
 }
 
-/* the results (grid or list) were touching the pagination bar right below
-   them with no breathing room */
 #rows_container .rows_container {
 	margin-bottom: 2em;
 }
 
-/* results toolbar (grid / list switch) */
+.archive_browse_heading {
+	font-size: 1.3em;
+	font-weight: 600;
+	color: var(--archive_ink);
+	margin: 0 0 1.2em;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid var(--archive_border);
+}
+
+.archive_fund_grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(18em, 1fr));
+	gap: 1.75em;
+	margin-bottom: 2.5em;
+	/* see #rows_container.view_grid .rows_container - same fix, cards size to
+	   their own content instead of stretching to match the tallest sibling */
+	align-items: start;
+}
+
+.archive_item_fund .image_wrapper {
+	height: 12em;
+}
+
+.archive_item_fund .info_container {
+	padding: 1.1em 1.2em 1.3em;
+	gap: 0.6em;
+}
+
+/* min-height + line-clamp reserve the same 2-line block for every title
+   regardless of actual length, so cards come out the same size on their own
+   merits instead of needing the grid to stretch (and pad) shorter ones */
+.archive_item_fund .archive_title {
+	font-size: 1em;
+	font-weight: 600;
+	line-height: 1.35;
+	min-height: 2.7em;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+}
+
+.archive_item_count {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 0.35em;
+	padding: 0.2em 0.65em;
+	border-radius: 1em;
+	background-color: var(--archive_media_bg);
+	color: var(--archive_muted);
+	font-size: 0.72em;
+	font-weight: 600;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	/* reserves its slot even empty (a zero-count card leaves this with no text,
+	   see annotate_child_count) - without a line-height's worth of min-height,
+	   an empty flex container collapses to just its own padding, which would
+	   make zero-count cards shorter than ones with a real count. 2.15em matches
+	   this element's own default line-height + padding exactly (same value
+	   .archive_card_tag uses for the identical reason), so a populated badge's
+	   real height is unaffected, only the empty one grows to match it */
+	min-height: 2.15em;
+	box-sizing: border-box;
+}
+
+.archive_item_count i {
+	font-size: 0.9em;
+	color: var(--archive_accent);
+}
+
+.archive_item_count.is_ready {
+	opacity: 1;
+}
+
+.archive_image_placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	color: var(--archive_border);
+	font-size: 1.8em;
+	background-color: var(--archive_media_bg);
+}
+
+.archive_search_status {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 0.75em;
+	margin-bottom: 1.25em;
+	padding-bottom: 0.75em;
+	border-bottom: 1px solid var(--archive_border);
+}
+
+/* text + back-link and the view toggle, as one header row instead of two -
+   see set_up/update_search_status in archive.js */
+.archive_search_status_info {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.75em;
+}
+
+.archive_search_status_text {
+	font-size: 0.95em;
+	font-weight: 600;
+	color: var(--archive_ink);
+}
+
+/* !important on color throughout this file's buttons: main.css's global button
+   reset (input[type=button], button, .button { color: #585858 !important }) beats
+   any class-based selector on plain specificity, no matter how many classes it
+   stacks - this is the only way to actually recolor a <button> here without
+   touching that shared rule */
+.archive_back_to_browse {
+	background: none;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+	color: var(--archive_accent) !important;
+	font-size: 0.85em;
+	font-weight: 600;
+	cursor: pointer;
+	text-transform: none;
+	letter-spacing: normal;
+	transition: opacity 0.15s ease;
+}
+
+.archive_back_to_browse:hover {
+	opacity: 0.75;
+}
+
+.archive_empty_state {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+	padding: 2em 0;
+	color: var(--archive_muted);
+	font-size: 1em;
+}
+
+.archive_empty_state i {
+	font-size: 1.3em;
+	color: var(--archive_border);
+}
 
 .archive_toolbar {
 	display: flex;
 	justify-content: flex-end;
-	margin-bottom: 1em;
 }
 
+/* segmented control, not two loose icon buttons - a single hairline shell with
+   an inset seam between the two options and one continuous active state */
 .archive_view_toggle {
 	display: inline-flex;
 	border: 1px solid var(--archive_border);
-	border-radius: 4px;
+	border-radius: 6px;
 	overflow: hidden;
+	background-color: var(--archive_media_bg);
 }
 
-/* every bare <button> on this site gets an inset box-shadow ring from the
-   global assets/sass/components/_button.scss (that's the "thick border" -
-   it's not actually an outline/border, so border:none alone doesn't clear
-   it); box-shadow:none here is what actually removes it */
+/* box-shadow:none clears the global button ring from _button.scss - border:none alone doesn't */
 .archive_view_btn {
-	width: 2.5em;
-	height: 2.5em;
+	width: 2.35em;
+	height: 2.35em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	border: none;
 	box-shadow: none;
-	background-color: var(--archive_card_bg);
-	color: #a89a86;
+	background-color: transparent;
+	color: var(--archive_muted) !important;
 	cursor: pointer;
 	text-transform: none;
 	letter-spacing: normal;
 	padding: 0;
+	font-size: 0.9em;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.archive_view_btn + .archive_view_btn {
+	border-left: 1px solid var(--archive_border);
 }
 
 .archive_view_btn:hover,
@@ -75,14 +310,14 @@
 .archive_view_btn:active {
 	outline: none;
 	box-shadow: none;
+	color: var(--archive_ink) !important;
 }
 
-.archive_view_btn.active {
+.archive_view_btn.active,
+.archive_view_btn.active:hover {
 	background-color: var(--archive_accent);
-	color: #fff;
+	color: #fff !important;
 }
-
-/* cards. shared between grid and list view */
 
 .archive_item {
 	position: relative;
@@ -92,6 +327,7 @@ a.row_wrapper {
 	display: flex;
 	color: inherit;
 	text-decoration: none;
+	transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .archive_item .go_to_dedalo {
@@ -103,11 +339,76 @@ a.row_wrapper {
 	z-index: 1;
 }
 
+.image_wrapper {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	background-color: var(--archive_media_bg);
+}
+
+.image_wrapper .thumb {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.image_wrapper .thumb.is_loaded {
+	opacity: 1;
+}
+
+.archive_card_dating {
+	position: absolute;
+	bottom: 0.5em;
+	right: 0.5em;
+	background-color: rgba(255,255,255,0.92);
+	color: #333333;
+	font-size: 0.7em;
+	font-weight: 600;
+	padding: 0.15em 0.55em;
+	border-radius: 0.3em;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.archive_card_tag {
+	align-self: flex-start;
+	padding: 0.2em 0.65em;
+	background-color: var(--archive_media_bg);
+	color: var(--archive_accent);
+	border-radius: 1em;
+	font-size: 0.72em;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	/* a genuinely empty inline element (see .is_empty) has no text to establish
+	   a line box, so it'd collapse to just its padding without this - box-sizing
+	   keeps that reserved height inclusive of the padding above, not additional.
+	   2.15em matches this element's own default line-height + padding exactly,
+	   so a populated tag's real height is unaffected, only the empty one grows */
+	min-height: 2.15em;
+	box-sizing: border-box;
+}
+
+/* reserves its slot (see draw_item) without showing an empty pill */
+.archive_card_tag.is_empty {
+	opacity: 0;
+}
+
 .info_container {
 	display: grid;
-	grid-template-columns: 25% auto;
-	grid-column-gap: 1em;
+	/* label column sized to its own content (capped, not a fixed 25% of
+	   whatever the container happens to be) so short labels like "Nombre"
+	   don't leave an oversized gap before the value starts */
+	grid-template-columns: minmax(7em, 14em) 1fr;
+	grid-column-gap: var(--archive_space_sm);
 	width: 100%;
+}
+
+.archive_item .info_container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
 }
 
 .archive_title {
@@ -115,27 +416,316 @@ a.row_wrapper {
 	font-size: 1.1em;
 	font-weight: bold;
 	margin-bottom: 0.5em;
-	color: #333333;
+	color: var(--archive_ink);
 }
 
 .left-labels {
 	grid-column: 1;
 	text-align: right;
-	color: #585858;
+	color: var(--archive_muted);
+	font-size: 0.85em;
+	font-weight: 600;
+	letter-spacing: 0.02em;
 	margin: 0;
+	padding-top: 0.15em;
 }
 
 .rigth-values {
 	grid-column: 2;
 	text-align: left;
+	color: var(--archive_ink);
 }
 
-/* list view . horizontal rows (matches tpl/coins row layout) */
+/* long-form prose (description, inscriptions) - full width, its own reading
+   rhythm, distinct from the compact label/value grid rows around it */
+.long_field {
+	grid-column: 1 / -1;
+	margin: var(--archive_space_sm) 0;
+	padding-top: var(--archive_space_xs);
+}
+
+.long_field_label {
+	display: block;
+	color: var(--archive_muted);
+	font-size: 0.85em;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	margin-bottom: 0.5em;
+}
+
+.long_field_value {
+	color: var(--archive_ink);
+	line-height: 1.65;
+	margin: 0;
+}
+
+/* description - its own archival-paper block (see archive.js draw_description),
+   not a plain long_field line. Colors below are new, component-local variables,
+   not changes to the site's shared --archive_* tokens above - the ivory/border
+   tones are simply light tints of the page's own --archive_accent gold (b7996d),
+   so the "paper" reads as warm parchment without introducing a foreign palette */
+.archive_description_section {
+	margin-top: var(--archive_space_md);
+	padding-top: var(--archive_space_sm);
+	border-top: 1px solid var(--archive_border);
+	max-width: var(--archive_text_measure);
+}
+
+.archive_description_label {
+	display: block;
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.7em;
+}
+
+.archive_description_paper {
+	/* one shared color, read by the grain overlay and the fade gradient below
+	   too, so the three layers can't drift apart into mismatched tones */
+	--paper_bg: #f9f2e0;
+
+	position: relative;
+	max-height: 13.5em;
+	overflow: hidden;
+	padding: 1.8em 2.2em;
+	background-color: var(--paper_bg);
+	/* a soft vignette - very faintly lighter at the center, deepening toward
+	   the edges - so the sheet reads as handled/uneven paper instead of a
+	   flat color fill */
+	background-image: radial-gradient(ellipse at 50% 40%, rgba(255,253,246,0.6) 0%, rgba(205,180,131,0.12) 100%);
+	border: 1px solid #e3d3a8;
+	border-radius: 2px;
+	/* a faint inner highlight just inside the border (a common cue for a
+	   slightly uneven, deckled paper edge) plus two soft outer shadows - a
+	   tight one for the paper's own thin edge, a wider one for a barely-there
+	   lift off the page. Nothing dramatic. */
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 252, 240, 0.5),
+		0 1px 2px rgba(60, 42, 16, 0.08),
+		0 14px 28px -18px rgba(60, 42, 16, 0.32);
+	transition: max-height 0.5s ease;
+}
+
+/* a warm-toned paper grain - a tiny tiled SVG noise filter, not an image
+   asset - visible enough to read as fibrous paper texture up close, while
+   staying quiet at normal reading distance */
+.archive_description_paper:before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.45 0 0 0 0 0.34 0 0 0 0 0.18 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	mix-blend-mode: multiply;
+	pointer-events: none;
+}
+
+.archive_description_text {
+	position: relative;
+	font-family: cambria, serif;
+	font-size: 1.08em;
+	line-height: 1.85;
+	color: #362a1a;
+	margin: 0;
+}
+
+/* drop cap on the first letter - a quiet nod to an archival manuscript,
+   sized/positioned to sit in the text block rather than towering over it */
+.archive_description_text:first-letter {
+	float: left;
+	font-size: 2.6em;
+	line-height: 0.78;
+	padding: 0.05em 0.08em 0 0;
+	color: var(--archive_accent);
+}
+
+.archive_description_fade {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 5em;
+	background: linear-gradient(to bottom, rgba(242, 230, 201, 0), var(--paper_bg));
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+.archive_description_paper.is_expanded .archive_description_fade {
+	opacity: 0;
+}
+
+/* the site-wide button/.button reset (assets/css/main.css) styles every
+   <button> as a big uppercase call-to-action pill with a hard inset
+   box-shadow "border" and a forced !important color on hover - built for
+   large actions, not a quiet inline reading toggle. Every property it sets
+   is neutralized explicitly below rather than assumed away, since several
+   (color, box-shadow) are !important there and need matching overrides here */
+.archive_description_toggle {
+	-webkit-appearance: none;
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	height: auto;
+	margin-top: 1em;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background-color: transparent;
+	box-shadow: none !important;
+	text-align: left;
+	text-transform: none;
+	text-overflow: unset;
+	white-space: normal;
+	overflow: visible;
+	font-family: inherit;
+	font-size: 0.85em;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.4;
+	color: var(--archive_accent) !important;
+	cursor: pointer;
+	transition: opacity 0.15s ease;
+}
+
+.archive_description_toggle:hover,
+.archive_description_toggle:active {
+	box-shadow: none !important;
+	background-color: transparent !important;
+	color: var(--archive_accent) !important;
+	text-decoration: underline;
+	opacity: 0.8;
+}
+
+.archive_description_toggle:after {
+	content: "\f107"; /* fa-chevron-down */
+	font-family: FontAwesome;
+	font-weight: normal;
+	font-size: 0.9em;
+	transition: transform 0.3s ease;
+}
+
+.archive_description_toggle[aria-expanded="true"]:after {
+	transform: rotate(180deg);
+}
+
+@media screen and (max-width: 736px) {
+	.archive_description_paper {
+		padding: 1.3em 1.3em;
+	}
+	.archive_description_text {
+		font-size: 1em;
+		line-height: 1.75;
+	}
+}
+
+.vertical-group {
+	grid-column: 2;
+	display: flex;
+	flex-flow: column;
+}
+
+.vertical-group .sub-vertical-group {
+	width: 100%;
+	margin-bottom: 0.5em;
+}
+
+.vertical-group .sub-vertical-group:last-child {
+	margin-bottom: 0;
+}
+
+/* documents (attached PDFs, see archive.js draw_documents) - its own quiet
+   section in the same family as .archive_related_items_section right below,
+   not a field squeezed into the info_container label/value grid - that grid's
+   align-items:baseline was pulling the label away from the card's own top
+   edge as soon as a title wrapped past one line, so label and card visibly
+   drifted apart. Standing on its own removes that mismatch entirely. */
+.archive_documents_section {
+	margin-top: var(--archive_space_md);
+	padding-top: var(--archive_space_sm);
+	border-top: 1px solid var(--archive_border);
+}
+
+.archive_documents_label {
+	display: block;
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.6em;
+}
+
+.archive_documents_list {
+	display: flex;
+	flex-flow: column;
+	gap: 0.5em;
+}
+
+.archive_document {
+	display: flex;
+	align-items: center;
+	gap: 0.7em;
+	max-width: var(--archive_text_measure);
+	padding: 0.7em 1em;
+	border: 1px solid var(--archive_border);
+	border-radius: 6px;
+	background-color: var(--archive_card_bg);
+	text-decoration: none;
+	color: var(--archive_ink);
+	transition: border-color 0.15s ease;
+}
+
+/* a plain border-color change only, no lift/shadow/background tint - the
+   icon badge below already sits on that same tint color, so swapping the
+   whole card to it on hover would make the badge disappear into the card.
+   color is forced back to ink (!important) because the site-wide `a:hover`
+   rule (assets/css/main.css) forces every link to its own gold on hover -
+   without this, the whole card's text would flash to that unrelated gold
+   instead of just the border quietly changing */
+.archive_document:hover {
+	border-color: var(--archive_accent);
+	color: var(--archive_ink) !important;
+}
+
+.archive_document_icon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.4em;
+	height: 2.4em;
+	border-radius: 5px;
+	background-color: var(--archive_media_bg);
+	color: var(--archive_accent);
+	font-size: 1.2em;
+}
+
+.archive_document_title {
+	font-size: 0.9em;
+	line-height: 1.35;
+	color: var(--archive_ink);
+}
+
+/* shared "content is changing" treatment - used both while a new results page
+   loads (load_list) and during a client-side sibling transition (go_to_row),
+   so both feel like the same calm dip rather than a hard cut */
+#rows_container {
+	transition: opacity 0.2s ease;
+}
+
+#rows_container.loading {
+	opacity: 0.35;
+}
 
 #rows_container.view_list a.row_wrapper {
 	flex-wrap: wrap;
 	border-bottom: 1px solid var(--archive_border);
 	padding: 1.25em 0;
+}
+
+#rows_container.view_list a.row_wrapper:hover {
+	background-color: var(--archive_media_bg);
 }
 
 #rows_container.view_list .archive_item:last-child a.row_wrapper {
@@ -170,81 +760,498 @@ a.row_wrapper {
 	}
 }
 
-/* grid view . card grid (default) */
-
 #rows_container.view_grid .rows_container {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(13.5em, 1fr));
 	gap: 1.25em;
+	/* default grid behavior stretches every card in a row to match the tallest
+	   one - since title length varies per record, that left short titles
+	   sitting in a card with a lot of dead space at the bottom. Cards size to
+	   their own content instead */
+	align-items: start;
 }
 
+.archive_item_fund a.row_wrapper,
+.archive_item_child a.row_wrapper,
+.related_coin_item,
 #rows_container.view_grid a.row_wrapper {
 	flex-direction: column;
 	border: 1px solid var(--archive_border);
-	border-radius: 6px;
+	border-radius: 8px;
 	height: 100%;
 	background-color: var(--archive_card_bg);
-	box-shadow: 0 2px 6px rgba(90,70,40,0.08);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+	overflow: hidden;
+	transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+/* restrained hover: a hint of lift and a slightly warmer border, not a jump -
+   the card should feel like it responded, not like it launched */
+.archive_item_fund a.row_wrapper:hover,
+.archive_item_child a.row_wrapper:hover,
+.related_coin_item:hover,
+#rows_container.view_grid a.row_wrapper:hover {
+	box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+	border-color: var(--archive_accent);
+	transform: translateY(-1px);
+}
+
+.archive_item_fund .thumb,
+.archive_item_child .thumb,
+#rows_container.view_grid .thumb {
+	transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.archive_item_fund a.row_wrapper:hover .thumb,
+.archive_item_child a.row_wrapper:hover .thumb,
+#rows_container.view_grid a.row_wrapper:hover .thumb {
+	transform: scale(1.02);
 }
 
 #rows_container.view_grid .image_wrapper {
-	width: 100%;
 	height: 9em;
-	background-color: var(--archive_media_bg);
-	overflow: hidden;
-}
-
-#rows_container.view_grid .image_wrapper .thumb {
-	width: 100%;
-	height: 100%;
-	object-fit: contain;
 }
 
 #rows_container.view_grid .info_container {
-	grid-template-columns: 100%;
 	padding: 0.9em 1em;
 }
 
 #rows_container.view_grid .archive_title {
-	grid-column: 1;
 	font-size: 0.95em;
-	margin-bottom: 0.35em;
+	margin-bottom: 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+	line-height: 1.3;
 }
-
-#rows_container.view_grid .left-labels {
-	grid-column: 1;
-	text-align: left;
-	font-weight: bold;
-	font-size: 0.75em;
-}
-
-#rows_container.view_grid .rigth-values {
-	grid-column: 1;
-	margin-bottom: 0.3em;
-	font-size: 0.85em;
-}
-
-/* detail view */
 
 .row_wrapper.detail {
 	display: flex;
-	flex-wrap: wrap;
-	padding: 1em 0;
+	flex-direction: column;
+	padding: 2em 0 3em;
 }
 
-.row_wrapper.detail .gallery {
+
+.archive_detail_nav:empty {
+	margin: 0;
+}
+
+.archive_breadcrumb {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5em;
+	align-items: center;
+	gap: 0.4em;
+	margin-bottom: 1.5em;
+	font-size: 0.85em;
 }
 
-.row_wrapper.detail .gallery .thumb {
-	height: 14em;
-	max-width: 100%;
-	object-fit: contain;
-	cursor: zoom-in;
+.archive_breadcrumb_icon {
+	color: var(--archive_accent);
+	margin-right: 0.2em;
+}
+
+.archive_breadcrumb_link {
+	color: var(--archive_accent);
+	text-decoration: none;
+	padding: 0.25em 0.75em;
+	border-radius: 1em;
 	background-color: var(--archive_media_bg);
+	transition: background-color 0.15s ease;
+}
+
+.archive_breadcrumb_link:hover {
+	background-color: var(--archive_border);
+}
+
+.archive_breadcrumb_separator {
+	color: #c9c9c9;
+	font-size: 0.75em;
+}
+
+/* first/previous/[jump]/next/last among siblings - a thin strip of its own,
+   distinct from the back-link/breadcrumb above it but part of the same
+   wayfinding family. Empty (no siblings) until draw_sibling_nav fills it in,
+   and stays empty/collapsed when there's nothing to compare against - see
+   archive.js. First/last pin to the edges via auto margins so the primary
+   previous/jump/next cluster reads as the visual center */
+.archive_sibling_nav {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.6em 1em;
+}
+
+.archive_sibling_nav:not(:empty) {
+	margin-bottom: 1.5em;
+	padding: 0.6em 1em;
+	border: 1px solid var(--archive_border);
+	border-radius: 6px;
+	background-color: var(--archive_card_bg);
+}
+
+.archive_sibling_first {
+	margin-right: auto;
+}
+
+.archive_sibling_last {
+	margin-left: auto;
+}
+
+.archive_sibling_link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	color: var(--archive_accent);
+	font-size: 0.85em;
+	font-weight: 600;
+	text-decoration: none;
+	transition: opacity 0.15s ease;
+}
+
+.archive_sibling_link:hover {
+	opacity: 0.75;
+}
+
+.archive_sibling_link.is_disabled {
+	color: var(--archive_muted);
+	opacity: 0.4;
+}
+
+.archive_sibling_first,
+.archive_sibling_last {
+	font-size: 0.9em;
+	padding: 0.3em;
+}
+
+.archive_sibling_position {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	color: var(--archive_muted);
+	font-size: 0.8em;
+	white-space: nowrap;
+}
+
+.archive_sibling_jump {
+	width: 3em;
+	padding: 0.25em 0.4em;
+	border: 1px solid var(--archive_border);
 	border-radius: 4px;
+	background-color: var(--archive_card_bg);
+	color: var(--archive_ink);
+	font-size: 1em;
+	text-align: center;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	/* hide the native spinner arrows - a plain numeric field reads calmer here
+	   than a stepper, and Enter/blur already commit the value */
+	appearance: textfield;
+	-moz-appearance: textfield;
+}
+
+.archive_sibling_jump::-webkit-outer-spin-button,
+.archive_sibling_jump::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.archive_sibling_jump:focus {
+	outline: none;
+	border-color: var(--archive_accent);
+	box-shadow: 0 0 0 3px rgba(183,153,109,0.15);
+}
+
+/* deliberate "light table" tray - background-color is explicit here rather
+   than inherited from the generic .image_wrapper card-thumbnail rule, with
+   real padding so it reads as a designed mat instead of an incidental bleed */
+.row_wrapper.detail .gallery {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--archive_space_md);
+	width: 100%;
+	margin-bottom: var(--archive_space_md);
+	padding: var(--archive_space_md);
+	background-color: var(--archive_media_bg);
+	border-radius: 8px;
+	box-sizing: border-box;
+}
+
+.row_wrapper.detail .gallery .gallery_figure {
+	flex: 1 1 300px;
+	max-width: 440px;
+	margin: 0;
+	/* fixed, not min - a photo's real aspect ratio is unknown until it loads,
+	   so a height that only grows would let the box pop taller under the load
+	   fade instead of just fading in. object-fit:contain letterboxes inside
+	   this regardless of the photo's own proportions, same principle as the
+	   card thumbnails' fixed-height .image_wrapper */
+	height: 20em;
+}
+
+/* the common case - a single hero image keeps this page's original larger
+   treatment; the more compact sizing above only kicks in once there's more
+   than one, so multiple hero shots can sit side by side instead of each
+   forcing a full 26em of scroll */
+.row_wrapper.detail .gallery .gallery_figure:only-child {
+	flex-basis: 520px;
+	max-width: 820px;
+	height: 26em;
+}
+
+.row_wrapper.detail .gallery .gallery_image {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	background-color: var(--archive_card_bg);
+	border: 1px solid var(--archive_border);
+	border-radius: 6px;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.14);
+	cursor: zoom-in;
+	opacity: 0;
+	transition: box-shadow 0.2s ease, transform 0.2s ease, opacity 0.35s ease;
+}
+
+.row_wrapper.detail .gallery .gallery_image.is_loaded {
+	opacity: 1;
+}
+
+.row_wrapper.detail .gallery .gallery_image:hover {
+	box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+	transform: translateY(-2px);
+}
+
+/* secondary images (images_data) - a compact "contact sheet" strip instead
+   of full hero slots, so records with several supporting images don't push
+   the actual field data far down the page. Still open the same zoom/pan
+   lightbox as the hero images above, just at a much smaller footprint. */
+.gallery_secondary {
+	margin-bottom: var(--archive_space_md);
+}
+
+.gallery_secondary_label {
+	display: block;
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.5em;
+}
+
+.gallery_secondary_grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6em;
+}
+
+.gallery_secondary_image {
+	width: 7em;
+	height: 7em;
+	object-fit: cover;
+	background-color: var(--archive_card_bg);
+	border: 1px solid var(--archive_border);
+	border-radius: 6px;
+	cursor: zoom-in;
+	opacity: 0;
+	transition: box-shadow 0.2s ease, transform 0.2s ease, opacity 0.35s ease;
+}
+
+.gallery_secondary_image.is_loaded {
+	opacity: 1;
+}
+
+.gallery_secondary_image:hover {
+	box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+	transform: translateY(-2px);
+}
+
+/* lightbox . full-screen zoom/pan viewer, see archive.js open_lightbox */
+.archive_lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0,0,0,0.985);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.archive_lightbox:focus {
+	outline: none;
+}
+
+.archive_lightbox.is_open {
+	opacity: 1;
+}
+
+.archive_lightbox_stage {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	touch-action: none;
+	transform: scale(0.96);
+	transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.archive_lightbox.is_open .archive_lightbox_stage {
+	transform: scale(1);
+}
+
+.archive_lightbox_image {
+	max-width: 88vw;
+	max-height: 78vh;
+	object-fit: contain;
+	opacity: 0;
+	user-select: none;
+	-webkit-user-drag: none;
+	will-change: transform;
+	transition: opacity 0.3s ease;
+}
+
+.archive_lightbox_image.is_loaded {
+	opacity: 1;
+}
+
+.archive_lightbox_spinner {
+	position: absolute;
+	width: 2.5em;
+	height: 2.5em;
+	border-radius: 50%;
+	border: 3px solid rgba(255,255,255,0.2);
+	border-top-color: var(--archive_accent);
+	animation: archive_lightbox_spin 0.8s linear infinite;
+}
+
+.archive_lightbox_spinner.hide {
+	display: none;
+}
+
+@keyframes archive_lightbox_spin {
+	to { transform: rotate(360deg); }
+}
+
+.archive_lightbox_caption {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 1.5em;
+	text-align: center;
+	color: rgba(255,255,255,0.85);
+	font-size: 0.9em;
+	padding: 0 4em;
+	pointer-events: none;
+}
+
+.archive_lightbox_caption.hide {
+	display: none;
+}
+
+.archive_lightbox_nav {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.85em;
+	height: 2.85em;
+	border-radius: 50%;
+	border: 1px solid rgba(255,255,255,0.22);
+	background-color: rgba(255,255,255,0.1);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	box-shadow: 0 4px 18px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+	color: rgba(255,255,255,0.88) !important;
+	font-size: 1.1em;
+	cursor: pointer;
+	padding: 0;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.archive_lightbox_nav:hover {
+	background-color: rgba(255,255,255,0.22);
+	border-color: rgba(255,255,255,0.4);
+	color: #fff !important;
+}
+
+.archive_lightbox_nav.hide {
+	display: none;
+}
+
+.archive_lightbox_prev {
+	left: 1.25em;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.archive_lightbox_next {
+	right: 1.25em;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+@media screen and (max-width: 736px) {
+
+	/* the edge-pinning auto-margins only read cleanly on one line - once this
+	   wraps, center everything instead of leaving "Última" stranded alone on
+	   its own row */
+	.archive_sibling_nav {
+		justify-content: center;
+	}
+
+	.archive_sibling_first,
+	.archive_sibling_last {
+		margin: 0;
+	}
+
+	.row_wrapper.detail .gallery .gallery_figure,
+	.row_wrapper.detail .gallery .gallery_figure:only-child {
+		flex-basis: 300px;
+		max-width: 100%;
+		height: 16em;
+	}
+
+	.gallery_secondary_image {
+		width: 5em;
+		height: 5em;
+	}
+
+	.archive_lightbox_image {
+		max-width: 94vw;
+		max-height: 72vh;
+	}
+
+	.archive_lightbox_nav {
+		width: 2.5em;
+		height: 2.5em;
+		font-size: 1em;
+	}
+
+	.archive_lightbox_caption {
+		padding: 0 3em;
+		font-size: 0.8em;
+	}
+}
+
+/* cambria is already loaded site-wide and used the same way for editorial
+   headings on the biblio/catalog/mints pages - reused here rather than
+   adding a new font */
+.row_wrapper.detail > .archive_title {
+	font-family: cambria, serif;
+	font-size: 1.25em;
+	line-height: 1.35;
+	text-align: center;
+	margin-top: 0.25em;
+	margin-bottom: 1.25em;
+	padding-bottom: 0.5em;
+	border-bottom: 2px solid var(--archive_accent);
 }
 
 .row_wrapper.detail .go_to_dedalo {
@@ -255,120 +1262,368 @@ a.row_wrapper {
 	display: inline-block;
 }
 
-@media screen and (min-width: 736px) {
-	.row_wrapper.detail .image_wrapper {
-		width: 40%;
-	}
-	.row_wrapper.detail .info_container {
-		width: 55%;
-	}
+.row_wrapper.detail .info_container {
+	align-items: baseline;
+	/* metadata/bibliography read better at a controlled width than stretched
+	   across the full column - the gallery/Contenido/Coins grids above and
+	   below deliberately keep the fuller width instead, see their own rules */
+	max-width: var(--archive_text_measure);
 }
 
-/* lightbox. no equivalent exists elsewhere on the site */
-
-body.archive_lightbox_open {
-	overflow: hidden;
+/* divider sits above each row instead of below - so the very last field in
+   the container (whatever type it happens to be: value, vertical-group,
+   bibliography...) doesn't trail a dangling empty-looking line before the
+   next section starts */
+.row_wrapper.detail .info_container > .left-labels,
+.row_wrapper.detail .info_container > .rigth-values,
+.row_wrapper.detail .info_container > .vertical-group {
+	padding: 0.3em 0;
+	border-top: 1px solid var(--archive_border);
 }
 
-.archive_lightbox {
-	position: fixed;
-	inset: 0;
-	background-color: rgba(0,0,0,0.9);
-	z-index: 9999;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+.row_wrapper.detail .info_container > .left-labels:first-of-type,
+.row_wrapper.detail .info_container > .rigth-values:first-of-type {
+	border-top: none;
 }
 
-.archive_lightbox_stage {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
+.row_wrapper.detail .info_container > .left-labels {
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
 }
 
-.archive_lightbox_img {
-	max-width: 90vw;
-	max-height: 90vh;
-	object-fit: contain;
-	cursor: zoom-in;
-	transition: transform 0.1s ease-out;
-	user-select: none;
+.row_wrapper.detail .info_container > .rigth-values {
+	color: var(--archive_ink);
+	line-height: 1.5;
 }
 
-.archive_lightbox_img.zoomed {
-	cursor: grab;
+/* a short centered gold rule instead of a full-width grey line - reads as a
+   deliberate section break rather than just one more row divider like the
+   thin lines running through .info_container above */
+.archive_contents_section,
+.archive_related_coins_section {
+	position: relative;
+	margin-top: var(--archive_space_lg);
+	padding-top: var(--archive_space_lg);
 }
 
-.archive_lightbox_img.dragging {
-	cursor: grabbing;
-	transition: none;
-}
-
-.archive_lightbox_nav {
+.archive_contents_section::before {
+	content: "";
 	position: absolute;
 	top: 0;
-	bottom: 0;
-	width: 3.5em;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 3em;
+	height: 3px;
+	border-radius: 2px;
+	background-color: var(--archive_accent);
+}
+
+.archive_contents_title {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	font-size: 1.05em;
+	font-weight: 700;
+	color: #333333;
+	margin: 0 0 1em;
+}
+
+.archive_contents_title i {
+	color: var(--archive_accent);
+}
+
+.archive_contents_filter {
+	display: block;
+	width: 100%;
+	max-width: 26em;
+	margin-bottom: 1em;
+	padding: 0.6em 1em;
+	border: 1px solid var(--archive_border);
+	border-radius: 2em;
+	font-size: 0.9em;
+	background-color: var(--archive_card_bg);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.archive_contents_filter:focus {
+	outline: none;
+	border-color: var(--archive_accent);
+	box-shadow: 0 0 0 3px rgba(183,153,109,0.15);
+}
+
+.archive_contents_grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(18em, 1fr));
+	gap: 0.75em;
+	/* see #rows_container.view_grid .rows_container - same fix, cards size to
+	   their own content instead of stretching to match the tallest sibling */
+	align-items: start;
+}
+
+.archive_item_child .image_wrapper {
+	height: 8em;
+}
+
+.archive_item_child .info_container {
+	padding: 0.9em 1em;
+	gap: 0.3em;
+}
+
+/* pulled flush against the image using the negative of .info_container's own
+   top padding above, instead of floating with a gap - stays sized to its text
+   (align-self/padding inherited from .archive_card_tag), just square + attached */
+.archive_item_child .archive_card_tag {
+	margin-top: -0.9em;
+	border-radius: 0;
+}
+
+/* lighter than the base .archive_title (these repeat often in a dense grid,
+   see .archive_contents_grid) but still semi-bold - light enough to be calm,
+   heavy enough to still read as a title rather than plain body text */
+.archive_item_child .archive_title {
+	margin-bottom: 0;
+	font-size: 0.88em;
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--archive_ink);
+	/* min-height + line-clamp reserve the same 2-line block for every title
+	   regardless of actual length, so cards come out the same size on their
+	   own merits instead of needing the grid to stretch (and pad) shorter ones */
+	min-height: 2.7em;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+}
+
+/* related items - a quieter, secondary relation (see archive.js
+   draw_related_items) - small inline chips instead of the Contents/Coins
+   sections' full card grid, and a plain muted label instead of their bold
+   icon heading, so this doesn't compete for the same attention */
+.archive_related_items_section {
+	margin-top: var(--archive_space_md);
+	padding-top: var(--archive_space_sm);
+	border-top: 1px solid var(--archive_border);
+}
+
+.archive_related_items_label {
+	display: block;
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.6em;
+}
+
+.archive_related_items_list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+}
+
+.archive_related_item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	max-width: 16em;
+	padding: 0.25em 0.9em 0.25em 0.25em;
+	border: 1px solid var(--archive_border);
+	border-radius: 2em;
+	background-color: var(--archive_card_bg);
+	text-decoration: none;
+	color: var(--archive_ink);
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.archive_related_item:hover {
+	border-color: var(--archive_accent);
+	background-color: var(--archive_media_bg);
+}
+
+.archive_related_item_thumb {
+	width: 2em;
+	height: 2em;
+	object-fit: cover;
+	border-radius: 50%;
+	flex-shrink: 0;
+	background-color: var(--archive_media_bg);
+}
+
+.archive_related_item_thumb_placeholder {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: none;
-	background: none;
-	color: #fff;
-	font-size: 1.6em;
-	opacity: 0.55;
-	cursor: pointer;
-	transition: opacity 0.15s ease;
-}
-
-.archive_lightbox_nav:hover {
-	opacity: 1;
-}
-
-.archive_lightbox_nav.prev {
-	left: 0;
-}
-
-.archive_lightbox_nav.next {
-	right: 0;
-}
-
-.archive_lightbox_counter {
-	position: absolute;
-	bottom: 1.5em;
-	left: 50%;
-	transform: translateX(-50%);
-	color: #fff;
 	font-size: 0.85em;
-	background-color: rgba(255,255,255,0.1);
-	padding: 0.3em 1em;
-	border-radius: 1em;
+	color: var(--archive_border);
+}
+
+.archive_related_item_title {
+	font-size: 0.85em;
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* related coins - same heading/grid rhythm as .archive_contents_section above
+   (reuses .archive_contents_title directly), wider cards to fit an obverse/reverse
+   pair. Set inside a tinted panel rather than a plain border-top rule so it reads
+   as its own related-content module, not "more children" of this record */
+.archive_related_coins_section {
+	padding: var(--archive_space_md);
+	border-top: none;
+	background-color: var(--archive_media_bg);
+	border-radius: 8px;
+}
+
+.archive_related_coins_grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(14em, 1fr));
+	gap: 0.75em;
+}
+
+.related_coin_images {
+	display: flex;
+	height: 8em;
+	background-color: var(--archive_media_bg);
+}
+
+.related_coin_images .image {
+	width: 50%;
+	height: 100%;
+	object-fit: contain;
+	background-color: #ffffff;
+}
+
+.related_coin_info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3em;
+	padding: 0.9em 1em;
+}
+
+.related_coin_mint {
+	font-weight: 600;
+	font-size: 0.95em;
+	color: var(--archive_ink);
+}
+
+.related_coin_secondary {
+	font-size: 0.8em;
+	color: var(--archive_muted);
 }
 
 @media screen and (max-width: 736px) {
 
-	#rows_container.view_list .info_container,
 	.row_wrapper.detail .info_container {
 		grid-template-columns: 100%;
 	}
 
-	#rows_container.view_list .left-labels,
 	.row_wrapper.detail .left-labels {
 		text-align: left;
 		font-weight: bold;
 	}
 
-	#rows_container.view_list .rigth-values,
 	.row_wrapper.detail .rigth-values {
 		grid-column: 1;
 		margin-bottom: 0.5em;
 	}
 
-	.archive_lightbox_nav {
-		width: 2.4em;
-		height: 2.4em;
+	/* one box per row on mobile, styled as a compact list row instead of a card -
+	   same border-bottom-separator, no-card-chrome treatment #rows_container.view_list
+	   already uses for search results, just with a smaller thumbnail */
+	.archive_contents_grid {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+
+	.archive_item_child a.row_wrapper {
+		flex-direction: row;
+		align-items: center;
+		border: none;
+		border-radius: 0;
+		box-shadow: none;
+		border-bottom: 1px solid var(--archive_border);
+		padding: 0.75em 0;
+	}
+
+	.archive_item_child a.row_wrapper:hover {
+		box-shadow: none;
+		transform: none;
+		background-color: var(--archive_media_bg);
+	}
+
+	.archive_item_child:last-child a.row_wrapper {
+		border-bottom: none;
+	}
+
+	.archive_item_child .image_wrapper {
+		width: 4.5em;
+		height: 4.5em;
+		flex: 0 0 auto;
+	}
+
+	.archive_item_child .info_container {
+		flex: 1 1 auto;
+		padding: 0 0 0 1em;
+	}
+
+	/* the desktop card's flush-square tag (see .archive_item_child .archive_card_tag
+	   above) only makes sense attached to the top of a vertical card - back to a
+	   plain small pill now that the image sits beside the text, not above it */
+	.archive_item_child .archive_card_tag {
+		margin-top: 0;
+		border-radius: 1em;
+	}
+
+	/* related coins - same one-per-row list treatment as the contents grid above */
+	.archive_related_coins_grid {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+
+	.related_coin_item {
+		flex-direction: row;
+		align-items: center;
+		border: none;
+		border-radius: 0;
+		box-shadow: none;
+		border-bottom: 1px solid var(--archive_border);
+	}
+
+	.related_coin_item:hover {
+		box-shadow: none;
+		transform: none;
+		/* the section itself is a tinted panel (--archive_media_bg) at this width -
+		   hover brightens the row against it instead of matching and disappearing */
+		background-color: var(--archive_card_bg);
+	}
+
+	.related_coin_item:last-child {
+		border-bottom: none;
+	}
+
+	.related_coin_images {
+		width: 6em;
+		height: 4.5em;
+		flex: 0 0 auto;
+	}
+
+	.related_coin_info {
+		flex: 1 1 auto;
+		padding: 0.5em 0 0.5em 1em;
 	}
 }
+
+/* pagination . intentionally NOT styled here - list_factory's markup
+   (.pagination > .paginator_wrapper.navigator > a, plus .spacer and .totals)
+   is already styled globally by page/css/pagination.less (loaded site-wide via
+   page.less), which is exactly what coins/catalog/type rely on for their own
+   pagination. Overriding it here just for this page was what produced a
+   different (and, at narrow widths, wrapping) look than every other list page -
+   removed so archive matches them exactly instead of re-implementing it. */

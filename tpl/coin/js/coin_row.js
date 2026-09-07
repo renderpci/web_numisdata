@@ -743,6 +743,22 @@ var coin_row = {
 					})
 				}
 
+		// public info
+			if (row.public_info && row.public_info.length>1 && row.public_info!=='<br data-mce-bogus="1">') {
+				common.create_dom_element({
+					element_type	: "label",
+					class_name		: "left-labels",
+					text_content	: tstring.public_info || "public_info",
+					parent			: info_container
+				})
+				common.create_dom_element({
+					element_type	: "span",
+					class_name		: "rigth-values",
+					inner_html		: row.public_info,
+					parent			: info_container
+				})
+			}
+
 		// find type
 			if (row.find_type && row.find_type.length>0) {
 				common.create_dom_element({
@@ -759,37 +775,74 @@ var coin_row = {
 				})
 			}
 
-		// hoard
+		// hoard - same clickable-value pattern as the type field above (type_label):
+		// the whole value is the anchor, not just the trailing icon, so clicking
+		// anywhere on the hoard name navigates to it (hoard_data is the raw,
+		// unresolved portal reference - just an array of ids - so no extra
+		// resolve_portals_custom entry is needed to read the first one)
 			if (row.hoard && row.hoard.length>0) {
+
+				let hoard_ids = []
+				try { hoard_ids = JSON.parse(row.hoard_data || '[]') } catch(e) { /* malformed, no link */ }
+				const hoard_url = hoard_ids[0] ? page_globals.__WEB_ROOT_WEB__ + '/hoard/' + hoard_ids[0] : null
+
 				common.create_dom_element({
 					element_type	: "label",
 					class_name		: "left-labels",
 					text_content	: tstring.hoard || "hoard",
 					parent			: info_container
 				})
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "rigth-values",
-					inner_html		: row.hoard,
-					parent			: info_container
-				})
+				if (hoard_url) {
+					common.create_dom_element({
+						element_type	: "a",
+						class_name		: "rigth-values type_label",
+						inner_html		: row.hoard + ' <a class="icon_link" href="' + hoard_url + '"></a>',
+						href			: hoard_url,
+						target			: "_blank",
+						parent			: info_container
+					})
+				}else{
+					common.create_dom_element({
+						element_type	: "span",
+						class_name		: "rigth-values",
+						inner_html		: row.hoard,
+						parent			: info_container
+					})
+				}
 			}
 
 		// finds
-			// findspot_place
+			// findspot_place, same clickable-value pattern as hoard above (findspot_data
+			// is the same shape - a raw array of ids)
 				if (row.findspot_place && row.findspot_place.length>0) {
+
+					let findspot_ids = []
+					try { findspot_ids = JSON.parse(row.findspot_data || '[]') } catch(e) { /* malformed, no link */ }
+					const findspot_url = findspot_ids[0] ? page_globals.__WEB_ROOT_WEB__ + '/findspot/' + findspot_ids[0] : null
+
 					common.create_dom_element({
 						element_type	: "label",
 						class_name		: "left-labels",
 						text_content	: tstring.findspot_place || "findspot_place",
 						parent			: info_container
 					})
-					common.create_dom_element({
-						element_type	: "span",
-						class_name		: "rigth-values",
-						inner_html		: row.findspot_place,
-						parent			: info_container
-					})
+					if (findspot_url) {
+						common.create_dom_element({
+							element_type	: "a",
+							class_name		: "rigth-values type_label",
+							inner_html		: row.findspot_place + ' <a class="icon_link" href="' + findspot_url + '"></a>',
+							href			: findspot_url,
+							target			: "_blank",
+							parent			: info_container
+						})
+					}else{
+						common.create_dom_element({
+							element_type	: "span",
+							class_name		: "rigth-values",
+							inner_html		: row.findspot_place,
+							parent			: info_container
+						})
+					}
 				}
 			// find_date
 				if (row.find_date && row.find_date.length>0) {
@@ -806,22 +859,6 @@ var coin_row = {
 						parent			: info_container
 					})
 				}
-
-		// public info
-			if (row.public_info && row.public_info.length>1 && row.public_info!=='<br data-mce-bogus="1">') {
-				common.create_dom_element({
-					element_type	: "label",
-					class_name		: "left-labels",
-					text_content	: tstring.public_info || "public_info",
-					parent			: info_container
-				})
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "rigth-values",
-					inner_html		: row.public_info,
-					parent			: info_container
-				})
-			}
 
 		// uri
 			const uri = row.coin_uri

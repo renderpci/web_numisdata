@@ -30,7 +30,10 @@
 					<!-- Search -->
 						<div id="form_container"></div>
 
-					<!-- Result -->
+					<!-- Browse (hierarchy landing view, default for list mode) -->
+						<div id="browse_container"></div>
+
+					<!-- Result (search results, hidden while browsing) -->
 						<section id="rows_container" class="result"></section>
 
 				</div>
@@ -48,6 +51,7 @@ dom_ready(function(){
 	archive.set_up({
 		section_id		: <?php echo json_encode($section_id) ?>,
 		form_container	: document.getElementById('form_container'),
+		browse_container: document.getElementById('browse_container'),
 		rows_container	: document.getElementById('rows_container')
 	})
 })

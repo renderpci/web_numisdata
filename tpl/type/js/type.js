@@ -105,8 +105,9 @@ var type =  {
 							// append final rendered node
 								container.appendChild(row_wrapper)
 
-							// children case (only variants)
-								const children = catalog_rows.children || null
+							// children case (only variants) - catalog_rows is null when
+							// this type has no catalog data at all (not just no children)
+								const children = (catalog_rows && catalog_rows.children) || null
 								if (children && children.length>0) {
 									const children_container = common.create_dom_element({
 										element_type	: 'div',
@@ -213,7 +214,10 @@ var type =  {
 						"material_data"					: "material",
 						"related_types_data"			: "types",
 						// mint resolution
-						"mint_data"						: "mints"
+						"mint_data"						: "mints",
+						// documentation (archive) resolution - full row, not just the
+						// flattened ref_documentation_title/ref_documentation_image
+						"ref_documentation_data"		: "documentation"
 					}
 				}
 			})

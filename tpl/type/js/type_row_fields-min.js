@@ -1462,6 +1462,98 @@ var type_row_fields_min = (function (exports) {
 					);
 				}
 
+			// ref_documentation : archive record(s) (documentation table) this type
+			// illustrates - a ONE-TO-MANY relation (the same type can be documented
+			// across several index cards) - ref_documentation_data is already resolved
+			// (see type.js resolve_portals_custom) into the full array of linked
+			// 'documentation' rows, so this renders one card per entry instead of
+			// assuming a single record. ref_documentation_title/ref_documentation_image
+			// (flat, pipe-joined strings across all linked records) are NOT used for
+			// display - each card pulls straight from its own resolved row instead.
+			// Laid out the same way this page's own find_coins grid already does
+			// (HALLAZGOS/TESOROS/CECAS section below) - flex-wrap, ~3 per row,
+			// images_wrapper + info_wrapper - rather than a one-off card design.
+			// Section header (a big_label via self.label()) matches every other
+			// block on this page (MONEDAS, PESO, ...)
+				if (item.ref_documentation_data && item.ref_documentation_data.length>0) {
+
+					fragment.appendChild( self.label(item, tstring.archive || "Archive") );
+
+					const ref_documentation_grid = common.create_dom_element({
+						element_type	: "div",
+						class_name		: "info_line ref_documentation_grid",
+						parent			: fragment
+					});
+
+					item.ref_documentation_data.forEach(function(doc){
+
+						const documentation_url	= page_globals.__WEB_ROOT_WEB__ + "/documentation/" + doc.section_id;
+						const doc_title				= doc.title || doc.name || ("ID " + doc.section_id);
+
+						const card = common.create_dom_element({
+							element_type	: "a",
+							class_name		: "ref_documentation",
+							href			: documentation_url,
+							target			: "_blank",
+							parent			: ref_documentation_grid
+						});
+						card.setAttribute('rel', 'noopener');
+
+						if (doc.identifying_images && doc.identifying_images.length>0) {
+
+							const first_image	= doc.identifying_images.split(' | ')[0];
+							// full-resolution ('/1.5MB/') image, not '/thumb/' - shown at full
+							// width/natural height below (see .ref_documentation in type.less),
+							// not cropped into a fixed-size box
+							const full_url		= page_globals.__WEB_MEDIA_BASE_URL__ + first_image;
+
+							const images = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "images_wrapper",
+								parent			: card
+							});
+							const img = common.create_dom_element({
+								element_type	: "img",
+								src				: full_url,
+								title			: doc_title,
+								loading			: "lazy",
+								parent			: images
+							});
+							img.alt = doc_title;
+						}
+
+						// info column: title first, then every populated field the linked
+						// record has - same field set/order archive.js's own draw_fields
+						// uses for this exact table, so the vocabulary matches its own
+						// detail page
+							const info = common.create_dom_element({
+								element_type	: "div",
+								class_name		: "info_wrapper",
+								parent			: card
+							});
+
+							common.create_dom_element({
+								element_type	: "div",
+								class_name		: "ref_documentation_title",
+								text_content	: doc_title,
+								parent			: info
+							});
+
+							const dating = [doc.dating_start, doc.dating_end].filter(Boolean).join(' - ') || doc.dating;
+
+							self.ref_documentation_field(info, tstring.collection || 'Collection', doc.collection);
+							self.ref_documentation_field(info, tstring.fund || 'Fund', doc.fund);
+							self.ref_documentation_field(info, tstring.typology || 'Typology', doc.typology);
+							self.ref_documentation_field(info, tstring.material || 'Material', doc.material);
+							self.ref_documentation_field(info, tstring.name || 'Name of the property', doc.name);
+							self.ref_documentation_field(info, tstring.technique || 'Technique', doc.technique);
+							self.ref_documentation_field(info, tstring.dating || 'Dating', dating);
+							self.ref_documentation_field(info, tstring.municipality || 'Municipality', doc.municipality);
+							self.ref_documentation_field(info, tstring.curator || 'Curator', doc.curator);
+							self.ref_documentation_field(info, tstring.description || 'Description', doc.description);
+					});
+				}
+
 			// row_wrapper
 				const row_wrapper = common.create_dom_element({
 					element_type	: "div",
@@ -1576,6 +1668,50 @@ var type_row_fields_min = (function (exports) {
 
 			return line
 		},//end label
+
+
+
+		/**
+		* REF_DOCUMENTATION_FIELD
+		* Append one value line for the linked documentation record, same plain
+		* text convention as the equivalents/related_types lines above - skips empty
+		* values and strips Dédalo's leading/trailing "|" join artifact on multi-value
+		* term fields (same fix archive.js's own add_field uses for this same table).
+		* The label is still in the DOM (kept for screen readers/context) but hidden
+		* visually - see .ref_documentation_field_label in type.css - so the cards
+		* show just the values, not "Fund: ", "Typology: " etc labels
+		* @return void
+		*/
+		ref_documentation_field : function(container, label, value) {
+
+			if (typeof value==="string") {
+				value = value.replace(/^(\s*\|\s*)+/, '').replace(/(\s*\|\s*)+$/, '').trim();
+			}
+
+			if (!value || (typeof value==="string" && value.trim().length===0)) {
+				return
+			}
+
+			const field = common.create_dom_element({
+				element_type	: "div",
+				class_name		: "info_value ref_documentation_field",
+				parent			: container
+			});
+
+			common.create_dom_element({
+				element_type	: "span",
+				class_name		: "ref_documentation_field_label",
+				text_content	: label + ": ",
+				parent			: field
+			});
+
+			common.create_dom_element({
+				element_type	: "span",
+				class_name		: "ref_documentation_field_value",
+				inner_html		: value,
+				parent			: field
+			});
+		},//end ref_documentation_field
 
 
 

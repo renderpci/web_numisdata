@@ -99,6 +99,94 @@
 			}
 		}
 
+		// ref_documentation grid . one card per linked archive record (one-to-many,
+		// see type_row_fields.js), laid out exactly like this page's own
+		// find_coins grid further down (HALLAZGOS/TESOROS/CECAS section) -
+		// flex-wrap, ~3 per row, images_wrapper + info_wrapper, plain
+		// border-bottom separator - rather than a one-off card design
+		.info_line.ref_documentation_grid {
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 1.2em;
+		}
+
+		.ref_documentation {
+			// full-view image on top, details below - not side-by-side - so the
+			// picture (now the full '/1.5MB/' resolution, see type_row_fields.js)
+			// shows at its natural size instead of being cropped into a small box
+			display: flex;
+			flex-direction: column;
+			flex: 0 0 32%;
+			margin-bottom: 0.5em;
+			margin-right: 0.5em;
+			font-size: 85%;
+			border-bottom: 1px solid rgb(227, 227, 227);
+			border-right: 1px solid rgb(227, 227, 227);
+			padding: 0.5em;
+			border-radius: 4px;
+			text-decoration: none;
+			color: @color_grey_dark;
+
+			// column divider - last card in each row of 3 doesn't need one
+			&:nth-child(3n) {
+				border-right: none;
+			}
+
+			.images_wrapper {
+				width: 100%;
+				background-color: #ffffff;
+
+				img {
+					display: block;
+					width: 100%;
+					height: auto;
+				}
+			}
+
+			.info_wrapper {
+				width: 100%;
+				padding: 0.5em 0 0;
+			}
+
+			.ref_documentation_title {
+				font-weight: 600;
+				margin-bottom: 0.25em;
+				// explicit, not inherited from the card link - otherwise the site's
+				// global a:hover rule is what was turning this gold only on hover
+				color: @color_gold_logo;
+			}
+
+			// cards show just the values ("Museu de Prehistòria de València"),
+			// not the "Fund: ", "Typology: " etc labels in front of them - see
+			// ref_documentation_field in type_row_fields.js
+			.ref_documentation_field_label {
+				display: none;
+			}
+
+			// values flow as one compact, muted meta line under the gold title,
+			// dot-separated - stacked one-per-line they read as an orphaned list
+			// of unlabelled black text with no relation to each other or to the
+			// title above; a single quieter line reads as a deliberate caption
+			.ref_documentation_field {
+				display: inline;
+				font-size: 0.92em;
+				color: #767676;
+			}
+
+			// non-breaking space before the dot - so a line wrap never leaves a
+			// bare "· Something" dangling at the start of the next line
+			.ref_documentation_field:not(:last-child):after {
+				content: "\00a0\00b7 ";
+				color: #c7c7c7;
+			}
+
+			@media screen and (max-width: 590px){
+				width: 95%;
+				flex: inherit;
+				border-right: none;
+			}
+		}
+
 		.id_line {
 			font-size: 1.2em;
 			margin-top: 1em;

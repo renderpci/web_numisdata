@@ -1,9 +1,5 @@
 :root {
-	/* matches the shared design tokens coins/catalog/type already use -
-	   rgb(227,227,227) is the site's standard row/card border (coins_common.less,
-	   type.less, catalog.less), #b7996d is the same gold accent coins_common.less
-	   uses for .sorted_coin .type, #333333/#767676 are @color_grey_dark and the
-	   muted-text grey coin.less's ref_documentation_field already uses */
+	/* shared design tokens - matches coins/catalog/type */
 	--documentation_border: rgb(227, 227, 227);
 	--documentation_card_bg: #ffffff;
 	--documentation_media_bg: #f6f6f6;
@@ -11,55 +7,20 @@
 	--documentation_ink: #333333;
 	--documentation_muted: #767676;
 
-	/* small, local spacing vocabulary - not a design-system, just enough to keep
-	   the vertical rhythm on this page consistent instead of ad-hoc per rule */
+	/* local spacing scale */
 	--documentation_space_xs: 0.6em;
 	--documentation_space_sm: 1em;
 	--documentation_space_md: 1.5em;
 	--documentation_space_lg: 2.5em;
 
-	/* editorial reading width for text-heavy content (metadata, bibliography) -
-	   grids/gallery are deliberately not constrained by this, see section rules */
+	/* reading width for text-heavy content */
 	--documentation_text_measure: 50em;
 }
 
-/* the shared page.css sizes #main as display:table (width:80%, margin:auto) -
-   a table's auto-layout still grows past that width to fit its widest unbreakable
-   content (here, the single-word "Documentación" h1), which overflows very narrow
-   viewports (~320px) site-wide. Overriding to display:block only here - archive.css
-   loads after page.css and only on this page - makes the width/max-width/margin
-   actually clamp instead of being a mere suggestion, with no visible difference at
-   any width where content already fits.
 
-   width is overridden too, for a different reason: page.less also jumps #main
-   from width:80% to width:95% at max-width:736px, a hard step rather than a
-   taper. 95% of 736px (~699px) is bigger than 80% of 737px (~590px) - so
-   #main's actual pixel width JUMPS UP by ~110px at that exact breakpoint as
-   the viewport keeps shrinking, before resuming its shrink. Any auto-fill
-   grid nested inside (.documentation_fund_grid, .documentation_contents_grid,
-   #rows_container.view_grid .rows_container, .documentation_related_coins_grid)
-   can regain a column at that single width before losing it again a little
-   further down - confirmed live: browse's .documentation_fund_grid measured 2
-   columns, then 1 at 850px, then back to 2 at exactly 736px, then 1 again
-   at 650px.
-
-   Fixed with a single continuous formula instead of patching the step:
-   clamp(80vw, calc(270px + 50vw), 95vw) still resolves to EXACTLY 80vw for
-   any viewport >=900px and EXACTLY 95vw for any viewport <=600px - both of
-   page.less's original values are fully preserved, including the real
-   "give mobile more width" intent behind the 95% rule - it only interpolates
-   between those two viewports (900 and 600, chosen simply because they
-   bracket 736 with room either side), where #main now tapers linearly
-   instead of jumping. Verified live across a full resize sweep: #main's
-   width is monotonically non-increasing as the viewport narrows at every
-   step, so no grid can ever regain a column while shrinking.
-
-   (A simpler alternative - pin width to a flat 80% always - was tried
-   first and also fully fixes the grids, at the cost of losing the 95%
-   mobile boost entirely below 736px instead of just smoothing its edge.
-   The clamp() keeps that intent, so it's the one kept here.) */
 #main {
 	display: block;
+	/* smooths page.less's #main width jump at 736px so grids can't regain a column while narrowing */
 	width: clamp(80vw, calc(270px + 50vw), 95vw);
 }
 
@@ -92,8 +53,6 @@
 		transform: none !important;
 	}
 	.documentation_lightbox_image {
-		/* zoom/pan stays instant rather than easing, but remains fully functional -
-		   motion preference removes animation, not capability */
 		transition: none !important;
 	}
 }
@@ -105,13 +64,7 @@
 	outline-offset: 2px;
 }
 
-/* h1 and .golden-separator are deliberately NOT styled here - coins.phtml and
-   catalog.phtml render the exact same title markup and don't touch either one,
-   so they get the shared global look (main.css's h1: 2.75em/700/-0.035em, and
-   page.less's full-width golden .golden-separator). This page previously
-   overrode both with a smaller/lighter title and a short 3em accent underline,
-   which is why "Documentación" didn't match "Coins"/"Catalogo" - removed so
-   the title renders identically to every other page */
+/* h1/.golden-separator intentionally unstyled - inherits the shared global look every other page uses */
 
 #main .inner > p {
 	max-width: 42em;
@@ -121,21 +74,10 @@
 	margin-bottom: 2em;
 }
 
-/* the search bar/filters themselves are intentionally NOT styled here - they're
-   the same form_factory .form-inline markup (.global_search, .button_submit)
-   coins.js/catalog.js build, so they get the exact shared look from
-   page/css/form.less (plain underlined input[type=text], global button style)
-   instead of a one-off pill-shaped input with its own icon and focus ring.
-   Only the vertical gap before the form is set here - a little more room
-   between the golden-separator and the search bar than the 0 this used to be */
 #documentation_search_form {
 	margin: var(--documentation_space_md) 0 var(--documentation_space_lg);
 }
 
-/* spacing between the Filtros/Buscar buttons - same 1rem gap form.less's own
-   .button_reset already uses between a form's two action buttons elsewhere,
-   just without that class's opacity:0.33 (both buttons here are equally live
-   actions, not a dim secondary reset) */
 #documentation_search_form .button_submit input[type="button"] {
 	margin-right: 1rem;
 }
@@ -162,8 +104,7 @@
 	grid-template-columns: repeat(auto-fill, minmax(18em, 1fr));
 	gap: 1.75em;
 	margin-bottom: 2.5em;
-	/* see #rows_container.view_grid .rows_container - same fix, cards size to
-	   their own content instead of stretching to match the tallest sibling */
+	/* cards size to their own content instead of stretching to the tallest sibling */
 	align-items: start;
 }
 
@@ -176,9 +117,7 @@
 	gap: 0.6em;
 }
 
-/* min-height + line-clamp reserve the same 2-line block for every title
-   regardless of actual length, so cards come out the same size on their own
-   merits instead of needing the grid to stretch (and pad) shorter ones */
+/* clamp to 2 lines so card heights stay uniform regardless of title length */
 .documentation_item_fund .documentation_title {
 	font-size: 1em;
 	font-weight: 600;
@@ -204,13 +143,7 @@
 	font-weight: 600;
 	opacity: 0;
 	transition: opacity 0.3s ease;
-	/* reserves its slot even empty (a zero-count card leaves this with no text,
-	   see annotate_child_count) - without a line-height's worth of min-height,
-	   an empty flex container collapses to just its own padding, which would
-	   make zero-count cards shorter than ones with a real count. 2.15em matches
-	   this element's own default line-height + padding exactly (same value
-	   .documentation_card_tag uses for the identical reason), so a populated badge's
-	   real height is unaffected, only the empty one grows to match it */
+	/* min-height reserves this badge's slot even when empty, for uniform card heights */
 	min-height: 2.15em;
 	box-sizing: border-box;
 }
@@ -246,8 +179,6 @@
 	border-bottom: 1px solid var(--documentation_border);
 }
 
-/* text + back-link and the view toggle, as one header row instead of two -
-   see set_up/update_search_status in archive.js */
 .documentation_search_status_info {
 	display: flex;
 	align-items: center;
@@ -261,11 +192,7 @@
 	color: var(--documentation_ink);
 }
 
-/* !important on color throughout this file's buttons: main.css's global button
-   reset (input[type=button], button, .button { color: #585858 !important }) beats
-   any class-based selector on plain specificity, no matter how many classes it
-   stacks - this is the only way to actually recolor a <button> here without
-   touching that shared rule */
+/* !important needed to beat main.css's global button color reset */
 .documentation_back_to_browse {
 	background: none;
 	border: none;
@@ -303,8 +230,6 @@
 	justify-content: flex-end;
 }
 
-/* segmented control, not two loose icon buttons - a single hairline shell with
-   an inset seam between the two options and one continuous active state */
 .documentation_view_toggle {
 	display: inline-flex;
 	border: 1px solid var(--documentation_border);
@@ -313,7 +238,7 @@
 	background-color: var(--documentation_media_bg);
 }
 
-/* box-shadow:none clears the global button ring from _button.scss - border:none alone doesn't */
+/* box-shadow:none clears the global button ring */
 .documentation_view_btn {
 	width: 2.35em;
 	height: 2.35em;
@@ -412,11 +337,7 @@ a.row_wrapper {
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.03em;
-	/* a genuinely empty inline element (see .is_empty) has no text to establish
-	   a line box, so it'd collapse to just its padding without this - box-sizing
-	   keeps that reserved height inclusive of the padding above, not additional.
-	   2.15em matches this element's own default line-height + padding exactly,
-	   so a populated tag's real height is unaffected, only the empty one grows */
+	/* min-height reserves height for empty tags too (see .is_empty) */
 	min-height: 2.15em;
 	box-sizing: border-box;
 }
@@ -428,9 +349,7 @@ a.row_wrapper {
 
 .info_container {
 	display: grid;
-	/* label column sized to its own content (capped, not a fixed 25% of
-	   whatever the container happens to be) so short labels like "Nombre"
-	   don't leave an oversized gap before the value starts */
+	/* label column sized to content, capped so long labels don't force a huge gap */
 	grid-template-columns: minmax(7em, 14em) 1fr;
 	grid-column-gap: var(--documentation_space_sm);
 	width: 100%;
@@ -467,8 +386,7 @@ a.row_wrapper {
 	color: var(--documentation_ink);
 }
 
-/* long-form prose (description, inscriptions) - full width, its own reading
-   rhythm, distinct from the compact label/value grid rows around it */
+/* full-width prose block (description, inscriptions) */
 .long_field {
 	grid-column: 1 / -1;
 	margin: var(--documentation_space_sm) 0;
@@ -490,11 +408,8 @@ a.row_wrapper {
 	margin: 0;
 }
 
-/* description - its own archival-paper block (see archive.js draw_description),
-   not a plain long_field line. Colors below are new, component-local variables,
-   not changes to the site's shared --documentation_* tokens above - the ivory/border
-   tones are simply light tints of the page's own --documentation_accent gold (b7996d),
-   so the "paper" reads as warm parchment without introducing a foreign palette */
+/* archival-paper look for the description block (see archive.js draw_description) -
+   colors are local tints of --documentation_accent, not new palette additions */
 .documentation_description_section {
 	position: relative;
 	margin-top: var(--documentation_space_lg);
@@ -513,8 +428,7 @@ a.row_wrapper {
 }
 
 .documentation_description_paper {
-	/* one shared color, read by the grain overlay and the fade gradient below
-	   too, so the three layers can't drift apart into mismatched tones */
+	/* shared by the grain overlay and fade gradient below, so tones can't drift apart */
 	--paper_bg: #f9f2e0;
 
 	position: relative;
@@ -522,16 +436,9 @@ a.row_wrapper {
 	overflow: hidden;
 	padding: 1.8em 2.2em;
 	background-color: var(--paper_bg);
-	/* a soft vignette - very faintly lighter at the center, deepening toward
-	   the edges - so the sheet reads as handled/uneven paper instead of a
-	   flat color fill */
 	background-image: radial-gradient(ellipse at 50% 40%, rgba(255,253,246,0.6) 0%, rgba(205,180,131,0.12) 100%);
 	border: 1px solid #e3d3a8;
 	border-radius: 2px;
-	/* a faint inner highlight just inside the border (a common cue for a
-	   slightly uneven, deckled paper edge) plus two soft outer shadows - a
-	   tight one for the paper's own thin edge, a wider one for a barely-there
-	   lift off the page. Nothing dramatic. */
 	box-shadow:
 		inset 0 0 0 1px rgba(255, 252, 240, 0.5),
 		0 1px 2px rgba(60, 42, 16, 0.08),
@@ -539,9 +446,7 @@ a.row_wrapper {
 	transition: max-height 0.5s ease;
 }
 
-/* a warm-toned paper grain - a tiny tiled SVG noise filter, not an image
-   asset - visible enough to read as fibrous paper texture up close, while
-   staying quiet at normal reading distance */
+/* subtle paper grain via an SVG noise filter, not an image asset */
 .documentation_description_paper:before {
 	content: "";
 	position: absolute;
@@ -560,8 +465,7 @@ a.row_wrapper {
 	margin: 0;
 }
 
-/* drop cap on the first letter - a quiet nod to an archival manuscript,
-   sized/positioned to sit in the text block rather than towering over it */
+/* drop cap on the first letter */
 .documentation_description_text:first-letter {
 	float: left;
 	font-size: 2.6em;
@@ -585,12 +489,7 @@ a.row_wrapper {
 	opacity: 0;
 }
 
-/* the site-wide button/.button reset (assets/css/main.css) styles every
-   <button> as a big uppercase call-to-action pill with a hard inset
-   box-shadow "border" and a forced !important color on hover - built for
-   large actions, not a quiet inline reading toggle. Every property it sets
-   is neutralized explicitly below rather than assumed away, since several
-   (color, box-shadow) are !important there and need matching overrides here */
+/* neutralizes main.css's global button reset (uppercase pill, inset box-shadow border, !important color) */
 .documentation_description_toggle {
 	-webkit-appearance: none;
 	appearance: none;
@@ -665,20 +564,13 @@ a.row_wrapper {
 	margin-bottom: 0;
 }
 
-/* documents (attached PDFs, see archive.js draw_documents) - its own quiet
-   section in the same family as .documentation_related_items_section right below,
-   not a field squeezed into the info_container label/value grid - that grid's
-   align-items:baseline was pulling the label away from the card's own top
-   edge as soon as a title wrapped past one line, so label and card visibly
-   drifted apart. Standing on its own removes that mismatch entirely. */
+/* documents (attached PDFs, see archive.js draw_documents) - its own section rather than
+   a field in the info_container grid, which misaligned label vs card */
 .documentation_documents_section {
 	position: relative;
 	margin-top: var(--documentation_space_lg);
 	padding-top: var(--documentation_space_lg);
-	/* same width cap as .info_container/.documentation_description_section - without
-	   this, the gold rule below centers against this section's own (wider,
-	   uncapped) box instead of the same column the other rules align to,
-	   so the two don't visually line up with each other */
+	/* same width cap as sibling sections so their gold rules align */
 	max-width: var(--documentation_text_measure);
 }
 
@@ -712,13 +604,7 @@ a.row_wrapper {
 	transition: border-color 0.15s ease;
 }
 
-/* a plain border-color change only, no lift/shadow/background tint - the
-   icon badge below already sits on that same tint color, so swapping the
-   whole card to it on hover would make the badge disappear into the card.
-   color is forced back to ink (!important) because the site-wide `a:hover`
-   rule (assets/css/main.css) forces every link to its own gold on hover -
-   without this, the whole card's text would flash to that unrelated gold
-   instead of just the border quietly changing */
+/* color !important needed to beat main.css's global a:hover gold color */
 .documentation_document:hover {
 	border-color: var(--documentation_accent);
 	color: var(--documentation_ink) !important;
@@ -743,9 +629,6 @@ a.row_wrapper {
 	color: var(--documentation_ink);
 }
 
-/* shared "content is changing" treatment - used both while a new results page
-   loads (load_list) and during a client-side sibling transition (go_to_row),
-   so both feel like the same calm dip rather than a hard cut */
 #rows_container {
 	transition: opacity 0.2s ease;
 }
@@ -800,10 +683,7 @@ a.row_wrapper {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(13.5em, 1fr));
 	gap: 1.25em;
-	/* default grid behavior stretches every card in a row to match the tallest
-	   one - since title length varies per record, that left short titles
-	   sitting in a card with a lot of dead space at the bottom. Cards size to
-	   their own content instead */
+	/* cards size to content instead of stretching to the tallest sibling */
 	align-items: start;
 }
 
@@ -821,8 +701,6 @@ a.row_wrapper {
 	transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
-/* restrained hover: a hint of lift and a slightly warmer border, not a jump -
-   the card should feel like it responded, not like it launched */
 .documentation_item_fund a.row_wrapper:hover,
 .documentation_item_child a.row_wrapper:hover,
 .related_coin_item:hover,
@@ -906,12 +784,7 @@ a.row_wrapper {
 	font-size: 0.75em;
 }
 
-/* first/previous/[jump]/next/last among siblings - a thin strip of its own,
-   distinct from the back-link/breadcrumb above it but part of the same
-   wayfinding family. Empty (no siblings) until draw_sibling_nav fills it in,
-   and stays empty/collapsed when there's nothing to compare against - see
-   archive.js. First/last pin to the edges via auto margins so the primary
-   previous/jump/next cluster reads as the visual center */
+/* prev/next among siblings, filled by draw_sibling_nav (archive.js) */
 .documentation_sibling_nav {
 	display: flex;
 	align-items: center;
@@ -980,8 +853,7 @@ a.row_wrapper {
 	font-size: 1em;
 	text-align: center;
 	transition: border-color 0.15s ease, box-shadow 0.15s ease;
-	/* hide the native spinner arrows - a plain numeric field reads calmer here
-	   than a stepper, and Enter/blur already commit the value */
+	/* hide native number spinner */
 	appearance: textfield;
 	-moz-appearance: textfield;
 }
@@ -998,9 +870,6 @@ a.row_wrapper {
 	box-shadow: 0 0 0 3px rgba(183,153,109,0.15);
 }
 
-/* deliberate "light table" tray - background-color is explicit here rather
-   than inherited from the generic .image_wrapper card-thumbnail rule, with
-   real padding so it reads as a designed mat instead of an incidental bleed */
 .row_wrapper.detail .gallery {
 	display: flex;
 	flex-direction: row;
@@ -1019,18 +888,12 @@ a.row_wrapper {
 	flex: 1 1 300px;
 	max-width: 440px;
 	margin: 0;
-	/* fixed, not min - a photo's real aspect ratio is unknown until it loads,
-	   so a height that only grows would let the box pop taller under the load
-	   fade instead of just fading in. object-fit:contain letterboxes inside
-	   this regardless of the photo's own proportions, same principle as the
-	   card thumbnails' fixed-height .image_wrapper */
+	/* fixed height avoids layout jump while the image is still loading */
 	height: 20em;
 }
 
-/* the common case - a single hero image keeps this page's original larger
-   treatment; the more compact sizing above only kicks in once there's more
-   than one, so multiple hero shots can sit side by side instead of each
-   forcing a full 26em of scroll */
+/* a single hero image keeps the larger original size; the compact sizing
+   above only kicks in once there's more than one */
 .row_wrapper.detail .gallery .gallery_figure:only-child {
 	flex-basis: 520px;
 	max-width: 820px;
@@ -1059,10 +922,7 @@ a.row_wrapper {
 	transform: translateY(-2px);
 }
 
-/* secondary images (images_data) - a compact "contact sheet" strip instead
-   of full hero slots, so records with several supporting images don't push
-   the actual field data far down the page. Still open the same zoom/pan
-   lightbox as the hero images above, just at a much smaller footprint. */
+/* compact thumbnail strip for supporting images, opens the same lightbox as the hero */
 .gallery_secondary {
 	margin-bottom: var(--documentation_space_md);
 }
@@ -1086,8 +946,7 @@ a.row_wrapper {
 	transition: max-height 0.5s ease;
 }
 
-/* past 7 extra images, collapsed to the first row (see archive.js) - a
-   bottom fade like the description's own, hidden once expanded */
+/* collapses past 7 images to one row, see archive.js */
 .gallery_secondary_fade {
 	position: absolute;
 	left: 0;
@@ -1259,9 +1118,6 @@ a.row_wrapper {
 
 @media screen and (max-width: 736px) {
 
-	/* the edge-pinning auto-margins only read cleanly on one line - once this
-	   wraps, center everything instead of leaving "Última" stranded alone on
-	   its own row */
 	.documentation_sibling_nav {
 		justify-content: center;
 	}
@@ -1304,13 +1160,7 @@ a.row_wrapper {
 	}
 }
 
-/* cambria is already loaded site-wide for editorial headings on the
-   biblio/catalog/mints pages, reused here rather than adding a new font -
-   font-weight:100 and the small-caps/letter-spacing combo below is the same
-   treatment catalog.less's own .name uses, not a one-off invention. Now sits
-   above the gallery (a record-name placard for the images below it, not a
-   caption trailing after them) with the same short centered gold rule this
-   page already uses to mark a deliberate break (see .documentation_contents_section) */
+/* cambria + small-caps/letter-spacing, same treatment catalog.less's .name uses */
 .row_wrapper.detail > .documentation_title {
 	position: relative;
 	font-family: cambria, serif;
@@ -1347,16 +1197,10 @@ a.row_wrapper {
 
 .row_wrapper.detail .info_container {
 	align-items: baseline;
-	/* metadata/bibliography read better at a controlled width than stretched
-	   across the full column - the gallery/Contenido/Coins grids above and
-	   below deliberately keep the fuller width instead, see their own rules */
 	max-width: var(--documentation_text_measure);
 }
 
-/* divider sits above each row instead of below - so the very last field in
-   the container (whatever type it happens to be: value, vertical-group,
-   bibliography...) doesn't trail a dangling empty-looking line before the
-   next section starts */
+/* divider above each row, not below - avoids a trailing empty line before the next section */
 .row_wrapper.detail .info_container > .left-labels,
 .row_wrapper.detail .info_container > .rigth-values,
 .row_wrapper.detail .info_container > .vertical-group {
@@ -1389,14 +1233,8 @@ a.row_wrapper {
 	padding-top: var(--documentation_space_lg);
 }
 
-/* a short centered gold rule instead of a full-width grey line - reads as a
-   deliberate section break rather than just one more row divider like the
-   thin lines running through .info_container above. Shared by every major
-   section break on this page (details -> description, description/details ->
-   documents) - .documentation_related_coins_section is deliberately excluded, it
-   uses its own tinted-panel treatment instead (see further down). Images ->
-   details deliberately has no rule of its own - removed on request, the
-   gallery's own margin-bottom is enough separation there */
+/* short gold rule marks a deliberate section break, shared across sections.
+   related_coins_section is excluded (uses its own tinted panel instead) */
 .documentation_description_section:before,
 .documentation_documents_section:before {
 	content: "";
@@ -1410,11 +1248,8 @@ a.row_wrapper {
 	background-color: var(--documentation_accent);
 }
 
-/* .documentation_contents_section itself is deliberately NOT width-capped (its grid
-   wants the fuller column, see the section rule above), so its rule can't just
-   center on 50% of its own box like the ones above - that would land it at a
-   different x position than them. left is pinned to half of the SAME reading
-   width those capped sections share instead, so all the rules line up */
+/* contents_section isn't width-capped like its siblings, so its rule centers
+   on the shared reading width instead of its own (wider) box */
 .documentation_contents_section:before {
 	content: "";
 	position: absolute;
@@ -1464,8 +1299,6 @@ a.row_wrapper {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(18em, 1fr));
 	gap: 0.75em;
-	/* see #rows_container.view_grid .rows_container - same fix, cards size to
-	   their own content instead of stretching to match the tallest sibling */
 	align-items: start;
 }
 
@@ -1478,26 +1311,17 @@ a.row_wrapper {
 	gap: 0.3em;
 }
 
-/* pulled flush against the image using the negative of .info_container's own
-   top padding above, instead of floating with a gap - stays sized to its text
-   (align-self/padding inherited from .documentation_card_tag), just square + attached */
 .documentation_item_child .documentation_card_tag {
 	margin-top: -0.9em;
 	border-radius: 0;
 }
 
-/* lighter than the base .documentation_title (these repeat often in a dense grid,
-   see .documentation_contents_grid) but still semi-bold - light enough to be calm,
-   heavy enough to still read as a title rather than plain body text */
 .documentation_item_child .documentation_title {
 	margin-bottom: 0;
 	font-size: 0.88em;
 	font-weight: 600;
 	line-height: 1.35;
 	color: var(--documentation_ink);
-	/* min-height + line-clamp reserve the same 2-line block for every title
-	   regardless of actual length, so cards come out the same size on their
-	   own merits instead of needing the grid to stretch (and pad) shorter ones */
 	min-height: 2.7em;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
@@ -1506,10 +1330,8 @@ a.row_wrapper {
 	overflow: hidden;
 }
 
-/* related items - a quieter, secondary relation (see archive.js
-   draw_related_items) - small inline chips instead of the Contents/Coins
-   sections' full card grid, and a plain muted label instead of their bold
-   icon heading, so this doesn't compete for the same attention */
+/* quieter secondary relation (archive.js draw_related_items) - chips instead
+   of full cards, muted label instead of a bold heading */
 .documentation_related_items_section {
 	margin-top: var(--documentation_space_md);
 	padding-top: var(--documentation_space_sm);
@@ -1576,10 +1398,7 @@ a.row_wrapper {
 	white-space: nowrap;
 }
 
-/* related coins - same heading/grid rhythm as .documentation_contents_section above
-   (reuses .documentation_contents_title directly), wider cards to fit an obverse/reverse
-   pair. Set inside a tinted panel rather than a plain border-top rule so it reads
-   as its own related-content module, not "more children" of this record */
+/* tinted panel instead of a border - reads as its own module, not "more children" */
 .documentation_related_coins_section {
 	padding: var(--documentation_space_md);
 	border-top: none;
@@ -1640,9 +1459,6 @@ a.row_wrapper {
 		margin-bottom: 0.5em;
 	}
 
-	/* one box per row on mobile, styled as a compact list row instead of a card -
-	   same border-bottom-separator, no-card-chrome treatment #rows_container.view_list
-	   already uses for search results, just with a smaller thumbnail */
 	.documentation_contents_grid {
 		grid-template-columns: 1fr;
 		gap: 0;
@@ -1679,15 +1495,11 @@ a.row_wrapper {
 		padding: 0 0 0 1em;
 	}
 
-	/* the desktop card's flush-square tag (see .documentation_item_child .documentation_card_tag
-	   above) only makes sense attached to the top of a vertical card - back to a
-	   plain small pill now that the image sits beside the text, not above it */
 	.documentation_item_child .documentation_card_tag {
 		margin-top: 0;
 		border-radius: 1em;
 	}
 
-	/* related coins - same one-per-row list treatment as the contents grid above */
 	.documentation_related_coins_grid {
 		grid-template-columns: 1fr;
 		gap: 0;
@@ -1705,8 +1517,6 @@ a.row_wrapper {
 	.related_coin_item:hover {
 		box-shadow: none;
 		transform: none;
-		/* the section itself is a tinted panel (--documentation_media_bg) at this width -
-		   hover brightens the row against it instead of matching and disappearing */
 		background-color: var(--documentation_card_bg);
 	}
 
@@ -1726,10 +1536,4 @@ a.row_wrapper {
 	}
 }
 
-/* pagination . intentionally NOT styled here - list_factory's markup
-   (.pagination > .paginator_wrapper.navigator > a, plus .spacer and .totals)
-   is already styled globally by page/css/pagination.less (loaded site-wide via
-   page.less), which is exactly what coins/catalog/type rely on for their own
-   pagination. Overriding it here just for this page was what produced a
-   different (and, at narrow widths, wrapping) look than every other list page -
-   removed so this page matches them exactly instead of re-implementing it. */
+/* pagination intentionally unstyled - shared global look from page/css/pagination.less */

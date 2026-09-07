@@ -115,7 +115,7 @@ var archive = {
 				callback	: function(form_item) {
 					self.form.activate_autocomplete({
 						form_item	: form_item,
-						table		: 'archive'
+						table		: 'documentation'
 					})
 				}
 			})
@@ -150,7 +150,7 @@ var archive = {
 						callback	: function(form_item) {
 							self.form.activate_autocomplete({
 								form_item	: form_item,
-								table		: 'archive'
+								table		: 'documentation'
 							})
 						}
 					})
@@ -458,7 +458,7 @@ var archive = {
 
 		const request_body = {
 			dedalo_get	: 'records',
-			table		: 'archive',
+			table		: 'documentation',
 			ar_fields	: ['*'],
 			sql_filter	: options.sql_filter || null,
 			limit		: options.limit,
@@ -497,7 +497,7 @@ var archive = {
 			class_name		: "archive_item"
 		})
 
-		const detail_url = page_globals.__WEB_ROOT_WEB__ + '/archive/' + row.section_id
+		const detail_url = page_globals.__WEB_ROOT_WEB__ + '/documentation/' + row.section_id
 
 		// card_link . whole card is clickable, opens detail in a new tab
 			const card_link = common.create_dom_element({

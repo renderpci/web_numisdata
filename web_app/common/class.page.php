@@ -220,11 +220,17 @@ class page extends stdClass {
 			$global_page = array_find($menu_items, function($item){
 				return ($item->term_id===WEB_MENU_PARENT);
 			});
+			if ($global_page===null) {
+				return false;
+			}
 			// template_items
 			$template_items = $this->data_combi[0]->result;
 			$global_template = array_find($template_items, function($item) use($global_page) {
 				return ($item->name===$global_page->template_name);
 			});
+			if ($global_template===null) {
+				return false;
+			}
 			// set
 			$global_page->template	= json_decode($global_template->data);
 			$this->global_page		= $global_page;

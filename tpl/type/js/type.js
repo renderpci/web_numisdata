@@ -215,7 +215,7 @@ var type =  {
 						"related_types_data"			: "types",
 						// mint resolution
 						"mint_data"						: "mints",
-						// documentation (archive) resolution - full row, not just the
+						// documentation resolution - full row, not just the
 						// flattened ref_documentation_title/ref_documentation_image
 						"ref_documentation_data"		: "documentation"
 					}

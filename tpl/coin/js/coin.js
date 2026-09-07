@@ -75,9 +75,9 @@ var coin = {
 									// show export buttons
 										self.export_data_container.classList.remove('hide')
 
-									// related documentation record (the archive index card this coin
-									// was catalogued from, if any) - non-blocking, doesn't hold up the
-									// coin's own content above
+									// related documentation record (the documentation index card this
+									// coin was catalogued from, if any) - non-blocking, doesn't hold up
+									// the coin's own content above
 										self.get_related_documentation(row).then(function(documentation_rows){
 											self.render_related_documentation(target, documentation_rows)
 										})
@@ -208,7 +208,7 @@ var coin = {
 
 	/**
 	* GET_RELATED_DOCUMENTATION
-	* Coins carry a forward reference to the archive index card(s) they were
+	* Coins carry a forward reference to the documentation index card(s) they were
 	* catalogued from in coins.related_heritage_data (a raw JSON array of
 	* documentation term_ids) - resolve_portals_custom doesn't resolve this
 	* relation (confirmed empty when tried), same as the reverse lookup on the
@@ -248,14 +248,15 @@ var coin = {
 
 	/**
 	* RENDER_RELATED_DOCUMENTATION
-	* Archive index card(s) this coin was catalogued from - the reverse of what
-	* the documentation page's own "Coins" section already shows. Same visual
-	* idiom the type page already uses for this identical relation (a big_label
-	* section header, then a square thumbnail beside a title + field list - see
-	* type_row_fields.js's ref_documentation block), so a linked archive record
-	* looks the same regardless of which detail page shows it. tstring.archive
-	* is the same real, already-translated key that block uses (not a made-up
-	* one), so this follows the page's language switch same as everything else.
+	* Documentation index card(s) this coin was catalogued from - the reverse of
+	* what the documentation page's own "Coins" section already shows. Same
+	* visual idiom the type page already uses for this identical relation (a
+	* big_label section header, then a square thumbnail beside a title + field
+	* list - see type_row_fields.js's ref_documentation block), so a linked
+	* documentation record looks the same regardless of which detail page shows
+	* it. tstring.documentation is the same real, already-translated key that
+	* block uses (not a made-up one), so this follows the page's language
+	* switch same as everything else.
 	* Nothing rendered (no header, no empty box) when there isn't one
 	* @param object container
 	* @param array documentation_rows
@@ -271,7 +272,7 @@ var coin = {
 		common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_line separator",
-			inner_html		: '<div class="big_label">' + (tstring.archive || 'Archive') + '</div>',
+			inner_html		: '<div class="big_label">' + (tstring.documentation || 'Documentation') + '</div>',
 			parent			: container
 		})
 

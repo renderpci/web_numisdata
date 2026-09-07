@@ -48,7 +48,7 @@
 <?php echo $this->get_header_links('js', ['js_async' => 'defer']) ?>
 <script>
 dom_ready(function(){
-	archive.set_up({
+	documentation.set_up({
 		section_id		: <?php echo json_encode($section_id) ?>,
 		form_container	: document.getElementById('form_container'),
 		browse_container: document.getElementById('browse_container'),

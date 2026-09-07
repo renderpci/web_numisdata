@@ -13,12 +13,10 @@
 
 	/* small, local spacing vocabulary - not a design-system, just enough to keep
 	   the vertical rhythm on this page consistent instead of ad-hoc per rule */
-	--archive_space_2xs: 0.35em;
 	--archive_space_xs: 0.6em;
 	--archive_space_sm: 1em;
 	--archive_space_md: 1.5em;
 	--archive_space_lg: 2.5em;
-	--archive_space_xl: 3.5em;
 
 	/* editorial reading width for text-heavy content (metadata, bibliography) -
 	   grids/gallery are deliberately not constrained by this, see section rules */
@@ -48,7 +46,11 @@
 	.archive_lightbox_image,
 	.archive_view_btn,
 	#rows_container,
-	#rows_container .pagination a {
+	#rows_container .pagination a,
+	.archive_description_paper,
+	.archive_description_fade,
+	.archive_description_toggle,
+	.archive_description_toggle:after {
 		transition: none !important;
 		animation-duration: 0.001ms !important;
 	}
@@ -457,6 +459,166 @@ a.row_wrapper {
 	margin: 0;
 }
 
+/* description - its own archival-paper block (see archive.js draw_description),
+   not a plain long_field line. Colors below are new, component-local variables,
+   not changes to the site's shared --archive_* tokens above - the ivory/border
+   tones are simply light tints of the page's own --archive_accent gold (b7996d),
+   so the "paper" reads as warm parchment without introducing a foreign palette */
+.archive_description_section {
+	margin-top: var(--archive_space_md);
+	padding-top: var(--archive_space_sm);
+	border-top: 1px solid var(--archive_border);
+	max-width: var(--archive_text_measure);
+}
+
+.archive_description_label {
+	display: block;
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.7em;
+}
+
+.archive_description_paper {
+	/* one shared color, read by the grain overlay and the fade gradient below
+	   too, so the three layers can't drift apart into mismatched tones */
+	--paper_bg: #f9f2e0;
+
+	position: relative;
+	max-height: 13.5em;
+	overflow: hidden;
+	padding: 1.8em 2.2em;
+	background-color: var(--paper_bg);
+	/* a soft vignette - very faintly lighter at the center, deepening toward
+	   the edges - so the sheet reads as handled/uneven paper instead of a
+	   flat color fill */
+	background-image: radial-gradient(ellipse at 50% 40%, rgba(255,253,246,0.6) 0%, rgba(205,180,131,0.12) 100%);
+	border: 1px solid #e3d3a8;
+	border-radius: 2px;
+	/* a faint inner highlight just inside the border (a common cue for a
+	   slightly uneven, deckled paper edge) plus two soft outer shadows - a
+	   tight one for the paper's own thin edge, a wider one for a barely-there
+	   lift off the page. Nothing dramatic. */
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 252, 240, 0.5),
+		0 1px 2px rgba(60, 42, 16, 0.08),
+		0 14px 28px -18px rgba(60, 42, 16, 0.32);
+	transition: max-height 0.5s ease;
+}
+
+/* a warm-toned paper grain - a tiny tiled SVG noise filter, not an image
+   asset - visible enough to read as fibrous paper texture up close, while
+   staying quiet at normal reading distance */
+.archive_description_paper:before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.45 0 0 0 0 0.34 0 0 0 0 0.18 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	mix-blend-mode: multiply;
+	pointer-events: none;
+}
+
+.archive_description_text {
+	position: relative;
+	font-family: cambria, serif;
+	font-size: 1.08em;
+	line-height: 1.85;
+	color: #362a1a;
+	margin: 0;
+}
+
+/* drop cap on the first letter - a quiet nod to an archival manuscript,
+   sized/positioned to sit in the text block rather than towering over it */
+.archive_description_text:first-letter {
+	float: left;
+	font-size: 2.6em;
+	line-height: 0.78;
+	padding: 0.05em 0.08em 0 0;
+	color: var(--archive_accent);
+}
+
+.archive_description_fade {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 5em;
+	background: linear-gradient(to bottom, rgba(242, 230, 201, 0), var(--paper_bg));
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+.archive_description_paper.is_expanded .archive_description_fade {
+	opacity: 0;
+}
+
+/* the site-wide button/.button reset (assets/css/main.css) styles every
+   <button> as a big uppercase call-to-action pill with a hard inset
+   box-shadow "border" and a forced !important color on hover - built for
+   large actions, not a quiet inline reading toggle. Every property it sets
+   is neutralized explicitly below rather than assumed away, since several
+   (color, box-shadow) are !important there and need matching overrides here */
+.archive_description_toggle {
+	-webkit-appearance: none;
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	height: auto;
+	margin-top: 1em;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background-color: transparent;
+	box-shadow: none !important;
+	text-align: left;
+	text-transform: none;
+	text-overflow: unset;
+	white-space: normal;
+	overflow: visible;
+	font-family: inherit;
+	font-size: 0.85em;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.4;
+	color: var(--archive_accent) !important;
+	cursor: pointer;
+	transition: opacity 0.15s ease;
+}
+
+.archive_description_toggle:hover,
+.archive_description_toggle:active {
+	box-shadow: none !important;
+	background-color: transparent !important;
+	color: var(--archive_accent) !important;
+	text-decoration: underline;
+	opacity: 0.8;
+}
+
+.archive_description_toggle:after {
+	content: "\f107"; /* fa-chevron-down */
+	font-family: FontAwesome;
+	font-weight: normal;
+	font-size: 0.9em;
+	transition: transform 0.3s ease;
+}
+
+.archive_description_toggle[aria-expanded="true"]:after {
+	transform: rotate(180deg);
+}
+
+@media screen and (max-width: 736px) {
+	.archive_description_paper {
+		padding: 1.3em 1.3em;
+	}
+	.archive_description_text {
+		font-size: 1em;
+		line-height: 1.75;
+	}
+}
+
 .vertical-group {
 	grid-column: 2;
 	display: flex;
@@ -470,6 +632,79 @@ a.row_wrapper {
 
 .vertical-group .sub-vertical-group:last-child {
 	margin-bottom: 0;
+}
+
+/* documents (attached PDFs, see archive.js draw_documents) - its own quiet
+   section in the same family as .archive_related_items_section right below,
+   not a field squeezed into the info_container label/value grid - that grid's
+   align-items:baseline was pulling the label away from the card's own top
+   edge as soon as a title wrapped past one line, so label and card visibly
+   drifted apart. Standing on its own removes that mismatch entirely. */
+.archive_documents_section {
+	margin-top: var(--archive_space_md);
+	padding-top: var(--archive_space_sm);
+	border-top: 1px solid var(--archive_border);
+}
+
+.archive_documents_label {
+	display: block;
+	font-weight: 600;
+	color: var(--archive_muted);
+	text-transform: uppercase;
+	font-size: 0.78em;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.6em;
+}
+
+.archive_documents_list {
+	display: flex;
+	flex-flow: column;
+	gap: 0.5em;
+}
+
+.archive_document {
+	display: flex;
+	align-items: center;
+	gap: 0.7em;
+	max-width: var(--archive_text_measure);
+	padding: 0.7em 1em;
+	border: 1px solid var(--archive_border);
+	border-radius: 6px;
+	background-color: var(--archive_card_bg);
+	text-decoration: none;
+	color: var(--archive_ink);
+	transition: border-color 0.15s ease;
+}
+
+/* a plain border-color change only, no lift/shadow/background tint - the
+   icon badge below already sits on that same tint color, so swapping the
+   whole card to it on hover would make the badge disappear into the card.
+   color is forced back to ink (!important) because the site-wide `a:hover`
+   rule (assets/css/main.css) forces every link to its own gold on hover -
+   without this, the whole card's text would flash to that unrelated gold
+   instead of just the border quietly changing */
+.archive_document:hover {
+	border-color: var(--archive_accent);
+	color: var(--archive_ink) !important;
+}
+
+.archive_document_icon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.4em;
+	height: 2.4em;
+	border-radius: 5px;
+	background-color: var(--archive_media_bg);
+	color: var(--archive_accent);
+	font-size: 1.2em;
+}
+
+.archive_document_title {
+	font-size: 0.9em;
+	line-height: 1.35;
+	color: var(--archive_ink);
 }
 
 /* shared "content is changing" treatment - used both while a new results page
@@ -725,12 +960,6 @@ a.row_wrapper {
 	outline: none;
 	border-color: var(--archive_accent);
 	box-shadow: 0 0 0 3px rgba(183,153,109,0.15);
-}
-
-.archive_sibling_position {
-	color: var(--archive_muted);
-	font-size: 0.8em;
-	white-space: nowrap;
 }
 
 /* deliberate "light table" tray - background-color is explicit here rather

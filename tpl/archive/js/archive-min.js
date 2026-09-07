@@ -1152,6 +1152,9 @@ var archive = {
 
 		this.draw_publications(info_container, row.publications_data)
 
+		this.draw_description(row_wrapper, row)
+		this.draw_documents(row_wrapper, row)
+
 		this.draw_contents(row_wrapper, row)
 		this.draw_related_items(row_wrapper, row)
 		this.draw_related_coins(row_wrapper, row)
@@ -1472,7 +1475,6 @@ var archive = {
 
 		this.add_field(info_container, tstring.municipality || 'Municipality', row.municipality)
 		this.add_field(info_container, tstring.curator || 'Curator', row.curator)
-		this.add_long_field(info_container, tstring.description || 'Description', row.description)
 	},//end draw_fields
 
 
@@ -1633,6 +1635,195 @@ var archive = {
 			})
 		}
 	},//end draw_publications
+
+
+
+	/**
+	* DRAW_DESCRIPTION
+	* Render a record's description as its own archival-paper block (see
+	* .archive_description_paper in archive.css) instead of a plain
+	* add_long_field line - warm parchment tone, serif type, drop cap, and a
+	* collapse/expand reading control once the text is long enough to need one.
+	* The full text is always in the DOM (never truncated); collapsing is
+	* purely visual via max-height, so nothing is lost to search/copy/SEO.
+	* @param object row_wrapper
+	* @param object row
+	*/
+	draw_description : function(row_wrapper, row) {
+
+		let value = row.description
+		if (typeof value==='string') {
+			value = value.trim()
+		}
+		if (!value) {
+			return
+		}
+
+		const section = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "archive_description_section",
+			parent			: row_wrapper
+		})
+
+		common.create_dom_element({
+			element_type	: "span",
+			class_name		: "archive_description_label",
+			text_content	: tstring.description || 'Description',
+			parent			: section
+		})
+
+		const paper = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "archive_description_paper",
+			parent			: section
+		})
+
+		common.create_dom_element({
+			element_type	: "p",
+			class_name		: "archive_description_text",
+			inner_html		: value,
+			parent			: paper
+		})
+
+		common.create_dom_element({
+			element_type	: "div",
+			class_name		: "archive_description_fade",
+			parent			: paper
+		})
+
+		const toggle = common.create_dom_element({
+			element_type	: "button",
+			type			: "button",
+			class_name		: "archive_description_toggle",
+			text_content	: tstring.read_full_description || 'Read full description',
+			parent			: section
+		})
+		toggle.setAttribute('aria-expanded', 'false')
+
+		// only the reader controls know the paper's real rendered height, so
+		// this decides - after layout, next frame - whether the text even
+		// needs collapsing at all; short descriptions just render in full
+		// with no toggle/fade clutter
+		requestAnimationFrame(function(){
+
+			const overflowing = paper.scrollHeight > paper.clientHeight + 1
+
+			if (!overflowing) {
+				paper.classList.add('is_expanded')
+				toggle.remove()
+				return
+			}
+
+			let expanded = false
+
+			toggle.addEventListener('click', function(){
+
+				expanded = !expanded
+
+				if (expanded) {
+					paper.style.maxHeight = paper.scrollHeight + 'px'
+					paper.classList.add('is_expanded')
+					toggle.textContent	= tstring.show_less || 'Show less'
+					toggle.setAttribute('aria-expanded', 'true')
+				}else{
+					// pin to the current full height first (no visual jump),
+					// force layout, then drop to the collapsed CSS max-height
+					// on the next frame so that step is what actually animates
+					paper.style.maxHeight = paper.scrollHeight + 'px'
+					paper.getBoundingClientRect()
+					requestAnimationFrame(function(){
+						paper.classList.remove('is_expanded')
+						paper.style.maxHeight = ''
+					})
+					toggle.textContent	= tstring.read_full_description || 'Read full description'
+					toggle.setAttribute('aria-expanded', 'false')
+				}
+			})
+
+			// once fully open, let the page reflow naturally past this block
+			// (responsive text reflow, window resize) instead of staying
+			// capped at the scrollHeight snapshot taken at expand-time
+			paper.addEventListener('transitionend', function(e){
+				if (e.propertyName==='max-height' && expanded) {
+					paper.style.maxHeight = 'none'
+				}
+			})
+		})
+	},//end draw_description
+
+
+
+	/**
+	* DRAW_DOCUMENTS
+	* Render a record's own attached PDFs (row.documents - a raw JSON array of
+	* file paths, parallel to row.documents_titles for their labels - not a
+	* resolved portal, same as the 'items' field draw_related_items handles).
+	* Its own section (like draw_contents/draw_related_items below), not a
+	* field squeezed into the info_container label/value grid - that grid's
+	* align-items:baseline was aligning the label against the card's text
+	* baseline instead of its top edge, making the two drift apart as soon as
+	* a title wrapped to more than one line
+	* @param object row_wrapper
+	* @param object row
+	*/
+	draw_documents : function(row_wrapper, row) {
+
+		let paths	= []
+		let titles	= []
+		try { paths	= JSON.parse(row.documents || '[]') } catch(e) { /* malformed, no documents */ }
+		try { titles	= JSON.parse(row.documents_titles || '[]') } catch(e) { /* malformed, fall back to filenames below */ }
+
+		if (!paths.length) {
+			return
+		}
+
+		const section = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "archive_documents_section",
+			parent			: row_wrapper
+		})
+
+		common.create_dom_element({
+			element_type	: "span",
+			class_name		: "archive_documents_label",
+			text_content	: tstring.documents || 'Documents',
+			parent			: section
+		})
+
+		const list = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "archive_documents_list",
+			parent			: section
+		})
+
+		paths.forEach(function(path, i){
+
+			const doc_title	= titles[i] || path.split('/').pop()
+
+			const card = common.create_dom_element({
+				element_type	: "a",
+				class_name		: "archive_document",
+				href			: page_globals.__WEB_MEDIA_BASE_URL__ + path,
+				target			: "_blank",
+				title			: (tstring.download || 'Download') + ': ' + doc_title,
+				parent			: list
+			})
+			card.setAttribute('rel', 'noopener')
+
+			common.create_dom_element({
+				element_type	: "i",
+				class_name		: "fa fa-file-pdf-o archive_document_icon",
+				parent			: card
+			})
+
+			common.create_dom_element({
+				element_type	: "span",
+				class_name		: "archive_document_title",
+				text_content	: doc_title,
+				parent			: card
+			})
+		})
+	},//end draw_documents
 
 
 

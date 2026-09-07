@@ -39,3 +39,5 @@ package-lock.json
 !analysis-min.js.map
 # AI tooling
 .claude/
+# reports
+tpl/lang/*_report_*.md

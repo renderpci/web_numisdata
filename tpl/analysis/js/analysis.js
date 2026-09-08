@@ -79,15 +79,6 @@ export const analysis =  {
 	clock_chart_container				: null,
 
 	/**
-	 * Color hexadecimal code for each denomination
-	 * @type {{
-	 * 	section_id: number,
-	 * 	color: string
-	 * }[]}
-	 */
-	denomination_colors: null,
-
-	/**
 	 * Chart wrapper instance for weight
 	 * @type {chart_wrapper}
 	 */
@@ -129,9 +120,6 @@ export const analysis =  {
 			self.weight_chart_container				= options.weight_chart_container
 			self.diameter_chart_container			= options.diameter_chart_container
 			self.clock_chart_container				= options.clock_chart_container
-
-		// denomination colors
-			self.load_denomination_colors()
 
 		// form
 			const form_node = self.render_form()
@@ -201,51 +189,6 @@ export const analysis =  {
 				}
 			}
 		}
-	},
-
-	/**
-	 * Call the Dedalo API and obtain colors for the different denominations
-	 * Loads color definitions for different coin denominations from the Dedalo API.
-	 * These colors are used for consistent visualization across different charts.
-	 * Once colors are loaded, the search submit button is enabled.
-	 *
-	 * @returns {void}
-	 */
-	load_denomination_colors : async function() {
-
-		const self = this
-
-		const request_body = {
-			dedalo_get	: 'records',
-			table		: 'ts_object',
-			ar_fields	: ['color', 'section_id', 'term'],
-			sql_filter	: "color IS NOT NULL AND color != ''",
-			lang		: page_globals.WEB_CURRENT_LANG_CODE
-		}
-
-		const api_response = await data_manager.request({
-			body : request_body
-		})
-		if(SHOW_DEBUG) {
-			console.log('load_denomination_colors API call response', api_response)
-		}
-
-		const result = api_response.result || []
-		self.denomination_colors = result
-			.map((ele) => {
-				return {
-					section_id	: ele.section_id,
-					color		: normalize_color(ele.color, null)
-				}
-			})
-			.filter((ele) => ele.color)
-
-		if(SHOW_DEBUG) {
-			console.log('load_denomination_colors processed colors', self.denomination_colors)
-		}
-
-		// Enable submit button
-		self.submit_button.disabled = false
 	},
 
 	/**
@@ -513,7 +456,6 @@ export const analysis =  {
 				class_name		: "btn btn-light btn-block primary",
 				parent			: submit_group
 			})
-			self.submit_button.disabled = true  // disable the button until the denomination colors are loaded
 			self.submit_button.addEventListener("click", function (e) {
 				e.preventDefault()
 				self.form_submit(form)
@@ -645,14 +587,9 @@ export const analysis =  {
 						const mint						= ele.p_mint ? ele.p_mint[0] : `Missing mint (${ele.section_id})`
 						const material					= ele.ref_type_material ? ele.ref_type_material : `Missing material (${i})`
 						const denomination				= ele.ref_type_denomination ? ele.ref_type_denomination : `Missing denomination ${i}`
-						const denomination_section_id	= (ele.ref_type_denomination_data && ele.ref_type_denomination_data.length)
-							? parseInt(ele.ref_type_denomination_data[0])
-							: null
-						const color						= denomination_section_id === null || !self.denomination_colors.find((ele)=>ele.section_id===denomination_section_id)
-							? DEFAULT_COLOR
-							: self.denomination_colors.find((ele)=>ele.section_id===denomination_section_id).color
+						const color						= normalize_color(ele.ref_type_denomination_color, DEFAULT_COLOR)
 						if (SHOW_DEBUG === true) {
-							// console.log(`NumberKey ${number_key} Denomination section ID ${denomination_section_id} assigned color ${color}`)
+							// console.log(`NumberKey ${number_key} denomination ${denomination} assigned color ${color}`)
 						}
 						// if (!['12', '59', '62', '18','11a','14'].includes(name)) continue
 						// if (!['59', '62'].includes(name)) continue
@@ -696,7 +633,6 @@ export const analysis =  {
 							tmp_data.type_number				= number_key //type number is and will be type number! Raspa said.
 							tmp_data.material					= material
 							tmp_data.denomination				= denomination
-							tmp_data.denomination_section_id 	= denomination_section_id
 							tmp_data.color						= color
 							data.push(tmp_data)
 						}

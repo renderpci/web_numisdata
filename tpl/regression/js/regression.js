@@ -22,16 +22,9 @@
 "use strict";
 
 
-// import { chart_wrapper } from "../../lib/charts/chart-wrapper.js";
+import { normalize_color } from "../../lib/charts/chart-wrapper.js";
 // regression_logic is loaded as a plain global (tpl/regression/js/regression_logic.js)
 // and must be available before this bundle evaluates.
-
-
-/**
- * Default color when Dedalo API does not provide one.
- * @type {string}
- */
-const DEFAULT_COLOR = '#1f77b4'
 
 
 /**
@@ -274,13 +267,13 @@ export const regression =  {
 
 		const result = api_response.result || []
 		self.denomination_colors = result
-			.filter((ele) => ele.color && ele.color.length)
 			.map((ele) => {
 				return {
-					section_id	: ele.section_id,
-					color		: ele.color
+					section_id	: parseInt(ele.section_id, 10),
+					color		: normalize_color(ele.color, null)
 				}
 			})
+			.filter((ele) => ele.color)
 
 		if(SHOW_DEBUG) {
 			console.log('load_denomination_colors processed colors', self.denomination_colors)

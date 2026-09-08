@@ -137,6 +137,11 @@
   word-break: break-word;
   text-align: left;
 }
+#main #regression_model_section .regression_table_section .regression_table_wrapper .regression_data_table tbody td.text.nowrap {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
 #main #regression_model_section .regression_table_section .regression_table_wrapper .regression_data_table tbody td.num {
   font-variant-numeric: tabular-nums;
   text-align: right;

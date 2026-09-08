@@ -715,7 +715,7 @@ var regression_logic = {
 				]),
 				hovertemplate:
 					"Ceca: %{customdata[0]}<br>" +
-					"MIB: %{customdata[1]} | %{customdata[2]} / %{customdata[3]}<br>" +
+					"Type: MIB %{customdata[1]} | %{customdata[2]} / %{customdata[3]}<br>" +
 					"Num. monedas: %{x}<br>" +
 					"Estimación cuños anverso: %{y}<br>" +
 					"IC bootstrap 95%: [%{customdata[4]}, %{customdata[6]}]<br>" +
@@ -911,7 +911,7 @@ var regression_logic = {
 				]),
 				hovertemplate:
 					"Ceca: %{customdata[0]}<br>" +
-					"MIB: %{customdata[1]} | %{customdata[2]} / %{customdata[3]}<br>" +
+					"Type: MIB %{customdata[1]} | %{customdata[2]} / %{customdata[3]}<br>" +
 					"Num. monedas: %{x}<br>" +
 					"Estimación cuños reverso: %{y}<br>" +
 					"IC bootstrap 95%: [%{customdata[4]}, %{customdata[6]}]<br>" +
@@ -1023,6 +1023,7 @@ var regression_logic = {
 					ceca			: Array.isArray(emblem.p_mint) ? emblem.p_mint[0] : emblem.p_mint,
 					ref_ceca		: emblem.ref_mint_number,
 					num				: emblem.ref_type_number,
+					denomination	: emblem.ref_type_denomination,
 					ir				: ir,
 					approx_display	: approx_display,
 					ci_lwr			: ci ? ci.lwr : NaN,
@@ -1092,7 +1093,7 @@ var regression_logic = {
 					element_type	: "colgroup",
 					parent			: table
 				});
-				const col_widths = [18, 12, 8, 11, 12, 8, 11, 12, 8]; // sums to 100 (9 cols)
+				const col_widths = [8, 20, 8, 6, 10, 12, 6, 10, 12, 8]; // sums to 100 (10 cols)
 				col_widths.forEach(w => {
 					const col = common.create_dom_element({
 						element_type	: "col",
@@ -1114,7 +1115,8 @@ var regression_logic = {
 				});
 				const shared_labels = [
 					tstring.mint || "Mint",
-					tstring.mib || "MIB",
+					tstring.type || "Type",
+					tstring.denomination || "Denomination",
 					tstring.coins_number || "Coins number"
 				];
 				shared_labels.forEach(label => {
@@ -1180,7 +1182,8 @@ var regression_logic = {
 
 					const cells = [
 						(a?.ceca ?? r?.ceca ?? ""),
-						`${sid ?? ""} | ${a?.ref_ceca ?? r?.ref_ceca ?? ""} / ${a?.num ?? r?.num ?? ""}`,
+						`MIB ${sid ?? ""} | ${a?.ref_ceca ?? r?.ref_ceca ?? ""} / ${a?.num ?? r?.num ?? ""}`,
+						(a?.denomination ?? r?.denomination ?? ""),
 						fmt(a?.ir ?? r?.ir ?? 0, 0),
 						fmt(a?.approx_display, 2),
 						`[${fmt(a?.ci_lwr, 2)}, ${fmt(a?.ci_upr, 2)}]`,
@@ -1191,7 +1194,7 @@ var regression_logic = {
 					];
 
 					cells.forEach((cell, idx) => {
-						const cls = (idx === 0) ? "text" : (idx >= 2 ? "num" : "");
+						const cls = (idx === 0 || idx === 2) ? "text" : (idx === 1 ? "text nowrap" : (idx >= 3 ? "num" : ""));
 						common.create_dom_element({
 							element_type	: "td",
 							text_content	: String(cell),
@@ -1610,7 +1613,7 @@ var regression_logic = {
 
 							tooltip.html(`
 								<div><b>Ceca:</b> ${d.customdata?.[0] ?? ""}</div>
-								<div><b>MIB:</b> ${mib_number} | ${d.customdata?.[2] ?? ""} / ${d.customdata?.[3] ?? ""}</div>
+								<div><b>Type:</b> MIB ${mib_number} | ${d.customdata?.[2] ?? ""} / ${d.customdata?.[3] ?? ""}</div>
 								<div><b>Num. monedas:</b> ${this.format_tooltip_number(d.x, 0)}</div>
 								<div><b>Estimación cuños:</b> ${this.format_tooltip_number(d.y, 2)}</div>
 								<div><b>Intervalo de confianza:</b> [${this.format_tooltip_number(d.customdata?.[4], 2)}, ${this.format_tooltip_number(d.customdata?.[6], 2)}]</div>
@@ -1620,7 +1623,7 @@ var regression_logic = {
 							if (token !== hover_token) return;
 							tooltip.html(`
 								<div><b>Ceca:</b> ${d.customdata?.[0] ?? ""}</div>
-								<div><b>MIB:</b> ${d.customdata?.[3] ?? "?"} | ${d.customdata?.[2] ?? ""} / ${d.customdata?.[3] ?? ""}</div>
+								<div><b>Type:</b> MIB ${d.customdata?.[3] ?? "?"} | ${d.customdata?.[2] ?? ""} / ${d.customdata?.[3] ?? ""}</div>
 								<div><b>Num. monedas:</b> ${this.format_tooltip_number(d.x, 0)}</div>
 								<div><b>Estimación cuños:</b> ${this.format_tooltip_number(d.y, 2)}</div>
 								<div><b>IC bootstrap 95%:</b> [${this.format_tooltip_number(d.customdata?.[4], 2)}, ${this.format_tooltip_number(d.customdata?.[6], 2)}]</div>
@@ -1755,8 +1758,8 @@ var regression_logic = {
 									<div style="font-weight: bold;">Ceca:</div>
 									<div>${d.customdata?.[0] ?? ""}</div>
 
-									<div style="font-weight: bold;">MIB:</div>
-									<div>${mib_number} | ${d.customdata?.[2] ?? ""} / ${d.customdata?.[3] ?? ""}</div>
+									<div style="font-weight: bold;">Type:</div>
+									<div>MIB ${mib_number} | ${d.customdata?.[2] ?? ""} / ${d.customdata?.[3] ?? ""}</div>
 
 									<div style="font-weight: bold;">Nº Monedas:</div>
 									<div>${this.format_tooltip_number(d.x, 0)}</div>

@@ -167,6 +167,12 @@
 								white-space	: normal;
 								word-break	: break-word;
 								text-align	: left;
+
+								&.nowrap {
+									white-space		: nowrap;
+									overflow		: visible;
+									text-overflow	: clip;
+								}
 							}
 
 							&.num {

@@ -39,6 +39,21 @@
 #main > .inner .result .chart_wrapper {
   padding-bottom: 2rem;
 }
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info > .term {
+  display: block;
+}
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .ref_type_material,
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .ref_type_denomination,
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .ref_type_averages_weight,
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .ref_type_total_weight_items,
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .ref_type_averages_diameter,
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .ref_type_total_diameter_items {
+  padding-right: 0.5rem;
+}
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .descriptions .ref_type_design_obverse,
+#main > .inner .result .chart_wrapper .panels-container .type_container > .type_info .descriptions .ref_type_symbol_obverse {
+  padding-right: 0.5rem;
+}
 #main #regression_model_section {
   padding-bottom: 2rem;
 }

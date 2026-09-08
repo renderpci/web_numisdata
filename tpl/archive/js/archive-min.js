@@ -48,7 +48,6 @@ var documentation = {
 
 	/**
 	* SET_UP
-	* When the HTML page is loaded
 	* @param object options
 	*/
 	set_up : function(options) {
@@ -63,8 +62,7 @@ var documentation = {
 		if (self.section_id) {
 			self.load_detail()
 
-			// back/forward after a go_to_row client-side jump - re-fetch fresh
-			// rather than trying to restore from cache, correctness over speed here
+			// back/forward after a client-side jump - re-fetch fresh
 				window.addEventListener('popstate', function(){
 					const match = window.location.pathname.match(/\/documentation\/(\d+)/)
 					if (match) {
@@ -77,11 +75,7 @@ var documentation = {
 			const form_node = self.render_form()
 			self.form_container.appendChild(form_node)
 
-			// search status . "Search results (N)" + back-to-browse, and the results
-			// toolbar (grid/list switch) live in one header row instead of two -
-			// both hidden together until searching, see enter/exit_search_mode.
-			// search_status_info is a separate inner node because update_search_status
-			// rebuilds its contents on every search - the toolbar must survive that
+			// search status + toolbar, hidden together until searching
 				self.search_status = common.create_dom_element({
 					element_type	: "div",
 					class_name		: "documentation_search_status hide"
@@ -134,11 +128,7 @@ var documentation = {
 				id			: "title",
 				name		: "title",
 				label		: tstring.search_documentation || "Search by title...",
-				// title+name, not title alone - resolve_title (below) documents why:
-				// records deep in the hierarchy often just inherit their parent's
-				// title verbatim and carry their own distinguishing text in 'name'
-				// instead, so a title-only search only ever turns up the top-level
-				// fund/documentation records, never their child cards
+				// title+name, not title alone - see resolve_title
 				q_column	: "CONCAT_WS(' ', title, name)",
 				eq			: "LIKE",
 				eq_in		: "%",
@@ -189,12 +179,7 @@ var documentation = {
 					})
 				})
 
-			// description . last in draw_fields' own order (see add_long_field there).
-			// Plain free-text LIKE, not wired to activate_autocomplete like the term
-			// fields above: that callback does a GROUP BY on the raw column to build
-			// its suggestion dropdown, which fits controlled-vocabulary columns like
-			// typology/material but not a paragraph-length prose field where almost
-			// every value is unique
+			// description - plain free-text LIKE, no autocomplete (prose field, not a controlled vocabulary)
 				self.form.item_factory({
 					id			: "description",
 					name		: "description",
@@ -207,12 +192,7 @@ var documentation = {
 					parent		: filters_panel
 				})
 
-		// buttons row . Filtros/Borrar filtros/Buscar all live together here
-		// (same convention as catalog.js's own submit_group: submit + reset
-		// side by side), instead of the clear button sitting inside the
-		// filters_panel grid itself - mixed into that 25%-wide field grid, it
-		// was landing wherever the last field's wrap happened to leave room,
-		// not lined up with the rest of the row of buttons
+		// buttons row . Filtros/Borrar filtros/Buscar together, same convention as catalog.js
 			const buttons_row = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "form-group field button_submit",
@@ -604,11 +584,8 @@ var documentation = {
 
 	/**
 	* ANNOTATE_CHILD_COUNT
-	* Fires a count-only request and fills in a fund card's item count once
-	* it resolves, rather than blocking the whole card on it. On a zero count
-	* target_el is left in place (empty, opacity:0 per CSS) rather than removed -
-	* every card in the grid reserves the same badge slot either way, so cards
-	* come out a uniform size instead of the zero-count ones ending up shorter
+	* Async item-count fill-in for a card. Zero-count target_el stays in place
+	* (opacity:0) rather than removed, so every card reserves the same slot
 	* @param string term_id
 	* @param object target_el
 	*/
@@ -660,11 +637,9 @@ var documentation = {
 
 	/**
 	* GET_ROWS
-	* Make a request to Dédalo public API to get "documentation" table records.
-	* parent_data/parents_data are NOT in resolve_portals_custom - self-referential
-	* portal resolution (a 'documentation' field resolving against 'documentation'
-	* itself) always comes back empty, so ancestors are walked manually instead,
-	* see resolve_ancestors
+	* Fetch "documentation" table records. parent_data isn't in
+	* resolve_portals_custom (self-referential resolution comes back empty) -
+	* ancestors are walked manually instead, see resolve_ancestors
 	* @return promise : {rows, total}
 	*/
 	get_rows : function(options) {
@@ -682,9 +657,7 @@ var documentation = {
 				related_bibliography_data	: 'bibliographic_references',
 				publications_data			: 'publications',
 				identifying_images_data	: 'images',
-				// a record's images can be split across two separate portal fields
-				// (identifying_images_data plus this one) - both get shown together
-				// in one gallery, see render_detail
+				// images can also be split into this second field - see render_detail
 				images_data					: 'images'
 			}
 		}
@@ -698,9 +671,7 @@ var documentation = {
 				console.log("-> documentation api_response:", api_response);
 			}
 
-			// data_manager's catch resolves (never rejects) with result:false on a
-			// genuine request failure - distinguish that from a legitimate empty
-			// result set (result: []) so callers can show an error, not "no records"
+			// result:false means a genuine failure (data_manager never rejects) - distinct from a legitimate empty []
 			if (api_response.result===false) {
 				return {
 					rows	: [],
@@ -745,8 +716,7 @@ var documentation = {
 
 		const detail_url = page_globals.__WEB_ROOT_WEB__ + '/documentation/' + id
 
-		// 'child' cards navigate same-tab (drilling in replaces the page);
-		// other variants open a new tab so browsing/searching keeps its place
+		// 'child' cards navigate same-tab, others open a new tab
 			const card_link = common.create_dom_element({
 				element_type	: "a",
 				class_name		: "row_wrapper",
@@ -809,11 +779,8 @@ var documentation = {
 
 		const tag = variant==='fund' ? (tstring.fund || 'Fund') : (row.typology || row.name)
 
-		// 'child' cards show the tag right under the image, above the title - a compact
-		// label instead of another stacked row, so the card doesn't grow taller than it
-		// needs to. Other variants keep it below the title, unchanged. Always reserves
-		// the slot (even with nothing to show) so every card in the grid comes out the
-		// same height - see .documentation_card_tag.is_empty
+		// 'child' cards show the tag above the title, compact. Always reserves the
+		// slot (see .documentation_card_tag.is_empty) so card heights stay uniform
 			if (variant==='child') {
 				const tag_el = common.create_dom_element({
 					element_type	: "span",
@@ -862,9 +829,7 @@ var documentation = {
 				})
 			}
 
-			// 'child' cards sit within a record's own contents grid (see draw_contents) and
-			// can themselves have children (e.g. a box containing coin sheets) - surface that
-			// count too, same as 'fund' cards do on the browse landing
+			// 'child' cards can have their own children too - same count badge as 'fund' cards
 				if (variant==='child') {
 					const count_el = common.create_dom_element({
 						element_type	: "span",
@@ -893,13 +858,7 @@ var documentation = {
 
 	/**
 	* RESOLVE_TITLE
-	* Many records deep in the hierarchy just inherited their parent's title
-	* verbatim (confirmed against the live data) - falls back to the row's own
-	* 'name' field (what kind of object it is) when that happens. Only ever
-	* returns a value straight from the API - never invents distinguishing text
-	* (no appended numbering, no synthesized labels); if several sibling records
-	* share the same title and name, they're shown identically, on purpose -
-	* that's a data issue for the source system to fix, not the frontend's to mask
+	* Falls back to 'name' when a record just inherited its parent's title verbatim
 	* @param object row
 	* @param string|null parent_title
 	* @return string|null
@@ -958,29 +917,21 @@ var documentation = {
 			parent			: container
 		})
 
-		// nav placeholder . back link + breadcrumb, filled in below once
-		// resolve_ancestors resolves
+		// nav placeholder . filled in below once resolve_ancestors resolves
 			const nav = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "documentation_detail_nav",
 				parent			: row_wrapper
 			})
 
-		// sibling nav placeholder . previous/next among this record's siblings
-		// (same parent), filled in below once fetch_children resolves
+		// sibling nav placeholder . filled in below once fetch_children resolves
 			const sibling_nav = common.create_dom_element({
 				element_type	: "div",
 				class_name		: "documentation_sibling_nav",
 				parent			: row_wrapper
 			})
 
-		// title . the record's own title field, verbatim - unlike draw_item's
-		// card titles (see resolve_title), this is a single standalone record
-		// the user specifically opened, so it should always show its real
-		// title rather than being swapped for 'name' just because it happens
-		// to match its parent's title too. Placed above the gallery (not
-		// below it, where this used to sit) so the record's name is the
-		// first thing read, with the images following as illustration of it
+		// title . the record's own title verbatim, not resolve_title's fallback - shown above the gallery
 			common.create_dom_element({
 				element_type	: "div",
 				class_name		: "documentation_title",
@@ -1038,7 +989,7 @@ var documentation = {
 					})
 
 					const lightbox_index = lightbox_images.length
-					lightbox_images.push({ src: image_el.src, caption: caption_text })
+					lightbox_images.push(Object.assign({ caption: caption_text }, self.resolve_lightbox_urls(image_row.image)))
 					image_el.addEventListener('click', function(){
 						self.open_lightbox(lightbox_images, lightbox_index)
 					})
@@ -1082,7 +1033,7 @@ var documentation = {
 						})
 
 						const lightbox_index = lightbox_images.length
-						lightbox_images.push({ src: thumb_el.src, caption: caption_text })
+						lightbox_images.push(Object.assign({ caption: caption_text }, self.resolve_lightbox_urls(image_row.image)))
 						thumb_el.addEventListener('click', function(){
 							self.open_lightbox(lightbox_images, lightbox_index)
 						})
@@ -1196,7 +1147,7 @@ var documentation = {
 						})
 
 						const lightbox_index = lightbox_images.length
-						lightbox_images.push({ src: image_el.src, caption: row.title || '' })
+						lightbox_images.push(Object.assign({ caption: row.title || '' }, self.resolve_lightbox_urls(image_path)))
 						image_el.addEventListener('click', function(){
 							self.open_lightbox(lightbox_images, lightbox_index)
 						})
@@ -2423,6 +2374,28 @@ var documentation = {
 
 
 	/**
+	* RESOLVE_LIGHTBOX_URLS
+	* Thumbnails/hero images stay on the 1.5MB variant, but the lightbox (full
+	* view) tries "modified" first, then "original", then back to the same
+	* 1.5MB variant already known to exist - see open_lightbox's load_image
+	* for the actual fallback chain
+	* @param string raw_image_path : e.g. /dedalo/media/image/1.5MB/464000/x.jpg
+	* @return object {src, fallback_src, last_resort_src}
+	*/
+	resolve_lightbox_urls : function(raw_image_path) {
+
+		const full_url = page_globals.__WEB_MEDIA_BASE_URL__ + raw_image_path
+
+		return {
+			src				: full_url.replace('/1.5MB/', '/modified/'),
+			fallback_src	: full_url.replace('/1.5MB/', '/original/'),
+			last_resort_src	: full_url
+		}
+	},//end resolve_lightbox_urls
+
+
+
+	/**
 	* OPEN_LIGHTBOX
 	* Full-screen zoom/pan image viewer for the detail page gallery. Wheel or
 	* pinch to zoom (centered on the cursor/pinch midpoint), drag to pan once
@@ -2485,9 +2458,12 @@ var documentation = {
 			parent			: stage
 		})
 
+		// the placeholder (see load_image) now covers the old spinner's job for the
+		// normal case, so it starts hidden - kept in the DOM rather than removed
+		// entirely in case a future path still needs a blocking loading state
 		const spinner = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "documentation_lightbox_spinner",
+			class_name		: "documentation_lightbox_spinner hide",
 			parent			: stage
 		})
 
@@ -2570,7 +2546,11 @@ var documentation = {
 				apply_transform(true)
 			}
 
-		// load_image . swaps src/caption for the current index, resets zoom/pan
+		// load_image . swaps src/caption for the current index, resets zoom/pan.
+		// Shows last_resort_src (the 1.5MB variant, already cached from the
+		// gallery/thumbnail this was clicked from) immediately as a placeholder,
+		// instead of a blank spinner wait, while load_full_resolution fetches
+		// the real target in the background and swaps it in once ready
 			function load_image() {
 
 				const current = images[state.index]
@@ -2580,11 +2560,12 @@ var documentation = {
 				state.y		= 0
 
 				img.classList.remove('is_loaded')
-				spinner.classList.remove('hide')
 				apply_transform(false)
 
-				img.src	= current.src
+				img.src	= current.last_resort_src || current.src
 				img.alt	= current.caption || ''
+
+				load_full_resolution(current, state.index)
 
 				caption.textContent = current.caption || ''
 				caption.classList.toggle('hide', !current.caption)
@@ -2593,6 +2574,35 @@ var documentation = {
 					prev_button.classList.toggle('hide', state.index<=0)
 					next_button.classList.toggle('hide', state.index>=images.length-1)
 				}
+			}
+
+		// load_full_resolution . fetches the sharp "modified" variant (falling
+		// back to "original") off-DOM, so the visible placeholder never blanks
+		// out mid-download, then swaps it into img once it has fully arrived.
+		// for_index guards against a stale, slow-to-arrive swap landing after
+		// the user has already stepped to a different image
+			function load_full_resolution(current, for_index) {
+
+				if (current.src===current.last_resort_src) {
+					return // already showing the only variant there is
+				}
+
+				const preload = new Image()
+
+				preload.addEventListener('load', function(){
+					if (state.index===for_index) {
+						img.src = preload.src
+					}
+				})
+
+				preload.addEventListener('error', function(){
+					if (state.index===for_index && preload.src===current.src && current.fallback_src) {
+						preload.src = current.fallback_src
+					}
+					// fallback also failing (or none to try) just leaves the placeholder shown
+				})
+
+				preload.src = current.src
 			}
 
 			// position_nav_buttons . prev/next sit just outside the image's own

@@ -157,7 +157,8 @@ var documentation = {
 					{ id: "collection", label: tstring.collection || "Collection" },
 					{ id: "fund",       label: tstring.fund       || "Fund"       },
 					{ id: "typology",   label: tstring.typology   || "Typology"   },
-					{ id: "material",   label: tstring.material   || "Material"   }
+					{ id: "material",   label: tstring.material   || "Material"   },
+					{ id: "name",       label: tstring.name       || "Name"       }
 				]
 				term_fields.forEach(function(field){
 					self.form.item_factory({
@@ -989,7 +990,7 @@ var documentation = {
 					})
 
 					const lightbox_index = lightbox_images.length
-					lightbox_images.push({ src: image_el.src, caption: caption_text })
+					lightbox_images.push(Object.assign({ caption: caption_text }, self.resolve_lightbox_urls(image_row.image)))
 					image_el.addEventListener('click', function(){
 						self.open_lightbox(lightbox_images, lightbox_index)
 					})
@@ -1033,7 +1034,7 @@ var documentation = {
 						})
 
 						const lightbox_index = lightbox_images.length
-						lightbox_images.push({ src: thumb_el.src, caption: caption_text })
+						lightbox_images.push(Object.assign({ caption: caption_text }, self.resolve_lightbox_urls(image_row.image)))
 						thumb_el.addEventListener('click', function(){
 							self.open_lightbox(lightbox_images, lightbox_index)
 						})
@@ -1147,7 +1148,7 @@ var documentation = {
 						})
 
 						const lightbox_index = lightbox_images.length
-						lightbox_images.push({ src: image_el.src, caption: row.title || '' })
+						lightbox_images.push(Object.assign({ caption: row.title || '' }, self.resolve_lightbox_urls(image_path)))
 						image_el.addEventListener('click', function(){
 							self.open_lightbox(lightbox_images, lightbox_index)
 						})
@@ -2145,10 +2146,9 @@ var documentation = {
 
 	/**
 	* DRAW_RELATED_ITEMS
-	* This record's cross-referenced siblings (see fetch_related_items) - kept
-	* deliberately quieter than draw_contents' own card grid (small inline
-	* thumbnail + label chips, muted heading) since this is a secondary,
-	* supporting relation rather than the record's actual contents
+	* This record's cross-referenced siblings (see fetch_related_items) - full
+	* cards, same draw_item('child') component draw_contents uses below, just
+	* under its own quieter muted label instead of draw_contents' bold heading
 	* @param object row_wrapper
 	* @param object row
 	*/
@@ -2178,50 +2178,14 @@ var documentation = {
 				parent			: section
 			})
 
-			const list = common.create_dom_element({
+			const grid = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "documentation_related_items_list",
+				class_name		: "documentation_contents_grid",
 				parent			: section
 			})
 
 			items.forEach(function(item_row){
-
-				const item_id	= item_row.term_id.split('_').pop()
-				const display_title = self.resolve_title(item_row, row.title) || ('ID ' + item_id)
-
-				const chip		= common.create_dom_element({
-					element_type	: "a",
-					class_name		: "documentation_related_item",
-					href			: page_globals.__WEB_ROOT_WEB__ + '/documentation/' + item_id,
-					title			: display_title,
-					parent			: list
-				})
-
-				if (item_row.identifying_images && item_row.identifying_images.length>0) {
-					const first_image	= item_row.identifying_images.split(' | ')[0]
-					const thumb_url		= (page_globals.__WEB_MEDIA_BASE_URL__ + first_image).replace('/1.5MB/', '/thumb/')
-					const thumb_img = common.create_dom_element({
-						element_type	: "img",
-						class_name		: "documentation_related_item_thumb",
-						src				: thumb_url,
-						loading			: "lazy",
-						parent			: chip
-					})
-					thumb_img.alt = display_title
-				}else{
-					common.create_dom_element({
-						element_type	: "i",
-						class_name		: "fa fa-file-o documentation_related_item_thumb documentation_related_item_thumb_placeholder",
-						parent			: chip
-					})
-				}
-
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "documentation_related_item_title",
-					text_content	: display_title,
-					parent			: chip
-				})
+				grid.appendChild( self.draw_item(item_row, { variant: 'child', parent_title: row.title }) )
 			})
 		})
 	},//end draw_related_items
@@ -2374,6 +2338,28 @@ var documentation = {
 
 
 	/**
+	* RESOLVE_LIGHTBOX_URLS
+	* Thumbnails/hero images stay on the 1.5MB variant, but the lightbox (full
+	* view) tries "modified" first, then "original", then back to the same
+	* 1.5MB variant already known to exist - see open_lightbox's load_image
+	* for the actual fallback chain
+	* @param string raw_image_path : e.g. /dedalo/media/image/1.5MB/464000/x.jpg
+	* @return object {src, fallback_src, last_resort_src}
+	*/
+	resolve_lightbox_urls : function(raw_image_path) {
+
+		const full_url = page_globals.__WEB_MEDIA_BASE_URL__ + raw_image_path
+
+		return {
+			src				: full_url.replace('/1.5MB/', '/modified/'),
+			fallback_src	: full_url.replace('/1.5MB/', '/original/'),
+			last_resort_src	: full_url
+		}
+	},//end resolve_lightbox_urls
+
+
+
+	/**
 	* OPEN_LIGHTBOX
 	* Full-screen zoom/pan image viewer for the detail page gallery. Wheel or
 	* pinch to zoom (centered on the cursor/pinch midpoint), drag to pan once
@@ -2436,9 +2422,12 @@ var documentation = {
 			parent			: stage
 		})
 
+		// the placeholder (see load_image) now covers the old spinner's job for the
+		// normal case, so it starts hidden - kept in the DOM rather than removed
+		// entirely in case a future path still needs a blocking loading state
 		const spinner = common.create_dom_element({
 			element_type	: "div",
-			class_name		: "documentation_lightbox_spinner",
+			class_name		: "documentation_lightbox_spinner hide",
 			parent			: stage
 		})
 
@@ -2521,7 +2510,11 @@ var documentation = {
 				apply_transform(true)
 			}
 
-		// load_image . swaps src/caption for the current index, resets zoom/pan
+		// load_image . swaps src/caption for the current index, resets zoom/pan.
+		// Shows last_resort_src (the 1.5MB variant, already cached from the
+		// gallery/thumbnail this was clicked from) immediately as a placeholder,
+		// instead of a blank spinner wait, while load_full_resolution fetches
+		// the real target in the background and swaps it in once ready
 			function load_image() {
 
 				const current = images[state.index]
@@ -2531,11 +2524,12 @@ var documentation = {
 				state.y		= 0
 
 				img.classList.remove('is_loaded')
-				spinner.classList.remove('hide')
 				apply_transform(false)
 
-				img.src	= current.src
+				img.src	= current.last_resort_src || current.src
 				img.alt	= current.caption || ''
+
+				load_full_resolution(current, state.index)
 
 				caption.textContent = current.caption || ''
 				caption.classList.toggle('hide', !current.caption)
@@ -2544,6 +2538,35 @@ var documentation = {
 					prev_button.classList.toggle('hide', state.index<=0)
 					next_button.classList.toggle('hide', state.index>=images.length-1)
 				}
+			}
+
+		// load_full_resolution . fetches the sharp "modified" variant (falling
+		// back to "original") off-DOM, so the visible placeholder never blanks
+		// out mid-download, then swaps it into img once it has fully arrived.
+		// for_index guards against a stale, slow-to-arrive swap landing after
+		// the user has already stepped to a different image
+			function load_full_resolution(current, for_index) {
+
+				if (current.src===current.last_resort_src) {
+					return // already showing the only variant there is
+				}
+
+				const preload = new Image()
+
+				preload.addEventListener('load', function(){
+					if (state.index===for_index) {
+						img.src = preload.src
+					}
+				})
+
+				preload.addEventListener('error', function(){
+					if (state.index===for_index && preload.src===current.src && current.fallback_src) {
+						preload.src = current.fallback_src
+					}
+					// fallback also failing (or none to try) just leaves the placeholder shown
+				})
+
+				preload.src = current.src
 			}
 
 			// position_nav_buttons . prev/next sit just outside the image's own

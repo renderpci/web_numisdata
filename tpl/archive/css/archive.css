@@ -119,8 +119,7 @@
 
 /* clamp to 2 lines so card heights stay uniform regardless of title length */
 .documentation_item_fund .documentation_title {
-	font-size: 1em;
-	font-weight: 600;
+	font-size: 1.08em;
 	line-height: 1.35;
 	min-height: 2.7em;
 	display: -webkit-box;
@@ -363,10 +362,12 @@ a.row_wrapper {
 
 .documentation_title {
 	grid-column: 1 / span 2;
+	font-family: 'Trebuchet MS', 'Segoe UI', Verdana, sans-serif;
 	font-size: 1.1em;
-	font-weight: bold;
+	font-weight: 500;
 	margin-bottom: 0.5em;
 	color: var(--documentation_ink);
+	transition: color 0.2s ease;
 }
 
 .left-labels {
@@ -721,6 +722,13 @@ a.row_wrapper {
 .documentation_item_child a.row_wrapper:hover .thumb,
 #rows_container.view_grid a.row_wrapper:hover .thumb {
 	transform: scale(1.02);
+}
+
+/* title picks up the accent color on hover, same quiet cue the ref_documentation
+cards on the coin/type pages use */
+.documentation_item_fund a.row_wrapper:hover .documentation_title,
+#rows_container.view_grid a.row_wrapper:hover .documentation_title {
+	color: var(--documentation_accent);
 }
 
 #rows_container.view_grid .image_wrapper {
@@ -1158,6 +1166,18 @@ a.row_wrapper {
 
 	.row_wrapper.detail > .documentation_title {
 		font-size: 1.19em;
+	}
+}
+
+/* first/last jump-to-edge buttons dropped below ~440px (most phone widths) -
+below that, they no longer fit the prev/position/next group on one line and
+wrap onto their own orphaned row. Prev/Next plus typing into the jump box
+already cover the same ground, so this is a clean simplification rather
+than a workaround */
+@media screen and (max-width: 440px) {
+	.documentation_sibling_first,
+	.documentation_sibling_last {
+		display: none;
 	}
 }
 

@@ -276,68 +276,74 @@ var coin = {
 			parent			: container
 		})
 
+		// reuses type_row_fields.js's own ref_documentation_grid markup/CSS
+		// verbatim (see type.less's .ref_documentation) instead of a one-off
+		// design, so a linked documentation record looks identical regardless
+		// of which detail page shows it
+		const grid = common.create_dom_element({
+			element_type	: "div",
+			class_name		: "info_line ref_documentation_grid",
+			parent			: container
+		})
+
 		documentation_rows.forEach(function(doc_row){
 
 			const id			= doc_row.term_id.split('_').pop()
 			const detail_url	= page_globals.__WEB_ROOT_WEB__ + '/documentation/' + id
 			const doc_title		= doc_row.title || doc_row.name || ('ID ' + id)
 
-			// one card, one link - the whole thing is clickable, rather than
-			// separate image/title links (which also meant fighting the site's
-			// default dotted-underline <a> styling on the title text)
-				const card = common.create_dom_element({
-					element_type	: "a",
-					class_name		: "info_line inline ref_documentation",
-					href			: detail_url,
-					target			: "_blank",
-					parent			: container
-				})
-				card.setAttribute('rel', 'noopener')
+			const card = common.create_dom_element({
+				element_type	: "a",
+				class_name		: "ref_documentation",
+				href			: detail_url,
+				target			: "_blank",
+				parent			: grid
+			})
+			card.setAttribute('rel', 'noopener')
 
 			if (doc_row.identifying_images && doc_row.identifying_images.length>0) {
 
 				const first_image	= doc_row.identifying_images.split(' | ')[0]
+				// full-resolution ('/1.5MB/') image, not a thumb - same as
+				// type_row_fields.js's identical card
 				const full_url		= page_globals.__WEB_MEDIA_BASE_URL__ + first_image
-				const thumb_url		= full_url.replace('/1.5MB/', '/thumb/')
 
-				const image_wrapper = common.create_dom_element({
+				const images = common.create_dom_element({
 					element_type	: "div",
-					class_name		: "ref_documentation_image_wrapper",
+					class_name		: "images_wrapper",
 					parent			: card
 				})
-
 				const img = common.create_dom_element({
 					element_type	: "img",
-					class_name		: "image",
-					src				: thumb_url,
+					src				: full_url,
 					title			: doc_title,
 					loading			: "lazy",
-					parent			: image_wrapper
+					parent			: images
 				})
 				img.alt = doc_title
 			}
 
-			const ref_documentation_info = common.create_dom_element({
+			const info = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "ref_documentation_info",
+				class_name		: "info_wrapper",
 				parent			: card
 			})
 
 			common.create_dom_element({
 				element_type	: "div",
-				class_name		: "info_value ref_documentation_title",
+				class_name		: "ref_documentation_title",
 				text_content	: doc_title,
-				parent			: ref_documentation_info
+				parent			: info
 			})
 
 			const dating = [doc_row.dating_start, doc_row.dating_end].filter(Boolean).join(' - ') || doc_row.dating
 
-			self.ref_documentation_field(ref_documentation_info, tstring.collection || 'Collection', doc_row.collection)
-			self.ref_documentation_field(ref_documentation_info, tstring.fund || 'Fund', doc_row.fund)
-			self.ref_documentation_field(ref_documentation_info, tstring.typology || 'Typology', doc_row.typology)
-			self.ref_documentation_field(ref_documentation_info, tstring.material || 'Material', doc_row.material)
-			self.ref_documentation_field(ref_documentation_info, tstring.dating || 'Dating', dating)
-			self.ref_documentation_field(ref_documentation_info, tstring.description || 'Description', doc_row.description)
+			self.ref_documentation_field(info, tstring.collection || 'Collection', doc_row.collection)
+			self.ref_documentation_field(info, tstring.fund || 'Fund', doc_row.fund)
+			self.ref_documentation_field(info, tstring.typology || 'Typology', doc_row.typology)
+			self.ref_documentation_field(info, tstring.material || 'Material', doc_row.material)
+			self.ref_documentation_field(info, tstring.dating || 'Dating', dating)
+			self.ref_documentation_field(info, tstring.description || 'Description', doc_row.description)
 		})
 	},//end render_related_documentation
 
@@ -346,8 +352,8 @@ var coin = {
 	/**
 	* REF_DOCUMENTATION_FIELD
 	* One "label: value" line for the linked documentation record - same
-	* empty-skip and "|" stripping convention as archive.js's own add_field
-	* and type_row_fields.js's identically-named/purposed helper
+	* empty-skip/"|"-stripping and hidden-label convention as
+	* type_row_fields.js's identically-named/purposed helper
 	* @param object container
 	* @param string label
 	* @param string value
@@ -362,11 +368,24 @@ var coin = {
 			return
 		}
 
-		common.create_dom_element({
+		const field = common.create_dom_element({
 			element_type	: "div",
 			class_name		: "info_value ref_documentation_field",
-			inner_html		: label + ': ' + value,
 			parent			: container
+		})
+
+		common.create_dom_element({
+			element_type	: "span",
+			class_name		: "ref_documentation_field_label",
+			text_content	: label + ": ",
+			parent			: field
+		})
+
+		common.create_dom_element({
+			element_type	: "span",
+			class_name		: "ref_documentation_field_value",
+			inner_html		: value,
+			parent			: field
 		})
 	}//end ref_documentation_field
 

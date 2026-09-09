@@ -157,7 +157,8 @@ var documentation = {
 					{ id: "collection", label: tstring.collection || "Collection" },
 					{ id: "fund",       label: tstring.fund       || "Fund"       },
 					{ id: "typology",   label: tstring.typology   || "Typology"   },
-					{ id: "material",   label: tstring.material   || "Material"   }
+					{ id: "material",   label: tstring.material   || "Material"   },
+					{ id: "name",       label: tstring.name       || "Name"       }
 				]
 				term_fields.forEach(function(field){
 					self.form.item_factory({
@@ -2145,10 +2146,9 @@ var documentation = {
 
 	/**
 	* DRAW_RELATED_ITEMS
-	* This record's cross-referenced siblings (see fetch_related_items) - kept
-	* deliberately quieter than draw_contents' own card grid (small inline
-	* thumbnail + label chips, muted heading) since this is a secondary,
-	* supporting relation rather than the record's actual contents
+	* This record's cross-referenced siblings (see fetch_related_items) - full
+	* cards, same draw_item('child') component draw_contents uses below, just
+	* under its own quieter muted label instead of draw_contents' bold heading
 	* @param object row_wrapper
 	* @param object row
 	*/
@@ -2178,50 +2178,14 @@ var documentation = {
 				parent			: section
 			})
 
-			const list = common.create_dom_element({
+			const grid = common.create_dom_element({
 				element_type	: "div",
-				class_name		: "documentation_related_items_list",
+				class_name		: "documentation_contents_grid",
 				parent			: section
 			})
 
 			items.forEach(function(item_row){
-
-				const item_id	= item_row.term_id.split('_').pop()
-				const display_title = self.resolve_title(item_row, row.title) || ('ID ' + item_id)
-
-				const chip		= common.create_dom_element({
-					element_type	: "a",
-					class_name		: "documentation_related_item",
-					href			: page_globals.__WEB_ROOT_WEB__ + '/documentation/' + item_id,
-					title			: display_title,
-					parent			: list
-				})
-
-				if (item_row.identifying_images && item_row.identifying_images.length>0) {
-					const first_image	= item_row.identifying_images.split(' | ')[0]
-					const thumb_url		= (page_globals.__WEB_MEDIA_BASE_URL__ + first_image).replace('/1.5MB/', '/thumb/')
-					const thumb_img = common.create_dom_element({
-						element_type	: "img",
-						class_name		: "documentation_related_item_thumb",
-						src				: thumb_url,
-						loading			: "lazy",
-						parent			: chip
-					})
-					thumb_img.alt = display_title
-				}else{
-					common.create_dom_element({
-						element_type	: "i",
-						class_name		: "fa fa-file-o documentation_related_item_thumb documentation_related_item_thumb_placeholder",
-						parent			: chip
-					})
-				}
-
-				common.create_dom_element({
-					element_type	: "span",
-					class_name		: "documentation_related_item_title",
-					text_content	: display_title,
-					parent			: chip
-				})
+				grid.appendChild( self.draw_item(item_row, { variant: 'child', parent_title: row.title }) )
 			})
 		})
 	},//end draw_related_items

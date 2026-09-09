@@ -327,29 +327,36 @@
 		// the title never inherits the site's default dotted <a> underline -
 		// border/color/text-decoration are all reset here instead. Absent
 		// entirely when there's no relation, see coin.js get_related_documentation
-		a.ref_documentation {
+		// reused from type.less's .ref_documentation_grid/.ref_documentation -
+		// gold title, hidden field labels, dot-separated meta line, same as
+		// type.less. Capped at 3 columns (not auto-fill, which could grow to
+		// 4+ on wide screens) - 2 then 1 as width drops, same as type.less
+		.info_line.ref_documentation_grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1em;
+			margin-top: 1.2em;
+
+			@media screen and (max-width: @content_medium2_max_width){
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			@media screen and (max-width: @content_medium_max_width){
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.ref_documentation {
 			display: flex;
 			flex-direction: column;
-			// a single card, not a full-width bar - same order of magnitude as
-			// one cell of the type page's 3-across ref_documentation_grid
-			max-width: 22em;
-			margin-top: 1em;
+			font-size: 85%;
+			border: 1px solid rgb(227, 227, 227);
 			padding: 0.5em;
-			border: 1px solid #e3e3e3;
 			border-radius: 4px;
 			text-decoration: none;
 			color: @color_grey_dark;
-			transition: border-color 0.15s ease;
 
-			&:hover {
-				border-color: @color_gold_logo;
-
-				.ref_documentation_title {
-					color: @color_gold_logo;
-				}
-			}
-
-			.ref_documentation_image_wrapper {
+			.images_wrapper {
 				width: 100%;
 				background-color: #ffffff;
 
@@ -360,23 +367,30 @@
 				}
 			}
 
-			.ref_documentation_info {
-				display: flex;
-				flex-direction: column;
-				gap: 0.3em;
-				padding-top: 0.5em;
+			.info_wrapper {
+				width: 100%;
+				padding: 0.5em 0 0;
 			}
 
 			.ref_documentation_title {
 				font-weight: 600;
-				font-size: 1.1em;
-				color: @color_grey_dark;
-				transition: color 0.15s ease;
+				margin-bottom: 0.25em;
+				color: @color_gold_logo;
+			}
+
+			.ref_documentation_field_label {
+				display: none;
 			}
 
 			.ref_documentation_field {
-				font-size: 0.85em;
+				display: inline;
+				font-size: 0.92em;
 				color: #767676;
+			}
+
+			.ref_documentation_field:not(:last-child):after {
+				content: "\00a0\00b7 ";
+				color: #c7c7c7;
 			}
 		}
 	}

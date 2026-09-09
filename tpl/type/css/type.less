@@ -100,14 +100,21 @@
 		}
 
 		// ref_documentation grid . one card per linked documentation record (one-to-many,
-		// see type_row_fields.js), laid out exactly like this page's own
-		// find_coins grid further down (HALLAZGOS/TESOROS/CECAS section) -
-		// flex-wrap, ~3 per row, images_wrapper + info_wrapper, plain
-		// border-bottom separator - rather than a one-off card design
+		// see type_row_fields.js). Capped at 3 columns (not auto-fill, which
+		// could grow to 4+ on wide screens) - 2 then 1 as width drops
 		.info_line.ref_documentation_grid {
-			display: flex;
-			flex-wrap: wrap;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1em;
 			margin-top: 1.2em;
+
+			@media screen and (max-width: @content_medium2_max_width){
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			@media screen and (max-width: @content_medium_max_width){
+				grid-template-columns: 1fr;
+			}
 		}
 
 		.ref_documentation {
@@ -116,21 +123,12 @@
 			// shows at its natural size instead of being cropped into a small box
 			display: flex;
 			flex-direction: column;
-			flex: 0 0 32%;
-			margin-bottom: 0.5em;
-			margin-right: 0.5em;
 			font-size: 85%;
-			border-bottom: 1px solid rgb(227, 227, 227);
-			border-right: 1px solid rgb(227, 227, 227);
+			border: 1px solid rgb(227, 227, 227);
 			padding: 0.5em;
 			border-radius: 4px;
 			text-decoration: none;
 			color: @color_grey_dark;
-
-			// column divider - last card in each row of 3 doesn't need one
-			&:nth-child(3n) {
-				border-right: none;
-			}
 
 			.images_wrapper {
 				width: 100%;
@@ -178,12 +176,6 @@
 			.ref_documentation_field:not(:last-child):after {
 				content: "\00a0\00b7 ";
 				color: #c7c7c7;
-			}
-
-			@media screen and (max-width: 590px){
-				width: 95%;
-				flex: inherit;
-				border-right: none;
 			}
 		}
 

@@ -1,4 +1,4 @@
-/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields_min, data_manager, Promise */
+/*global tstring, page_globals, page, event_manager, common, image_gallery, map_factory, type_row_fields_min, data_manager, Promise, IS_PRODUCTION, regression_logic, SHOW_DEBUG */
 /*eslint no-undef: "error"*/
 "use strict";
 
@@ -151,6 +151,9 @@ var type =  {
 
 							// show export buttons
 								self.export_data_container.classList.remove('hide')
+
+							// die estimation (statistical estimation of the number of dies)
+								self.draw_die_estimation(catalog_rows)
 						})
 					})
 			}
@@ -224,7 +227,8 @@ var type =  {
 
 		// catalog call
 			const ar_fields = ['section_id', 'term', 'term_data', 'term_table', 'term_section_tipo', 'parents', 'children',
-							   'ref_mint_number', 'full_coins_reference_calculable', 'full_coins_reference_discard',
+							   'ref_mint_number', 'ref_type_number', 'ref_type_denomination', 'p_mint',
+							   'full_coins_reference_calculable', 'full_coins_reference_discard',
 							   'full_coins_reference_diameter_max', 'full_coins_reference_weight', 'full_coins_reference_axis']
 			ar_calls.push({
 				id		: "catalog",
@@ -319,6 +323,83 @@ var type =  {
 			resolve(row_node)
 		})
 	},//end list_row_builder
+
+
+
+	/**
+	* DRAW_DIE_ESTIMATION
+	* Renders the "statistical estimation of the number of dies" regression charts
+	* (Anverso / Reverso) with its data table for the viewed type.
+	* It reuses the shared regression logic (tpl/regression/js/regression_logic.js),
+	* showing only the information relative to the current type (single emblem).
+	* @param object|array ar_rows. Single catalog row (the viewed type) or array of rows
+	* @return void
+	*/
+	draw_die_estimation : function(ar_rows) {
+
+		// only available in PRE (regression_vars record lives in web_numisdata_mib_pre)
+		if (IS_PRODUCTION===true) {
+			return
+		}
+
+		const container = document.getElementById('die_estimation_chart_container')
+		const section   = document.getElementById('die_estimation')
+		if (!container || !section) {
+			return
+		}
+
+		// normalize to array
+			const rows = Array.isArray(ar_rows)
+				? ar_rows
+				: (ar_rows ? [ar_rows] : [])
+
+		// only draw when there is at least one type with calculable reference data
+		const calculable = rows.filter(function(el){
+			return el.full_coins_reference_calculable && el.full_coins_reference_calculable.length > 0
+		})
+		if (calculable.length < 1) {
+			return
+		}
+
+		section.classList.remove('hide')
+
+		if (typeof regression_logic === 'undefined' || typeof regression_logic.plot_rev_and_anv !== 'function') {
+			console.error('regression_logic module not loaded')
+			return
+		}
+
+		// data table (collapsible) + CSV download
+		const table_container  = document.getElementById('die_estimation_table_container')
+		const table_toggle     = document.getElementById('die_estimation_table_toggle')
+		const table_download   = document.getElementById('die_estimation_table_download')
+
+		if (table_toggle && table_container) {
+			table_toggle.addEventListener('click', function(){
+				const is_hidden = table_container.classList.toggle('hide')
+				table_toggle.setAttribute('aria-expanded', String(!is_hidden))
+				const icon = table_toggle.querySelector('.regression_table_toggle_icon')
+				if (icon) {
+					icon.textContent = is_hidden ? '\u25B6' : '\u25BC'
+				}
+			})
+		}
+
+		if (table_download && table_container) {
+			table_download.addEventListener('click', function(){
+				regression_logic.download_table_csv(table_container)
+			})
+		}
+
+		regression_logic.plot_rev_and_anv(container, rows, {
+			table_container  : table_container || null,
+			download_button  : table_download || null
+		})
+			.catch(function(err){
+				if (SHOW_DEBUG===true) {
+					console.error('draw_die_estimation error:', err)
+				}
+			})
+	},//end draw_die_estimation
 
 
 

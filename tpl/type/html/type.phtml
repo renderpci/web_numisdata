@@ -25,6 +25,29 @@
 					<!-- Result -->
 						<section class="result">
 							<div id="row_detail"></div>
+
+							<!-- Die estimation (statistical estimation of the number of dies) -->
+							<div id="die_estimation" class="die_estimation hide">
+								<div class="info_line separator">
+									<div class="big_label"><?php echo tstring('die_estimation') ?></div>
+								</div>
+								<div id="die_estimation_chart_container" class="chart_wrapper"></div>
+
+								<!-- Data table (collapsible) -->
+								<div id="die_estimation_table_section" class="regression_table_section">
+									<div class="regression_table_header">
+										<button id="die_estimation_table_toggle" type="button" class="regression_table_toggle" aria-expanded="false" aria-controls="die_estimation_table_container">
+											<span class="regression_table_toggle_label"><?php echo tstring('data_table')?></span>
+											<span class="regression_table_toggle_icon" aria-hidden="true">&#9654;</span>
+										</button>
+										<button id="die_estimation_table_download" type="button" class="regression_table_download" disabled>
+											<?php echo tstring('download')?>
+										</button>
+									</div>
+									<div id="die_estimation_table_container" class="regression_table_wrapper hide"></div>
+								</div>
+							</div>
+
 							<div id="export_data" class="export_data_container"></div>
 						</section>
 				</div>

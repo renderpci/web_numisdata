@@ -85,6 +85,8 @@
 					page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/assets/lib/leaflet/markercluster/leaflet.markercluster.js';
 					page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog'.JS_SUFFIX.'.js';
 					page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/catalog/js/catalog_row_fields'.JS_SUFFIX.'.js';
+					// regression_logic (plain global) shared with the regression/mint pages for the die estimation
+					page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/regression/js/regression_logic'.JS_SUFFIX.'.js';
 					// page::$js_ar_url[] = __WEB_TEMPLATE_WEB__ . '/mints/js/mints'.JS_SUFFIX.'.js';
 
 					// row_fields js add

@@ -121,6 +121,13 @@ var regression_min = (function (exports) {
 		table_storage_key					: 'regression_table_expanded',
 
 		/**
+		 * localStorage key used to persist the last selected mint
+		 * so page reloads reuse the same mint (testing convenience).
+		 * @type {string}
+		 */
+		mint_storage_key					: 'regression_mint_selected',
+
+		/**
 		 * Color hexadecimal code for each denomination
 		 * @type {{
 		 * 	section_id: number,
@@ -251,19 +258,30 @@ var regression_min = (function (exports) {
 						.map(val => val[0]);
 
 					if (mints.length > 0) {
-						// pick a random mint
-						const random_mint = mints[Math.floor(Math.random() * mints.length)];
+						// restore the persisted user-selected mint, or pick a random one
+						let persisted_mint = null;
+						try {
+							persisted_mint = localStorage.getItem(self.mint_storage_key) || null;
+						} catch (e) {
+							// localStorage may be unavailable (private mode, etc.); ignore
+						}
 
 						// find mint form item and set its value
 						const mint_item = self.form.form_items['mint'];
 						if (mint_item) {
-							mint_item.node_input.value = random_mint;
-							mint_item.q = random_mint;
+							if (persisted_mint) {
+								// restore as user-selected value (rendered in container_values)
+								self.form.add_selected_value(mint_item, persisted_mint, persisted_mint);
+							} else {
+								const random_mint = mints[Math.floor(Math.random() * mints.length)];
+								mint_item.node_input.value = random_mint;
+								mint_item.q = random_mint;
 
-							// trigger input event to update floating label
-							mint_item.node_input.dispatchEvent(new Event('input'));
-							// trigger blur event to ensure label is positioned correctly
-							mint_item.node_input.dispatchEvent(new Event('blur'));
+								// trigger input event to update floating label
+								mint_item.node_input.dispatchEvent(new Event('input'));
+								// trigger blur event to ensure label is positioned correctly
+								mint_item.node_input.dispatchEvent(new Event('blur'));
+							}
 
 							// auto-submit search
 							self.form_submit();
@@ -601,6 +619,11 @@ var regression_min = (function (exports) {
 				});
 				reset_button.addEventListener("click", function (e) {
 					e.preventDefault();
+					try {
+						localStorage.removeItem(self.mint_storage_key);
+					} catch (e) {
+						// ignore storage errors
+					}
 					window.location.replace(window.location.pathname);
 				});
 
@@ -642,6 +665,18 @@ var regression_min = (function (exports) {
 			// options
 				typeof options.scroll_result==="boolean" ? options.scroll_result : true;
 				const form_items	= options.form_items || self.form.form_items;
+
+			// persist selected mint (user-selected values only) across reloads for testing convenience
+				const mint_item = self.form.form_items['mint'];
+				try {
+					if (mint_item && mint_item.q_selected && mint_item.q_selected.length > 0) {
+						localStorage.setItem(self.mint_storage_key, mint_item.q_selected.join(','));
+					} else {
+						localStorage.removeItem(self.mint_storage_key);
+					}
+				} catch (e) {
+					// ignore storage errors
+				}
 
 			// build filter
 				const filter = self.form.build_filter({

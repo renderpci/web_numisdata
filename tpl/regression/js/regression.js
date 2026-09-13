@@ -121,9 +121,9 @@ export const regression =  {
 
 		// data table toggle (collapsible, state persisted in localStorage)
 			if (self.regression_model_table_toggle && self.regression_model_table_container) {
-				// restore saved state (default: collapsed)
+				// restore saved state (default: expanded)
 					try {
-						if (localStorage.getItem(self.table_storage_key) === 'expanded') {
+						if (localStorage.getItem(self.table_storage_key) !== 'collapsed') {
 							self.regression_model_table_container.classList.remove('hide')
 							self.regression_model_table_toggle.setAttribute('aria-expanded', 'true')
 							const icon = self.regression_model_table_toggle.querySelector('.regression_table_toggle_icon')

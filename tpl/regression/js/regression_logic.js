@@ -47,6 +47,16 @@ function bootstrap_random() {
 	return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 
+/**
+ * Light grey used to render the reference points (observed regression data used
+ * to fit the model that computes the type estimation point) on the die
+ * estimation charts. Kept soft and less visible so the brown "Aproximación"
+ * point of the viewed type remains the clear protagonist of the graph.
+ * @type {string}
+ */
+const REFERENCE_POINT_COLOR = "#c2c2c2";
+const REFERENCE_POINT_STROKE = "#c2c2c2";
+
 
 /**
  * Callback for tooltip rendering in violin-boxplot visualizations.
@@ -946,7 +956,12 @@ var regression_logic = {
 			const max_ir_observed = (fit.filtered.IR_Ant_filtrat.length > 0) ? Math.max(...fit.filtered.IR_Ant_filtrat) : 0;
 			// Prioritize search results max IR to "fit" the graph to the results, plus a tiny margin.
 			// If no results, default to observed max.
-			const max_ir = (max_ir_search > 0) ? Math.max(max_ir_search * 1.02, 10) : max_ir_observed;
+			// When the reference points are requested (type view) the graph must span
+			// the full observed reference dataset, otherwise all the reference points
+			// (filtered with IR > 10) would fall out of the displayed range and vanish.
+			const max_ir = (opts.show_reference_points === true)
+				? Math.max(max_ir_search * 1.02, max_ir_observed, 10)
+				: ((max_ir_search > 0) ? Math.max(max_ir_search * 1.02, 10) : max_ir_observed);
 
 			return Promise.all([
 				this.plot_rev(regression_model_chart_container, max_ir),
@@ -959,7 +974,8 @@ var regression_logic = {
 
 				this._render_rev_anv_d3(regression_model_chart_container, tracesAnv, tracesRev, {
 					xLabel: "Índice de Rareza (IR)",
-					yLabel: "Número de cuños estimado"
+					yLabel: "Número de cuños estimado",
+					show_reference_points: opts.show_reference_points === true
 				});
 
 				// Optional data table visualization (in addition to the charts)
@@ -1520,9 +1536,9 @@ var regression_logic = {
 
 					// Also clear any active point highlights for a full reset
 					svg.selectAll("circle")
-						.style("stroke", "#000")
-						.style("stroke-width", 2)
-						.attr("r", circle_d => (circle_d?.name === "Aproximación" ? 4 : 5));
+						.style("stroke", circle_d => (circle_d?.isReferencePoint ? REFERENCE_POINT_STROKE : "#000"))
+						.style("stroke-width", circle_d => (circle_d?.isReferencePoint ? 1 : 2))
+						.attr("r", circle_d => (circle_d?.isReferencePoint ? 3 : (circle_d?.name === "Aproximación" ? 4 : 5)));
 				});
 
 			// Content area (clipped)
@@ -1564,6 +1580,29 @@ var regression_logic = {
 					.attr("stroke-width", s.style.strokeWidth ?? 2)
 					.attr("d", line_gen);
 			});
+
+			// Reference points (observed regression data used to fit the model
+			// that calculates the current type estimation point). Only rendered
+			// when explicitly requested (type view). Painted grey, less dim.
+			if (labels.show_reference_points === true) {
+				series.filter(s => s.kind === "points" && !s.keepColor).forEach(s => {
+					const valid_pts = s.points
+						.filter(d => Number.isFinite(d.x) && Number.isFinite(d.y))
+						.map(d => ({ ...d, isReferencePoint: true }));
+
+					plot_area.selectAll(null)
+						.data(valid_pts)
+						.join("circle")
+						.attr("cx", d => x(d.x))
+						.attr("cy", d => y(d.y))
+						.attr("r", 3)
+						.attr("fill", REFERENCE_POINT_COLOR)
+						.attr("stroke", REFERENCE_POINT_STROKE)
+						.attr("stroke-width", 1)
+						.attr("opacity", 0.55)
+						.attr("pointer-events", "none");
+				});
+			}
 
 			series.filter(s => s.kind === "points" && s.keepColor).forEach(s => {
 				const valid_pts = s.points.filter(d =>
@@ -1676,10 +1715,11 @@ var regression_logic = {
 						if (section_id) {
 							// Reset all points to their default state
 							svg.selectAll("circle")
-								.style("stroke", "#573c3cff")
-								.style("stroke-width", 2)
+								.style("stroke", circle_d => (circle_d?.isReferencePoint ? REFERENCE_POINT_STROKE : "#573c3cff"))
+								.style("stroke-width", circle_d => (circle_d?.isReferencePoint ? 1 : 2))
 								.attr("r", function(circle_d) {
 									// Return to original radius based on trace type
+									if (circle_d?.isReferencePoint) return 3;
 									return (circle_d?.name === "Aproximación") ? 4 : 5;
 								});
 

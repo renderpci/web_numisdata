@@ -417,7 +417,8 @@ var type =  {
 
 		regression_logic.plot_rev_and_anv(container, rows, {
 			table_container  : table_container || null,
-			download_button  : table_download || null
+			download_button  : table_download || null,
+			show_reference_points : true
 		})
 			.catch(function(err){
 				if (SHOW_DEBUG===true) {

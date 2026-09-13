@@ -153,7 +153,11 @@ var type =  {
 								self.export_data_container.classList.remove('hide')
 
 							// die estimation (statistical estimation of the number of dies)
-								self.draw_die_estimation(catalog_rows)
+								// draw the whole current type points (the type and all its variants)
+								self.get_type_group_rows(catalog_rows)
+								.then(function(type_rows){
+									self.draw_die_estimation(type_rows)
+								})
 						})
 					})
 			}
@@ -327,11 +331,99 @@ var type =  {
 
 
 	/**
+	* GET_TYPE_GROUP_ROWS
+	* Expands the viewed type into the whole current type group: the type row plus
+	* all its variant rows (its own children and/or siblings sharing the same
+	* direct parent type row). This allows the die estimation chart to draw the
+	* whole type points instead of only the single current point.
+	* @param object catalog_rows. Parsed catalog row of the viewed type
+	* @return Promise<array> Full array of parsed catalog rows for the type group
+	*/
+	get_type_group_rows : async function(catalog_rows) {
+
+		// current row normalized
+			const current_rows = catalog_rows ? [catalog_rows] : []
+			if (!catalog_rows) {
+				return current_rows
+			}
+
+		// collect section_ids of the whole type group
+			const section_ids = [parseInt(catalog_rows.section_id)]
+
+		// current row own children (variants). When the current type is a parent
+		// type row, its children are the variants resolved as full rows or ids
+			if (Array.isArray(catalog_rows.children) && catalog_rows.children.length>0) {
+				catalog_rows.children.forEach(function(child){
+					const id = (child && typeof child==='object')
+						? parseInt(child.section_id)
+						: parseInt(child)
+					if (Number.isFinite(id) && section_ids.indexOf(id)===-1) {
+						section_ids.push(id)
+					}
+				})
+			}
+
+		// direct parent type row (the catalog row that groups the variants)
+			if (Array.isArray(catalog_rows.parents) && catalog_rows.parents.length>0) {
+				const parent = catalog_rows.parents.find(function(el){
+					return el.term_table==='types' && el.children
+				}) || null
+				if (parent) {
+					let children = parent.children
+					if (typeof children === 'string') {
+						try {
+							children = JSON.parse(children)
+						} catch (error) {
+							children = []
+						}
+					}
+					if (Array.isArray(children)) {
+						children.forEach(function(id){
+							const n = parseInt(id)
+							if (Number.isFinite(n) && section_ids.indexOf(n)===-1) {
+								section_ids.push(n)
+							}
+						})
+					}
+				}
+			}
+
+		// nothing to expand. Only the current row
+			if (section_ids.length<2) {
+				return current_rows
+			}
+
+		// fetch the whole group rows
+			const ar_fields = ['section_id', 'term', 'term_data', 'term_table', 'term_section_tipo', 'parents', 'children',
+							   'ref_mint_number', 'ref_type_number', 'ref_type_denomination', 'p_mint',
+							   'full_coins_reference_calculable', 'full_coins_reference_discard',
+							   'full_coins_reference_diameter_max', 'full_coins_reference_weight', 'full_coins_reference_axis']
+			const request_body = {
+				dedalo_get	: 'records',
+				table		: 'catalog',
+				ar_fields	: ar_fields,
+				lang		: page_globals.WEB_CURRENT_LANG_CODE,
+				sql_filter	: 'section_id IN (' + section_ids.join(',') + ')',
+				count		: false
+			}
+			const response = await data_manager.request({ body : request_body })
+
+			if (!response.result || response.result.length<1) {
+				return current_rows
+			}
+
+		// parse and return the whole group rows
+			return page.parse_catalog_data(response.result)
+	},//end get_type_group_rows
+
+
+
+	/**
 	* DRAW_DIE_ESTIMATION
 	* Renders the "statistical estimation of the number of dies" regression charts
 	* (Anverso / Reverso) with its data table for the viewed type.
 	* It reuses the shared regression logic (tpl/regression/js/regression_logic.js),
-	* showing only the information relative to the current type (single emblem).
+	* showing the whole current type points (the type and all its variants).
 	* @param object|array ar_rows. Single catalog row (the viewed type) or array of rows
 	* @return void
 	*/

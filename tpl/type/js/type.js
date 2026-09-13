@@ -23,6 +23,12 @@ var type =  {
 	// section_id
 	section_id : null,
 
+	/**
+	 * localStorage key used to persist the die estimation data table fold/unfold state.
+	 * @type {string}
+	 */
+	die_estimation_table_storage_key : 'type_die_estimation_table_expanded',
+
 
 
 	/**
@@ -374,12 +380,31 @@ var type =  {
 		const table_download   = document.getElementById('die_estimation_table_download')
 
 		if (table_toggle && table_container) {
+			// restore saved state (default: expanded)
+				try {
+					if (localStorage.getItem(self.die_estimation_table_storage_key) !== 'collapsed') {
+						table_container.classList.remove('hide')
+						table_toggle.setAttribute('aria-expanded', 'true')
+						const icon = table_toggle.querySelector('.regression_table_toggle_icon')
+						if (icon) {
+							icon.textContent = '\u25BC'
+						}
+					}
+				} catch (e) {
+					// localStorage may be unavailable (private mode, etc.); ignore
+				}
+
 			table_toggle.addEventListener('click', function(){
 				const is_hidden = table_container.classList.toggle('hide')
 				table_toggle.setAttribute('aria-expanded', String(!is_hidden))
 				const icon = table_toggle.querySelector('.regression_table_toggle_icon')
 				if (icon) {
 					icon.textContent = is_hidden ? '\u25B6' : '\u25BC'
+				}
+				try {
+					localStorage.setItem(self.die_estimation_table_storage_key, is_hidden ? 'collapsed' : 'expanded')
+				} catch (e) {
+					// ignore storage errors
 				}
 			})
 		}
